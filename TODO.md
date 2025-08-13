@@ -1,6 +1,6 @@
-- [] 删除实体清理的功能
-- [] HuskHomes兼容
-- [] Quickshop-Hikari兼容
-- [] Folia计划任务线程
-- [] Velocity 插件通道支持
-- [] 实现Paper的一些Bug修复
+- [ ] 删除实体清理的功能
+- [ ] HuskHomes兼容
+- [ ] Quickshop-Hikari兼容
+- [ ] Folia计划任务线程
+- [ ] Velocity 插件通道支持
+- [ ] 实现Paper的一些Bug修复
