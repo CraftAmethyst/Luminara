@@ -14,6 +14,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+
+import ca.spottedleaf.dataconverter.minecraft.MCDataConverter;
+import ca.spottedleaf.dataconverter.minecraft.MCVersions;
+import ca.spottedleaf.dataconverter.minecraft.datatypes.MCDataType;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
@@ -51,7 +55,25 @@ public class PlayerDataMixin implements PlayerDataBridge {
         try {
             final File file1 = new File(this.playerDir, uuid + ".dat");
             if (file1.exists()) {
-                return NbtIo.readCompressed(new FileInputStream(file1));
+                CompoundTag playerData = NbtIo.readCompressed(new FileInputStream(file1));
+
+                // Luminara - Apply data conversion to player data
+                if (playerData != null) {
+                    try {
+                        int dataVersion = playerData.getInt("DataVersion");
+                        if (dataVersion > 0 && dataVersion < MCVersions.V1_20_1) {
+                            CompoundTag convertedData = MCDataConverter.convertTag(MCDataType.PLAYER, playerData, dataVersion, MCVersions.V1_20_1);
+                            if (convertedData != null) {
+                                playerData = convertedData;
+                            }
+                        }
+                    } catch (Exception e) {
+                        // Log error but continue with original data
+                        LOGGER.warn("Failed to convert player data for {}: {}", uuid, e.getMessage());
+                    }
+                }
+
+                return playerData;
             }
         } catch (Exception exception) {
             ARCLIGHT_LOGGER.warn("player.data.load-failed", uuid);

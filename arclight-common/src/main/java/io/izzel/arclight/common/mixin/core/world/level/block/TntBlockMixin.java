@@ -35,7 +35,7 @@ public abstract class TntBlockMixin {
         return instance.hasNeighborSignal(pos) && CraftEventFactory.callTNTPrimeEvent(instance, pos, TNTPrimeEvent.PrimeCause.REDSTONE, null, source);
     }
 
-    @Redirect(method = "playerWillDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;onCaughtFire(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/entity/LivingEntity;)V"))
+    @Redirect(method = "playerWillDestroy", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/level/block/TntBlock;onCaughtFire(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/entity/LivingEntity;)V"))
     private void arclight$playerBreak(TntBlock instance, BlockState state, Level world, BlockPos pos, Direction face, LivingEntity igniter,
                                       Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player player) {
         if (CraftEventFactory.callTNTPrimeEvent(world, pos, TNTPrimeEvent.PrimeCause.BLOCK_BREAK, player, null)) {
@@ -43,7 +43,7 @@ public abstract class TntBlockMixin {
         }
     }
 
-    @Inject(method = "use", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TntBlock;onCaughtFire(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/entity/LivingEntity;)V"))
+    @Inject(method = "use", cancellable = true, at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/level/block/TntBlock;onCaughtFire(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/entity/LivingEntity;)V"))
     private void arclight$player(BlockState p_57450_, Level level, BlockPos pos, Player player, InteractionHand p_57454_, BlockHitResult p_57455_, CallbackInfoReturnable<InteractionResult> cir) {
         if (!CraftEventFactory.callTNTPrimeEvent(level, pos, TNTPrimeEvent.PrimeCause.PLAYER, player, null)) {
             cir.setReturnValue(InteractionResult.CONSUME);

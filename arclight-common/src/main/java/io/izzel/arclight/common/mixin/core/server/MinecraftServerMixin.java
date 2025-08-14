@@ -81,6 +81,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BooleanSupplier;
 
+import ca.spottedleaf.dataconverter.minecraft.MCDataConverterRegistry;
+
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<TickTask> implements MinecraftServerBridge, ICommandSourceBridge {
 
@@ -269,6 +271,14 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     protected void runServer() {
         try {
             ARCLIGHT_LOGGER.info("server.starting");
+
+            // Luminara - Initialize Data Converter Registry
+            try {
+                MCDataConverterRegistry.init();
+                ARCLIGHT_LOGGER.info("Initialized Minecraft Data Converter Registry");
+            } catch (Exception e) {
+                ARCLIGHT_LOGGER.error("Failed to initialize Data Converter Registry", e);
+            }
 
             // Luminara - Validate Paper compatibility before server start
             io.izzel.arclight.common.optimization.paper.PaperCompatibleOptimizer.logCompatibilityStatus();

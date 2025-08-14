@@ -6,8 +6,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v.command.ServerCommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 
-@Mixin(targets = "net/minecraft/commands/CommandSource$1")
+@Pseudo
+@Mixin(targets = "net/minecraft/commands/CommandSource$1", remap = false)
 public class CommandSource1Mixin implements ICommandSourceBridge {
 
 

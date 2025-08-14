@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.world.level.block.ComposterBlock$InputContainer")
+@Mixin(net.minecraft.world.level.block.ComposterBlock.InputContainer.class)
 public abstract class ComposterBlock_InputContainerMixin extends SimpleContainerMixin {
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;)V", at = @At("RETURN"))

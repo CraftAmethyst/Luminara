@@ -6,8 +6,10 @@ import net.minecraft.world.level.block.entity.CommandBlockEntity;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v.command.CraftBlockCommandSender;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 
+@Pseudo
 @Mixin(targets = "net/minecraft/world/level/block/entity/CommandBlockEntity$1")
 public class CommandBlockTileEntity1Mixin implements ICommandSourceBridge {
 

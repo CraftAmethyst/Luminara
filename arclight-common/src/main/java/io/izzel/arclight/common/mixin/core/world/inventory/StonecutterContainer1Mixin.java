@@ -5,8 +5,10 @@ import io.izzel.arclight.common.bridge.core.inventory.container.PosContainerBrid
 import net.minecraft.world.inventory.StonecutterMenu;
 import org.bukkit.Location;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 
+@Pseudo
 @Mixin(targets = "net/minecraft/world/inventory/StonecutterMenu$1")
 public abstract class StonecutterContainer1Mixin implements IInventoryBridge {
 

@@ -33,6 +33,9 @@ public final class PaperIntegration {
             // Initialize Paper configuration system
             PaperConfigurationInitializer.initialize();
 
+            // Initialize Paper plugin system
+            PaperPluginIntegration.initialize();
+
             // Initialize other Paper systems
             initializePaperSystems();
 

@@ -296,6 +296,9 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
     private void arclight$writeExtra(CompoundTag compound, CallbackInfo ci) {
         this.getBukkitEntity().setExtraData(compound);
+
+        // Luminara - Mark player data with current version
+        compound.putInt("DataVersion", ca.spottedleaf.dataconverter.minecraft.MCVersions.V1_20_1);
     }
 
     public void spawnIn(Level world) {

@@ -5,8 +5,10 @@ import io.izzel.arclight.common.mixin.core.world.SimpleContainerMixin;
 import net.minecraft.world.inventory.LoomMenu;
 import org.bukkit.Location;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 
+@Pseudo
 @Mixin(targets = "net/minecraft/world/inventory/LoomMenu$1")
 public abstract class LoomContainer1Mixin extends SimpleContainerMixin {
 

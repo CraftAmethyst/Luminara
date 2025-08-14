@@ -13,12 +13,14 @@ import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Pseudo
 @Mixin(targets = "net/minecraft/world/level/block/entity/LecternBlockEntity$1")
 public abstract class LecternTileEntity1Mixin implements IInventoryBridge, Container {
 

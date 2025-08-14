@@ -17,7 +17,6 @@ public class GlobalConfiguration extends ConfigurationPart {
 
     // Configuration sections
     public Logging logging = new Logging();
-    public Timings timings = new Timings();
     public Console console = new Console();
     public ChunkLoading chunkLoading = new ChunkLoading();
     public UnsupportedSettings unsupportedSettings = new UnsupportedSettings();
@@ -41,15 +40,7 @@ public class GlobalConfiguration extends ConfigurationPart {
         public boolean useRgbForNamedTextColors = true;
     }
 
-    public static class Timings extends ConfigurationPart {
-        public boolean enabled = true;
-        public boolean verbose = true;
-        public String url = "https://timings.aikar.co/";
-        public boolean serverNamePrivacy = false;
-        public boolean hiddenConfigEntries = true;
-        public int historyInterval = 300;
-        public int historyLength = 3600;
-    }
+
 
     public static class Console extends ConfigurationPart {
         public boolean enableBrigadierHighlighting = true;

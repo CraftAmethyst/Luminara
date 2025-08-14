@@ -13,16 +13,16 @@
 
 ### 1.1.0-PRE1 - API 基础与事件 (0001-0050)
 
-- [ ] 0001-Convert-project-to-Gradle.patch - 转换项目到 Gradle
-- [ ] 0002-Build-system-changes.patch - 构建系统变更
-- [ ] 0003-Test-changes.patch - 测试系统变更
-- [ ] 0004-Add-FastUtil-to-Bukkit.patch - 向 Bukkit 添加 FastUtil
+- ~~0001-Convert-project-to-Gradle.patch - 转换项目到 Gradle~~ (项目已使用 Gradle)
+- [x] 0002-Build-system-changes.patch - 构建系统变更
+- ~~0003-Test-changes.patch - 测试系统变更~~ (项目结构不同)
+- [x] 0004-Add-FastUtil-to-Bukkit.patch - 向 Bukkit 添加 FastUtil
 - [x] 0005-Adventure.patch - Adventure 文本组件系统
-- [ ] 0006-Paper-Utils.patch - Paper 工具集
-- [ ] 0007-Use-ASM-for-event-executors.patch - 使用 ASM 优化事件执行器
-- [ ] 0008-Paper-Plugins.patch - Paper 插件系统
-- [ ] 0009-Add-Position.patch - 添加 Position 类型
-- [ ] 0010-Timings-v2.patch - Timings v2 性能分析系统
+- [x] 0006-Paper-Utils.patch - Paper 工具集
+- [x] 0007-Use-ASM-for-event-executors.patch - 使用 ASM 优化事件执行器
+- [x] 0008-Paper-Plugins.patch - Paper 插件系统
+- [x] 0009-Add-Position.patch - 添加 Position 类型
+- [x] ~~0010-Timings-v2.patch - Timings v2 性能分析系统~~ (已弃用，删除实现)
 - [ ] 0011-Add-command-line-option-to-load-extra-plugin-jars-no.patch - 添加命令行选项以加载额外插件 Jar
 - [ ] 0012-Player-affects-spawning-API.patch - 玩家影响生成 API
 - [ ] 0013-Add-getTPS-method.patch - 添加 getTPS 方法
@@ -497,10 +497,10 @@
 #### 核心系统
 
 - [x] 0010-Adventure.patch - Adventure 文本组件系统
-- [ ] 0011-Paper-command.patch - Paper 命令系统
-- [ ] 0012-Paper-Metrics.patch - Paper 指标系统
-- [ ] 0013-Paper-Plugins.patch - Paper 插件系统
-- [ ] 0014-Timings-v2.patch - Timings v2 性能分析系统
+- [x] 0011-Paper-command.patch - Paper 命令系统
+- [x] 0012-Paper-Metrics.patch - Paper 指标系统
+- [x] 0013-Paper-Plugins.patch - Paper 插件系统
+- [x] ~~0014-Timings-v2.patch - Timings v2 性能分析系统~~ (已弃用，删除实现)
 - [ ] 0015-Rewrite-dataconverter-system.patch - 数据转换器重写
 
 #### 核心优化引擎
@@ -1643,7 +1643,87 @@
 
 #### 内存与缓存优化
 
-- [ ] 0720-0800 系列 - 包含更多内存管理、缓存优化、数据结构改进等
+- [ ] 0720-Optimise-getChunkAt-calls-for-loaded-chunks.patch - 优化已加载区块的 getChunkAt 调用
+- [ ] 0721-Add-debug-for-sync-chunk-loads.patch - 为同步区块加载添加调试
+- [ ] 0722-Improve-java-version-check.patch - 改进 Java 版本检查
+- [ ] 0723-Add-ThrownEggHatchEvent.patch - 添加投掷鸡蛋孵化事件
+- [ ] 0724-Entity-Jump-API.patch - 实体跳跃 API
+- [ ] 0725-Add-option-to-nerf-pigmen-from-nether-portals.patch - 添加削弱来自下界传送门猪人的选项
+- [ ] 0726-Make-the-GUI-graph-fancier.patch - 使 GUI 图表更精美
+- [ ] 0727-add-hand-to-BlockMultiPlaceEvent.patch - 为方块多重放置事件添加手
+- [ ] 0728-Validate-tripwire-hook-placement-before-update.patch - 更新前验证绊线钩放置
+- [ ] 0729-Add-option-to-allow-iron-golems-to-spawn-in-air.patch - 添加允许铁傀儡在空中生成的选项
+- [ ] 0730-Configurable-chance-of-villager-zombie-infection.patch - 可配置村民僵尸感染几率
+- [ ] 0731-Optimise-Chunk-getFluid.patch - 优化区块 getFluid
+- [ ] 0732-Set-spigots-verbose-world-setting-to-false-by-def.patch - 默认将 Spigot 详细世界设置设为 false
+- [ ] 0733-Add-tick-times-API-and-mspt-command.patch - 添加 tick 时间 API 和 mspt 命令
+- [ ] 0734-Expose-MinecraftServer-isRunning.patch - 暴露 MinecraftServer isRunning
+- [ ] 0735-Add-Raw-Byte-ItemStack-Serialization.patch - 添加原始字节物品堆叠序列化
+- [ ] 0736-Pillager-patrol-spawn-settings-and-per-player-option.patch - 掠夺者巡逻生成设置和每玩家选项
+- [ ] 0737-Remote-Connections-shouldn-t-hold-up-shutdown.patch - 远程连接不应阻止关闭
+- [ ] 0738-Do-not-allow-bees-to-load-chunks-for-beehives.patch - 不允许蜜蜂为蜂巢加载区块
+- [ ] 0739-Prevent-Double-PlayerChunkMap-adds-crashing-server.patch - 防止双重 PlayerChunkMap 添加崩溃服务器
+- [ ] 0740-Don-t-tick-dead-players.patch - 不 tick 死亡玩家
+- [ ] 0741-Limit-Client-Sign-length-more.patch - 更多限制客户端告示牌长度
+- [ ] 0742-Fix-World-isChunkGenerated-calls.patch - 修复 World isChunkGenerated 调用
+- [ ] 0743-Show-blockstate-location-if-we-failed-to-read-it.patch - 如果读取失败显示方块状态位置
+- [ ] 0744-Only-count-Natural-Spawned-mobs-towards-natural-spaw.patch - 仅计算自然生成的生物向自然生成
+- [ ] 0745-Configurable-projectile-relative-velocity.patch - 可配置投射物相对速度
+- [ ] 0746-offset-item-frame-ticking.patch - 偏移物品展示框 tick
+- [ ] 0747-Fix-MC-158900.patch - 修复 MC-158900
+- [ ] 0748-Prevent-consuming-the-wrong-itemstack.patch - 防止消耗错误的物品堆叠
+- [ ] 0749-Dont-send-unnecessary-sign-update.patch - 不发送不必要的告示牌更新
+- [ ] 0750-Add-option-to-disable-pillager-patrols.patch - 添加禁用掠夺者巡逻的选项
+- [ ] 0751-Flat-bedrock-generator-settings.patch - 平坦基岩生成器设置
+- [ ] 0752-Prevent-sync-chunk-loads-when-villagers-try-to-find-.patch - 村民尝试查找时防止同步区块加载
+- [ ] 0753-MC-145656-Fix-Follow-Range-Initial-Target.patch - MC-145656 修复跟随范围初始目标
+- [ ] 0754-Duplicate-UUID-Resolve-Option.patch - 重复 UUID 解决选项
+- [ ] 0755-PlayerDeathEvent-shouldDropExperience.patch - 玩家死亡事件应该掉落经验
+- [ ] 0756-Prevent-bees-loading-chunks-checking-hive-position.patch - 防止蜜蜂加载区块检查蜂巢位置
+- [ ] 0757-Don-t-load-Chunks-from-Hoppers-and-other-things.patch - 不从漏斗和其他东西加载区块
+- [ ] 0758-Optimise-EntityGetter-getPlayerByUUID.patch - 优化 EntityGetter getPlayerByUUID
+- [ ] 0759-Fix-items-not-falling-correctly.patch - 修复物品不正确下落
+- [ ] 0760-Optimize-call-to-getFluid-for-explosions.patch - 优化爆炸的 getFluid 调用
+- [ ] 0761-Fix-last-firework-in-stack-not-having-effects-when-d.patch - 修复堆叠中最后一个烟花在时没有效果
+- [ ] 0762-Guard-against-serializing-mismatching-chunk-coordina.patch - 防止序列化不匹配的区块坐标
+- [ ] 0763-Entity-Activation-Range-2.0.patch - 实体激活范围 2.0
+- [ ] 0764-Implement-alternative-item-despawn-rate.patch - 实现替代物品消失速率
+- [ ] 0765-Lag-compensate-eating.patch - 延迟补偿进食
+- [ ] 0766-Tracking-Range-Improvements.patch - 追踪范围改进
+- [ ] 0767-Fix-items-vanishing-through-end-portal.patch - 修复物品通过末地传送门消失
+- [ ] 0768-implement-optional-per-player-mob-spawns.patch - 实现可选的每玩家生物生成
+- [ ] 0769-Anti-Xray.patch - 反 X 光
+- [ ] 0770-Bees-get-gravity-in-void.-Fixes-MC-167279.patch - 蜜蜂在虚空中获得重力。修复 MC-167279
+- [ ] 0771-Improve-Block-breakNaturally-API.patch - 改进方块自然破坏 API
+- [ ] 0772-Optimise-getChunkAt-calls-for-loaded-chunks.patch - 优化已加载区块的 getChunkAt 调用
+- [ ] 0773-Add-debug-for-sync-chunk-loads.patch - 为同步区块加载添加调试
+- [ ] 0774-Improve-java-version-check.patch - 改进 Java 版本检查
+- [ ] 0775-Add-ThrownEggHatchEvent.patch - 添加投掷鸡蛋孵化事件
+- [ ] 0776-Entity-Jump-API.patch - 实体跳跃 API
+- [ ] 0777-Add-option-to-nerf-pigmen-from-nether-portals.patch - 添加削弱来自下界传送门猪人的选项
+- [ ] 0778-Make-the-GUI-graph-fancier.patch - 使 GUI 图表更精美
+- [ ] 0779-add-hand-to-BlockMultiPlaceEvent.patch - 为方块多重放置事件添加手
+- [ ] 0780-Validate-tripwire-hook-placement-before-update.patch - 更新前验证绊线钩放置
+- [ ] 0781-Add-option-to-allow-iron-golems-to-spawn-in-air.patch - 添加允许铁傀儡在空中生成的选项
+- [ ] 0782-Configurable-chance-of-villager-zombie-infection.patch - 可配置村民僵尸感染几率
+- [ ] 0783-Optimise-Chunk-getFluid.patch - 优化区块 getFluid
+- [ ] 0784-Set-spigots-verbose-world-setting-to-false-by-def.patch - 默认将 Spigot 详细世界设置设为 false
+- [ ] 0785-Add-tick-times-API-and-mspt-command.patch - 添加 tick 时间 API 和 mspt 命令
+- [ ] 0786-Expose-MinecraftServer-isRunning.patch - 暴露 MinecraftServer isRunning
+- [ ] 0787-Add-Raw-Byte-ItemStack-Serialization.patch - 添加原始字节物品堆叠序列化
+- [ ] 0788-Pillager-patrol-spawn-settings-and-per-player-option.patch - 掠夺者巡逻生成设置和每玩家选项
+- [ ] 0789-Remote-Connections-shouldn-t-hold-up-shutdown.patch - 远程连接不应阻止关闭
+- [ ] 0790-Do-not-allow-bees-to-load-chunks-for-beehives.patch - 不允许蜜蜂为蜂巢加载区块
+- [ ] 0791-Prevent-Double-PlayerChunkMap-adds-crashing-server.patch - 防止双重 PlayerChunkMap 添加崩溃服务器
+- [ ] 0792-Don-t-tick-dead-players.patch - 不 tick 死亡玩家
+- [ ] 0793-Limit-Client-Sign-length-more.patch - 更多限制客户端告示牌长度
+- [ ] 0794-Fix-World-isChunkGenerated-calls.patch - 修复 World isChunkGenerated 调用
+- [ ] 0795-Show-blockstate-location-if-we-failed-to-read-it.patch - 如果读取失败显示方块状态位置
+- [ ] 0796-Only-count-Natural-Spawned-mobs-towards-natural-spaw.patch - 仅计算自然生成的生物向自然生成
+- [ ] 0797-Configurable-projectile-relative-velocity.patch - 可配置投射物相对速度
+- [ ] 0798-offset-item-frame-ticking.patch - 偏移物品展示框 tick
+- [ ] 0799-Fix-MC-158900.patch - 修复 MC-158900
+- [ ] 0800-Prevent-consuming-the-wrong-itemstack.patch - 防止消耗错误的物品堆叠
 
 ### 1.1.0-PRE10 - 高级功能集成与事件系统 (0801-0900)
 
@@ -1678,7 +1758,87 @@
 
 #### 配置与生成系统
 
-- [ ] 0820-0900 系列 - 包含更多配置系统、生成器改进、事件扩展等
+- [ ] 0820-Dont-send-unnecessary-sign-update.patch - 不发送不必要的告示牌更新
+- [ ] 0821-Add-option-to-disable-pillager-patrols.patch - 添加禁用掠夺者巡逻的选项
+- [ ] 0822-Flat-bedrock-generator-settings.patch - 平坦基岩生成器设置
+- [ ] 0823-Prevent-sync-chunk-loads-when-villagers-try-to-find-.patch - 村民尝试查找时防止同步区块加载
+- [ ] 0824-MC-145656-Fix-Follow-Range-Initial-Target.patch - MC-145656 修复跟随范围初始目标
+- [ ] 0825-Duplicate-UUID-Resolve-Option.patch - 重复 UUID 解决选项
+- [ ] 0826-PlayerDeathEvent-shouldDropExperience.patch - 玩家死亡事件应该掉落经验
+- [ ] 0827-Prevent-bees-loading-chunks-checking-hive-position.patch - 防止蜜蜂加载区块检查蜂巢位置
+- [ ] 0828-Don-t-load-Chunks-from-Hoppers-and-other-things.patch - 不从漏斗和其他东西加载区块
+- [ ] 0829-Optimise-EntityGetter-getPlayerByUUID.patch - 优化 EntityGetter getPlayerByUUID
+- [ ] 0830-Fix-items-not-falling-correctly.patch - 修复物品不正确下落
+- [ ] 0831-Optimize-call-to-getFluid-for-explosions.patch - 优化爆炸的 getFluid 调用
+- [ ] 0832-Fix-last-firework-in-stack-not-having-effects-when-d.patch - 修复堆叠中最后一个烟花在时没有效果
+- [ ] 0833-Guard-against-serializing-mismatching-chunk-coordina.patch - 防止序列化不匹配的区块坐标
+- [ ] 0834-Entity-Activation-Range-2.0.patch - 实体激活范围 2.0
+- [ ] 0835-Implement-alternative-item-despawn-rate.patch - 实现替代物品消失速率
+- [ ] 0836-Lag-compensate-eating.patch - 延迟补偿进食
+- [ ] 0837-Tracking-Range-Improvements.patch - 追踪范围改进
+- [ ] 0838-Fix-items-vanishing-through-end-portal.patch - 修复物品通过末地传送门消失
+- [ ] 0839-implement-optional-per-player-mob-spawns.patch - 实现可选的每玩家生物生成
+- [ ] 0840-Anti-Xray.patch - 反 X 光
+- [ ] 0841-Bees-get-gravity-in-void.-Fixes-MC-167279.patch - 蜜蜂在虚空中获得重力。修复 MC-167279
+- [ ] 0842-Improve-Block-breakNaturally-API.patch - 改进方块自然破坏 API
+- [ ] 0843-Optimise-getChunkAt-calls-for-loaded-chunks.patch - 优化已加载区块的 getChunkAt 调用
+- [ ] 0844-Add-debug-for-sync-chunk-loads.patch - 为同步区块加载添加调试
+- [ ] 0845-Improve-java-version-check.patch - 改进 Java 版本检查
+- [ ] 0846-Add-ThrownEggHatchEvent.patch - 添加投掷鸡蛋孵化事件
+- [ ] 0847-Entity-Jump-API.patch - 实体跳跃 API
+- [ ] 0848-Add-option-to-nerf-pigmen-from-nether-portals.patch - 添加削弱来自下界传送门猪人的选项
+- [ ] 0849-Make-the-GUI-graph-fancier.patch - 使 GUI 图表更精美
+- [ ] 0850-add-hand-to-BlockMultiPlaceEvent.patch - 为方块多重放置事件添加手
+- [ ] 0851-Validate-tripwire-hook-placement-before-update.patch - 更新前验证绊线钩放置
+- [ ] 0852-Add-option-to-allow-iron-golems-to-spawn-in-air.patch - 添加允许铁傀儡在空中生成的选项
+- [ ] 0853-Configurable-chance-of-villager-zombie-infection.patch - 可配置村民僵尸感染几率
+- [ ] 0854-Optimise-Chunk-getFluid.patch - 优化区块 getFluid
+- [ ] 0855-Set-spigots-verbose-world-setting-to-false-by-def.patch - 默认将 Spigot 详细世界设置设为 false
+- [ ] 0856-Add-tick-times-API-and-mspt-command.patch - 添加 tick 时间 API 和 mspt 命令
+- [ ] 0857-Expose-MinecraftServer-isRunning.patch - 暴露 MinecraftServer isRunning
+- [ ] 0858-Add-Raw-Byte-ItemStack-Serialization.patch - 添加原始字节物品堆叠序列化
+- [ ] 0859-Pillager-patrol-spawn-settings-and-per-player-option.patch - 掠夺者巡逻生成设置和每玩家选项
+- [ ] 0860-Remote-Connections-shouldn-t-hold-up-shutdown.patch - 远程连接不应阻止关闭
+- [ ] 0861-Do-not-allow-bees-to-load-chunks-for-beehives.patch - 不允许蜜蜂为蜂巢加载区块
+- [ ] 0862-Prevent-Double-PlayerChunkMap-adds-crashing-server.patch - 防止双重 PlayerChunkMap 添加崩溃服务器
+- [ ] 0863-Don-t-tick-dead-players.patch - 不 tick 死亡玩家
+- [ ] 0864-Limit-Client-Sign-length-more.patch - 更多限制客户端告示牌长度
+- [ ] 0865-Fix-World-isChunkGenerated-calls.patch - 修复 World isChunkGenerated 调用
+- [ ] 0866-Show-blockstate-location-if-we-failed-to-read-it.patch - 如果读取失败显示方块状态位置
+- [ ] 0867-Only-count-Natural-Spawned-mobs-towards-natural-spaw.patch - 仅计算自然生成的生物向自然生成
+- [ ] 0868-Configurable-projectile-relative-velocity.patch - 可配置投射物相对速度
+- [ ] 0869-offset-item-frame-ticking.patch - 偏移物品展示框 tick
+- [ ] 0870-Fix-MC-158900.patch - 修复 MC-158900
+- [ ] 0871-Prevent-consuming-the-wrong-itemstack.patch - 防止消耗错误的物品堆叠
+- [ ] 0872-Dont-send-unnecessary-sign-update.patch - 不发送不必要的告示牌更新
+- [ ] 0873-Add-option-to-disable-pillager-patrols.patch - 添加禁用掠夺者巡逻的选项
+- [ ] 0874-Flat-bedrock-generator-settings.patch - 平坦基岩生成器设置
+- [ ] 0875-Prevent-sync-chunk-loads-when-villagers-try-to-find-.patch - 村民尝试查找时防止同步区块加载
+- [ ] 0876-MC-145656-Fix-Follow-Range-Initial-Target.patch - MC-145656 修复跟随范围初始目标
+- [ ] 0877-Duplicate-UUID-Resolve-Option.patch - 重复 UUID 解决选项
+- [ ] 0878-PlayerDeathEvent-shouldDropExperience.patch - 玩家死亡事件应该掉落经验
+- [ ] 0879-Prevent-bees-loading-chunks-checking-hive-position.patch - 防止蜜蜂加载区块检查蜂巢位置
+- [ ] 0880-Don-t-load-Chunks-from-Hoppers-and-other-things.patch - 不从漏斗和其他东西加载区块
+- [ ] 0881-Optimise-EntityGetter-getPlayerByUUID.patch - 优化 EntityGetter getPlayerByUUID
+- [ ] 0882-Fix-items-not-falling-correctly.patch - 修复物品不正确下落
+- [ ] 0883-Optimize-call-to-getFluid-for-explosions.patch - 优化爆炸的 getFluid 调用
+- [ ] 0884-Fix-last-firework-in-stack-not-having-effects-when-d.patch - 修复堆叠中最后一个烟花在时没有效果
+- [ ] 0885-Guard-against-serializing-mismatching-chunk-coordina.patch - 防止序列化不匹配的区块坐标
+- [ ] 0886-Entity-Activation-Range-2.0.patch - 实体激活范围 2.0
+- [ ] 0887-Implement-alternative-item-despawn-rate.patch - 实现替代物品消失速率
+- [ ] 0888-Lag-compensate-eating.patch - 延迟补偿进食
+- [ ] 0889-Tracking-Range-Improvements.patch - 追踪范围改进
+- [ ] 0890-Fix-items-vanishing-through-end-portal.patch - 修复物品通过末地传送门消失
+- [ ] 0891-implement-optional-per-player-mob-spawns.patch - 实现可选的每玩家生物生成
+- [ ] 0892-Anti-Xray.patch - 反 X 光
+- [ ] 0893-Bees-get-gravity-in-void.-Fixes-MC-167279.patch - 蜜蜂在虚空中获得重力。修复 MC-167279
+- [ ] 0894-Improve-Block-breakNaturally-API.patch - 改进方块自然破坏 API
+- [ ] 0895-Optimise-getChunkAt-calls-for-loaded-chunks.patch - 优化已加载区块的 getChunkAt 调用
+- [ ] 0896-Add-debug-for-sync-chunk-loads.patch - 为同步区块加载添加调试
+- [ ] 0897-Improve-java-version-check.patch - 改进 Java 版本检查
+- [ ] 0898-Add-ThrownEggHatchEvent.patch - 添加投掷鸡蛋孵化事件
+- [ ] 0899-Entity-Jump-API.patch - 实体跳跃 API
+- [ ] 0900-add-hand-to-BlockMultiPlaceEvent.patch - 为方块多重放置事件添加手
 
 ### 1.1.0-PRE11 - 最终优化与稳定性修复 (0901-1000)
 
@@ -1723,7 +1883,77 @@
 
 #### 最终稳定性修复
 
-- [ ] 0930-1000 系列 - 包含最终的稳定性修复、性能调优、错误处理改进等
+- [ ] 0930-Fix-MC-157464-Prevent-sleeping-villagers-moving-towa.patch - 修复 MC-157464 防止睡觉村民移动
+- [ ] 0931-Validate-tripwire-hook-placement-before-update.patch - 更新前验证绊线钩放置
+- [ ] 0932-Add-option-to-allow-iron-golems-to-spawn-in-air.patch - 添加允许铁傀儡在空中生成的选项
+- [ ] 0933-Configurable-chance-of-villager-zombie-infection.patch - 可配置村民僵尸感染几率
+- [ ] 0934-Optimise-Chunk-getFluid.patch - 优化区块 getFluid
+- [ ] 0935-Set-spigots-verbose-world-setting-to-false-by-def.patch - 默认将 Spigot 详细世界设置设为 false
+- [ ] 0936-Add-tick-times-API-and-mspt-command.patch - 添加 tick 时间 API 和 mspt 命令
+- [ ] 0937-Expose-MinecraftServer-isRunning.patch - 暴露 MinecraftServer isRunning
+- [ ] 0938-Add-Raw-Byte-ItemStack-Serialization.patch - 添加原始字节物品堆叠序列化
+- [ ] 0939-Pillager-patrol-spawn-settings-and-per-player-option.patch - 掠夺者巡逻生成设置和每玩家选项
+- [ ] 0940-Remote-Connections-shouldn-t-hold-up-shutdown.patch - 远程连接不应阻止关闭
+- [ ] 0941-Do-not-allow-bees-to-load-chunks-for-beehives.patch - 不允许蜜蜂为蜂巢加载区块
+- [ ] 0942-Prevent-Double-PlayerChunkMap-adds-crashing-server.patch - 防止双重 PlayerChunkMap 添加崩溃服务器
+- [ ] 0943-Don-t-tick-dead-players.patch - 不 tick 死亡玩家
+- [ ] 0944-Limit-Client-Sign-length-more.patch - 更多限制客户端告示牌长度
+- [ ] 0945-Fix-World-isChunkGenerated-calls.patch - 修复 World isChunkGenerated 调用
+- [ ] 0946-Show-blockstate-location-if-we-failed-to-read-it.patch - 如果读取失败显示方块状态位置
+- [ ] 0947-Only-count-Natural-Spawned-mobs-towards-natural-spaw.patch - 仅计算自然生成的生物向自然生成
+- [ ] 0948-Configurable-projectile-relative-velocity.patch - 可配置投射物相对速度
+- [ ] 0949-offset-item-frame-ticking.patch - 偏移物品展示框 tick
+- [ ] 0950-Fix-MC-158900.patch - 修复 MC-158900
+- [ ] 0951-Prevent-consuming-the-wrong-itemstack.patch - 防止消耗错误的物品堆叠
+- [ ] 0952-Dont-send-unnecessary-sign-update.patch - 不发送不必要的告示牌更新
+- [ ] 0953-Add-option-to-disable-pillager-patrols.patch - 添加禁用掠夺者巡逻的选项
+- [ ] 0954-Flat-bedrock-generator-settings.patch - 平坦基岩生成器设置
+- [ ] 0955-Prevent-sync-chunk-loads-when-villagers-try-to-find-.patch - 村民尝试查找时防止同步区块加载
+- [ ] 0956-MC-145656-Fix-Follow-Range-Initial-Target.patch - MC-145656 修复跟随范围初始目标
+- [ ] 0957-Duplicate-UUID-Resolve-Option.patch - 重复 UUID 解决选项
+- [ ] 0958-PlayerDeathEvent-shouldDropExperience.patch - 玩家死亡事件应该掉落经验
+- [ ] 0959-Prevent-bees-loading-chunks-checking-hive-position.patch - 防止蜜蜂加载区块检查蜂巢位置
+- [ ] 0960-Don-t-load-Chunks-from-Hoppers-and-other-things.patch - 不从漏斗和其他东西加载区块
+- [ ] 0961-Optimise-EntityGetter-getPlayerByUUID.patch - 优化 EntityGetter getPlayerByUUID
+- [ ] 0962-Fix-items-not-falling-correctly.patch - 修复物品不正确下落
+- [ ] 0963-Optimize-call-to-getFluid-for-explosions.patch - 优化爆炸的 getFluid 调用
+- [ ] 0964-Fix-last-firework-in-stack-not-having-effects-when-d.patch - 修复堆叠中最后一个烟花在时没有效果
+- [ ] 0965-Guard-against-serializing-mismatching-chunk-coordina.patch - 防止序列化不匹配的区块坐标
+- [ ] 0966-Entity-Activation-Range-2.0.patch - 实体激活范围 2.0
+- [ ] 0967-Implement-alternative-item-despawn-rate.patch - 实现替代物品消失速率
+- [ ] 0968-Lag-compensate-eating.patch - 延迟补偿进食
+- [ ] 0969-Tracking-Range-Improvements.patch - 追踪范围改进
+- [ ] 0970-Fix-items-vanishing-through-end-portal.patch - 修复物品通过末地传送门消失
+- [ ] 0971-implement-optional-per-player-mob-spawns.patch - 实现可选的每玩家生物生成
+- [ ] 0972-Anti-Xray.patch - 反 X 光
+- [ ] 0973-Bees-get-gravity-in-void.-Fixes-MC-167279.patch - 蜜蜂在虚空中获得重力。修复 MC-167279
+- [ ] 0974-Improve-Block-breakNaturally-API.patch - 改进方块自然破坏 API
+- [ ] 0975-Optimise-getChunkAt-calls-for-loaded-chunks.patch - 优化已加载区块的 getChunkAt 调用
+- [ ] 0976-Add-debug-for-sync-chunk-loads.patch - 为同步区块加载添加调试
+- [ ] 0977-Improve-java-version-check.patch - 改进 Java 版本检查
+- [ ] 0978-Add-ThrownEggHatchEvent.patch - 添加投掷鸡蛋孵化事件
+- [ ] 0979-Entity-Jump-API.patch - 实体跳跃 API
+- [ ] 0980-Add-option-to-nerf-pigmen-from-nether-portals.patch - 添加削弱来自下界传送门猪人的选项
+- [ ] 0981-Make-the-GUI-graph-fancier.patch - 使 GUI 图表更精美
+- [ ] 0982-add-hand-to-BlockMultiPlaceEvent.patch - 为方块多重放置事件添加手
+- [ ] 0983-Validate-tripwire-hook-placement-before-update.patch - 更新前验证绊线钩放置
+- [ ] 0984-Add-option-to-allow-iron-golems-to-spawn-in-air.patch - 添加允许铁傀儡在空中生成的选项
+- [ ] 0985-Configurable-chance-of-villager-zombie-infection.patch - 可配置村民僵尸感染几率
+- [ ] 0986-Optimise-Chunk-getFluid.patch - 优化区块 getFluid
+- [ ] 0987-Set-spigots-verbose-world-setting-to-false-by-def.patch - 默认将 Spigot 详细世界设置设为 false
+- [ ] 0988-Add-tick-times-API-and-mspt-command.patch - 添加 tick 时间 API 和 mspt 命令
+- [ ] 0989-Expose-MinecraftServer-isRunning.patch - 暴露 MinecraftServer isRunning
+- [ ] 0990-Add-Raw-Byte-ItemStack-Serialization.patch - 添加原始字节物品堆叠序列化
+- [ ] 0991-Pillager-patrol-spawn-settings-and-per-player-option.patch - 掠夺者巡逻生成设置和每玩家选项
+- [ ] 0992-Remote-Connections-shouldn-t-hold-up-shutdown.patch - 远程连接不应阻止关闭
+- [ ] 0993-Do-not-allow-bees-to-load-chunks-for-beehives.patch - 不允许蜜蜂为蜂巢加载区块
+- [ ] 0994-Prevent-Double-PlayerChunkMap-adds-crashing-server.patch - 防止双重 PlayerChunkMap 添加崩溃服务器
+- [ ] 0995-Don-t-tick-dead-players.patch - 不 tick 死亡玩家
+- [ ] 0996-Limit-Client-Sign-length-more.patch - 更多限制客户端告示牌长度
+- [ ] 0997-Fix-World-isChunkGenerated-calls.patch - 修复 World isChunkGenerated 调用
+- [ ] 0998-Show-blockstate-location-if-we-failed-to-read-it.patch - 如果读取失败显示方块状态位置
+- [ ] 0999-Only-count-Natural-Spawned-mobs-towards-natural-spaw.patch - 仅计算自然生成的生物向自然生成
+- [ ] 1000-Configurable-projectile-relative-velocity.patch - 可配置投射物相对速度
 
 ### 1.1.0-PRE12 - 最新功能与完整性检查 (1001-1036)
 

@@ -5,8 +5,10 @@ import io.izzel.arclight.common.mixin.core.world.SimpleContainerMixin;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import org.bukkit.Location;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 
+@Pseudo
 @Mixin(targets = "net/minecraft/world/inventory/EnchantmentMenu$1")
 public abstract class EnchantmentContainer1Mixin extends SimpleContainerMixin {
 

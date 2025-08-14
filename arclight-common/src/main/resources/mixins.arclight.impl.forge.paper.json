@@ -24,6 +24,13 @@
     "util.BlockPosMixin_Paper",
     "util.BuiltInRegistriesMixin_MCDevFixes",
     "util.MCUtilsMixin",
-    "util.UtilMixin_MCDevFixes"
+    "util.UtilMixin_MCDevFixes",
+    "util.LocationMixin_Position",
+    "plugin.CraftServerPluginManagerMixin",
+    "plugin.JavaPluginPaperMixin",
+    "plugin.PaperPluginSystemMixin",
+    "server.CraftServerMixin_PaperCommands",
+    "server.MinecraftServerMixin_PaperMetrics",
+    "event.SimplePluginManagerMixin_ASMExecutors"
   ]
 }

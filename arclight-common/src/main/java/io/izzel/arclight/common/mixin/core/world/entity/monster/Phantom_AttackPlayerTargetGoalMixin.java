@@ -17,7 +17,7 @@ public abstract class Phantom_AttackPlayerTargetGoalMixin {
     private Phantom outerThis;
 
     // canUse  setTarget
-    @Inject(method = "m_8036_()Z", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Phantom;m_6710_(Lnet/minecraft/world/entity/LivingEntity;)V"))
+    @Inject(method = "canUse()Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Phantom;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"))
     private void arclight$reason(CallbackInfoReturnable<Boolean> cir) {
         ((MobEntityBridge) outerThis).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
     }

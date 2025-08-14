@@ -1,5 +1,7 @@
 package io.izzel.arclight.common.mixin.paper.server;
 
+import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = CraftServer.class, remap = false)
 public class CraftServerMixin_Paper {
 
+    private static final Logger LOGGER = ArclightI18nLogger.getLogger("PaperCraftServer");
+
     /**
      * Initialize Paper-specific CraftServer features during server startup.
      */
@@ -22,8 +26,7 @@ public class CraftServerMixin_Paper {
             // Initialize Paper-specific CraftServer features
             this.arclight$setupPaperCraftServerEnvironment();
         } catch (Exception e) {
-            System.err.println("Failed to initialize Paper CraftServer features: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Failed to initialize Paper CraftServer features: " + e.getMessage(), e);
         }
     }
 
@@ -36,6 +39,6 @@ public class CraftServerMixin_Paper {
         // Setup Paper-specific CraftServer environment
         // This includes command registration, event handling, etc.
 
-        System.out.println("Initialized Paper CraftServer features for Luminara");
+        LOGGER.info("Initialized Paper CraftServer features for Luminara");
     }
 }
