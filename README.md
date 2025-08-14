@@ -2,11 +2,11 @@
 
 [简体中文](/README_zh.md)
 
-> This server is an Arclight Fork. Please report any issues encountered while using this server in **this project's Issue tracker**. Do **not** report them in the Arclight project's Issue tracker!
+> This server software is an Arclight Fork. Please report any issues encountered while using this server software in **this project's Issue tracker**. Do **not** report them in the Arclight project's Issue tracker!
 
 ## ❓ What is This?
 
-Luminara is a hybrid server that implements Bukkit/Spigot/Paper APIs on a Forge foundation through Mixin (Forge+Paper), similar to Mohist/Thermos/MCPC+.
+Luminara is a hybrid server software that implements Bukkit/Spigot/Paper APIs on a Forge foundation through Mixin (Forge+Paper), similar to Mohist/Thermos/MCPC+.
 
 ## ✨ Features
 
@@ -47,9 +47,11 @@ Luminara is a hybrid server that implements Bukkit/Spigot/Paper APIs on a Forge 
 
 1. **Download** the JAR file
 2. **Start the server**:
+
    ```bash
    java -jar luminara.jar nogui
    ```
+
    > The `nogui` parameter disables the server GUI panel
 
 ## ❌ Incompatibilities
@@ -68,7 +70,7 @@ Luminara is a hybrid server that implements Bukkit/Spigot/Paper APIs on a Forge 
 
 - [Report Bugs](https://github.com/QianMoo0121/Luminara/issues/new/choose) - Submit encountered issues here
 - [Discussions](https://github.com/QianMoo0121/Luminara/discussions) - For questions and general discussions
-- **Do NOT report issues with this server to Arclight!**
+- **Do NOT report issues with this server software to Arclight!**
 
 ## 📄 License
 

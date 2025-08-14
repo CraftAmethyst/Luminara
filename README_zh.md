@@ -44,9 +44,11 @@ Luminara 是一个混合服务端，在 Forge 的基础上通过 Mixin 实现 Bu
 
 1. **下载** jar 文件
 2. **启动服务器**：
+
    ```bash
    java -jar luminara.jar nogui
    ```
+
    > `nogui` 参数将禁用服务器控制面板
 
 ## ❌ 不兼容
