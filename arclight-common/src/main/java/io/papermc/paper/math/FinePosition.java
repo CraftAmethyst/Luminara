@@ -1,7 +1,6 @@
 package io.papermc.paper.math;
 
 import org.bukkit.util.NumberConversions;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * A position represented with doubles.
  * <p>
  * <b>May see breaking changes until Experimental annotation is removed.</b>
+ *
  * @see BlockPosition
  */
 @ApiStatus.Experimental

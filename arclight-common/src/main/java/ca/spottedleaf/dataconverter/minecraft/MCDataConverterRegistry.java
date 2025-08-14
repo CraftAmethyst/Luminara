@@ -10,6 +10,9 @@ public final class MCDataConverterRegistry {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static boolean initialized = false;
 
+    private MCDataConverterRegistry() {
+    }
+
     public static void init() {
         if (initialized) {
             return;
@@ -32,7 +35,5 @@ public final class MCDataConverterRegistry {
     public static boolean isInitialized() {
         return initialized;
     }
-
-    private MCDataConverterRegistry() {}
 
 }

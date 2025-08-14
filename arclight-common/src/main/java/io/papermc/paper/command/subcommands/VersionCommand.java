@@ -3,7 +3,6 @@ package io.papermc.paper.command.subcommands;
 import io.papermc.paper.command.PaperSubcommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
 public final class VersionCommand implements PaperSubcommand {
     @Override

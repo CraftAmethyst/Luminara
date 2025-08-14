@@ -9,6 +9,32 @@ import org.jetbrains.annotations.Nullable;
 public interface Timing extends AutoCloseable {
 
     /**
+     * Gets the timer that is currently timing your code
+     *
+     * @return Current Timing or null if none
+     */
+    @Nullable
+    static Timing getCurrentTiming() {
+        // Timings v2 is deprecated, return null
+        return null;
+    }
+
+    /**
+     * Used as a super convenient way to time code
+     *
+     * @param timing   The timing to time
+     * @param runnable The code to time
+     */
+    static void time(@NotNull Timing timing, @NotNull Runnable runnable) {
+        timing.startTiming();
+        try {
+            runnable.run();
+        } finally {
+            timing.stopTiming();
+        }
+    }
+
+    /**
      * Starts timing the execution until {@link #stopTiming()} is called.
      *
      * @return this
@@ -25,7 +51,7 @@ public interface Timing extends AutoCloseable {
 
     /**
      * Starts timing the execution until {@link #stopTiming()} is called.
-     *
+     * <p>
      * But only if we are on the primary thread.
      *
      * @return this
@@ -37,7 +63,7 @@ public interface Timing extends AutoCloseable {
      * Stops timing and records the data. Propagates the data up to group handlers.
      *
      * <p>Will automatically be called when this Timing is used with try-with-resources</p>
-     *
+     * <p>
      * But only if we are on the primary thread.
      */
     void stopTimingIfSync();
@@ -46,30 +72,6 @@ public interface Timing extends AutoCloseable {
      * Stops timing and disregards current timing data.
      */
     void abort();
-
-    /**
-     * Gets the timer that is currently timing your code
-     * @return Current Timing or null if none
-     */
-    @Nullable
-    static Timing getCurrentTiming() {
-        // Timings v2 is deprecated, return null
-        return null;
-    }
-
-    /**
-     * Used as a super convenient way to time code
-     * @param timing The timing to time
-     * @param runnable The code to time
-     */
-    static void time(@NotNull Timing timing, @NotNull Runnable runnable) {
-        timing.startTiming();
-        try {
-            runnable.run();
-        } finally {
-            timing.stopTiming();
-        }
-    }
 
     @Override
     void close();

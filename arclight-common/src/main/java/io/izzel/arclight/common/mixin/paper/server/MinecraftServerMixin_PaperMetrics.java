@@ -32,10 +32,10 @@ public class MinecraftServerMixin_PaperMetrics {
 
             // Initialize Paper Metrics
             this.arclight$paperMetrics = new Metrics(
-                "Arclight-Paper",
-                serverUUID,
-                true,
-                java.util.logging.Logger.getLogger("PaperMetrics")
+                    "Arclight-Paper",
+                    serverUUID,
+                    true,
+                    java.util.logging.Logger.getLogger("PaperMetrics")
             );
 
             // Add some basic charts
@@ -54,10 +54,10 @@ public class MinecraftServerMixin_PaperMetrics {
         if (this.arclight$paperMetrics != null) {
             // Add server software chart
             this.arclight$paperMetrics.addCustomChart(new Metrics.SimplePie("server_software", () -> "Arclight-Paper"));
-            
+
             // Add Java version chart
-            this.arclight$paperMetrics.addCustomChart(new Metrics.SimplePie("java_version", () -> 
-                System.getProperty("java.version")));
+            this.arclight$paperMetrics.addCustomChart(new Metrics.SimplePie("java_version", () ->
+                    System.getProperty("java.version")));
         }
     }
 }

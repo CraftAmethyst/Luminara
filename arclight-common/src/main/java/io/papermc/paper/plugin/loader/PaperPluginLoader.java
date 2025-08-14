@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
@@ -30,35 +28,35 @@ import java.util.regex.Pattern;
  * This loader handles paper-plugin.yml files and provides better plugin isolation.
  */
 public class PaperPluginLoader implements PluginLoader {
-    
+
     private final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<>();
     private final Map<String, PaperPluginClassLoader> loaders = new ConcurrentHashMap<>();
     private final Logger logger;
-    
+
     public PaperPluginLoader(@NotNull Server instance) {
         this.server = instance;
         this.logger = Logger.getLogger("PaperPluginLoader");
     }
-    
+
     @Override
     @NotNull
     public Plugin loadPlugin(@NotNull File file) throws InvalidPluginException {
         if (!file.exists()) {
             throw new InvalidPluginException(new FileNotFoundException(file.getPath() + " does not exist"));
         }
-        
+
         final PaperPluginDescriptionFile description;
         try {
             description = getPaperPluginDescription(file);
         } catch (InvalidDescriptionException ex) {
             throw new InvalidPluginException(ex);
         }
-        
+
         final File parentFile = file.getParentFile();
         final File dataFolder = new File(parentFile, description.getName());
-        
+
         if (dataFolder.exists() && !dataFolder.isDirectory()) {
             throw new InvalidPluginException(String.format(
                     "Projected datafolder: '%s' for %s (%s) exists and is not a directory",
@@ -67,7 +65,7 @@ public class PaperPluginLoader implements PluginLoader {
                     file
             ));
         }
-        
+
         // Check for conflicting plugin names
         for (Plugin plugin : server.getPluginManager().getPlugins()) {
             if (plugin.getDescription().getName().equalsIgnoreCase(description.getName())) {
@@ -77,7 +75,7 @@ public class PaperPluginLoader implements PluginLoader {
                 ));
             }
         }
-        
+
         PaperPluginClassLoader loader;
         try {
             loader = new PaperPluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file);
@@ -86,12 +84,12 @@ public class PaperPluginLoader implements PluginLoader {
         } catch (Throwable ex) {
             throw new InvalidPluginException(ex);
         }
-        
+
         loaders.put(description.getName(), loader);
-        
+
         return loader.getPlugin();
     }
-    
+
     @Override
     @NotNull
     public PluginDescriptionFile getPluginDescription(@NotNull File file) throws InvalidDescriptionException {
@@ -125,33 +123,33 @@ public class PaperPluginLoader implements PluginLoader {
             throw new InvalidDescriptionException(ex);
         }
     }
-    
+
     @Override
     @NotNull
     public Pattern[] getPluginFileFilters() {
         return fileFilters.clone();
     }
-    
+
     @Override
     @NotNull
     public Map<Class<? extends Event>, Set<RegisteredListener>> createRegisteredListeners(@NotNull Listener listener, @NotNull Plugin plugin) {
         Map<Class<? extends Event>, Set<RegisteredListener>> ret = new HashMap<>();
-        
+
         for (java.lang.reflect.Method method : listener.getClass().getMethods()) {
             EventHandler eh = method.getAnnotation(EventHandler.class);
             if (eh == null) continue;
-            
+
             // Check method signature
             if (method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
                 plugin.getLogger().severe(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
                 continue;
             }
-            
+
             final Class<? extends Event> eventClass = method.getParameterTypes()[0].asSubclass(Event.class);
             method.setAccessible(true);
-            
+
             Set<RegisteredListener> eventSet = ret.computeIfAbsent(eventClass, k -> new HashSet<>());
-            
+
             EventExecutor executor = (listener1, event) -> {
                 try {
                     if (!eventClass.isAssignableFrom(event.getClass())) {
@@ -162,24 +160,24 @@ public class PaperPluginLoader implements PluginLoader {
                     throw new EventException(ex);
                 }
             };
-            
+
             eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
         }
-        
+
         return ret;
     }
-    
+
     @Override
     public void enablePlugin(@NotNull Plugin plugin) {
         if (!(plugin instanceof JavaPlugin)) {
             throw new IllegalArgumentException("Plugin is not associated with this PluginLoader");
         }
-        
+
         if (!plugin.isEnabled()) {
             plugin.getLogger().info("Enabling " + plugin.getDescription().getFullName());
-            
+
             JavaPlugin jPlugin = (JavaPlugin) plugin;
-            
+
             try {
                 // Use reflection to access protected setEnabled method
                 java.lang.reflect.Method setEnabledMethod = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
@@ -190,22 +188,22 @@ public class PaperPluginLoader implements PluginLoader {
             }
         }
     }
-    
+
     @Override
     public void disablePlugin(@NotNull Plugin plugin) {
         if (!(plugin instanceof JavaPlugin)) {
             throw new IllegalArgumentException("Plugin is not associated with this PluginLoader");
         }
-        
+
         if (plugin.isEnabled()) {
             String message = String.format("Disabling %s", plugin.getDescription().getFullName());
             plugin.getLogger().info(message);
-            
+
             // server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
-            
+
             JavaPlugin jPlugin = (JavaPlugin) plugin;
             ClassLoader cloader = jPlugin.getClass().getClassLoader();
-            
+
             try {
                 // Use reflection to access protected setEnabled method
                 java.lang.reflect.Method setEnabledMethod = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
@@ -214,11 +212,11 @@ public class PaperPluginLoader implements PluginLoader {
             } catch (Throwable ex) {
                 plugin.getLogger().log(Level.SEVERE, "Error occurred while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
-            
+
             if (cloader instanceof PaperPluginClassLoader) {
                 PaperPluginClassLoader loader = (PaperPluginClassLoader) cloader;
                 loaders.remove(plugin.getDescription().getName());
-                
+
                 try {
                     loader.close();
                 } catch (IOException ex) {
@@ -227,7 +225,7 @@ public class PaperPluginLoader implements PluginLoader {
             }
         }
     }
-    
+
     /**
      * Gets the class loader for a specific plugin.
      */
@@ -235,7 +233,7 @@ public class PaperPluginLoader implements PluginLoader {
     public PaperPluginClassLoader getPluginClassLoader(@NotNull String pluginName) {
         return loaders.get(pluginName);
     }
-    
+
     /**
      * Gets all loaded plugin class loaders.
      */
@@ -243,7 +241,7 @@ public class PaperPluginLoader implements PluginLoader {
     public Collection<PaperPluginClassLoader> getPluginClassLoaders() {
         return Collections.unmodifiableCollection(loaders.values());
     }
-    
+
     /**
      * Checks if a class is available in any loaded plugin.
      */
@@ -251,21 +249,21 @@ public class PaperPluginLoader implements PluginLoader {
     public Class<?> getClassByName(@NotNull String name) {
         return classes.get(name);
     }
-    
+
     /**
      * Sets a class in the global class cache.
      */
     void setClass(@NotNull String name, @NotNull Class<?> clazz) {
         classes.put(name, clazz);
     }
-    
+
     /**
      * Removes a class from the global class cache.
      */
     void removeClass(@NotNull String name) {
         classes.remove(name);
     }
-    
+
     /**
      * Gets the server instance.
      */

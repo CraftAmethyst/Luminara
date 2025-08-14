@@ -3,14 +3,10 @@ package io.papermc.paper.command;
 import com.google.common.base.Functions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 public final class CommandUtil {
     private CommandUtil() {
@@ -18,9 +14,9 @@ public final class CommandUtil {
 
     // Code from Mojang - copyright them
     public static List<String> getListMatchingLast(
-        final CommandSender sender,
-        final String[] args,
-        final String... matches
+            final CommandSender sender,
+            final String[] args,
+            final String... matches
     ) {
         return getListMatchingLast(sender, args, Arrays.asList(matches));
     }
@@ -30,9 +26,9 @@ public final class CommandUtil {
     }
 
     public static List<String> getListMatchingLast(
-        final CommandSender sender,
-        final String[] strings,
-        final Collection<?> collection
+            final CommandSender sender,
+            final String[] strings,
+            final Collection<?> collection
     ) {
         String last = strings[strings.length - 1];
         ArrayList<String> results = Lists.newArrayList();

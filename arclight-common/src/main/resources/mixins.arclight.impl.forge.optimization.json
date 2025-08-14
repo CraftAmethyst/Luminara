@@ -8,13 +8,10 @@
   "mixins": [
     "ClassInheritanceMultiMapMixin",
     "EntityDataManagerMixin_Optimize",
-
     "EntityMixin_Optimize",
     "GoalMixin",
     "MobMixin_Optimization",
-
     "VoxelShapesMixin",
-
     "network.ServerGamePacketListenerImplMixin_Optimize",
     "network.ServerPlayerMixin_Optimize",
     "realtime.ItemEntityMixin_Realtime",

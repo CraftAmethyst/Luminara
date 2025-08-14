@@ -19,6 +19,54 @@ public interface Position {
     BlockPosition BLOCK_ZERO = new BlockPositionImpl(0, 0, 0);
 
     /**
+     * Creates a position at the coordinates
+     *
+     * @param x x coord
+     * @param y y coord
+     * @param z z coord
+     * @return a position with those coords
+     */
+    @Contract(value = "_, _, _ -> new", pure = true)
+    static @NotNull BlockPosition block(int x, int y, int z) {
+        return new BlockPositionImpl(x, y, z);
+    }
+
+    /**
+     * Creates a position from the location.
+     *
+     * @param location the location to copy the position of
+     * @return a new position at that location
+     */
+    @Contract(value = "_ -> new", pure = true)
+    static @NotNull BlockPosition block(@NotNull Location location) {
+        return new BlockPositionImpl(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    /**
+     * Creates a position at the coordinates
+     *
+     * @param x x coord
+     * @param y y coord
+     * @param z z coord
+     * @return a position with those coords
+     */
+    @Contract(value = "_, _, _ -> new", pure = true)
+    static @NotNull FinePosition fine(double x, double y, double z) {
+        return new FinePositionImpl(x, y, z);
+    }
+
+    /**
+     * Creates a position from the location.
+     *
+     * @param location the location to copy the position of
+     * @return a new position at that location
+     */
+    @Contract(value = "_ -> new", pure = true)
+    static @NotNull FinePosition fine(@NotNull Location location) {
+        return new FinePositionImpl(location.getX(), location.getY(), location.getZ());
+    }
+
+    /**
      * Gets the block x value for this position
      *
      * @return the block x value
@@ -132,53 +180,5 @@ public interface Position {
     @Contract(value = "_ -> new", pure = true)
     default @NotNull Location toLocation(@NotNull World world) {
         return new Location(world, this.x(), this.y(), this.z());
-    }
-
-    /**
-     * Creates a position at the coordinates
-     *
-     * @param x x coord
-     * @param y y coord
-     * @param z z coord
-     * @return a position with those coords
-     */
-    @Contract(value = "_, _, _ -> new", pure = true)
-    static @NotNull BlockPosition block(int x, int y, int z) {
-        return new BlockPositionImpl(x, y, z);
-    }
-
-    /**
-     * Creates a position from the location.
-     *
-     * @param location the location to copy the position of
-     * @return a new position at that location
-     */
-    @Contract(value = "_ -> new", pure = true)
-    static @NotNull BlockPosition block(@NotNull Location location) {
-        return new BlockPositionImpl(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-    }
-
-    /**
-     * Creates a position at the coordinates
-     *
-     * @param x x coord
-     * @param y y coord
-     * @param z z coord
-     * @return a position with those coords
-     */
-    @Contract(value = "_, _, _ -> new", pure = true)
-    static @NotNull FinePosition fine(double x, double y, double z) {
-        return new FinePositionImpl(x, y, z);
-    }
-
-    /**
-     * Creates a position from the location.
-     *
-     * @param location the location to copy the position of
-     * @return a new position at that location
-     */
-    @Contract(value = "_ -> new", pure = true)
-    static @NotNull FinePosition fine(@NotNull Location location) {
-        return new FinePositionImpl(location.getX(), location.getY(), location.getZ());
     }
 }

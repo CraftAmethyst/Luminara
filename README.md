@@ -2,11 +2,13 @@
 
 [简体中文](/README_zh.md)
 
-> This server software is an Arclight Fork. Please report any issues encountered while using this server software in **this project's Issue tracker**. Do **not** report them in the Arclight project's Issue tracker!
+> This server software is an Arclight Fork. Please report any issues encountered while using this server software in *
+*this project's Issue tracker**. Do **not** report them in the Arclight project's Issue tracker!
 
 ## ❓ What is This?
 
-Luminara is a hybrid server software that implements Bukkit/Spigot/Paper APIs on a Forge foundation through Mixin (Forge+Paper), similar to Mohist/Thermos/MCPC+.
+Luminara is a hybrid server software that implements Bukkit/Spigot/Paper APIs on a Forge foundation through Mixin (
+Forge+Paper), similar to Mohist/Thermos/MCPC+.
 
 ## ✨ Features
 
@@ -27,11 +29,13 @@ Luminara is a hybrid server software that implements Bukkit/Spigot/Paper APIs on
 
 ### Stable Releases
 
-- [GitHub Releases](https://github.com/QianMoo0121/Luminara/releases) - Official releases recommended for production environments (excellent stability). PRE releases are for early access (lower stability than official releases).
+- [GitHub Releases](https://github.com/QianMoo0121/Luminara/releases) - Official releases recommended for production
+  environments (excellent stability). PRE releases are for early access (lower stability than official releases).
 
 ### Development Builds
 
-- [Nightly Builds](https://github.com/QianMoo0121/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials) _(GitHub login required, lower stability than PRE releases)_
+- [Nightly Builds](https://github.com/QianMoo0121/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials) _(GitHub
+  login required, lower stability than PRE releases)_
 
 ### Building from Source
 

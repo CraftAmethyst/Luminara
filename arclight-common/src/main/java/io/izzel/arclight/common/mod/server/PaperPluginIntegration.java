@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mod.server;
 
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.papermc.paper.plugin.manager.PaperPluginManagerImpl;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.SimpleCommandMap;
@@ -10,7 +11,6 @@ import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Integration class for Paper plugin system in Luminara.
@@ -22,10 +22,10 @@ public class PaperPluginIntegration {
     private static final Logger LOGGER = ArclightI18nLogger.getLogger("PaperPluginIntegration");
     private static boolean initialized = false;
     private static PaperPluginManagerImpl paperPluginManager;
-    
+
     private PaperPluginIntegration() {
     }
-    
+
     /**
      * Initializes the Paper plugin system integration.
      * This should be called during server startup after the basic Bukkit server is initialized.
@@ -34,10 +34,10 @@ public class PaperPluginIntegration {
         if (initialized) {
             return;
         }
-        
+
         try {
             LOGGER.info("Initializing Paper plugin system integration for Luminara...");
-            
+
             Server server = Bukkit.getServer();
             if (!(server instanceof CraftServer)) {
                 LOGGER.warn("Server is not a CraftServer instance, Paper plugin integration may not work correctly");
@@ -54,17 +54,17 @@ public class PaperPluginIntegration {
 
             // Get the Paper plugin manager instance
             paperPluginManager = (PaperPluginManagerImpl) craftServer.getPluginManager();
-            
+
             initialized = true;
             LOGGER.info("Paper plugin system integration initialized successfully for Luminara");
-            
+
         } catch (Exception e) {
             LOGGER.error("Failed to initialize Paper plugin system integration: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Paper plugin system integration initialization failed", e);
         }
     }
-    
+
     /**
      * Validates that the Paper plugin manager is properly initialized.
      * With Mixin integration, the plugin manager should be automatically replaced.
@@ -102,14 +102,14 @@ public class PaperPluginIntegration {
             return false;
         }
     }
-    
+
     /**
      * Checks if the Paper plugin system integration is initialized.
      */
     public static boolean isInitialized() {
         return initialized;
     }
-    
+
     /**
      * Gets the Paper plugin manager instance.
      */
@@ -120,7 +120,7 @@ public class PaperPluginIntegration {
         }
         return paperPluginManager;
     }
-    
+
     /**
      * Shuts down the Paper plugin system integration.
      * This should be called during server shutdown.
@@ -129,26 +129,26 @@ public class PaperPluginIntegration {
         if (!initialized) {
             return;
         }
-        
+
         try {
             LOGGER.info("Shutting down Paper plugin system integration...");
-            
+
             if (paperPluginManager != null) {
                 paperPluginManager.disablePlugins();
                 paperPluginManager.clearPlugins();
             }
-            
+
             initialized = false;
             paperPluginManager = null;
-            
+
             LOGGER.info("Paper plugin system integration shut down successfully");
-            
+
         } catch (Exception e) {
             LOGGER.error("Error during Paper plugin system integration shutdown: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Reloads the Paper plugin system.
      * This will disable all plugins, clear the plugin manager, and reinitialize.
@@ -158,21 +158,21 @@ public class PaperPluginIntegration {
             LOGGER.warn("Cannot reload Paper plugin system: not initialized");
             return;
         }
-        
+
         try {
             LOGGER.info("Reloading Paper plugin system...");
-            
+
             shutdown();
             initialize();
-            
+
             LOGGER.info("Paper plugin system reloaded successfully");
-            
+
         } catch (Exception e) {
             LOGGER.error("Error during Paper plugin system reload: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Gets information about the current Paper plugin system state.
      */
@@ -181,13 +181,13 @@ public class PaperPluginIntegration {
         StringBuilder info = new StringBuilder();
         info.append("Paper Plugin System Integration Status:\n");
         info.append("Initialized: ").append(initialized).append("\n");
-        
+
         if (initialized && paperPluginManager != null) {
             info.append("Loaded Plugins: ").append(paperPluginManager.getPlugins().length).append("\n");
             info.append("Plugin Manager: ").append(paperPluginManager.getClass().getSimpleName()).append("\n");
             info.append("Load Order Tree: ").append(paperPluginManager.getLoadOrderTree().getClass().getSimpleName()).append("\n");
         }
-        
+
         return info.toString();
     }
 }

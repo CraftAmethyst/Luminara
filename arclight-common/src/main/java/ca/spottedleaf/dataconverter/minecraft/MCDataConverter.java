@@ -1,7 +1,6 @@
 package ca.spottedleaf.dataconverter.minecraft;
 
 import ca.spottedleaf.dataconverter.converters.DataConverter;
-import ca.spottedleaf.dataconverter.converters.datatypes.DataType;
 import ca.spottedleaf.dataconverter.minecraft.datatypes.MCDataType;
 import ca.spottedleaf.dataconverter.types.MapType;
 import ca.spottedleaf.dataconverter.types.json.JsonMapType;
@@ -14,11 +13,14 @@ public final class MCDataConverter {
 
     private static final LongArrayList BREAKPOINTS = MCVersionRegistry.getBreakpoints();
 
+    private MCDataConverter() {
+    }
+
     public static <T> T copy(final T type) {
         if (type instanceof CompoundTag) {
-            return (T)((CompoundTag)type).copy();
+            return (T) ((CompoundTag) type).copy();
         } else if (type instanceof JsonObject) {
-            return (T)((JsonObject)type).deepCopy();
+            return (T) ((JsonObject) type).deepCopy();
         }
 
         return type;
@@ -27,7 +29,7 @@ public final class MCDataConverter {
     public static CompoundTag convertTag(final MCDataType type, final CompoundTag data, final int fromVersion, final int toVersion) {
         final NBTMapType wrapped = new NBTMapType(data);
 
-        final NBTMapType replaced = (NBTMapType)convertData(type, wrapped, fromVersion, toVersion);
+        final NBTMapType replaced = (NBTMapType) convertData(type, wrapped, fromVersion, toVersion);
 
         return replaced == null ? wrapped.getTag() : replaced.getTag();
     }
@@ -35,7 +37,7 @@ public final class MCDataConverter {
     public static JsonObject convertJson(final MCDataType type, final JsonObject data, final boolean compressed, final int fromVersion, final int toVersion) {
         final JsonMapType wrapped = new JsonMapType(data, compressed);
 
-        final JsonMapType replaced = (JsonMapType)convertData(type, wrapped, fromVersion, toVersion);
+        final JsonMapType replaced = (JsonMapType) convertData(type, wrapped, fromVersion, toVersion);
 
         return replaced == null ? wrapped.getJson() : replaced.getJson();
     }
@@ -53,7 +55,7 @@ public final class MCDataConverter {
                 continue;
             }
 
-            final MapType<String> converted = type.convert((MapType<String>)ret, currentVersion, Math.min(nextVersion, breakpoint - 1));
+            final MapType<String> converted = type.convert((MapType<String>) ret, currentVersion, Math.min(nextVersion, breakpoint - 1));
             if (converted != null) {
                 ret = converted;
             }
@@ -66,17 +68,13 @@ public final class MCDataConverter {
         }
 
         if (currentVersion != nextVersion) {
-            final MapType<String> converted = type.convert((MapType<String>)ret, currentVersion, nextVersion);
+            final MapType<String> converted = type.convert((MapType<String>) ret, currentVersion, nextVersion);
             if (converted != null) {
                 ret = converted;
             }
         }
 
-        return (MapType<String>)ret;
+        return (MapType<String>) ret;
     }
-
-
-
-    private MCDataConverter() {}
 
 }

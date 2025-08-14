@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mod;
 import io.izzel.arclight.common.mod.server.event.ArclightEventDispatcherRegistry;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.mod.velocity.VelocityManager;
-// Removed OptimizationManager import - MPEM functionality removed
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.fml.IExtensionPoint;

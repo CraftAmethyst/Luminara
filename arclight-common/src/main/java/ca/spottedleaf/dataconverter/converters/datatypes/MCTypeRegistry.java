@@ -1,8 +1,9 @@
 package ca.spottedleaf.dataconverter.converters.datatypes;
 
-import ca.spottedleaf.dataconverter.minecraft.datatypes.MCDataType;
-
 public final class MCTypeRegistry {
+
+    private MCTypeRegistry() {
+    }
 
     public static void registerConverters() {
         // Data converter registry is initialized
@@ -13,7 +14,5 @@ public final class MCTypeRegistry {
         // MCDataType.CHUNK.addConverter(new ChunkConverter());
         // MCDataType.PLAYER.addConverter(new PlayerConverter());
     }
-
-    private MCTypeRegistry() {}
 
 }

@@ -1,7 +1,6 @@
 package ca.spottedleaf.dataconverter.minecraft.datatypes;
 
 import ca.spottedleaf.dataconverter.converters.DataConverter;
-import ca.spottedleaf.dataconverter.converters.datatypes.DataType;
 import ca.spottedleaf.dataconverter.minecraft.MCVersionRegistry;
 import ca.spottedleaf.dataconverter.types.MapType;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;

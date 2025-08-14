@@ -10,11 +10,20 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = Location.class, remap = false)
 public abstract class LocationMixin implements FinePosition {
 
-    @Shadow public abstract double getX();
-    @Shadow public abstract double getY();
-    @Shadow public abstract double getZ();
-    @Shadow public abstract float getYaw();
-    @Shadow public abstract float getPitch();
+    @Shadow
+    public abstract double getX();
+
+    @Shadow
+    public abstract double getY();
+
+    @Shadow
+    public abstract double getZ();
+
+    @Shadow
+    public abstract float getYaw();
+
+    @Shadow
+    public abstract float getPitch();
 
     // Paper - add Position
     @Override

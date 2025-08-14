@@ -2,7 +2,7 @@ package io.papermc.paper.command;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
 public class CallbackCommand extends Command {

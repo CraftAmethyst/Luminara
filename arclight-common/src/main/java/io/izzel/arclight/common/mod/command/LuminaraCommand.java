@@ -2,7 +2,10 @@ package io.izzel.arclight.common.mod.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import io.izzel.arclight.common.mod.command.subcommands.*;
+import io.izzel.arclight.common.mod.command.subcommands.AdventureTestSubCommand;
+import io.izzel.arclight.common.mod.command.subcommands.GCSubCommand;
+import io.izzel.arclight.common.mod.command.subcommands.InfoSubCommand;
+import io.izzel.arclight.common.mod.command.subcommands.LuminaraSubCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;

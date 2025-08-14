@@ -1,9 +1,9 @@
 package io.papermc.paper.command;
 
+import org.bukkit.command.CommandSender;
+
 import java.util.Collections;
 import java.util.List;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
 public interface PaperSubcommand {
 

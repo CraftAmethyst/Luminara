@@ -41,7 +41,6 @@ public class GlobalConfiguration extends ConfigurationPart {
     }
 
 
-
     public static class Console extends ConfigurationPart {
         public boolean enableBrigadierHighlighting = true;
         public boolean enableBrigadierCompletions = true;

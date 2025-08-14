@@ -10,27 +10,27 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongComparator;
 import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
 import org.slf4j.Logger;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Locale;
 
 public final class MCVersionRegistry {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     protected static final Int2ObjectLinkedOpenHashMap<String> VERSION_NAMES = new Int2ObjectLinkedOpenHashMap<>();
     protected static final IntArrayList VERSION_LIST;
     protected static final LongArrayList DATA_VERSION_LIST;
-
     protected static final IntArrayList DATACONVERTER_VERSIONS_LIST;
     protected static final IntLinkedOpenHashSet DATACONVERTER_VERSIONS_MAJOR = new IntLinkedOpenHashSet();
     protected static final LongLinkedOpenHashSet DATACONVERTER_VERSIONS = new LongLinkedOpenHashSet();
     protected static final Int2ObjectLinkedOpenHashMap<IntArrayList> SUBVERSIONS = new Int2ObjectLinkedOpenHashMap<>();
     protected static final LongArrayList BREAKPOINTS = new LongArrayList();
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     static {
         // Note: Some of these are nameless.
         // Unless a data version is specified here, it will NOT have converters ran for it. Please add them on update!
-        final int[] converterVersions = new int[] {
+        final int[] converterVersions = new int[]{
                 99,
                 100,
                 101,
@@ -257,7 +257,7 @@ public final class MCVersionRegistry {
             final String name = field.getName();
             final int value;
             try {
-                 value = field.getInt(null);
+                value = field.getInt(null);
             } catch (final Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -310,7 +310,7 @@ public final class MCVersionRegistry {
             }
         }
 
-        DATA_VERSION_LIST.sort((LongComparator)null);
+        DATA_VERSION_LIST.sort((LongComparator) null);
 
         for (final int version : DATACONVERTER_VERSIONS_MAJOR) {
             DATACONVERTER_VERSIONS.add(DataConverter.encodeVersions(version, 0));
@@ -348,14 +348,6 @@ public final class MCVersionRegistry {
         return DATACONVERTER_VERSIONS_MAJOR.contains(version);
     }
 
-    public String getVersionName(final int version) {
-        return VERSION_NAMES.get(version);
-    }
-
-    public boolean isRegisteredVersion(final int version) {
-        return VERSION_NAMES.containsKey(version);
-    }
-
     public static IntArrayList getVersionList() {
         return VERSION_LIST;
     }
@@ -376,5 +368,13 @@ public final class MCVersionRegistry {
         if (!DATACONVERTER_VERSIONS.contains(version)) {
             throw new IllegalStateException("Version " + DataConverter.encodedToString(version) + " is not registered to have dataconverters, yet has a dataconverter");
         }
+    }
+
+    public String getVersionName(final int version) {
+        return VERSION_NAMES.get(version);
+    }
+
+    public boolean isRegisteredVersion(final int version) {
+        return VERSION_NAMES.containsKey(version);
     }
 }

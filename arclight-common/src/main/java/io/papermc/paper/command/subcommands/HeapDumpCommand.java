@@ -2,7 +2,6 @@ package io.papermc.paper.command.subcommands;
 
 import io.papermc.paper.command.PaperSubcommand;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
 import javax.management.MBeanServer;
 import java.io.File;
@@ -18,10 +17,10 @@ public final class HeapDumpCommand implements PaperSubcommand {
             File heapDump = new File(new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-heap.hprof");
 
             server.invoke(
-                ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", com.sun.management.HotSpotDiagnosticMXBean.class).getObjectName(),
-                "dumpHeap",
-                new Object[]{heapDump.getAbsolutePath(), true},
-                new String[]{"java.lang.String", "boolean"}
+                    ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", com.sun.management.HotSpotDiagnosticMXBean.class).getObjectName(),
+                    "dumpHeap",
+                    new Object[]{heapDump.getAbsolutePath(), true},
+                    new String[]{"java.lang.String", "boolean"}
             );
 
             sender.sendMessage("Heap dump saved to " + heapDump.getAbsolutePath());

@@ -6,7 +6,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,11 +27,11 @@ public final class EntityCommand implements PaperSubcommand {
         sender.sendMessage("Total entities: " + totalEntities);
 
         entityCounts.entrySet().stream()
-            .sorted(Map.Entry.<EntityType, Integer>comparingByValue().reversed())
-            .limit(10)
-            .forEach(entry ->
-                sender.sendMessage("  " + entry.getKey().name() + ": " + entry.getValue())
-            );
+                .sorted(Map.Entry.<EntityType, Integer>comparingByValue().reversed())
+                .limit(10)
+                .forEach(entry ->
+                        sender.sendMessage("  " + entry.getKey().name() + ": " + entry.getValue())
+                );
 
         return true;
     }

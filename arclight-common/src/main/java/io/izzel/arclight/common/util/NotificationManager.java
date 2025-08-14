@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.util;
 
 // Removed MpemThreadManager import - MPEM functionality removed
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;

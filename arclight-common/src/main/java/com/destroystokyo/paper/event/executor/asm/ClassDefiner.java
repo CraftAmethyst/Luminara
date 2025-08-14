@@ -4,6 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ClassDefiner {
 
+    @NotNull
+    public static ClassDefiner getInstance() {
+        return SafeClassDefiner.INSTANCE;
+    }
+
     /**
      * Returns if the defined classes can bypass access checks
      *
@@ -25,10 +30,5 @@ public interface ClassDefiner {
      */
     @NotNull
     public Class<?> defineClass(@NotNull ClassLoader parentLoader, @NotNull String name, @NotNull byte[] data);
-
-    @NotNull
-    public static ClassDefiner getInstance() {
-        return SafeClassDefiner.INSTANCE;
-    }
 
 }

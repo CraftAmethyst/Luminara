@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * A position represented with integers.
  * <p>
  * <b>May see breaking changes until Experimental annotation is removed.</b>
+ *
  * @see FinePosition
  */
 @ApiStatus.Experimental
@@ -71,7 +72,7 @@ public interface BlockPosition extends Position {
      * multiplied by the amount.
      *
      * @param blockFace the block face to offset towards
-     * @param amount the number of times to move in that direction
+     * @param amount    the number of times to move in that direction
      * @return the offset block position
      */
     @Contract(pure = true)
@@ -83,7 +84,7 @@ public interface BlockPosition extends Position {
      * Returns a block position offset by the amount along
      * the specified axis.
      *
-     * @param axis the axis to offset along
+     * @param axis   the axis to offset along
      * @param amount the amount to offset along that axis
      * @return the offset block position
      */

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * for both plugin types.
  */
 public class PaperPluginManagerImpl implements PluginManager {
-    
+
     private final Server server;
     private final SimpleCommandMap commandMap;
     private final Map<String, Plugin> plugins = new LinkedHashMap<>();
@@ -44,22 +44,22 @@ public class PaperPluginManagerImpl implements PluginManager {
     private final Map<Boolean, Map<Permissible, Boolean>> defSubs = new HashMap<>();
     private final LoadOrderTree loadOrderTree = new LoadOrderTree();
     private final Logger logger;
-    
+
     public PaperPluginManagerImpl(@NotNull Server instance, @NotNull SimpleCommandMap commandMap) {
         this.server = instance;
         this.commandMap = commandMap;
         this.logger = Logger.getLogger("PaperPluginManager");
-        
+
         // Initialize default permission sets
         defaultPerms.put(true, new HashSet<>());
         defaultPerms.put(false, new HashSet<>());
         defSubs.put(true, new HashMap<>());
         defSubs.put(false, new HashMap<>());
-        
+
         // Register plugin loaders
         pluginLoaders.add(new JavaPluginLoader(server));
         pluginLoaders.add(new PaperPluginLoader(server));
-        
+
         // Set up file associations
         Pattern[] patterns;
         for (PluginLoader loader : pluginLoaders) {
@@ -69,37 +69,37 @@ public class PaperPluginManagerImpl implements PluginManager {
             }
         }
     }
-    
+
     @Override
     @Nullable
     public Plugin getPlugin(@NotNull String name) {
         return plugins.get(name.replace(' ', '_'));
     }
-    
+
     @Override
     @NotNull
     public Plugin[] getPlugins() {
         return plugins.values().toArray(new Plugin[0]);
     }
-    
+
     @Override
     public boolean isPluginEnabled(@NotNull String name) {
         Plugin plugin = getPlugin(name);
         return plugin != null && plugin.isEnabled();
     }
-    
+
     @Override
     public boolean isPluginEnabled(@Nullable Plugin plugin) {
         return plugin != null && plugins.containsValue(plugin) && plugin.isEnabled();
     }
-    
+
     @Override
     @Nullable
     public Plugin loadPlugin(@NotNull File file) throws InvalidPluginException, UnknownDependencyException {
         if (!file.exists()) {
             return null;
         }
-        
+
         PluginLoader loader = null;
         for (Pattern filter : fileAssociations.keySet()) {
             Matcher match = filter.matcher(file.getName());
@@ -108,20 +108,20 @@ public class PaperPluginManagerImpl implements PluginManager {
                 break;
             }
         }
-        
+
         if (loader == null) {
             throw new UnknownDependencyException("Unknown plugin type for file: " + file.getName());
         }
-        
+
         return loadPlugin(file, loader);
     }
-    
+
     private Plugin loadPlugin(@NotNull File file, @NotNull PluginLoader loader) throws InvalidPluginException {
         Plugin result = loader.loadPlugin(file);
-        
+
         if (result != null) {
             plugins.put(result.getDescription().getName(), result);
-            
+
             // If this is a Paper plugin, add it to the load order tree
             if (loader instanceof PaperPluginLoader) {
                 try {
@@ -132,35 +132,35 @@ public class PaperPluginManagerImpl implements PluginManager {
                 }
             }
         }
-        
+
         return result;
     }
-    
+
     @Override
     @NotNull
     public Plugin[] loadPlugins(@NotNull File directory) {
         if (!directory.isDirectory()) {
             return new Plugin[0];
         }
-        
+
         List<Plugin> result = new ArrayList<>();
         Set<Pattern> filters = new HashSet<>();
-        
+
         for (PluginLoader loader : pluginLoaders) {
             filters.addAll(Arrays.asList(loader.getPluginFileFilters()));
         }
-        
+
         Map<String, File> plugins = new HashMap<>();
         Set<String> loadedPlugins = new HashSet<>();
         Map<String, Collection<String>> dependencies = new HashMap<>();
         Map<String, Collection<String>> softDependencies = new HashMap<>();
-        
+
         // Discover all plugin files
         File[] files = directory.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (!file.isFile()) continue;
-                
+
                 boolean matched = false;
                 for (Pattern filter : filters) {
                     if (filter.matcher(file.getName()).find()) {
@@ -168,17 +168,17 @@ public class PaperPluginManagerImpl implements PluginManager {
                         break;
                     }
                 }
-                
+
                 if (!matched) continue;
-                
+
                 PluginDescriptionFile description;
                 try {
                     PluginLoader loader = getPluginLoader(file);
                     if (loader == null) continue;
-                    
+
                     description = loader.getPluginDescription(file);
                     String name = description.getName();
-                    
+
                     if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")) {
                         logger.log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
                         continue;
@@ -190,25 +190,25 @@ public class PaperPluginManagerImpl implements PluginManager {
                     logger.log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
                     continue;
                 }
-                
+
                 plugins.put(description.getName(), file);
                 dependencies.put(description.getName(), description.getDepend());
                 softDependencies.put(description.getName(), description.getSoftDepend());
             }
         }
-        
+
         // Build load order tree for Paper plugins
         try {
             loadOrderTree.build();
             List<String> loadOrder = loadOrderTree.getLoadOrder();
-            
+
             // Load plugins in the correct order
             for (String pluginName : loadOrder) {
                 if (loadedPlugins.contains(pluginName)) continue;
-                
+
                 File file = plugins.get(pluginName);
                 if (file == null) continue;
-                
+
                 try {
                     Plugin plugin = loadPlugin(file);
                     if (plugin != null) {
@@ -223,11 +223,11 @@ public class PaperPluginManagerImpl implements PluginManager {
         } catch (LoadOrderTree.CircularDependencyException ex) {
             logger.log(Level.SEVERE, "Circular dependency detected in plugin loading", ex);
         }
-        
+
         // Load remaining plugins (traditional Bukkit plugins)
         for (Map.Entry<String, File> entry : plugins.entrySet()) {
             if (loadedPlugins.contains(entry.getKey())) continue;
-            
+
             try {
                 Plugin plugin = loadPlugin(entry.getValue());
                 if (plugin != null) {
@@ -238,10 +238,10 @@ public class PaperPluginManagerImpl implements PluginManager {
                 logger.log(Level.SEVERE, "Could not load '" + entry.getValue().getPath() + "' in folder '" + directory.getPath() + "'", ex);
             }
         }
-        
+
         return result.toArray(new Plugin[0]);
     }
-    
+
     @Nullable
     private PluginLoader getPluginLoader(@NotNull File file) {
         for (Pattern filter : fileAssociations.keySet()) {
@@ -251,7 +251,7 @@ public class PaperPluginManagerImpl implements PluginManager {
         }
         return null;
     }
-    
+
     @Override
     public void disablePlugins() {
         Plugin[] plugins = getPlugins();
@@ -259,7 +259,7 @@ public class PaperPluginManagerImpl implements PluginManager {
             disablePlugin(plugins[i]);
         }
     }
-    
+
     @Override
     public void disablePlugin(@NotNull Plugin plugin) {
         if (plugin.isEnabled()) {
@@ -268,25 +268,25 @@ public class PaperPluginManagerImpl implements PluginManager {
             } catch (Throwable ex) {
                 logger.log(Level.SEVERE, "Error occurred (in the plugin loader) while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
-            
+
             try {
                 server.getScheduler().cancelTasks(plugin);
             } catch (Throwable ex) {
                 logger.log(Level.SEVERE, "Error occurred (in the plugin loader) while cancelling tasks for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
-            
+
             try {
                 server.getServicesManager().unregisterAll(plugin);
             } catch (Throwable ex) {
                 logger.log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering services for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
-            
+
             try {
                 HandlerList.unregisterAll(plugin);
             } catch (Throwable ex) {
                 logger.log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering events for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
-            
+
             try {
                 server.getMessenger().unregisterIncomingPluginChannel(plugin);
                 server.getMessenger().unregisterOutgoingPluginChannel(plugin);
@@ -295,16 +295,16 @@ public class PaperPluginManagerImpl implements PluginManager {
             }
         }
     }
-    
+
     @Override
     public void enablePlugin(@NotNull Plugin plugin) {
         if (!plugin.isEnabled()) {
             List<Command> pluginCommands = PluginCommandYamlParser.parse(plugin);
-            
+
             if (!pluginCommands.isEmpty()) {
                 commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
             }
-            
+
             try {
                 plugin.getPluginLoader().enablePlugin(plugin);
             } catch (Throwable ex) {
@@ -312,7 +312,7 @@ public class PaperPluginManagerImpl implements PluginManager {
             }
         }
     }
-    
+
     @Override
     public void clearPlugins() {
         synchronized (this) {

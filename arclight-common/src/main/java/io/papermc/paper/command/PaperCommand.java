@@ -1,16 +1,10 @@
 package io.papermc.paper.command;
 
-import io.papermc.paper.command.subcommands.*;
+import io.papermc.paper.command.subcommands.EntityCommand;
+import io.papermc.paper.command.subcommands.HeapDumpCommand;
+import io.papermc.paper.command.subcommands.ReloadCommand;
+import io.papermc.paper.command.subcommands.VersionCommand;
 import io.papermc.paper.util.Pair;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -18,8 +12,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public final class PaperCommand extends Command {
     static final String BASE_PERM = "bukkit.command.paper.";
@@ -28,29 +24,6 @@ public final class PaperCommand extends Command {
     private static final Set<String> COMPLETABLE_SUBCOMMANDS = SUBCOMMANDS.entrySet().stream().filter(entry -> entry.getValue().tabCompletes()).map(Map.Entry::getKey).collect(Collectors.toSet());
     // alias -> subcommand label
     private static final Map<String, String> ALIASES = createAliases();
-
-    private static Map<String, PaperSubcommand> createSubcommands() {
-        final Map<Set<String>, PaperSubcommand> commands = new HashMap<>();
-
-        commands.put(Set.of("heap"), new HeapDumpCommand());
-        commands.put(Set.of("entity"), new EntityCommand());
-        commands.put(Set.of("reload"), new ReloadCommand());
-        commands.put(Set.of("version"), new VersionCommand());
-
-        return commands.entrySet().stream()
-            .flatMap(entry -> entry.getKey().stream().map(s -> Map.entry(s, entry.getValue())))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    private static Map<String, String> createAliases() {
-        final Map<String, Set<String>> aliases = new HashMap<>();
-
-        aliases.put("version", Set.of("ver"));
-
-        return aliases.entrySet().stream()
-            .flatMap(entry -> entry.getValue().stream().map(s -> Map.entry(s, entry.getKey())))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
 
     public PaperCommand(final String name) {
         super(name);
@@ -66,6 +39,29 @@ public final class PaperCommand extends Command {
         }
     }
 
+    private static Map<String, PaperSubcommand> createSubcommands() {
+        final Map<Set<String>, PaperSubcommand> commands = new HashMap<>();
+
+        commands.put(Set.of("heap"), new HeapDumpCommand());
+        commands.put(Set.of("entity"), new EntityCommand());
+        commands.put(Set.of("reload"), new ReloadCommand());
+        commands.put(Set.of("version"), new VersionCommand());
+
+        return commands.entrySet().stream()
+                .flatMap(entry -> entry.getKey().stream().map(s -> Map.entry(s, entry.getValue())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private static Map<String, String> createAliases() {
+        final Map<String, Set<String>> aliases = new HashMap<>();
+
+        aliases.put("version", Set.of("ver"));
+
+        return aliases.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream().map(s -> Map.entry(s, entry.getKey())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
     private static boolean testPermission(final CommandSender sender, final String permission) {
         if (sender.hasPermission(BASE_PERM + permission) || sender.hasPermission("bukkit.command.paper")) {
             return true;
@@ -74,12 +70,30 @@ public final class PaperCommand extends Command {
         return false;
     }
 
+    private static @Nullable Pair<String, PaperSubcommand> resolveCommand(String label) {
+        label = label.toLowerCase(Locale.ENGLISH);
+        @Nullable PaperSubcommand subCommand = SUBCOMMANDS.get(label);
+        if (subCommand == null) {
+            final @Nullable String command = ALIASES.get(label);
+            if (command != null) {
+                label = command;
+                subCommand = SUBCOMMANDS.get(command);
+            }
+        }
+
+        if (subCommand != null) {
+            return Pair.of(label, subCommand);
+        }
+
+        return null;
+    }
+
     @Override
     public List<String> tabComplete(
-        final CommandSender sender,
-        final String alias,
-        final String[] args,
-        final @Nullable Location location
+            final CommandSender sender,
+            final String alias,
+            final String[] args,
+            final @Nullable Location location
     ) throws IllegalArgumentException {
         if (args.length <= 1) {
             return CommandUtil.getListMatchingLast(sender, args, COMPLETABLE_SUBCOMMANDS);
@@ -95,9 +109,9 @@ public final class PaperCommand extends Command {
 
     @Override
     public boolean execute(
-        final CommandSender sender,
-        final String commandLabel,
-        final String[] args
+            final CommandSender sender,
+            final String commandLabel,
+            final String[] args
     ) {
         if (!testPermission(sender)) {
             return true;
@@ -119,23 +133,5 @@ public final class PaperCommand extends Command {
         }
         final String[] choppedArgs = Arrays.copyOfRange(args, 1, args.length);
         return subCommand.second().execute(sender, subCommand.first(), choppedArgs);
-    }
-
-    private static @Nullable Pair<String, PaperSubcommand> resolveCommand(String label) {
-        label = label.toLowerCase(Locale.ENGLISH);
-        @Nullable PaperSubcommand subCommand = SUBCOMMANDS.get(label);
-        if (subCommand == null) {
-            final @Nullable String command = ALIASES.get(label);
-            if (command != null) {
-                label = command;
-                subCommand = SUBCOMMANDS.get(command);
-            }
-        }
-
-        if (subCommand != null) {
-            return Pair.of(label, subCommand);
-        }
-
-        return null;
     }
 }

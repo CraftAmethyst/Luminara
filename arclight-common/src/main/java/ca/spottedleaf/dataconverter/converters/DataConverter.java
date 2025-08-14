@@ -21,6 +21,23 @@ public abstract class DataConverter<T, R> {
         this.versionStep = versionStep;
     }
 
+    // step must be in the lower bits, so that encodeVersions(version, step) < encodeVersions(version, step + 1)
+    public static long encodeVersions(final int version, final int step) {
+        return ((long) version << 32) | (step & 0xFFFFFFFFL);
+    }
+
+    public static int getVersion(final long encoded) {
+        return (int) (encoded >>> 32);
+    }
+
+    public static int getStep(final long encoded) {
+        return (int) encoded;
+    }
+
+    public static String encodedToString(final long encoded) {
+        return getVersion(encoded) + "." + getStep(encoded);
+    }
+
     public final int getToVersion() {
         return this.toVersion;
     }
@@ -34,21 +51,4 @@ public abstract class DataConverter<T, R> {
     }
 
     public abstract R convert(final T data, final long sourceVersion, final long toVersion);
-
-    // step must be in the lower bits, so that encodeVersions(version, step) < encodeVersions(version, step + 1)
-    public static long encodeVersions(final int version, final int step) {
-        return ((long)version << 32) | (step & 0xFFFFFFFFL);
-    }
-
-    public static int getVersion(final long encoded) {
-        return (int)(encoded >>> 32);
-    }
-
-    public static int getStep(final long encoded) {
-        return (int)encoded;
-    }
-
-    public static String encodedToString(final long encoded) {
-        return getVersion(encoded) + "." + getStep(encoded);
-    }
 }

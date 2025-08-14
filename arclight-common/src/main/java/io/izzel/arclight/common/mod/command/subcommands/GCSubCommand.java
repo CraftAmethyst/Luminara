@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mod.command.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-// Removed MemoryOptimizer import - MPEM functionality removed
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;

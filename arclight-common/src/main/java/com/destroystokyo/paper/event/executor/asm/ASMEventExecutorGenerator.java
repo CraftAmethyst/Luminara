@@ -1,24 +1,25 @@
 package com.destroystokyo.paper.event.executor.asm;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.bukkit.plugin.EventExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.GeneratorAdapter;
 
+import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.objectweb.asm.Opcodes.*;
 
 public class ASMEventExecutorGenerator {
 
     private static final String EXECUTE_DESCRIPTOR = "(Lorg/bukkit/event/Listener;Lorg/bukkit/event/Event;)V";
+    public static AtomicInteger NEXT_ID = new AtomicInteger(1);
 
     @NotNull
     public static byte[] generateEventExecutor(@NotNull Method m, @NotNull String name) {
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-        writer.visit(V1_8, ACC_PUBLIC, name.replace('.', '/'), null, Type.getInternalName(Object.class), new String[] {Type.getInternalName(EventExecutor.class)});
+        writer.visit(V1_8, ACC_PUBLIC, name.replace('.', '/'), null, Type.getInternalName(Object.class), new String[]{Type.getInternalName(EventExecutor.class)});
         // Generate constructor
         GeneratorAdapter methodGenerator = new GeneratorAdapter(writer.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null), ACC_PUBLIC, "<init>", "()V");
         methodGenerator.loadThis();
@@ -45,7 +46,6 @@ public class ASMEventExecutorGenerator {
         return writer.toByteArray();
     }
 
-    public static AtomicInteger NEXT_ID = new AtomicInteger(1);
     @NotNull
     public static String generateName() {
         int id = NEXT_ID.getAndIncrement();

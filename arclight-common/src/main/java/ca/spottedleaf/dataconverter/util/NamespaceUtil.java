@@ -2,6 +2,9 @@ package ca.spottedleaf.dataconverter.util;
 
 public final class NamespaceUtil {
 
+    private NamespaceUtil() {
+    }
+
     public static String correctNamespace(final String value) {
         if (value == null) {
             return null;
@@ -49,7 +52,5 @@ public final class NamespaceUtil {
 
         return value.substring(colonIndex + 1);
     }
-
-    private NamespaceUtil() {}
 
 }

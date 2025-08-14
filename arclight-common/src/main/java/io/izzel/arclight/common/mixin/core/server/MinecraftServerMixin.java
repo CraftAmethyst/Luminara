@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.server;
 
+import ca.spottedleaf.dataconverter.minecraft.MCDataConverterRegistry;
 import com.mojang.datafixers.DataFixer;
 import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
@@ -80,8 +81,6 @@ import java.net.Proxy;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BooleanSupplier;
-
-import ca.spottedleaf.dataconverter.minecraft.MCDataConverterRegistry;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<TickTask> implements MinecraftServerBridge, ICommandSourceBridge {

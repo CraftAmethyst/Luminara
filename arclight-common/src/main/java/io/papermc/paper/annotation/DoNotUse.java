@@ -1,10 +1,11 @@
 package io.papermc.paper.annotation;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Annotation used to mark methods or constructors which should not be called.

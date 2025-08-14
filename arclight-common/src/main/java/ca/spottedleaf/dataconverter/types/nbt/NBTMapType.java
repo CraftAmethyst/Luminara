@@ -2,7 +2,10 @@ package ca.spottedleaf.dataconverter.types.nbt;
 
 import ca.spottedleaf.dataconverter.types.ListType;
 import ca.spottedleaf.dataconverter.types.MapType;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.Map;
 import java.util.Set;

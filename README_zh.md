@@ -6,7 +6,8 @@
 
 ## ❓ 这啥玩意
 
-Luminara 是一个混合服务端，在 Forge 的基础上通过 Mixin 实现 Bukkit/Spigot/Paper API（Forge+Paper），就像 Mohist/Thermos/MCPC+那样。
+Luminara 是一个混合服务端，在 Forge 的基础上通过 Mixin 实现 Bukkit/Spigot/Paper API（Forge+Paper），就像
+Mohist/Thermos/MCPC+那样。
 
 ## ✨ 特性
 
@@ -27,11 +28,13 @@ Luminara 是一个混合服务端，在 Forge 的基础上通过 Mixin 实现 Bu
 
 ### 稳定版本
 
-- [GitHub Releases](https://github.com/QianMoo0121/Luminara/releases) - 正式版推荐用于生产环境（稳定性优秀），PRE 想要提前尝鲜（稳定性相对正式版较差）
+- [GitHub Releases](https://github.com/QianMoo0121/Luminara/releases) - 正式版推荐用于生产环境（稳定性优秀），PRE
+  想要提前尝鲜（稳定性相对正式版较差）
 
 ### 开发版本
 
-- [每日构建版本](https://github.com/QianMoo0121/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials) _(需要 GitHub 登录，稳定性相对 PRE 较差)_
+- [每日构建版本](https://github.com/QianMoo0121/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials) _(需要
+  GitHub 登录，稳定性相对 PRE 较差)_
 
 ### 自行构建
 
