@@ -27,7 +27,7 @@ public class CraftMagicNumbersAdventureMixin {
 
     // Adventure component flattener
     public @NotNull ComponentFlattener componentFlattener() {
-        return ComponentFlattener.basic();
+        return PaperAdventure.componentFlattener();
     }
 
     // Adventure serializers (deprecated methods for compatibility)
@@ -43,7 +43,7 @@ public class CraftMagicNumbersAdventureMixin {
 
     @Deprecated(forRemoval = true)
     public @NotNull GsonComponentSerializer gsonComponentSerializer() {
-        return GsonComponentSerializer.gson();
+        return PaperAdventure.gsonSerializer();
     }
 
     @Deprecated(forRemoval = true)
@@ -53,7 +53,7 @@ public class CraftMagicNumbersAdventureMixin {
 
     @Deprecated(forRemoval = true)
     public @NotNull LegacyComponentSerializer legacyComponentSerializer() {
-        return LegacyComponentSerializer.legacySection();
+        return PaperAdventure.legacySerializer();
     }
 
     // MiniMessage serializer

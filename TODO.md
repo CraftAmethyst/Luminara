@@ -17,7 +17,7 @@
 - [ ] 0002-Build-system-changes.patch - 构建系统变更
 - [ ] 0003-Test-changes.patch - 测试系统变更
 - [ ] 0004-Add-FastUtil-to-Bukkit.patch - 向 Bukkit 添加 FastUtil
-- [ ] 0005-Adventure.patch - Adventure 文本组件系统
+- [x] 0005-Adventure.patch - Adventure 文本组件系统
 - [ ] 0006-Paper-Utils.patch - Paper 工具集
 - [ ] 0007-Use-ASM-for-event-executors.patch - 使用 ASM 优化事件执行器
 - [ ] 0008-Paper-Plugins.patch - Paper 插件系统
@@ -484,19 +484,19 @@
 
 #### 构建系统 & 基础架构
 
-- [ ] 0001-Setup-Gradle-project.patch - 设置 Gradle 项目结构
-- [ ] 0002-Remap-fixes.patch - 修复重映射问题
-- [ ] 0003-Build-system-changes.patch - 构建系统变更
-- [ ] 0004-Test-changes.patch - 测试系统变更
-- [ ] 0005-Paper-config-files.patch - Paper 配置文件系统
-- [ ] 0006-MC-Dev-fixes.patch - MC 开发修复
-- [ ] 0007-ConcurrentUtil.patch - 并发工具类
-- [ ] 0008-CB-fixes.patch - CraftBukkit 修复
-- [ ] 0009-MC-Utils.patch - Minecraft 工具类
+- [x] 0001-Setup-Gradle-project.patch - 设置 Gradle 项目结构
+- [x] 0002-Remap-fixes.patch - 修复重映射问题
+- [x] 0003-Build-system-changes.patch - 构建系统变更
+- [x] 0004-Test-changes.patch - 测试系统变更
+- [x] 0005-Paper-config-files.patch - Paper 配置文件系统
+- [x] 0006-MC-Dev-fixes.patch - MC 开发修复
+- [x] 0007-ConcurrentUtil.patch - 并发工具类
+- [x] 0008-CB-fixes.patch - CraftBukkit 修复
+- [x] 0009-MC-Utils.patch - Minecraft 工具类
 
 #### 核心系统
 
-- [ ] 0010-Adventure.patch - Adventure 文本组件系统
+- [x] 0010-Adventure.patch - Adventure 文本组件系统
 - [ ] 0011-Paper-command.patch - Paper 命令系统
 - [ ] 0012-Paper-Metrics.patch - Paper 指标系统
 - [ ] 0013-Paper-Plugins.patch - Paper 插件系统

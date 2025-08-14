@@ -79,7 +79,7 @@ public abstract class CraftServerAdventureMixin implements net.kyori.adventure.a
     }
 
     public @NotNull ComponentFlattener componentFlattener() {
-        return ComponentFlattener.basic();
+        return PaperAdventure.componentFlattener();
     }
 
     @Deprecated(forRemoval = true)
@@ -94,7 +94,7 @@ public abstract class CraftServerAdventureMixin implements net.kyori.adventure.a
 
     @Deprecated(forRemoval = true)
     public @NotNull GsonComponentSerializer gsonComponentSerializer() {
-        return GsonComponentSerializer.gson();
+        return PaperAdventure.gsonSerializer();
     }
 
     @Deprecated(forRemoval = true)
@@ -104,7 +104,7 @@ public abstract class CraftServerAdventureMixin implements net.kyori.adventure.a
 
     @Deprecated(forRemoval = true)
     public @NotNull LegacyComponentSerializer legacyComponentSerializer() {
-        return LegacyComponentSerializer.legacySection();
+        return PaperAdventure.legacySerializer();
     }
 
     // MiniMessage serializer

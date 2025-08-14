@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.optimization.mpem;
 
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
-import io.izzel.arclight.i18n.ArclightConfig;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
