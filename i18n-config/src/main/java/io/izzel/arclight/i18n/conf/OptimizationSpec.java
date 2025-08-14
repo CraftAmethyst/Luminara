@@ -20,13 +20,12 @@ public class OptimizationSpec {
     @Setting("chunk-optimization")
     private ChunkOptimizationSpec chunkOptimization;
 
-    // Memory optimization settings
-    @Setting("memory-optimization")
-    private MemoryOptimizationSpec memoryOptimization;
+    // MPEM optimization settings removed to avoid conflicts with Paper
+    // @Setting("memory-optimization")
+    // private MemoryOptimizationSpec memoryOptimization;
 
-    // Async system settings
-    @Setting("async-system")
-    private AsyncSystemSpec asyncSystem;
+    // @Setting("async-system")
+    // private AsyncSystemSpec asyncSystem;
 
     // World creation optimization settings
     @Setting("world-creation")
@@ -48,13 +47,14 @@ public class OptimizationSpec {
         return chunkOptimization != null ? chunkOptimization : new ChunkOptimizationSpec();
     }
 
-    public MemoryOptimizationSpec getMemoryOptimization() {
-        return memoryOptimization != null ? memoryOptimization : new MemoryOptimizationSpec();
-    }
+    // MPEM optimization getters removed - functionality disabled
+    // public MemoryOptimizationSpec getMemoryOptimization() {
+    //     return null; // MPEM memory optimization disabled
+    // }
 
-    public AsyncSystemSpec getAsyncSystem() {
-        return asyncSystem != null ? asyncSystem : new AsyncSystemSpec();
-    }
+    // public AsyncSystemSpec getAsyncSystem() {
+    //     return null; // MPEM async system disabled
+    // }
 
     public WorldCreationSpec getWorldCreation() {
         return worldCreation != null ? worldCreation : new WorldCreationSpec();

@@ -2,7 +2,7 @@ package io.izzel.arclight.common.mod.command.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import io.izzel.arclight.common.optimization.mpem.MemoryOptimizer;
+// Removed MemoryOptimizer import - MPEM functionality removed
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -32,16 +32,24 @@ public class GCSubCommand implements LuminaraSubCommand {
         CommandSourceStack source = context.getSource();
 
         try {
-            double beforeUsage = MemoryOptimizer.getMemoryUsage();
-            MemoryOptimizer.forceCleanup();
+            // Simple memory usage calculation without MPEM
+            Runtime runtime = Runtime.getRuntime();
+            long totalMemory = runtime.totalMemory();
+            long freeMemory = runtime.freeMemory();
+            double beforeUsage = (double) (totalMemory - freeMemory) / runtime.maxMemory();
+
+            // Perform basic cleanup
+            System.runFinalization();
             System.gc();
 
             Thread.sleep(1000);
 
-            double afterUsage = MemoryOptimizer.getMemoryUsage();
+            totalMemory = runtime.totalMemory();
+            freeMemory = runtime.freeMemory();
+            double afterUsage = (double) (totalMemory - freeMemory) / runtime.maxMemory();
             double freed = (beforeUsage - afterUsage) * 100;
 
-            source.sendSuccess(() -> Component.literal(String.format("Cache cleanup and GC completed. Freed: %.2f%%", freed)), true);
+            source.sendSuccess(() -> Component.literal(String.format("Basic GC completed. Freed: %.2f%%", freed)), true);
             source.sendSuccess(() -> Component.literal(String.format("Memory usage: %.2f%% -> %.2f%%", beforeUsage * 100, afterUsage * 100)), false);
 
             return 1;

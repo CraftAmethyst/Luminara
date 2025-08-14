@@ -3,7 +3,7 @@ package io.izzel.arclight.common.mod;
 import io.izzel.arclight.common.mod.server.event.ArclightEventDispatcherRegistry;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.mod.velocity.VelocityManager;
-import io.izzel.arclight.common.optimization.mpem.OptimizationManager;
+// Removed OptimizationManager import - MPEM functionality removed
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -45,7 +45,8 @@ public class ArclightMod {
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
-        OptimizationManager.initialize(event);
+        // MPEM optimization system removed to avoid conflicts with Paper
+        LOGGER.info("Common setup completed - MPEM optimizations disabled for Paper compatibility");
     }
 
     private void onServerAboutToStart(ServerAboutToStartEvent event) {

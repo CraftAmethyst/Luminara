@@ -1,74 +1,75 @@
 # Luminara
 
-一个Arclight fork，争取在Arclight上做出更多优化与改进（1.20.1）
-> 使用本服务端过程中出现的任何问题请在本项目Issue反馈，请勿在Arclight项目Issue反馈！
+[简体中文](/README_zh.md)
 
-## ✨ 特性
+> This server is an Arclight Fork. Please report any issues encountered while using this server in **this project's Issue tracker**. Do **not** report them in the Arclight project's Issue tracker!
 
-- 🔧 **兼容性强** - 支持 Bukkit/Spigot 插件与 Forge 模组同时运行
-- 🚀 **高性能** - 并入了MPEM部分优化项，异步保存世界...
-- 🛠️ **易于使用** - 简单的安装与使用
-- 🌐 **Velocity支持** - 支持Velocity Modern转发，实现跨服功能
+## ❓ What is This?
 
-## 🎯 主要维护版本
+Luminara is a hybrid server that implements Bukkit/Spigot/Paper APIs on a Forge foundation through Mixin (Forge+Paper), similar to Mohist/Thermos/MCPC+.
 
-> **当前主要维护版本：Minecraft 1.20.1**
+## ✨ Features
+
+- 🔧 **High Compatibility** - Supports simultaneous operation of Bukkit/Spigot/select Paper plugins alongside Forge mods
+- 🚀 **High Performance** - Incorporates optimizations from Paper
+- 🛠️ **Easy to Use** - Simple installation and operation
+- 🌐 **Velocity Support** - Supports Velocity Modern forwarding for cross-server functionality
+
+## 🎯 Primary Maintenance Version
+
+> **Currently maintained version: Minecraft 1.20.1**
 >
-> - **Forge 版本**：47.4.6
-> - **稳定性**：较好
-> - **插件兼容性**：一般，仅Spigot
-> - **模组兼容性**：优秀
+> - **Forge Version**: 47.4.6
+> - **Plugin Compatibility**: Moderate (supports Bukkit/Spigot and select Paper plugins)
+> - **Mod Compatibility**: Good
 
-## 📥 下载
+## 📥 Downloads
 
-### 稳定版本
+### Stable Releases
 
-- [GitHub Releases](https://github.com/QianMoo0121/Luminara/releases) - 推荐用于生产环境
+- [GitHub Releases](https://github.com/QianMoo0121/Luminara/releases) - Official releases recommended for production environments (excellent stability). PRE releases are for early access (lower stability than official releases).
 
-### 开发版本
+### Development Builds
 
-- [每日构建版本](https://github.com/QianMoo0121/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials) *(需要
-  GitHub 登录)*
+- [Nightly Builds](https://github.com/QianMoo0121/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials) _(GitHub login required, lower stability than PRE releases)_
 
-### 自行构建
+### Building from Source
 
-- 克隆本项目到本地 `git clone -b <分支> https://github.com/QianMoo0121/Luminara.git`
-- 运行 `./gradlew cleanBuild remapSpigotJar idea --no-daemon -i --stacktrace --refresh-dependencies` 进行配置
-- 运行 `./gradlew build collect` 构建项目
-- 构建完成后，jar 文件位于 `./build/libs` 目录下
+- Clone the repository locally:  
+  `git clone -b <branch> https://github.com/QianMoo0121/Luminara.git`
+- Configure the project:  
+  `./gradlew cleanBuild remapSpigotJar idea --no-daemon -i --stacktrace --refresh-dependencies`
+- Build the project:  
+  `./gradlew build collect`
+- The compiled JAR file will be located in the `./build/libs` directory
 
-## 🚀 安装使用
+## 🚀 Installation & Usage
 
-1. **下载** jar 文件
-2. **启动服务器**：
+1. **Download** the JAR file
+2. **Start the server**:
    ```bash
    java -jar luminara.jar nogui
    ```
-   > `nogui` 参数将禁用服务器控制面板
+   > The `nogui` parameter disables the server GUI panel
 
-## ❌ 不兼容
+## ❌ Incompatibilities
 
-- 与所有的优化模组/插件不兼容
+- Incompatible with **all optimization mods/plugins**
+  > _(Paper's partial optimizations are already included)_
 
-> 已包含MPEM的部分优化
+## 📚 Support & Resources
 
-- 与清理模组/插件不兼容
+### 📖 Documentation
 
-> 已包含实体清理，如果你仍然想用模组/插件来提供实体清理功能，请在arclight.conf关闭实体清理功能
+- [Arclight Documentation](https://wiki.izzel.io/s/arclight-docs) - Detailed usage guides and configuration instructions
+- [To-Do List](TODO.md)
 
-## 📚 支持与帮助
+### 🐛 Issue Reporting
 
-### 📖 文档
+- [Report Bugs](https://github.com/QianMoo0121/Luminara/issues/new/choose) - Submit encountered issues here
+- [Discussions](https://github.com/QianMoo0121/Luminara/discussions) - For questions and general discussions
+- **Do NOT report issues with this server to Arclight!**
 
-- [Arclight文档](https://wiki.izzel.io/s/arclight-docs) - 详细的使用指南和配置说明
-- [待办事项](TODO.md)
+## 📄 License
 
-### 🐛 问题反馈
-
-- [提交 Bug](https://github.com/QianMoo0121/Luminara/issues/new/choose) - 遇到问题请在这里报告
-- [讨论区](https://github.com/QianMoo0121/Luminara/discussions) - 提问和讨论
-- 请勿将本服务端的问题反馈到Arclight！
-
-## 📄 开源协议
-
-本项目基于 [GPL v3](LICENSE) 协议开源。
+This project is open-source under the [GPL v3](LICENSE) license.

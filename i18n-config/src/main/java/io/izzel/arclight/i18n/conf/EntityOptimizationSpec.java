@@ -9,11 +9,12 @@ public class EntityOptimizationSpec {
     @Setting("disable-entity-collisions")
     private boolean disableEntityCollisions = false;
 
-    @Setting("entity-cleanup-enabled")
-    private boolean entityCleanupEnabled = true;
+    // Entity cleanup removed to avoid conflicts with Paper patches
+    // @Setting("entity-cleanup-enabled")
+    // private boolean entityCleanupEnabled = false;
 
-    @Setting("entity-cleanup-threshold")
-    private int entityCleanupThreshold = 600;
+    // @Setting("entity-cleanup-threshold")
+    // private int entityCleanupThreshold = 600;
 
     @Setting("entity-freeze-timeout")
     private long entityFreezeTimeout = 10000;
@@ -21,26 +22,28 @@ public class EntityOptimizationSpec {
     @Setting("reduce-entity-updates")
     private boolean reduceEntityUpdates = true;
 
-    @Setting("clean-valuable-items")
-    private boolean cleanValuableItems = false;
+    // Item cleanup settings removed to avoid conflicts with Paper patches
+    // @Setting("clean-valuable-items")
+    // private boolean cleanValuableItems = false;
 
-    @Setting("item-max-age")
-    private long itemMaxAge = 6000;
+    // @Setting("item-max-age")
+    // private long itemMaxAge = 6000;
 
-    @Setting("cleanup-notification-enabled")
-    private boolean cleanupNotificationEnabled = true;
+    // @Setting("cleanup-notification-enabled")
+    // private boolean cleanupNotificationEnabled = false;
 
-    @Setting("cleanup-warning-time")
-    private int cleanupWarningTime = 30;
+    // @Setting("cleanup-warning-time")
+    // private int cleanupWarningTime = 30;
 
-    @Setting("cleanup-start-message")
-    private String cleanupStartMessage = "&6[Luminara] &eEntity cleanup starting in &c{time} &eseconds...";
+    // Cleanup messages removed - entity cleanup functionality disabled
+    // @Setting("cleanup-start-message")
+    // private String cleanupStartMessage = "";
 
-    @Setting("cleanup-complete-message")
-    private String cleanupCompleteMessage = "&6[Luminara] &aEntity cleanup completed! Removed &c{total} &aentities (Dead: &c{dead}&a, Items: &c{items}&a, Dense: &c{dense}&a, Excess: &c{excess}&a)";
+    // @Setting("cleanup-complete-message")
+    // private String cleanupCompleteMessage = "";
 
-    @Setting("cleanup-cancelled-message")
-    private String cleanupCancelledMessage = "&6[Luminara] &cEntity cleanup cancelled.";
+    // @Setting("cleanup-cancelled-message")
+    // private String cleanupCancelledMessage = "";
 
     @Setting("entity-check-interval")
     private int entityCheckInterval = 200;
@@ -62,11 +65,11 @@ public class EntityOptimizationSpec {
     }
 
     public boolean isEntityCleanupEnabled() {
-        return entityCleanupEnabled;
+        return false; // Entity cleanup disabled to avoid Paper conflicts
     }
 
     public int getEntityCleanupThreshold() {
-        return entityCleanupThreshold;
+        return 600; // Default value, not used
     }
 
     public long getEntityFreezeTimeout() {
@@ -78,31 +81,31 @@ public class EntityOptimizationSpec {
     }
 
     public boolean isCleanValuableItems() {
-        return cleanValuableItems;
+        return false; // Item cleanup disabled to avoid Paper conflicts
     }
 
     public long getItemMaxAge() {
-        return itemMaxAge;
+        return 6000; // Default value, not used
     }
 
     public boolean isCleanupNotificationEnabled() {
-        return cleanupNotificationEnabled;
+        return false; // Cleanup notifications disabled
     }
 
     public int getCleanupWarningTime() {
-        return cleanupWarningTime;
+        return 30; // Default value, not used
     }
 
     public String getCleanupStartMessage() {
-        return cleanupStartMessage;
+        return ""; // Cleanup messages disabled
     }
 
     public String getCleanupCompleteMessage() {
-        return cleanupCompleteMessage;
+        return ""; // Cleanup messages disabled
     }
 
     public String getCleanupCancelledMessage() {
-        return cleanupCancelledMessage;
+        return ""; // Cleanup messages disabled
     }
 
     public int getEntityCheckInterval() {

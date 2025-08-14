@@ -25,14 +25,11 @@ public class PaperCompatibleOptimizer {
      * This method only applies optimizations that don't conflict with Paper
      */
     public static void optimizeWorldCompatibly(ServerLevel world) {
-        var config = ArclightConfig.spec().getOptimization();
+        // MPEM optimizations removed to avoid conflicts with Paper
+        // Only basic memory optimization remains
+        performMemoryOptimization(world);
 
-        // Only perform non-conflicting optimizations
-        if (config.getMemoryOptimization().isCacheCleanupEnabled()) {
-            performMemoryOptimization(world);
-        }
-
-        LOGGER.debug("Applied Paper-compatible optimizations for world: {}",
+        LOGGER.debug("Applied basic Paper-compatible optimizations for world: {}",
                 world.dimension().location());
     }
 

@@ -21,7 +21,7 @@ public class LuminaraCommand {
         // Register default subcommands
         registerSubCommand(new InfoSubCommand());
         registerSubCommand(new GCSubCommand());
-        registerSubCommand(new CleanupSubCommand());
+        // Removed CleanupSubCommand - entity cleanup functionality removed to avoid Paper conflicts
         registerSubCommand(new AdventureTestSubCommand());
     }
 
