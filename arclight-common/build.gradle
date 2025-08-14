@@ -1,8 +1,16 @@
 buildscript {
     repositories {
+        // Primary repositories
+        mavenCentral()
+        maven { url = 'https://repo1.maven.org/maven2/' }
+
+        // Backup repositories
+        maven { url = 'https://repo.maven.apache.org/maven2/' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/releases/' }
+
+        // Minecraft/Forge repositories
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
-        mavenCentral()
         maven { url = 'https://maven.izzel.io/releases' }
         // maven { url = 'https://maven.parchmentmc.org' }
     }
@@ -47,14 +55,23 @@ minecraft {
 }
 
 repositories {
-    maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+    // Primary repositories
+    mavenCentral()
+    maven { url = 'https://repo1.maven.org/maven2/' }
+
+    // Backup repositories for ASM and other dependencies
+    maven { url = 'https://repo.maven.apache.org/maven2/' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/releases/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+
+    // Minecraft/Forge repositories
     maven { url = 'https://files.minecraftforge.net/maven/' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+
+    // Project specific repositories
     maven { url = 'https://maven.izzel.io/releases' }
     maven { url = 'https://jitpack.io/' }
-
-    mavenCentral()
 }
 
 dependencies {
