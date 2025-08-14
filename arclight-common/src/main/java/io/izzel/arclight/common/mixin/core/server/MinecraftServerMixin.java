@@ -10,7 +10,7 @@ import io.izzel.arclight.common.mod.server.BukkitRegistry;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.BukkitOptionParser;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
-import io.izzel.arclight.common.optimization.paper.WorldCreationOptimizer;
+
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -270,6 +270,10 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     protected void runServer() {
         try {
             ARCLIGHT_LOGGER.info("server.starting");
+
+            // Luminara - Validate Paper compatibility before server start
+            io.izzel.arclight.common.optimization.paper.PaperCompatibleOptimizer.logCompatibilityStatus();
+
             if (!this.initServer()) {
                 throw new IllegalStateException("Failed to initialize server");
             }
@@ -397,8 +401,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
             arclight$saveAllWorldsAsync(true, true, true); // suppressLog = true to avoid duplicate message
         }
 
-        // Luminara - Cleanup world creation optimizer resources
-        WorldCreationOptimizer.shutdown();
+        // Luminara - Paper optimization cleanup removed (conflicts with Paper patches)
     }
 
     @Inject(method = "createLevels", at = @At("RETURN"))
@@ -446,7 +449,8 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         arclight$capturedLevel = null;
         if (serverWorld != null) {
             this.levels.put(serverWorld.dimension(), serverWorld);
-            WorldCreationOptimizer.optimizeWorldInit(serverWorld, serverWorld.serverLevelData);
+            // Luminara - Use Paper-compatible optimization instead
+            io.izzel.arclight.common.optimization.paper.PaperCompatibleOptimizer.optimizeWorldCompatibly(serverWorld);
 
             if (((CraftServer) Bukkit.getServer()).scoreboardManager == null) {
                 ((CraftServer) Bukkit.getServer()).scoreboardManager = new CraftScoreboardManager((MinecraftServer) (Object) this, serverWorld.getScoreboard());
@@ -466,7 +470,8 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
      */
     @Overwrite
     public void prepareLevels(ChunkProgressListener listener) {
-        var config = io.izzel.arclight.i18n.ArclightConfig.spec().getOptimization().getWorldCreation();
+        // Luminara - World creation optimization removed to avoid conflicts with Paper patches
+        // Using standard spawn area preparation instead
 
         ServerLevel serverworld = this.overworld();
         this.forceTicks = true;
@@ -477,13 +482,13 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         ServerChunkCache serverchunkprovider = serverworld.getChunkSource();
         this.nextTickTime = Util.getMillis();
 
-        int spawnRadius = config.getSpawnAreaRadius();
+        // Use standard spawn radius (11) instead of config value to avoid Paper conflicts
+        int spawnRadius = 11;
         serverchunkprovider.addRegionTicket(TicketType.START, new ChunkPos(blockpos), spawnRadius, Unit.INSTANCE);
-        if (!config.isSkipSpawnChunkLoading()) {
-            int targetChunks = (spawnRadius * 2 + 1) * (spawnRadius * 2 + 1);
-            while (serverchunkprovider.getTickingGenerated() < targetChunks) {
-                this.executeModerately();
-            }
+        // Always load spawn chunks to maintain compatibility
+        int targetChunks = (spawnRadius * 2 + 1) * (spawnRadius * 2 + 1);
+        while (serverchunkprovider.getTickingGenerated() < targetChunks) {
+            this.executeModerately();
         }
 
         this.executeModerately();
@@ -514,7 +519,8 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
     // bukkit methods
     public void initWorld(ServerLevel serverWorld, ServerLevelData worldInfo, WorldData saveData, WorldOptions worldOptions) {
-        var config = io.izzel.arclight.i18n.ArclightConfig.spec().getOptimization().getWorldCreation();
+        // Luminara - World creation optimization removed to avoid conflicts with Paper patches
+        // Using standard world initialization instead
 
         ARCLIGHT_LOGGER.info("world.creating", ((WorldBridge) serverWorld).bridge$getWorld().getName());
 
@@ -525,16 +531,14 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                             ((WorldBridge) serverWorld).bridge$getWorld()));
         }
 
-        if (config.isOptimizeWorldBorderSetup()) {
-            WorldBorder worldborder = serverWorld.getWorldBorder();
-            worldborder.applySettings(worldInfo.getWorldBorder());
-        }
+        // Always setup world border (Paper handles optimization internally)
+        WorldBorder worldborder = serverWorld.getWorldBorder();
+        worldborder.applySettings(worldInfo.getWorldBorder());
 
         if (!worldInfo.isInitialized()) {
             try {
-                if (!config.isDeferSpawnAreaPreparation()) {
-                    setInitialSpawn(serverWorld, worldInfo, worldOptions.generateBonusChest(), flag);
-                }
+                // Always set initial spawn (Paper handles optimization internally)
+                setInitialSpawn(serverWorld, worldInfo, worldOptions.generateBonusChest(), flag);
                 worldInfo.setInitialized(true);
                 if (flag) {
                     this.setupDebugLevel(this.worldData);

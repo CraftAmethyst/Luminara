@@ -6,17 +6,19 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class WorldCreationSpec {
 
+    // Luminara - World creation optimizations disabled to avoid conflicts with Paper patches
+    // Paper handles world creation optimization internally
     @Setting("fast-world-creation")
-    private boolean fastWorldCreation = true;
+    private boolean fastWorldCreation = false;
 
     @Setting("skip-spawn-chunk-loading")
     private boolean skipSpawnChunkLoading = false;
 
     @Setting("force-close-loading-screen")
-    private boolean forceCloseLoadingScreen = true;
+    private boolean forceCloseLoadingScreen = false;
 
     @Setting("early-world-list-addition")
-    private boolean earlyWorldListAddition = true;
+    private boolean earlyWorldListAddition = false;
 
     @Setting("parallel-world-initialization")
     private boolean parallelWorldInitialization = false;
@@ -28,7 +30,7 @@ public class WorldCreationSpec {
     private int maxConcurrentWorldLoads = 2;
 
     @Setting("optimize-world-border-setup")
-    private boolean optimizeWorldBorderSetup = true;
+    private boolean optimizeWorldBorderSetup = false;
 
     @Setting("defer-spawn-area-preparation")
     private boolean deferSpawnAreaPreparation = false;
@@ -37,7 +39,7 @@ public class WorldCreationSpec {
     private int spawnAreaRadius = 11;
 
     @Setting("async-world-data-loading")
-    private boolean asyncWorldDataLoading = true;
+    private boolean asyncWorldDataLoading = false;
 
     public boolean isFastWorldCreation() {
         return fastWorldCreation;

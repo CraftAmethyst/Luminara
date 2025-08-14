@@ -17,57 +17,21 @@ public class ChunkOptimizer {
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-
-        var config = ArclightConfig.spec().getOptimization().getChunkOptimization();
-        if (!config.isAggressiveChunkUnloading()) return;
-
-        long currentTime = System.currentTimeMillis();
-        long unloadThreshold = config.getChunkUnloadDelay() * 1000L;
-
-        // Update active chunks
-        for (ServerLevel level : event.getServer().getAllLevels()) {
-            level.getPlayers(player -> {
-                ChunkPos pos = new ChunkPos(player.chunkPosition().x, player.chunkPosition().z);
-                chunkAccessTimes.put(pos, currentTime);
-                return false;
-            });
-        }
-
-        // Unload inactive chunks
-        int unloadedCount = 0;
-        chunkAccessTimes.entrySet().removeIf(entry -> {
-            if (currentTime - entry.getValue() > unloadThreshold) {
-                for (ServerLevel level : event.getServer().getAllLevels()) {
-                    if (level.getChunkSource().hasChunk(entry.getKey().x, entry.getKey().z)) {
-                        // Trigger chunk unloading
-                        level.getChunkSource().tick(() -> true, true);
-                        LOGGER.debug("optimization.chunk.unloading", entry.getKey().x, entry.getKey().z, level.dimension().location());
-                    }
-                }
-                return true;
-            }
-            return false;
-        });
-
-        if (unloadedCount > 0) {
-            LOGGER.info("optimization.chunk.unloaded", unloadedCount);
-        }
-
+        // Luminara - Chunk optimization disabled to avoid conflicts with Paper patches
+        // Paper handles chunk loading/unloading optimization internally
+        // This method is kept for compatibility but does nothing
+        return;
     }
 
     public static void markChunkAccessed(ChunkPos pos) {
-        chunkAccessTimes.put(pos, System.currentTimeMillis());
+        // Luminara - Chunk access tracking disabled (Paper handles this internally)
+        // Method kept for compatibility
     }
 
     public static boolean isChunkActive(ChunkPos pos) {
-        var config = ArclightConfig.spec().getOptimization().getChunkOptimization();
-        Long lastAccess = chunkAccessTimes.get(pos);
-
-        if (lastAccess == null) return false;
-
-        long threshold = config.getChunkUnloadDelay() * 1000L;
-        return (System.currentTimeMillis() - lastAccess) < threshold;
+        // Luminara - Chunk activity tracking disabled (Paper handles this internally)
+        // Method kept for compatibility, always returns true to avoid breaking existing code
+        return true;
     }
 
 
