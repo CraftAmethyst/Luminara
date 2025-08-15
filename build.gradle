@@ -2,7 +2,7 @@ import io.izzel.arclight.gradle.tasks.UploadFilesTask
 
 allprojects {
     group 'io.izzel.luminara'
-    version '1.0.8'
+    version '1.1.0-Pre1-nighty6'
 
     def getGitHash = { ->
         def stdout = new ByteArrayOutputStream()
