@@ -8,10 +8,20 @@ buildscript {
         maven { url = 'https://repo.maven.apache.org/maven2/' }
         maven { url = 'https://oss.sonatype.org/content/repositories/releases/' }
 
+        // Additional backup repositories
+        maven { url = 'https://maven.aliyun.com/repository/public' }
+        maven { url = 'https://maven.aliyun.com/repository/google' }
+        maven { url = 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url = 'https://plugins.gradle.org/m2/' }
+        maven { url = 'https://repo.codemc.io/repository/maven' }
+        maven { url = 'https://jitpack.io' }
+
         // Minecraft/Forge repositories
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
         maven { url = 'https://maven.izzel.io/releases' }
+        // Additional backup for Spigot
+        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
         // maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
@@ -64,10 +74,24 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/releases/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
 
+    // Additional backup repositories
+    maven { url = 'https://maven.aliyun.com/repository/public' }
+    maven { url = 'https://maven.aliyun.com/repository/google' }
+    maven { url = 'https://maven.aliyun.com/repository/spring-plugin' }
+    maven { url = 'https://plugins.gradle.org/m2/' }
+    maven { url = 'https://repo.codemc.io/repository/maven' }
+
     // Minecraft/Forge repositories
     maven { url = 'https://files.minecraftforge.net/maven/' }
     maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    
+    // Additional backup repositories for Minecraft/Forge
+    maven { url = 'https://maven.minecraftforge.net' }
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
+    maven { url = 'https://libraries.minecraft.net/' }
+    maven { url = 'https://maven.fabricmc.net/' }
 
     // Project specific repositories
     maven { url = 'https://maven.izzel.io/releases' }
