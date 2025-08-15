@@ -18,12 +18,14 @@ body:
       label: 请确认您已完成以下几件事
       description: 市面上大多数整合包，特别是较老版本（1.12.2）的整合包，其自带的插件都无法在高版本环境下运行
       options:
-        - label: 正在使用最新的 Arclight
+        - label: 正在使用最新 Release 版本的 Luminara
         - label: 已为所有插件及模组安装依赖
           required: true
         - label: 已为所有插件及模组更新至最新版
           required: true
         - label: 不可在 Spigot 复现
+          required: true
+        - label: 不可在 Paper 复现
           required: true
         - label: 不可在 Forge 复现
           required: true
@@ -31,8 +33,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: Arclight 版本
-      description: 在 Arclight 启动时会打印版本，如 arclight-1.15.2-1.0.3-SNAPSHOT-9455d03
+      label: Luminara 版本
+      description: 在 Luminara 启动时会打印版本，如 Luminara-1.15.2-1.0.3-SNAPSHOT-9455d03
     validations:
       required: true
 
@@ -90,7 +92,7 @@ body:
       description: >-
         日志能在 /logs/latest.log 中找到
         <br>服务器关闭后，将日志文件拖拽至输入框上传
-        <br>或上传至 https://paste.ubuntu.com/ 网站，提交后将链接附在下方即可
+        <br>或上传至 https://mclo.gs/ 网站，提交后将链接附在下方即可
         <br>如果选择使用其他在线剪贴板，请确保链接可用
         <br>**请勿直接复制粘贴日志文本**
       placeholder: 日志链接，或将日志文件拖到此处上传
