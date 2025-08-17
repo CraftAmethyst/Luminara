@@ -84,8 +84,7 @@ public class TeleportCommandMixin {
 
                 label23:
                 {
-                    if (entity instanceof LivingEntity) {
-                        LivingEntity livingentity = (LivingEntity) entity;
+                    if (entity instanceof LivingEntity livingentity) {
                         if (livingentity.isFallFlying()) {
                             break label23;
                         }
@@ -95,8 +94,7 @@ public class TeleportCommandMixin {
                     entity.setOnGround(true);
                 }
 
-                if (entity instanceof PathfinderMob) {
-                    PathfinderMob pathfindermob = (PathfinderMob) entity;
+                if (entity instanceof PathfinderMob pathfindermob) {
                     pathfindermob.getNavigation().stop();
                 }
 

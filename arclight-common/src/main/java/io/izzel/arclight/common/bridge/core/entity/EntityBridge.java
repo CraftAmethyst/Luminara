@@ -4,6 +4,7 @@ import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -52,4 +53,10 @@ public interface EntityBridge extends ICommandSourceBridge {
     int bridge$getRideCooldown();
 
     boolean bridge$canCollideWith(Entity entity);
+
+    // Paper start - Entity Origin API
+    Location bridge$getOrigin();
+
+    void bridge$setOrigin(Location origin);
+    // Paper end
 }

@@ -737,55 +737,55 @@ public class MultiThreadedQueue<E> implements Queue<E> {
         /* element */
 
         @SuppressWarnings("unchecked")
-        protected final E getElementPlain() {
+        protected E getElementPlain() {
             return (E) ELEMENT_HANDLE.get(this);
         }
 
-        protected final void setElementPlain(final Object element) {
+        protected void setElementPlain(final Object element) {
             ELEMENT_HANDLE.set(this, element);
         }
 
         @SuppressWarnings("unchecked")
-        protected final E getElementVolatile() {
+        protected E getElementVolatile() {
             return (E) ELEMENT_HANDLE.getVolatile(this);
         }
 
-        protected final void setElementVolatile(final Object element) {
+        protected void setElementVolatile(final Object element) {
             ELEMENT_HANDLE.setVolatile(this, element);
         }
 
         @SuppressWarnings("unchecked")
-        protected final E getAndSetElementVolatile(final Object element) {
+        protected E getAndSetElementVolatile(final Object element) {
             return (E) ELEMENT_HANDLE.getAndSet(this, element);
         }
 
         @SuppressWarnings("unchecked")
-        protected final E compareExchangeElementVolatile(final Object expect, final Object update) {
+        protected E compareExchangeElementVolatile(final Object expect, final Object update) {
             return (E) ELEMENT_HANDLE.compareAndExchange(this, expect, update);
         }
 
         /* next */
 
         @SuppressWarnings("unchecked")
-        protected final LinkedNode<E> getNextPlain() {
+        protected LinkedNode<E> getNextPlain() {
             return (LinkedNode<E>) NEXT_HANDLE.get(this);
         }
 
-        protected final void setNextPlain(final LinkedNode<E> next) {
+        protected void setNextPlain(final LinkedNode<E> next) {
             NEXT_HANDLE.set(this, next);
         }
 
         @SuppressWarnings("unchecked")
-        protected final LinkedNode<E> getNextVolatile() {
+        protected LinkedNode<E> getNextVolatile() {
             return (LinkedNode<E>) NEXT_HANDLE.getVolatile(this);
         }
 
-        protected final void setNextVolatile(final LinkedNode<E> next) {
+        protected void setNextVolatile(final LinkedNode<E> next) {
             NEXT_HANDLE.setVolatile(this, next);
         }
 
         @SuppressWarnings("unchecked")
-        protected final LinkedNode<E> compareExchangeNextVolatile(final LinkedNode<E> expect, final LinkedNode<E> update) {
+        protected LinkedNode<E> compareExchangeNextVolatile(final LinkedNode<E> expect, final LinkedNode<E> update) {
             return (LinkedNode<E>) NEXT_HANDLE.compareAndExchange(this, expect, update);
         }
     }
@@ -801,7 +801,7 @@ public class MultiThreadedQueue<E> implements Queue<E> {
             this.advance();
         }
 
-        protected final void advance() {
+        protected void advance() {
             if (this.next == null) {
                 this.nextElement = null;
                 return;

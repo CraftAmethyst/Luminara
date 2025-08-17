@@ -42,12 +42,12 @@ public class PaperPluginClassLoader extends URLClassLoader {
     private final URL url;
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<>();
     private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
     private JavaPlugin pluginInit;
 
     PaperPluginClassLoader(@NotNull PaperPluginLoader loader, @NotNull ClassLoader parent,
                            @NotNull PaperPluginDescriptionFile description, @NotNull File dataFolder,
-                           @NotNull File file) throws IOException, InvalidPluginException, MalformedURLException {
+                           @NotNull File file) throws IOException, InvalidPluginException {
         super(new URL[]{file.toURI().toURL()}, parent);
 
         this.loader = loader;

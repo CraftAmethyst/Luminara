@@ -149,6 +149,9 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
     @Shadow private Entity vehicle;
     private CraftEntity bukkitEntity;
     private transient PositionImpl arclight$tpPos;
+    // Paper start - Entity Origin API
+    private org.bukkit.Location arclight$origin;
+    // Paper end
 
     private static boolean isLevelAtLeast(CompoundTag tag, int level) {
         return tag.contains("Bukkit.updateLevel") && tag.getInt("Bukkit.updateLevel") >= level;
@@ -531,6 +534,26 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
     public void bridge$postTick() {
         postTick();
     }
+
+    // Paper start - Entity Origin API
+    public void arclight$setOrigin(org.bukkit.Location origin) {
+        this.arclight$origin = origin != null ? origin.clone() : null;
+    }
+
+    public org.bukkit.Location arclight$getOrigin() {
+        return this.arclight$origin != null ? this.arclight$origin.clone() : null;
+    }
+
+    @Override
+    public org.bukkit.Location bridge$getOrigin() {
+        return arclight$getOrigin();
+    }
+
+    @Override
+    public void bridge$setOrigin(org.bukkit.Location origin) {
+        arclight$setOrigin(origin);
+    }
+    // Paper end
 
     @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;handleNetherPortal()V"))
     public void arclight$baseTick$moveToPostTick(Entity entity) {
@@ -1043,7 +1066,7 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
     @Inject(method = "restoreFrom", at = @At("HEAD"))
     private void arclight$forwardHandle(Entity entityIn, CallbackInfo ci) {
         ((InternalEntityBridge) entityIn).internal$getBukkitEntity().setHandle((Entity) (Object) this);
-        ((EntityBridge) this).bridge$setBukkitEntity(((InternalEntityBridge) entityIn).internal$getBukkitEntity());
+        this.bridge$setBukkitEntity(((InternalEntityBridge) entityIn).internal$getBukkitEntity());
         if (entityIn instanceof Mob) {
             ((Mob) entityIn).dropLeash(true, false);
         }

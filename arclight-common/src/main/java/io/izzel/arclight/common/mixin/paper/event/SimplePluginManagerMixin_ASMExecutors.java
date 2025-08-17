@@ -37,7 +37,6 @@ public class SimplePluginManagerMixin_ASMExecutors {
                 Class<?> executorClass = definer.defineClass(method.getDeclaringClass().getClassLoader(), name, classData);
                 EventExecutor executor = (EventExecutor) executorClass.getDeclaredConstructor().newInstance();
                 cir.setReturnValue(executor);
-                return;
             }
         } catch (Exception e) {
             // Fall back to default implementation if ASM generation fails

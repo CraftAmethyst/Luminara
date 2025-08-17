@@ -4,6 +4,6 @@ import ca.spottedleaf.dataconverter.types.MapType;
 
 public interface DataWalker<K> {
 
-    public MapType<String> walk(final MapType<K> data, final long fromVersion, final long toVersion);
+    MapType<String> walk(final MapType<K> data, final long fromVersion, final long toVersion);
 
 }

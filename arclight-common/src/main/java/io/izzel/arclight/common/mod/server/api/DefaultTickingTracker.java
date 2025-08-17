@@ -24,10 +24,7 @@ public class DefaultTickingTracker implements TickingTracker {
             return tileState;
         }
         Block block = getTickingBlock();
-        if (block != null) {
-            return block;
-        }
-        return null;
+        return block;
     }
 
     @Nullable

@@ -31,7 +31,7 @@ public final class MCDataConverter {
 
         final NBTMapType replaced = (NBTMapType) convertData(type, wrapped, fromVersion, toVersion);
 
-        return replaced == null ? wrapped.getTag() : replaced.getTag();
+        return replaced == null ? wrapped.tag() : replaced.tag();
     }
 
     public static JsonObject convertJson(final MCDataType type, final JsonObject data, final boolean compressed, final int fromVersion, final int toVersion) {
@@ -39,7 +39,7 @@ public final class MCDataConverter {
 
         final JsonMapType replaced = (JsonMapType) convertData(type, wrapped, fromVersion, toVersion);
 
-        return replaced == null ? wrapped.getJson() : replaced.getJson();
+        return replaced == null ? wrapped.json() : replaced.json();
     }
 
     private static MapType<String> convertData(final MCDataType type, final MapType<String> data, int fromVersion, final int toVersion) {

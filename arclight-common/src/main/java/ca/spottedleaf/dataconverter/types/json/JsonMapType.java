@@ -10,32 +10,14 @@ import com.google.gson.JsonPrimitive;
 import java.util.Map;
 import java.util.Set;
 
-public final class JsonMapType implements MapType<String> {
-
-    private final JsonObject json;
-    private final boolean compressed;
+public record JsonMapType(JsonObject json, boolean compressed) implements MapType<String> {
 
     public JsonMapType() {
-        this.json = new JsonObject();
-        this.compressed = false;
+        this(new JsonObject(), false);
     }
 
     public JsonMapType(final JsonObject json) {
-        this.json = json;
-        this.compressed = false;
-    }
-
-    public JsonMapType(final JsonObject json, final boolean compressed) {
-        this.json = json;
-        this.compressed = compressed;
-    }
-
-    public JsonObject getJson() {
-        return this.json;
-    }
-
-    public boolean isCompressed() {
-        return this.compressed;
+        this(json, false);
     }
 
     @Override
@@ -56,11 +38,8 @@ public final class JsonMapType implements MapType<String> {
     @Override
     public boolean hasKey(final String key, final int type) {
         final JsonElement element = this.json.get(key);
-        if (element == null) {
-            return false;
-        }
+        return element != null;
         // JSON doesn't have strict typing like NBT, so we approximate
-        return true;
     }
 
     @Override
@@ -343,7 +322,7 @@ public final class JsonMapType implements MapType<String> {
     @Override
     public void setList(final String key, final ListType value) {
         if (value instanceof JsonListType) {
-            this.json.add(key, ((JsonListType) value).getJson());
+            this.json.add(key, ((JsonListType) value).json());
         }
     }
 
@@ -355,7 +334,7 @@ public final class JsonMapType implements MapType<String> {
         }
 
         final JsonListType ret = new JsonListType(new JsonArray(), this.compressed);
-        this.json.add(key, ret.getJson());
+        this.json.add(key, ret.json());
         return ret;
     }
 
@@ -367,7 +346,7 @@ public final class JsonMapType implements MapType<String> {
     @Override
     public boolean getBoolean(final String key) {
         final JsonElement element = this.json.get(key);
-        return element != null ? element.getAsBoolean() : false;
+        return element != null && element.getAsBoolean();
     }
 
     @Override

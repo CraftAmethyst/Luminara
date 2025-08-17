@@ -175,15 +175,14 @@ public final class PaperIntegrationValidator {
      * Get validation report.
      */
     public static String getValidationReport() {
-        StringBuilder report = new StringBuilder();
-        report.append("Paper Integration Validation Report:\n");
 
-        report.append("- Paper Integration: ").append(validatePaperIntegration() ? "PASS" : "FAIL").append("\n");
-        report.append("- Paper Configuration: ").append(validatePaperConfiguration() ? "PASS" : "FAIL").append("\n");
-        report.append("- Adventure Integration: ").append(validateAdventureIntegration() ? "PASS" : "FAIL").append("\n");
-        report.append("- Concurrent Utilities: ").append(validateConcurrentUtilities() ? "PASS" : "FAIL").append("\n");
+        String report = "Paper Integration Validation Report:\n" +
+                "- Paper Integration: " + (validatePaperIntegration() ? "PASS" : "FAIL") + "\n" +
+                "- Paper Configuration: " + (validatePaperConfiguration() ? "PASS" : "FAIL") + "\n" +
+                "- Adventure Integration: " + (validateAdventureIntegration() ? "PASS" : "FAIL") + "\n" +
+                "- Concurrent Utilities: " + (validateConcurrentUtilities() ? "PASS" : "FAIL") + "\n";
 
-        return report.toString();
+        return report;
     }
 
     /**

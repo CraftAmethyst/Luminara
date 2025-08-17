@@ -142,7 +142,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     @Final
     private AttributeMap attributes;
     private boolean isTickingEffects = false;
-    private List<Map.Entry<Either<MobEffectInstance, MobEffect>, EntityPotionEffectEvent.Cause>> effectsToProcess = Lists.newArrayList();
+    private final List<Map.Entry<Either<MobEffectInstance, MobEffect>, EntityPotionEffectEvent.Cause>> effectsToProcess = Lists.newArrayList();
     private transient EntityPotionEffectEvent.Action arclight$action;
     private transient boolean arclight$damageResult;
     private transient EntityRegainHealthEvent.RegainReason arclight$regainReason;
@@ -635,7 +635,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
             float f1 = 0.0F;
             // ShieldBlockEvent implemented in damageEntity0
 
-            if (false && amount > 0.0F && this.isDamageSourceBlocked(source)) {
+            if (false) {
                 this.hurtCurrentlyUsedShield(amount);
                 f1 = amount;
                 amount = 0.0F;

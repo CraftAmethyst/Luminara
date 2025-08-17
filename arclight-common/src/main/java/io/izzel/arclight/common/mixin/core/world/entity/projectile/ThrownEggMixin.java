@@ -53,8 +53,7 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
                     var entityType = ((EntityTypeBridge) (Object) hatchingType).bridge$getHandle();
                     var entity = entityType.create(this.level());
                     // Let's do: Meadow mixin compatibility https://github.com/IzzelAliz/Arclight/issues/1149
-                    if (entity instanceof Chicken) {
-                        Chicken chicken = (Chicken) entity;
+                    if (entity instanceof Chicken chicken) {
                         Blackhole.consume(chicken);
                     }
                     if (entity != null) {

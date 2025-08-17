@@ -29,7 +29,7 @@ public abstract class MerchantInventoryMixin implements IInventoryBridge, Contai
     @Shadow @Final private Merchant merchant;
     // @formatter:on
 
-    private List<HumanEntity> transactions = new ArrayList<>();
+    private final List<HumanEntity> transactions = new ArrayList<>();
     private int maxStack = MAX_STACK;
 
     @Override

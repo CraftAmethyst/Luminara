@@ -7,10 +7,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class ErrorHandlingSpec {
 
     @Setting("continue-on-crash")
-    private boolean continueOnCrash = false;
+    private final boolean continueOnCrash = false;
 
     @Setting("crash-report-directory")
-    private String crashReportDirectory = "crash-reports";
+    private final String crashReportDirectory = "crash-reports";
 
     public boolean isContinueOnCrash() {
         return continueOnCrash;

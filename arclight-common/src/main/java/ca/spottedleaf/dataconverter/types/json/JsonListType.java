@@ -8,32 +8,14 @@ import com.google.gson.JsonPrimitive;
 
 import java.util.List;
 
-public final class JsonListType implements ListType {
-
-    private final JsonArray json;
-    private final boolean compressed;
+public record JsonListType(JsonArray json, boolean compressed) implements ListType {
 
     public JsonListType() {
-        this.json = new JsonArray();
-        this.compressed = false;
+        this(new JsonArray(), false);
     }
 
     public JsonListType(final JsonArray json) {
-        this.json = json;
-        this.compressed = false;
-    }
-
-    public JsonListType(final JsonArray json, final boolean compressed) {
-        this.json = json;
-        this.compressed = compressed;
-    }
-
-    public JsonArray getJson() {
-        return this.json;
-    }
-
-    public boolean isCompressed() {
-        return this.compressed;
+        this(json, false);
     }
 
     @Override
@@ -219,14 +201,14 @@ public final class JsonListType implements ListType {
     @Override
     public void addMap(final MapType<String> value) {
         if (value instanceof JsonMapType) {
-            this.json.add(((JsonMapType) value).getJson());
+            this.json.add(((JsonMapType) value).json());
         }
     }
 
     @Override
     public void addList(final ListType value) {
         if (value instanceof JsonListType) {
-            this.json.add(((JsonListType) value).getJson());
+            this.json.add(((JsonListType) value).json());
         }
     }
 
@@ -295,14 +277,14 @@ public final class JsonListType implements ListType {
     @Override
     public void setMap(final int index, final MapType<String> value) {
         if (value instanceof JsonMapType) {
-            this.json.set(index, ((JsonMapType) value).getJson());
+            this.json.set(index, ((JsonMapType) value).json());
         }
     }
 
     @Override
     public void setList(final int index, final ListType value) {
         if (value instanceof JsonListType) {
-            this.json.set(index, ((JsonListType) value).getJson());
+            this.json.set(index, ((JsonListType) value).json());
         }
     }
 

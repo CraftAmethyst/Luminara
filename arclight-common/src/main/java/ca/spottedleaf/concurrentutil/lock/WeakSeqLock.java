@@ -12,8 +12,8 @@ import java.lang.invoke.VarHandle;
  */
 public final class WeakSeqLock {
 
-    protected static final VarHandle SEQUENCE_HANDLE = ConcurrentUtil.getVarHandle(WeakSeqLock.class, "sequence", int.class);
-    protected volatile int sequence;
+    private static final VarHandle SEQUENCE_HANDLE = ConcurrentUtil.getVarHandle(WeakSeqLock.class, "sequence", int.class);
+    private volatile int sequence;
 
     public WeakSeqLock() {
         this.sequence = 0;
@@ -100,23 +100,23 @@ public final class WeakSeqLock {
 
     /* sequence */
 
-    protected final int getSequenceVolatile() {
+    private int getSequenceVolatile() {
         return (int) SEQUENCE_HANDLE.getVolatile(this);
     }
 
-    protected final void setSequenceVolatile(final int sequence) {
+    private void setSequenceVolatile(final int sequence) {
         SEQUENCE_HANDLE.setVolatile(this, sequence);
     }
 
-    protected final boolean compareAndSetSequenceVolatile(final int expect, final int update) {
+    private boolean compareAndSetSequenceVolatile(final int expect, final int update) {
         return SEQUENCE_HANDLE.compareAndSet(this, expect, update);
     }
 
-    protected final int getAndAddSequenceVolatile(final int delta) {
+    private int getAndAddSequenceVolatile(final int delta) {
         return (int) SEQUENCE_HANDLE.getAndAdd(this, delta);
     }
 
-    protected final int addAndGetSequenceVolatile(final int delta) {
+    private int addAndGetSequenceVolatile(final int delta) {
         return (int) SEQUENCE_HANDLE.getAndAdd(this, delta) + delta;
     }
 

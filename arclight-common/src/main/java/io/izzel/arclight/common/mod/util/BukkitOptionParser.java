@@ -4,6 +4,7 @@ import joptsimple.OptionParser;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 
@@ -21,6 +22,12 @@ public class BukkitOptionParser extends OptionParser {
                 .ofType(File.class)
                 .defaultsTo(new File("plugins"))
                 .describedAs("Plugin directory");
+
+        // Paper start - Add command line option to load extra plugin jars
+        accepts("add-plugin", "Extra plugin jar to load")
+                .withRequiredArg()
+                .ofType(File.class)
+                .describedAs("Plugin jar file");
 
         acceptsAll(asList("h", "host", "server-ip"), "Host to listen on")
                 .withRequiredArg()
@@ -57,31 +64,31 @@ public class BukkitOptionParser extends OptionParser {
                 .ofType(SimpleDateFormat.class)
                 .describedAs("Log date format");
 
-        acceptsAll(asList("log-pattern"), "Specfies the log filename pattern")
+        acceptsAll(List.of("log-pattern"), "Specfies the log filename pattern")
                 .withRequiredArg()
                 .ofType(String.class)
                 .defaultsTo("server.log")
                 .describedAs("Log filename");
 
-        acceptsAll(asList("log-limit"), "Limits the maximum size of the log file (0 = unlimited)")
+        acceptsAll(List.of("log-limit"), "Limits the maximum size of the log file (0 = unlimited)")
                 .withRequiredArg()
                 .ofType(Integer.class)
                 .defaultsTo(0)
                 .describedAs("Max log size");
 
-        acceptsAll(asList("log-count"), "Specified how many log files to cycle through")
+        acceptsAll(List.of("log-count"), "Specified how many log files to cycle through")
                 .withRequiredArg()
                 .ofType(Integer.class)
                 .defaultsTo(1)
                 .describedAs("Log count");
 
-        acceptsAll(asList("log-append"), "Whether to append to the log file")
+        acceptsAll(List.of("log-append"), "Whether to append to the log file")
                 .withRequiredArg()
                 .ofType(Boolean.class)
                 .defaultsTo(true)
                 .describedAs("Log append");
 
-        acceptsAll(asList("log-strip-color"), "Strips color codes from log file");
+        acceptsAll(List.of("log-strip-color"), "Strips color codes from log file");
 
         acceptsAll(asList("b", "bukkit-settings"), "File for bukkit settings")
                 .withRequiredArg()
@@ -95,14 +102,14 @@ public class BukkitOptionParser extends OptionParser {
                 .defaultsTo(new File("commands.yml"))
                 .describedAs("Yml file");
 
-        acceptsAll(asList("forceUpgrade"), "Whether to force a world upgrade");
-        acceptsAll(asList("eraseCache"), "Whether to force cache erase during world upgrade");
+        acceptsAll(List.of("forceUpgrade"), "Whether to force a world upgrade");
+        acceptsAll(List.of("eraseCache"), "Whether to force cache erase during world upgrade");
 
-        acceptsAll(asList("nojline"), "Disables jline and emulates the vanilla console");
+        acceptsAll(List.of("nojline"), "Disables jline and emulates the vanilla console");
 
-        acceptsAll(asList("noconsole"), "Disables the console");
+        acceptsAll(List.of("noconsole"), "Disables the console");
 
-        acceptsAll(asList("demo"), "Demo mode");
+        acceptsAll(List.of("demo"), "Demo mode");
 
         // Spigot Start
         acceptsAll(asList("S", "spigot-settings"), "File for spigot settings")

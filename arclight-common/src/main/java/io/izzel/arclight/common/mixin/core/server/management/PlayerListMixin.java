@@ -151,6 +151,25 @@ public abstract class PlayerListMixin implements PlayerListBridge {
     @Redirect(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getLevel(Lnet/minecraft/resources/ResourceKey;)Lnet/minecraft/server/level/ServerLevel;"))
     private ServerLevel arclight$spawnLocationEvent(MinecraftServer minecraftServer, ResourceKey<Level> dimension, Connection netManager, ServerPlayer playerIn) {
         CraftPlayer player = ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity();
+
+        // Paper start - PlayerInitialSpawnEvent
+        // Check if this is the player's first time joining by checking if player data file exists
+        File playerDataFile = new File(this.server.getWorldPath(net.minecraft.world.level.storage.LevelResource.PLAYER_DATA_DIR).toFile(), playerIn.getUUID() + ".dat");
+        boolean isFirstTime = !playerDataFile.exists();
+
+        if (isFirstTime) {
+            com.destroystokyo.paper.event.player.PlayerInitialSpawnEvent initialEvent =
+                    new com.destroystokyo.paper.event.player.PlayerInitialSpawnEvent(player, player.getLocation());
+            cserver.getPluginManager().callEvent(initialEvent);
+
+            // Update the player's location if the initial spawn event changed it
+            Location newLoc = initialEvent.getSpawnLocation();
+            if (!newLoc.equals(player.getLocation())) {
+                player.teleport(newLoc);
+            }
+        }
+        // Paper end
+
         PlayerSpawnLocationEvent event = new PlayerSpawnLocationEvent(player, player.getLocation());
         cserver.getPluginManager().callEvent(event);
         Location loc = event.getSpawnLocation();
@@ -521,7 +540,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         serverplayerentity.setHealth(serverplayerentity.getHealth());
         ForgeEventFactory.firePlayerRespawnEvent(serverplayerentity, conqueredEnd);
         if (flag2) {
-            serverplayerentity.connection.send(new ClientboundSoundPacket(SoundEvents.RESPAWN_ANCHOR_DEPLETE, SoundSource.BLOCKS, (double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), 1.0F, 1.0F, serverWorld.random.nextLong()));
+            serverplayerentity.connection.send(new ClientboundSoundPacket(SoundEvents.RESPAWN_ANCHOR_DEPLETE, SoundSource.BLOCKS, pos.getX(), pos.getY(), pos.getZ(), 1.0F, 1.0F, serverWorld.random.nextLong()));
         }
         this.sendAllPlayerInfo(serverplayerentity);
         serverplayerentity.onUpdateAbilities();

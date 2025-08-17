@@ -32,7 +32,7 @@ import java.util.Optional;
 @Mixin(CraftingMenu.class)
 public abstract class CraftingMenuMixin extends AbstractContainerMenuMixin implements PosContainerBridge {
 
-    private static transient boolean arclight$isRepair;
+    private static boolean arclight$isRepair;
     // @formatter:off
     @Mutable @Shadow @Final private CraftingContainer craftSlots;
     @Shadow @Final private ResultContainer resultSlots;

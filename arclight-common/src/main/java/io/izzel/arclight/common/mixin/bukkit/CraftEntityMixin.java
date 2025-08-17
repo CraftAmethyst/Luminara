@@ -34,11 +34,11 @@ public abstract class CraftEntityMixin implements org.bukkit.entity.Entity {
         }
         if (entity instanceof EnderDragonPart part) {
             if (part.parentMob instanceof EnderDragon) {
-                cir.setReturnValue(new CraftEnderDragonPart(server, (EnderDragonPart) entity));
+                cir.setReturnValue(new CraftEnderDragonPart(server, part));
                 return;
             }
 
-            cir.setReturnValue(new CraftComplexPart(server, (EnderDragonPart) entity));
+            cir.setReturnValue(new CraftComplexPart(server, part));
             return;
         }
         var convert = EntityClassLookup.getConvert(entity);

@@ -190,7 +190,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 }
             } else if (this.quickcraftStatus == 2) {
                 if (!this.quickcraftSlots.isEmpty()) {
-                    if (false && this.quickcraftSlots.size() == 1) {
+                    if (false) {
                         int l = (this.quickcraftSlots.iterator().next()).index;
                         this.resetQuickCraft();
                         this.doClick(l, this.quickcraftType, ClickType.PICKUP, player);

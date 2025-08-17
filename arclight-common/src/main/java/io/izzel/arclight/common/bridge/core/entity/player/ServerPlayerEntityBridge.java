@@ -46,4 +46,10 @@ public interface ServerPlayerEntityBridge extends PlayerEntityBridge {
     int bridge$getPing();
 
     void bridge$updateCommands();
+
+    // Paper start - Player affects spawning API
+    boolean bridge$getAffectsSpawning();
+
+    void bridge$setAffectsSpawning(boolean affects);
+    // Paper end
 }

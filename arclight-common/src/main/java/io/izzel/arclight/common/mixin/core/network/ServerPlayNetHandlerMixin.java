@@ -629,7 +629,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                             if (!this.player.isChangingDimension() && (!this.player.serverLevel().getGameRules().getBoolean(GameRules.RULE_DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isFallFlying())) {
                                 float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
 
-                                if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.isSingleplayerOwner()) {
+                                if (d11 - d10 > Math.max(f2, Math.pow(SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed, 2)) && !this.isSingleplayerOwner()) {
                                     // CraftBukkit end
                                     ARCLIGHT_LOGGER.warn("moved-too-quickly", this.player.getName().getString(), d7, d8, d9);
                                     this.teleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYRot(), this.player.getXRot());
@@ -713,7 +713,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                                 }
 
                                 this.player.absMoveTo(d0, d1, d2, f, f1); // Copied from above
-                                this.clientIsFloating = d12 >= -0.03125D && this.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && !this.server.isFlightAllowed() && !this.player.getAbilities().mayfly && !this.player.hasEffect(MobEffects.LEVITATION) && !this.player.isFallFlying() && this.noBlocksAround((Entity) this.player) && !this.player.isAutoSpinAttack();
+                                this.clientIsFloating = d12 >= -0.03125D && this.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && !this.server.isFlightAllowed() && !this.player.getAbilities().mayfly && !this.player.hasEffect(MobEffects.LEVITATION) && !this.player.isFallFlying() && this.noBlocksAround(this.player) && !this.player.isAutoSpinAttack();
                                 // CraftBukkit end
                                 this.player.serverLevel().getChunkSource().move(this.player);
                                 this.player.doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, packetplayinflying.isOnGround());
@@ -1277,7 +1277,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
 
                     // Fish bucket - SPIGOT-4048
                     if ((entity instanceof Bucketable && entity instanceof LivingEntity && origItem != null && origItem.asItem() == Items.WATER_BUCKET) && (event.isCancelled() || player.getInventory().getSelected() == null || player.getInventory().getSelected().getItem() != origItem)) {
-                        send(new ClientboundAddEntityPacket((LivingEntity) entity));
+                        send(new ClientboundAddEntityPacket(entity));
                         player.containerMenu.sendAllDataToRemote();
                     }
 

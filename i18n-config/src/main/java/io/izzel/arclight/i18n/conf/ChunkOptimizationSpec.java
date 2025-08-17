@@ -9,16 +9,16 @@ public class ChunkOptimizationSpec {
     // Luminara - Chunk optimizations disabled to avoid conflicts with Paper patches
     // Paper handles chunk optimization internally
     @Setting("aggressive-chunk-unloading")
-    private boolean aggressiveChunkUnloading = false;
+    private final boolean aggressiveChunkUnloading = false;
 
     @Setting("chunk-unload-delay")
-    private int chunkUnloadDelay = 300;
+    private final int chunkUnloadDelay = 300;
 
     @Setting("optimize-chunk-loading")
-    private boolean optimizeChunkLoading = false;
+    private final boolean optimizeChunkLoading = false;
 
     @Setting("chunk-load-rate-limit")
-    private int chunkLoadRateLimit = 10;
+    private final int chunkLoadRateLimit = 10;
 
     public boolean isAggressiveChunkUnloading() {
         return aggressiveChunkUnloading;

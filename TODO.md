@@ -18,16 +18,16 @@
 - [x] 0008-Paper-Plugins.patch
 - [x] 0009-Add-Position.patch
 - ~~0010-Timings-v2.patch~~ (已弃用)
-- [ ] 0011-Add-command-line-option-to-load-extra-plugin-jars-no.patch
-- [ ] 0012-Player-affects-spawning-API.patch
-- [ ] 0013-Add-getTPS-method.patch
-- [ ] 0014-Version-Command-2.0.patch
-- [ ] 0015-Entity-Origin-API.patch
-- [ ] 0016-Add-PlayerLocaleChangeEvent.patch
-- [ ] 0017-Add-view-distance-API.patch
-- [ ] 0018-Add-BeaconEffectEvent.patch
-- [ ] 0019-Add-PlayerInitialSpawnEvent.patch
-- [ ] 0020-Expose-server-CommandMap.patch
+- [x] 0011-Add-command-line-option-to-load-extra-plugin-jars-no.patch
+- [x] 0012-Player-affects-spawning-API.patch
+- [x] 0013-Add-getTPS-method.patch
+- [x] 0014-Version-Command-2.0.patch
+- [x] 0015-Entity-Origin-API.patch
+- [x] 0016-Add-PlayerLocaleChangeEvent.patch
+- [x] 0017-Add-view-distance-API.patch
+- [x] 0018-Add-BeaconEffectEvent.patch
+- [x] 0019-Add-PlayerInitialSpawnEvent.patch
+- [x] 0020-Expose-server-CommandMap.patch
 - [ ] 0021-Graduate-bungeecord-chat-API-from-spigot-subclasses.patch
 - [ ] 0022-Add-exception-reporting-event.patch
 - [ ] 0023-Add-BaseComponent-sendMessage-methods-to-CommandSend.patch
@@ -495,8 +495,8 @@
 - [x] 0012-Paper-Metrics.patch
 - [x] 0013-Paper-Plugins.patch
 - ~~0014-Timings-v2.patch~~ (已弃用)
-- [x] 0015-Rewrite-dataconverter-system.patch
-- [ ] 0016-Starlight.patch
+- ~~0015-Rewrite-dataconverter-system.patch~~ (兼容性问题)
+- ~~0016-Starlight.patch~~ (兼容性问题)
 - [ ] 0017-Add-TickThread.patch
 - [ ] 0018-Add-command-line-option-to-load-extra-plugin-jars-no.patch
 - [ ] 0019-Rewrite-chunk-system.patch

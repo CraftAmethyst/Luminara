@@ -39,12 +39,10 @@ public class PaperPluginIntegration {
             LOGGER.info("Initializing Paper plugin system integration for Luminara...");
 
             Server server = Bukkit.getServer();
-            if (!(server instanceof CraftServer)) {
+            if (!(server instanceof CraftServer craftServer)) {
                 LOGGER.warn("Server is not a CraftServer instance, Paper plugin integration may not work correctly");
                 return;
             }
-
-            CraftServer craftServer = (CraftServer) server;
 
             // Validate that the Paper plugin manager is properly initialized via Mixin
             if (!validatePaperPluginManager(craftServer)) {

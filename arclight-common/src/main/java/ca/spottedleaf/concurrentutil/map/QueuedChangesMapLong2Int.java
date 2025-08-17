@@ -16,10 +16,10 @@ import java.util.function.LongFunction;
  */
 public final class QueuedChangesMapLong2Int {
 
-    protected static final VarHandle UPDATE_QUEUE_HANDLE = ConcurrentUtil.getVarHandle(QueuedChangesMapLong2Int.class, "updateQueue", UpdateQueue.class);
-    protected final Long2IntOpenHashMap map;
-    protected final AtomicLong version = new AtomicLong();
-    protected volatile UpdateQueue<Update> updateQueue = new UpdateQueue<>();
+    private static final VarHandle UPDATE_QUEUE_HANDLE = ConcurrentUtil.getVarHandle(QueuedChangesMapLong2Int.class, "updateQueue", UpdateQueue.class);
+    private final Long2IntOpenHashMap map;
+    private final AtomicLong version = new AtomicLong();
+    private volatile UpdateQueue<Update> updateQueue = new UpdateQueue<>();
 
     public QueuedChangesMapLong2Int() {
         this.map = new Long2IntOpenHashMap();
@@ -113,7 +113,7 @@ public final class QueuedChangesMapLong2Int {
      * Queues an update operation.
      * This method is thread-safe and can be called from any thread.
      */
-    protected void queueUpdate(final Update update) {
+    private void queueUpdate(final Update update) {
         UpdateQueue<Update> queue;
         do {
             queue = this.getUpdateQueueVolatile();
@@ -154,12 +154,12 @@ public final class QueuedChangesMapLong2Int {
     /* update queue */
 
     @SuppressWarnings("unchecked")
-    protected final UpdateQueue<Update> getUpdateQueueVolatile() {
+    private UpdateQueue<Update> getUpdateQueueVolatile() {
         return (UpdateQueue<Update>) UPDATE_QUEUE_HANDLE.getVolatile(this);
     }
 
     @SuppressWarnings("unchecked")
-    protected final UpdateQueue<Update> getAndSetUpdateQueueVolatile(final UpdateQueue<Update> queue) {
+    private UpdateQueue<Update> getAndSetUpdateQueueVolatile(final UpdateQueue<Update> queue) {
         return (UpdateQueue<Update>) UPDATE_QUEUE_HANDLE.getAndSet(this, queue);
     }
 

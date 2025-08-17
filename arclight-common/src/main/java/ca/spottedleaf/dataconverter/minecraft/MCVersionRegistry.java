@@ -17,14 +17,14 @@ import java.util.Locale;
 
 public final class MCVersionRegistry {
 
-    protected static final Int2ObjectLinkedOpenHashMap<String> VERSION_NAMES = new Int2ObjectLinkedOpenHashMap<>();
-    protected static final IntArrayList VERSION_LIST;
-    protected static final LongArrayList DATA_VERSION_LIST;
-    protected static final IntArrayList DATACONVERTER_VERSIONS_LIST;
-    protected static final IntLinkedOpenHashSet DATACONVERTER_VERSIONS_MAJOR = new IntLinkedOpenHashSet();
-    protected static final LongLinkedOpenHashSet DATACONVERTER_VERSIONS = new LongLinkedOpenHashSet();
-    protected static final Int2ObjectLinkedOpenHashMap<IntArrayList> SUBVERSIONS = new Int2ObjectLinkedOpenHashMap<>();
-    protected static final LongArrayList BREAKPOINTS = new LongArrayList();
+    private static final Int2ObjectLinkedOpenHashMap<String> VERSION_NAMES = new Int2ObjectLinkedOpenHashMap<>();
+    private static final IntArrayList VERSION_LIST;
+    private static final LongArrayList DATA_VERSION_LIST;
+    private static final IntArrayList DATACONVERTER_VERSIONS_LIST;
+    private static final IntLinkedOpenHashSet DATACONVERTER_VERSIONS_MAJOR = new IntLinkedOpenHashSet();
+    private static final LongLinkedOpenHashSet DATACONVERTER_VERSIONS = new LongLinkedOpenHashSet();
+    private static final Int2ObjectLinkedOpenHashMap<IntArrayList> SUBVERSIONS = new Int2ObjectLinkedOpenHashMap<>();
+    private static final LongArrayList BREAKPOINTS = new LongArrayList();
     private static final Logger LOGGER = LogUtils.getLogger();
 
     static {
@@ -310,7 +310,7 @@ public final class MCVersionRegistry {
             }
         }
 
-        DATA_VERSION_LIST.sort((LongComparator) null);
+        DATA_VERSION_LIST.sort(null);
 
         for (final int version : DATACONVERTER_VERSIONS_MAJOR) {
             DATACONVERTER_VERSIONS.add(DataConverter.encodeVersions(version, 0));

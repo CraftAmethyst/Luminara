@@ -46,6 +46,6 @@ public abstract class WorldEntitySpawner_EntityDensityManagerMixin implements Wo
     @Override
     public boolean bridge$canSpawn(MobCategory classification, ChunkPos pos, int limit) {
         int i = limit * this.spawnableChunkCount / 289;
-        return this.mobCategoryCounts.getInt(classification) >= i ? false : this.localMobCapCalculator.canSpawn(classification, pos);
+        return this.mobCategoryCounts.getInt(classification) < i && this.localMobCapCalculator.canSpawn(classification, pos);
     }
 }

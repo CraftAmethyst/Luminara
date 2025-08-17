@@ -9,37 +9,37 @@ public class WorldCreationSpec {
     // Luminara - World creation optimizations disabled to avoid conflicts with Paper patches
     // Paper handles world creation optimization internally
     @Setting("fast-world-creation")
-    private boolean fastWorldCreation = false;
+    private final boolean fastWorldCreation = false;
 
     @Setting("skip-spawn-chunk-loading")
-    private boolean skipSpawnChunkLoading = false;
+    private final boolean skipSpawnChunkLoading = false;
 
     @Setting("force-close-loading-screen")
-    private boolean forceCloseLoadingScreen = false;
+    private final boolean forceCloseLoadingScreen = false;
 
     @Setting("early-world-list-addition")
-    private boolean earlyWorldListAddition = false;
+    private final boolean earlyWorldListAddition = false;
 
     @Setting("parallel-world-initialization")
-    private boolean parallelWorldInitialization = false;
+    private final boolean parallelWorldInitialization = false;
 
     @Setting("world-init-timeout-seconds")
-    private int worldInitTimeoutSeconds = 30;
+    private final int worldInitTimeoutSeconds = 30;
 
     @Setting("max-concurrent-world-loads")
-    private int maxConcurrentWorldLoads = 2;
+    private final int maxConcurrentWorldLoads = 2;
 
     @Setting("optimize-world-border-setup")
-    private boolean optimizeWorldBorderSetup = false;
+    private final boolean optimizeWorldBorderSetup = false;
 
     @Setting("defer-spawn-area-preparation")
-    private boolean deferSpawnAreaPreparation = false;
+    private final boolean deferSpawnAreaPreparation = false;
 
     @Setting("spawn-area-radius")
-    private int spawnAreaRadius = 11;
+    private final int spawnAreaRadius = 11;
 
     @Setting("async-world-data-loading")
-    private boolean asyncWorldDataLoading = false;
+    private final boolean asyncWorldDataLoading = false;
 
     public boolean isFastWorldCreation() {
         return fastWorldCreation;

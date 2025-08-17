@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public interface ClassDefiner {
 
     @NotNull
-    public static ClassDefiner getInstance() {
+    static ClassDefiner getInstance() {
         return SafeClassDefiner.INSTANCE;
     }
 
@@ -14,7 +14,7 @@ public interface ClassDefiner {
      *
      * @return if classes bypass access checks
      */
-    public default boolean isBypassAccessChecks() {
+    default boolean isBypassAccessChecks() {
         return false;
     }
 
@@ -28,7 +28,6 @@ public interface ClassDefiner {
      * @throws ClassFormatError     if the class data is invalid
      * @throws NullPointerException if any of the arguments are null
      */
-    @NotNull
-    public Class<?> defineClass(@NotNull ClassLoader parentLoader, @NotNull String name, @NotNull byte[] data);
+    @NotNull Class<?> defineClass(@NotNull ClassLoader parentLoader, @NotNull String name, @NotNull byte[] data);
 
 }

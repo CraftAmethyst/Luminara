@@ -66,7 +66,7 @@ public interface CraftRecipeMixin {
             }));
             ((IngredientBridge) stack).bridge$setExact(true);
         } else if (bukkit instanceof ArclightSpecialIngredient) {
-            stack = ((ArclightSpecialIngredient) bukkit).getIngredient();
+            stack = ((ArclightSpecialIngredient) bukkit).ingredient();
         } else {
             throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
         }

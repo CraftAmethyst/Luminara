@@ -6,20 +6,10 @@ import net.minecraft.nbt.*;
 
 import java.util.List;
 
-public final class NBTListType implements ListType {
-
-    private final ListTag tag;
+public record NBTListType(ListTag tag) implements ListType {
 
     public NBTListType() {
-        this.tag = new ListTag();
-    }
-
-    public NBTListType(final ListTag tag) {
-        this.tag = tag;
-    }
-
-    public ListTag getTag() {
-        return this.tag;
+        this(new ListTag());
     }
 
     @Override
@@ -186,14 +176,14 @@ public final class NBTListType implements ListType {
     @Override
     public void addMap(final MapType<String> value) {
         if (value instanceof NBTMapType) {
-            this.tag.add(((NBTMapType) value).getTag());
+            this.tag.add(((NBTMapType) value).tag());
         }
     }
 
     @Override
     public void addList(final ListType value) {
         if (value instanceof NBTListType) {
-            this.tag.add(((NBTListType) value).getTag());
+            this.tag.add(((NBTListType) value).tag());
         }
     }
 
@@ -250,14 +240,14 @@ public final class NBTListType implements ListType {
     @Override
     public void setMap(final int index, final MapType<String> value) {
         if (value instanceof NBTMapType) {
-            this.tag.set(index, ((NBTMapType) value).getTag());
+            this.tag.set(index, ((NBTMapType) value).tag());
         }
     }
 
     @Override
     public void setList(final int index, final ListType value) {
         if (value instanceof NBTListType) {
-            this.tag.set(index, ((NBTListType) value).getTag());
+            this.tag.set(index, ((NBTListType) value).tag());
         }
     }
 

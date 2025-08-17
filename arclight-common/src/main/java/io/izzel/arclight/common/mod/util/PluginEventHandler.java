@@ -40,7 +40,7 @@ public class PluginEventHandler implements IEventListener {
     private final IEventListener handler;
     private final SubscribeEvent subInfo;
     private java.lang.reflect.Type filter = null;
-    private String readable;
+    private final String readable;
 
 
     public PluginEventHandler(Plugin plugin, Object target, Method method, boolean isGeneric) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

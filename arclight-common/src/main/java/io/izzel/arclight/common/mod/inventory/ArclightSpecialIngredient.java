@@ -9,17 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ArclightSpecialIngredient implements RecipeChoice {
-
-    private final Ingredient ingredient;
-
-    public ArclightSpecialIngredient(Ingredient ingredient) {
-        this.ingredient = ingredient;
-    }
-
-    public Ingredient getIngredient() {
-        return ingredient;
-    }
+public record ArclightSpecialIngredient(Ingredient ingredient) implements RecipeChoice {
 
     @NotNull
     @Override
@@ -51,8 +41,4 @@ public class ArclightSpecialIngredient implements RecipeChoice {
         return Objects.equals(ingredient, that.ingredient);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(ingredient);
-    }
 }

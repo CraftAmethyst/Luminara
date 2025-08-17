@@ -60,41 +60,26 @@ public final class ConfigurationLoaders {
     }
 
     /**
-     * Simplified YAML configuration loader.
-     */
-    public static class YamlConfigurationLoader {
-        private final Path path;
-        private final HeaderMode headerMode;
-
-        public YamlConfigurationLoader(Path path, HeaderMode headerMode) {
-            this.path = path;
-            this.headerMode = headerMode;
-        }
-
-        public Path getPath() {
-            return this.path;
-        }
-
-        public HeaderMode getHeaderMode() {
-            return this.headerMode;
-        }
+         * Simplified YAML configuration loader.
+         */
+        public record YamlConfigurationLoader(Path path, HeaderMode headerMode) {
 
         /**
-         * Loads configuration from the file.
-         * This is a simplified implementation that returns a basic configuration node.
-         */
-        public ConfigurationNode load() {
-            return new SimpleConfigurationNode();
-        }
+             * Loads configuration from the file.
+             * This is a simplified implementation that returns a basic configuration node.
+             */
+            public ConfigurationNode load() {
+                return new SimpleConfigurationNode();
+            }
 
-        /**
-         * Saves configuration to the file.
-         */
-        public void save(ConfigurationNode node) {
-            // Simplified save implementation
-            System.out.println("Saving configuration to: " + this.path);
+            /**
+             * Saves configuration to the file.
+             */
+            public void save(ConfigurationNode node) {
+                // Simplified save implementation
+                System.out.println("Saving configuration to: " + this.path);
+            }
         }
-    }
 
     /**
      * Simplified configuration node implementation.

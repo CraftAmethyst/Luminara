@@ -192,7 +192,7 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
             this.access.execute((p_217003_6_, p_217003_7_) -> {
                 ItemStack itemstack2 = itemstack;
                 List<EnchantmentInstance> list = this.getEnchantmentList(itemstack, id, this.costs[id]);
-                if (true || !list.isEmpty()) {
+                if (true) {
 
                     //  playerIn.onEnchant(itemstack, i);
                     boolean flag = itemstack.getItem() == Items.BOOK;

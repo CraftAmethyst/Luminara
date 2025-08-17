@@ -54,7 +54,7 @@ public class PaperPluginLoader implements PluginLoader {
             throw new InvalidPluginException(ex);
         }
 
-        final File parentFile = file.getParentFile();
+        final File parentFile = new File("plugins"); // Paper - use plugins folder for data directories
         final File dataFolder = new File(parentFile, description.getName());
 
         if (dataFolder.exists() && !dataFolder.isDirectory()) {
@@ -169,14 +169,12 @@ public class PaperPluginLoader implements PluginLoader {
 
     @Override
     public void enablePlugin(@NotNull Plugin plugin) {
-        if (!(plugin instanceof JavaPlugin)) {
+        if (!(plugin instanceof JavaPlugin jPlugin)) {
             throw new IllegalArgumentException("Plugin is not associated with this PluginLoader");
         }
 
         if (!plugin.isEnabled()) {
             plugin.getLogger().info("Enabling " + plugin.getDescription().getFullName());
-
-            JavaPlugin jPlugin = (JavaPlugin) plugin;
 
             try {
                 // Use reflection to access protected setEnabled method
@@ -191,7 +189,7 @@ public class PaperPluginLoader implements PluginLoader {
 
     @Override
     public void disablePlugin(@NotNull Plugin plugin) {
-        if (!(plugin instanceof JavaPlugin)) {
+        if (!(plugin instanceof JavaPlugin jPlugin)) {
             throw new IllegalArgumentException("Plugin is not associated with this PluginLoader");
         }
 
@@ -201,7 +199,6 @@ public class PaperPluginLoader implements PluginLoader {
 
             // server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
 
-            JavaPlugin jPlugin = (JavaPlugin) plugin;
             ClassLoader cloader = jPlugin.getClass().getClassLoader();
 
             try {
@@ -213,8 +210,7 @@ public class PaperPluginLoader implements PluginLoader {
                 plugin.getLogger().log(Level.SEVERE, "Error occurred while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
 
-            if (cloader instanceof PaperPluginClassLoader) {
-                PaperPluginClassLoader loader = (PaperPluginClassLoader) cloader;
+            if (cloader instanceof PaperPluginClassLoader loader) {
                 loaders.remove(plugin.getDescription().getName());
 
                 try {

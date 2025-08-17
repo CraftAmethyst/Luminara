@@ -10,20 +10,10 @@ import net.minecraft.nbt.Tag;
 import java.util.Map;
 import java.util.Set;
 
-public final class NBTMapType implements MapType<String> {
-
-    private final CompoundTag tag;
+public record NBTMapType(CompoundTag tag) implements MapType<String> {
 
     public NBTMapType() {
-        this.tag = new CompoundTag();
-    }
-
-    public NBTMapType(final CompoundTag tag) {
-        this.tag = tag;
-    }
-
-    public CompoundTag getTag() {
-        return this.tag;
+        this(new CompoundTag());
     }
 
     @Override
@@ -267,7 +257,7 @@ public final class NBTMapType implements MapType<String> {
     @Override
     public void setList(final String key, final ListType value) {
         if (value instanceof NBTListType) {
-            this.tag.put(key, ((NBTListType) value).getTag());
+            this.tag.put(key, ((NBTListType) value).tag());
         }
     }
 
@@ -279,7 +269,7 @@ public final class NBTMapType implements MapType<String> {
         }
 
         final NBTListType ret = new NBTListType();
-        this.tag.put(key, ret.getTag());
+        this.tag.put(key, ret.tag());
         return ret;
     }
 

@@ -47,7 +47,7 @@ public class ArclightConfig {
         HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setPath(path).build();
         CommentedConfigurationNode cur = loader.load();
         cur.mergeValuesFrom(node);
-        cur.getNode("locale", "current").setValue(ArclightLocale.getInstance().getCurrent());
+        cur.getNode("locale", "current").setValue(ArclightLocale.getInstance().current());
         fillComments(cur, ArclightLocale.getInstance());
         instance = new ArclightConfig(cur);
         loader.save(cur);

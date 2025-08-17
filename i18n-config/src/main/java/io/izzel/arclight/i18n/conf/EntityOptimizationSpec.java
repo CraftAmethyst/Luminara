@@ -7,7 +7,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class EntityOptimizationSpec {
 
     @Setting("disable-entity-collisions")
-    private boolean disableEntityCollisions = false;
+    private final boolean disableEntityCollisions = false;
 
     // Entity cleanup removed to avoid conflicts with Paper patches
     // @Setting("entity-cleanup-enabled")
@@ -17,10 +17,10 @@ public class EntityOptimizationSpec {
     // private int entityCleanupThreshold = 600;
 
     @Setting("entity-freeze-timeout")
-    private long entityFreezeTimeout = 10000;
+    private final long entityFreezeTimeout = 10000;
 
     @Setting("reduce-entity-updates")
-    private boolean reduceEntityUpdates = true;
+    private final boolean reduceEntityUpdates = true;
 
     // Item cleanup settings removed to avoid conflicts with Paper patches
     // @Setting("clean-valuable-items")
@@ -46,19 +46,19 @@ public class EntityOptimizationSpec {
     // private String cleanupCancelledMessage = "";
 
     @Setting("entity-check-interval")
-    private int entityCheckInterval = 200;
+    private final int entityCheckInterval = 200;
 
     @Setting("entity-update-distance")
-    private double entityUpdateDistance = 64.0;
+    private final double entityUpdateDistance = 64.0;
 
     @Setting("max-entities-per-chunk")
-    private int maxEntitiesPerChunk = 100;
+    private final int maxEntitiesPerChunk = 100;
 
     @Setting("max-entities-per-type")
-    private int maxEntitiesPerType = 150;
+    private final int maxEntitiesPerType = 150;
 
     @Setting("chunk-entity-limit")
-    private int chunkEntityLimit = 20;
+    private final int chunkEntityLimit = 20;
 
     public boolean isDisableEntityCollisions() {
         return disableEntityCollisions;

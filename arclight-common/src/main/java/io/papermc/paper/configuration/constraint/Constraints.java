@@ -65,7 +65,7 @@ public final class Constraints {
             }
 
             @Override
-            public String getMessage() {
+            public String message() {
                 return this.message.replace("{value}", String.valueOf(this.minValue));
             }
         }
@@ -122,7 +122,7 @@ public final class Constraints {
             }
 
             @Override
-            public String getMessage() {
+            public String message() {
                 return this.message.replace("{value}", String.valueOf(this.maxValue));
             }
         }
@@ -154,28 +154,18 @@ public final class Constraints {
         }
 
         /**
-         * Positive constraint validator implementation.
-         */
-        class PositiveConstraintValidator implements Constraint.ConstraintValidator {
-            private final String message;
-
-            public PositiveConstraintValidator(String message) {
-                this.message = message;
-            }
+                 * Positive constraint validator implementation.
+                 */
+                record PositiveConstraintValidator(String message) implements Constraint.ConstraintValidator {
 
             @Override
-            public boolean validate(Object value) {
-                if (value instanceof Number number) {
-                    return number.doubleValue() > 0;
+                    public boolean validate(Object value) {
+                        if (value instanceof Number number) {
+                            return number.doubleValue() > 0;
+                        }
+                        return true; // Non-numeric values pass validation
+                    }
                 }
-                return true; // Non-numeric values pass validation
-            }
-
-            @Override
-            public String getMessage() {
-                return this.message;
-            }
-        }
     }
 
     /**
@@ -204,27 +194,17 @@ public final class Constraints {
         }
 
         /**
-         * NonNegative constraint validator implementation.
-         */
-        class NonNegativeConstraintValidator implements Constraint.ConstraintValidator {
-            private final String message;
-
-            public NonNegativeConstraintValidator(String message) {
-                this.message = message;
-            }
+                 * NonNegative constraint validator implementation.
+                 */
+                record NonNegativeConstraintValidator(String message) implements Constraint.ConstraintValidator {
 
             @Override
-            public boolean validate(Object value) {
-                if (value instanceof Number number) {
-                    return number.doubleValue() >= 0;
+                    public boolean validate(Object value) {
+                        if (value instanceof Number number) {
+                            return number.doubleValue() >= 0;
+                        }
+                        return true; // Non-numeric values pass validation
+                    }
                 }
-                return true; // Non-numeric values pass validation
-            }
-
-            @Override
-            public String getMessage() {
-                return this.message;
-            }
-        }
     }
 }

@@ -74,7 +74,7 @@ public abstract class ChorusFlowerBlockMixin extends BlockMixin {
                     flag = true;
                 }
 
-                if (flag && allNeighborsEmpty(worldIn, blockpos, (Direction) null) && worldIn.isEmptyBlock(pos.above(2))) {
+                if (flag && allNeighborsEmpty(worldIn, blockpos, null) && worldIn.isEmptyBlock(pos.above(2))) {
                     if (CraftEventFactory.handleBlockSpreadEvent(worldIn, pos, blockpos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i), 2)) {
                         worldIn.setBlock(pos, this.plant.getStateForPlacement(worldIn, pos), 2);
                         this.placeGrownFlower(worldIn, blockpos, i);

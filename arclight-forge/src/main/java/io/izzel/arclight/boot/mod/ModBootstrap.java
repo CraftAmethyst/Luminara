@@ -134,7 +134,7 @@ public class ModBootstrap extends AbstractBootstrap {
         map.put(plugin.name(), plugin);
     }
 
-    public static record ModBoot(Configuration configuration, ClassLoader parent) {
+    public record ModBoot(Configuration configuration, ClassLoader parent) {
     }
 
     private record JarModuleDataProvider(Jar jar) implements SecureJar.ModuleDataProvider {

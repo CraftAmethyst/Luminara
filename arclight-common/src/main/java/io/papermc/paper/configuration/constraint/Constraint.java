@@ -31,7 +31,7 @@ public @interface Constraint {
         /**
          * Gets the constraint message.
          */
-        String getMessage();
+        String message();
     }
 
     /**
@@ -48,24 +48,14 @@ public @interface Constraint {
     }
 
     /**
-     * Default constraint validator implementation.
-     */
-    class DefaultConstraintValidator implements ConstraintValidator {
-        private final String message;
-
-        public DefaultConstraintValidator(String message) {
-            this.message = message;
-        }
+         * Default constraint validator implementation.
+         */
+        record DefaultConstraintValidator(String message) implements ConstraintValidator {
 
         @Override
-        public boolean validate(Object value) {
-            // Default implementation always validates
-            return true;
+            public boolean validate(Object value) {
+                // Default implementation always validates
+                return true;
+            }
         }
-
-        @Override
-        public String getMessage() {
-            return this.message;
-        }
-    }
 }

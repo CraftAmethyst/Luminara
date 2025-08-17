@@ -136,6 +136,8 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
     public boolean relativeTime = true;
     public WeatherType weather = null;
     public String locale = "en_us";
+    // Paper start - Player affects spawning API
+    public boolean affectsSpawning = true;
     @Shadow private boolean seenCredits;
     @Shadow @Nullable private Vec3 enteredNetherPosition;
     @Shadow private float lastSentHealth;
@@ -151,6 +153,7 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
     private float pluginRainPositionPrevious;
     private boolean arclight$initialized = false;
     private transient PlayerTeleportEvent.TeleportCause arclight$cause;
+    // Paper end
     private transient BlockStateListPopulator arclight$populator;
     private transient PlayerSpawnChangeEvent.Cause arclight$spawnChangeCause;
 
@@ -247,7 +250,7 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
             if (j <= 1) {
                 i = 1;
             }
-            int i1 = (l = (k = (long) (i * 2 + 1)) * k) > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) l;
+            int i1 = (l = (k = i * 2L + 1) * k) > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) l;
             int j1 = this.getCoprime(i1);
             int k1 = new Random().nextInt(i1);
             for (int l1 = 0; l1 < i1; ++l1) {
@@ -311,7 +314,7 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
             }
             if (world == null || position == null) {
                 world = ((CraftWorld) Bukkit.getServer().getWorlds().get(0)).getHandle();
-                position = Vec3.atCenterOf(((ServerLevel) world).getSharedSpawnPos());
+                position = Vec3.atCenterOf(world.getSharedSpawnPos());
             }
             this.setLevel(world);
             this.setPos(position.x(), position.y(), position.z());
@@ -846,7 +849,7 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
             Bukkit.getPluginManager().callEvent(event);
         }
         if (!this.language.equals(packetIn.language())) {
-            PlayerLocaleChangeEvent event2 = new PlayerLocaleChangeEvent(this.getBukkitEntity(), packetIn.language());
+            com.destroystokyo.paper.event.player.PlayerLocaleChangeEvent event2 = new com.destroystokyo.paper.event.player.PlayerLocaleChangeEvent(this.getBukkitEntity(), this.language, packetIn.language());
             Bukkit.getPluginManager().callEvent(event2);
         }
         this.locale = packetIn.language();
@@ -889,12 +892,12 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
     }
 
     public CraftPlayer getBukkitEntity() {
-        return (CraftPlayer) ((InternalEntityBridge) this).internal$getBukkitEntity();
+        return (CraftPlayer) this.internal$getBukkitEntity();
     }
 
     @Override
     public CraftPlayer bridge$getBukkitEntity() {
-        return (CraftPlayer) ((InternalEntityBridge) this).internal$getBukkitEntity();
+        return (CraftPlayer) this.internal$getBukkitEntity();
     }
 
     @Override
@@ -1141,4 +1144,16 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
     public void bridge$updateCommands() {
         this.server.getCommands().sendCommands((ServerPlayer) (Object) this);
     }
+
+    // Paper start - Player affects spawning API
+    @Override
+    public boolean bridge$getAffectsSpawning() {
+        return this.affectsSpawning;
+    }
+
+    @Override
+    public void bridge$setAffectsSpawning(boolean affects) {
+        this.affectsSpawning = affects;
+    }
+    // Paper end
 }

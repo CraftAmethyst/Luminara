@@ -34,7 +34,7 @@ public abstract class BabyFollowAdultMixin {
                         return false;
                     } else {
                         LivingEntity ageablemob = p_258331_.get(p_258317_);
-                        if (p_258327_.closerThan(ageablemob, (double) (p_259321_.getMaxValue() + 1)) && !p_258327_.closerThan(ageablemob, (double) p_259321_.getMinValue())) {
+                        if (p_258327_.closerThan(ageablemob, p_259321_.getMaxValue() + 1) && !p_258327_.closerThan(ageablemob, p_259321_.getMinValue())) {
                             // CraftBukkit start
                             EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_258327_, ageablemob, EntityTargetEvent.TargetReason.FOLLOW_LEADER);
                             if (event.isCancelled()) {

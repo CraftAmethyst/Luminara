@@ -7,13 +7,13 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class AsyncWorldSaveSpec {
 
     @Setting("enabled")
-    private boolean enabled = true;
+    private final boolean enabled = true;
 
     @Setting("timeout-seconds")
-    private int timeoutSeconds = 30;
+    private final int timeoutSeconds = 30;
 
     @Setting("save-world-data")
-    private boolean saveWorldData = true;
+    private final boolean saveWorldData = true;
 
     public boolean isEnabled() {
         return enabled;

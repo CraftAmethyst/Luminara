@@ -25,7 +25,7 @@ public abstract class CompoundContainerMixin implements IInventoryBridge, Contai
     @Shadow
     @Final
     public Container container2;
-    private List<HumanEntity> transactions = new ArrayList<>();
+    private final List<HumanEntity> transactions = new ArrayList<>();
 
     @Override
     public List<ItemStack> getContents() {

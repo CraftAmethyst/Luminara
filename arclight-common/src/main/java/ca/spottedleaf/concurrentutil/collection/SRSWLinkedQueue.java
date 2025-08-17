@@ -14,12 +14,12 @@ import java.lang.invoke.VarHandle;
  */
 public final class SRSWLinkedQueue<E> {
 
-    protected static final VarHandle HEAD_HANDLE = ConcurrentUtil.getVarHandle(SRSWLinkedQueue.class, "head", LinkedNode.class);
-    protected static final VarHandle TAIL_HANDLE = ConcurrentUtil.getVarHandle(SRSWLinkedQueue.class, "tail", LinkedNode.class);
+    private static final VarHandle HEAD_HANDLE = ConcurrentUtil.getVarHandle(SRSWLinkedQueue.class, "head", LinkedNode.class);
+    private static final VarHandle TAIL_HANDLE = ConcurrentUtil.getVarHandle(SRSWLinkedQueue.class, "tail", LinkedNode.class);
     // Always non-null, high chance of being the actual head
-    protected volatile LinkedNode<E> head;
+    private volatile LinkedNode<E> head;
     // Always non-null, high chance of being the actual tail
-    protected volatile LinkedNode<E> tail;
+    private volatile LinkedNode<E> tail;
 
     public SRSWLinkedQueue() {
         final LinkedNode<E> dummy = new LinkedNode<>(null, null);
@@ -107,49 +107,49 @@ public final class SRSWLinkedQueue<E> {
         /* element */
 
         @SuppressWarnings("unchecked")
-        protected final E getElementPlain() {
+        protected E getElementPlain() {
             return (E) ELEMENT_HANDLE.get(this);
         }
 
-        protected final void setElementPlain(final Object element) {
+        protected void setElementPlain(final Object element) {
             ELEMENT_HANDLE.set(this, element);
         }
 
         @SuppressWarnings("unchecked")
-        protected final E getElementVolatile() {
+        protected E getElementVolatile() {
             return (E) ELEMENT_HANDLE.getVolatile(this);
         }
 
-        protected final void setElementVolatile(final Object element) {
+        protected void setElementVolatile(final Object element) {
             ELEMENT_HANDLE.setVolatile(this, element);
         }
 
         /* next */
 
         @SuppressWarnings("unchecked")
-        protected final LinkedNode<E> getNextPlain() {
+        protected LinkedNode<E> getNextPlain() {
             return (LinkedNode<E>) NEXT_HANDLE.get(this);
         }
 
-        protected final void setNextPlain(final LinkedNode<E> next) {
+        protected void setNextPlain(final LinkedNode<E> next) {
             NEXT_HANDLE.set(this, next);
         }
 
         @SuppressWarnings("unchecked")
-        protected final LinkedNode<E> getNextVolatile() {
+        protected LinkedNode<E> getNextVolatile() {
             return (LinkedNode<E>) NEXT_HANDLE.getVolatile(this);
         }
 
-        protected final void setNextVolatile(final LinkedNode<E> next) {
+        protected void setNextVolatile(final LinkedNode<E> next) {
             NEXT_HANDLE.setVolatile(this, next);
         }
 
-        protected final void setNextRelease(final LinkedNode<E> next) {
+        protected void setNextRelease(final LinkedNode<E> next) {
             NEXT_HANDLE.setRelease(this, next);
         }
 
         @SuppressWarnings("unchecked")
-        protected final LinkedNode<E> getNextAcquire() {
+        protected LinkedNode<E> getNextAcquire() {
             return (LinkedNode<E>) NEXT_HANDLE.getAcquire(this);
         }
     }

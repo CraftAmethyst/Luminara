@@ -49,9 +49,8 @@ public abstract class JavaPluginPaperMixin implements PaperPluginAPI {
      */
     @Unique
     private void initializePaperFeatures() {
-        if (!paperPluginInitialized && getClassLoader() instanceof PaperPluginClassLoader) {
+        if (!paperPluginInitialized && getClassLoader() instanceof PaperPluginClassLoader loader) {
             try {
-                PaperPluginClassLoader loader = (PaperPluginClassLoader) getClassLoader();
                 this.paperDescription = loader.getDescription();
                 this.paperPluginInitialized = true;
 

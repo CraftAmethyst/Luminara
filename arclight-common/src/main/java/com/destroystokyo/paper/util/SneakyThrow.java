@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public class SneakyThrow {
 
     public static void sneaky(@NotNull Throwable exception) {
-        SneakyThrow.<RuntimeException>throwSneaky(exception);
+        SneakyThrow.throwSneaky(exception);
     }
 
     @SuppressWarnings("unchecked")

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -135,7 +136,7 @@ public class ComponentBridgeHandler {
     // Create an iterator for components (replaces ComponentMixin.iterator())
     public static Iterator<Component> createIterator(Component component) {
         if (component == null) {
-            return List.<Component>of().iterator();
+            return Collections.emptyIterator();
         }
 
         if (!initialized) {

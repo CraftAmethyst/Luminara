@@ -105,10 +105,7 @@ public abstract class DistanceManagerMixin implements TicketManagerBridge {
 
     boolean removeTicket(long chunkPosIn, Ticket<?> ticketIn) {
         SortedArraySet<Ticket<?>> ticketSet = this.getTickets(chunkPosIn);
-        boolean removed = false;
-        if (ticketSet.remove(ticketIn)) {
-            removed = true;
-        }
+        boolean removed = ticketSet.remove(ticketIn);
         if (ticketSet.isEmpty()) {
             this.tickets.remove(chunkPosIn);
         }

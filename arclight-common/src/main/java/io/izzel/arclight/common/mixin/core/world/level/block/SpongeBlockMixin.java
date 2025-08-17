@@ -61,8 +61,7 @@ public class SpongeBlockMixin {
                 } else {
                     Block block = iblockdata.getBlock();
 
-                    if (block instanceof BucketPickup) {
-                        BucketPickup ifluidsource = (BucketPickup) block;
+                    if (block instanceof BucketPickup ifluidsource) {
 
                         if (!ifluidsource.pickupBlock(blockList, blockposition1, iblockdata).isEmpty()) { // CraftBukkit
                             return true;

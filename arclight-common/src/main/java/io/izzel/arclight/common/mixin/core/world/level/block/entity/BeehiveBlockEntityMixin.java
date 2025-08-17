@@ -34,7 +34,7 @@ import java.util.List;
 @Mixin(BeehiveBlockEntity.class)
 public abstract class BeehiveBlockEntityMixin extends BlockEntityMixin {
 
-    private static transient boolean arclight$force;
+    private static boolean arclight$force;
     @Shadow
     @Nullable
     public BlockPos savedFlowerPos;

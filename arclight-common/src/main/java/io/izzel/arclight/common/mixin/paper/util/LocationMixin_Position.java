@@ -61,7 +61,7 @@ public abstract class LocationMixin_Position {
      */
     @Unique
     public FinePosition asFinePosition() {
-        return (FinePosition) (Object) this;
+        return (FinePosition) this;
     }
 
     /**

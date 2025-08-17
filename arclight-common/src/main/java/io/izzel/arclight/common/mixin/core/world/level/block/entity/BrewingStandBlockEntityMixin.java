@@ -105,7 +105,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableBlockEntityMi
             if (ing.isEmpty()) {
                 ing = containerItem;
             } else {
-                Containers.dropItemStack(level, (double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), containerItem);
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), containerItem);
             }
         } else ing.shrink(1);
 

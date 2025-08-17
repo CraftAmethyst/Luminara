@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-public class ArclightLocale {
+public record ArclightLocale(String current, String fallback, CommentedConfigurationNode node) {
 
     private static ArclightLocale instance;
 
@@ -25,15 +25,6 @@ public class ArclightLocale {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private final String current, fallback;
-    private final CommentedConfigurationNode node;
-
-    public ArclightLocale(String current, String fallback, CommentedConfigurationNode node) {
-        this.current = current;
-        this.fallback = fallback;
-        this.node = node;
     }
 
     public static void info(String path, Object... args) {
@@ -91,18 +82,6 @@ public class ArclightLocale {
     private static String currentLocale() {
         Locale locale = Locale.getDefault();
         return locale.getLanguage().toLowerCase(Locale.ROOT) + "_" + locale.getCountry().toLowerCase(Locale.ROOT);
-    }
-
-    public String getCurrent() {
-        return current;
-    }
-
-    public String getFallback() {
-        return fallback;
-    }
-
-    public CommentedConfigurationNode getNode() {
-        return node;
     }
 
     public String format(String node, Object... args) {
