@@ -1,5 +1,8 @@
 package io.papermc.paper.plugin.manager;
 
+import com.destroystokyo.paper.event.server.ServerExceptionEvent;
+import com.destroystokyo.paper.exception.ServerEventException;
+import com.destroystokyo.paper.exception.ServerPluginEnableDisableException;
 import io.papermc.paper.plugin.configuration.PaperPluginDescriptionFile;
 import io.papermc.paper.plugin.loader.PaperPluginLoader;
 import org.bukkit.Server;
@@ -308,7 +311,7 @@ public class PaperPluginManagerImpl implements PluginManager {
             try {
                 plugin.getPluginLoader().enablePlugin(plugin);
             } catch (Throwable ex) {
-                logger.log(Level.SEVERE, "Error occurred (in the plugin loader) while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                ServerExceptionEvent.reportException(new ServerPluginEnableDisableException("Error occurred (in the plugin loader) while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex, plugin));
             }
         }
     }
@@ -351,7 +354,7 @@ public class PaperPluginManagerImpl implements PluginManager {
                     ));
                 }
             } catch (Throwable ex) {
-                logger.log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex);
+                ServerExceptionEvent.reportException(new ServerEventException("Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex, registration.getPlugin(), registration.getListener(), event));
             }
         }
     }

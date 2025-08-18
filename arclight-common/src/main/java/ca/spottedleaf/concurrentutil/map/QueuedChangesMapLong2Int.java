@@ -19,7 +19,7 @@ public final class QueuedChangesMapLong2Int {
     private static final VarHandle UPDATE_QUEUE_HANDLE = ConcurrentUtil.getVarHandle(QueuedChangesMapLong2Int.class, "updateQueue", UpdateQueue.class);
     private final Long2IntOpenHashMap map;
     private final AtomicLong version = new AtomicLong();
-    private volatile UpdateQueue<Update> updateQueue = new UpdateQueue<>();
+    private final UpdateQueue<Update> updateQueue = new UpdateQueue<>();
 
     public QueuedChangesMapLong2Int() {
         this.map = new Long2IntOpenHashMap();

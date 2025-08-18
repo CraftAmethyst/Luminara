@@ -154,18 +154,18 @@ public final class Constraints {
         }
 
         /**
-                 * Positive constraint validator implementation.
-                 */
-                record PositiveConstraintValidator(String message) implements Constraint.ConstraintValidator {
+         * Positive constraint validator implementation.
+         */
+        record PositiveConstraintValidator(String message) implements Constraint.ConstraintValidator {
 
             @Override
-                    public boolean validate(Object value) {
-                        if (value instanceof Number number) {
-                            return number.doubleValue() > 0;
-                        }
-                        return true; // Non-numeric values pass validation
-                    }
+            public boolean validate(Object value) {
+                if (value instanceof Number number) {
+                    return number.doubleValue() > 0;
                 }
+                return true; // Non-numeric values pass validation
+            }
+        }
     }
 
     /**
@@ -194,17 +194,17 @@ public final class Constraints {
         }
 
         /**
-                 * NonNegative constraint validator implementation.
-                 */
-                record NonNegativeConstraintValidator(String message) implements Constraint.ConstraintValidator {
+         * NonNegative constraint validator implementation.
+         */
+        record NonNegativeConstraintValidator(String message) implements Constraint.ConstraintValidator {
 
             @Override
-                    public boolean validate(Object value) {
-                        if (value instanceof Number number) {
-                            return number.doubleValue() >= 0;
-                        }
-                        return true; // Non-numeric values pass validation
-                    }
+            public boolean validate(Object value) {
+                if (value instanceof Number number) {
+                    return number.doubleValue() >= 0;
                 }
+                return true; // Non-numeric values pass validation
+            }
+        }
     }
 }

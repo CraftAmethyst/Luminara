@@ -48,14 +48,14 @@ public @interface Constraint {
     }
 
     /**
-         * Default constraint validator implementation.
-         */
-        record DefaultConstraintValidator(String message) implements ConstraintValidator {
+     * Default constraint validator implementation.
+     */
+    record DefaultConstraintValidator(String message) implements ConstraintValidator {
 
         @Override
-            public boolean validate(Object value) {
-                // Default implementation always validates
-                return true;
-            }
+        public boolean validate(Object value) {
+            // Default implementation always validates
+            return true;
         }
+    }
 }

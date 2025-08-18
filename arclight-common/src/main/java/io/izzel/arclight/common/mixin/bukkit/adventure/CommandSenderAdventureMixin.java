@@ -4,6 +4,8 @@ import io.izzel.arclight.common.adventure.PaperAdventure;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,5 +46,37 @@ public interface CommandSenderAdventureMixin extends Audience {
     @Override
     default void sendMessage(@NotNull Identity source, @NotNull Component message, net.kyori.adventure.audience.MessageType type) {
         sendMessage(message);
+    }
+
+    // Paper API Patch 0023: Add BaseComponent sendMessage methods to CommandSender
+
+    /**
+     * Sends the component to the sender
+     *
+     * <p>If this sender does not support sending full components then
+     * the component will be sent as legacy text.</p>
+     *
+     * @param component the component to send
+     * @deprecated use {@link #sendMessage(Identity, Component, net.kyori.adventure.audience.MessageType)} instead
+     */
+    @Deprecated
+    default void sendMessage(@NotNull BaseComponent component) {
+        CommandSender sender = (CommandSender) this;
+        sender.sendMessage(component.toLegacyText());
+    }
+
+    /**
+     * Sends an array of components as a single message to the sender
+     *
+     * <p>If this sender does not support sending full components then
+     * the components will be sent as legacy text.</p>
+     *
+     * @param components the components to send
+     * @deprecated use {@link #sendMessage(Identity, Component, net.kyori.adventure.audience.MessageType)} instead
+     */
+    @Deprecated
+    default void sendMessage(@NotNull BaseComponent... components) {
+        CommandSender sender = (CommandSender) this;
+        sender.sendMessage(new TextComponent(components).toLegacyText());
     }
 }

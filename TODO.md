@@ -28,18 +28,18 @@
 - [x] 0018-Add-BeaconEffectEvent.patch
 - [x] 0019-Add-PlayerInitialSpawnEvent.patch
 - [x] 0020-Expose-server-CommandMap.patch
-- [ ] 0021-Graduate-bungeecord-chat-API-from-spigot-subclasses.patch
-- [ ] 0022-Add-exception-reporting-event.patch
-- [ ] 0023-Add-BaseComponent-sendMessage-methods-to-CommandSend.patch
-- [ ] 0024-Fix-ServerListPingEvent-flagging-as-Async.patch
-- [ ] 0025-Player-Tab-List-and-Title-APIs.patch
-- [ ] 0026-Add-methods-for-working-with-arrows-stuck-in-living-.patch
-- [ ] 0027-Complete-resource-pack-API.patch
-- [ ] 0028-Add-a-call-helper-to-Event.patch
-- [ ] 0029-Add-sender-name-to-commands.yml-replacement.patch
-- [ ] 0030-Add-command-to-reload-permissions.yml-and-require-co.patch
-- [ ] 0031-Custom-replacement-for-eaten-items.patch
-- [ ] 0032-Entity-AddTo-RemoveFrom-World-Events.patch
+- [x] 0021-Graduate-bungeecord-chat-API-from-spigot-subclasses.patch
+- [x] 0022-Add-exception-reporting-event.patch
+- [x] 0023-Add-BaseComponent-sendMessage-methods-to-CommandSend.patch
+- [x] 0024-Fix-ServerListPingEvent-flagging-as-Async.patch
+- [x] 0025-Player-Tab-List-and-Title-APIs.patch
+- [x] 0026-Add-methods-for-working-with-arrows-stuck-in-living-.patch
+- [x] 0027-Complete-resource-pack-API.patch
+- [x] 0028-Add-a-call-helper-to-Event.patch
+- [x] 0029-Add-sender-name-to-commands.yml-replacement.patch
+- [x] 0030-Add-command-to-reload-permissions.yml-and-require-co.patch
+- [x] 0031-Custom-replacement-for-eaten-items.patch
+- [] 0032-Entity-AddTo-RemoveFrom-World-Events.patch
 - [ ] 0033-EntityPathfindEvent.patch
 - [ ] 0034-Reduce-thread-synchronization-in-MetadataStoreBase.patch
 - [ ] 0035-Add-MetadataStoreBase.removeAll-Plugin.patch

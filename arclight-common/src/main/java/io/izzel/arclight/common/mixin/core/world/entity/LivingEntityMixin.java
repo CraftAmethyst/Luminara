@@ -93,6 +93,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     @Shadow
     @Final
     private static EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID;
+    private final List<Map.Entry<Either<MobEffectInstance, MobEffect>, EntityPotionEffectEvent.Cause>> effectsToProcess = Lists.newArrayList();
     @Shadow
     public net.minecraft.world.entity.player.Player lastHurtByPlayer;
     @Shadow
@@ -142,7 +143,6 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     @Final
     private AttributeMap attributes;
     private boolean isTickingEffects = false;
-    private final List<Map.Entry<Either<MobEffectInstance, MobEffect>, EntityPotionEffectEvent.Cause>> effectsToProcess = Lists.newArrayList();
     private transient EntityPotionEffectEvent.Action arclight$action;
     private transient boolean arclight$damageResult;
     private transient EntityRegainHealthEvent.RegainReason arclight$regainReason;
@@ -1107,9 +1107,19 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
                 ci.cancel();
                 return null;
             } else if (!craftItem.equals(event.getItem())) {
-                return CraftItemStack.asNMSCopy(event.getItem()).finishUsingItem(worldIn, entityLiving);
+                ItemStack result = CraftItemStack.asNMSCopy(event.getItem()).finishUsingItem(worldIn, entityLiving);
+
+                // Paper API Patch 0031: Custom replacement for eaten items
+                // Check if a custom replacement item was set
+                org.bukkit.inventory.ItemStack replacement = ((io.izzel.arclight.common.mixin.bukkit.PlayerItemConsumeEventMixin) (Object) event).getReplacement();
+                if (replacement != null) {
+                    return CraftItemStack.asNMSCopy(replacement);
+                }
+
+                return result;
             }
         }
+
         return itemStack.finishUsingItem(worldIn, entityLiving);
     }
 

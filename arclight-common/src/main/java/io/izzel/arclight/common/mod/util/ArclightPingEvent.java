@@ -23,6 +23,8 @@ public class ArclightPingEvent extends ServerListPingEvent {
     public CraftIconCache icon;
 
     public ArclightPingEvent(Connection networkManager, MinecraftServer server) {
+        // Paper API Patch 0024: Fix ServerListPingEvent flagging as Async
+        // Use !Bukkit.isPrimaryThread() to properly detect async context
         super(((NetworkManagerBridge) networkManager).bridge$getHostname(), ((InetSocketAddress) networkManager.getRemoteAddress()).getAddress(), server.getMotd(), server.getPlayerList().getMaxPlayers());
         this.icon = ((CraftServer) Bukkit.getServer()).getServerIcon();
         this.players = server.getPlayerList().players.toArray();

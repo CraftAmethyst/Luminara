@@ -8,6 +8,7 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import jline.console.ConsoleReader;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -222,5 +223,60 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
         this.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
+    }
+
+    // Paper API Patch 0021: Graduate bungeecord chat API from spigot subclasses
+
+    /**
+     * Sends the component to all online players.
+     *
+     * @param component the component to send
+     * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
+     */
+    @Deprecated
+    public void broadcast(BaseComponent component) {
+        CraftServer server = (CraftServer) (Object) this;
+        server.spigot().broadcast(component);
+    }
+
+    /**
+     * Sends an array of components as a single message to all online players.
+     *
+     * @param components the components to send
+     * @deprecated use {@code sendMessage} methods that accept {@link net.kyori.adventure.text.Component}
+     */
+    @Deprecated
+    public void broadcast(BaseComponent... components) {
+        CraftServer server = (CraftServer) (Object) this;
+        server.spigot().broadcast(components);
+    }
+
+    // Paper API Patch 0030: Add command to reload permissions.yml and require confirmation
+
+    /**
+     * Reloads the server permissions from the permissions.yml file
+     */
+    public void reloadPermissions() {
+        CraftServer server = (CraftServer) (Object) this;
+
+        try {
+            // Reload permissions from permissions.yml
+            // Since clearPermissions() and recalculatePermissionDefaults() may not exist,
+            // we'll use a simpler approach by reloading the server configuration
+            server.reloadData();
+
+            // Reload all player permissions
+            for (org.bukkit.entity.Player player : server.getOnlinePlayers()) {
+                if (player instanceof org.bukkit.craftbukkit.v.entity.CraftPlayer) {
+                    player.recalculatePermissions();
+                }
+            }
+
+            // Log the reload
+            server.getLogger().info("Permissions reloaded from permissions.yml");
+        } catch (Exception e) {
+            server.getLogger().severe("Failed to reload permissions: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

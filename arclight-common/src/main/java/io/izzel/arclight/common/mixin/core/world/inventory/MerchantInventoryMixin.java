@@ -24,12 +24,11 @@ import java.util.List;
 @Mixin(MerchantContainer.class)
 public abstract class MerchantInventoryMixin implements IInventoryBridge, Container {
 
+    private final List<HumanEntity> transactions = new ArrayList<>();
     // @formatter:off
     @Shadow @Final private NonNullList<ItemStack> itemStacks;
-    @Shadow @Final private Merchant merchant;
     // @formatter:on
-
-    private final List<HumanEntity> transactions = new ArrayList<>();
+    @Shadow @Final private Merchant merchant;
     private int maxStack = MAX_STACK;
 
     @Override

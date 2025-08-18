@@ -13,7 +13,7 @@ import java.lang.invoke.VarHandle;
 public final class WeakSeqLock {
 
     private static final VarHandle SEQUENCE_HANDLE = ConcurrentUtil.getVarHandle(WeakSeqLock.class, "sequence", int.class);
-    private volatile int sequence;
+    private final int sequence;
 
     public WeakSeqLock() {
         this.sequence = 0;

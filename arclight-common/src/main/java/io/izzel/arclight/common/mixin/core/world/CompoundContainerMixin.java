@@ -19,13 +19,13 @@ import java.util.List;
 @Mixin(CompoundContainer.class)
 public abstract class CompoundContainerMixin implements IInventoryBridge, Container {
 
+    private final List<HumanEntity> transactions = new ArrayList<>();
     @Shadow
     @Final
     public Container container1;
     @Shadow
     @Final
     public Container container2;
-    private final List<HumanEntity> transactions = new ArrayList<>();
 
     @Override
     public List<ItemStack> getContents() {
