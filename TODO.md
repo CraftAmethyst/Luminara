@@ -39,7 +39,7 @@
 - [x] 0029-Add-sender-name-to-commands.yml-replacement.patch
 - [x] 0030-Add-command-to-reload-permissions.yml-and-require-co.patch
 - [x] 0031-Custom-replacement-for-eaten-items.patch
-- [] 0032-Entity-AddTo-RemoveFrom-World-Events.patch
+- [ ] 0032-Entity-AddTo-RemoveFrom-World-Events.patch
 - [ ] 0033-EntityPathfindEvent.patch
 - [ ] 0034-Reduce-thread-synchronization-in-MetadataStoreBase.patch
 - [ ] 0035-Add-MetadataStoreBase.removeAll-Plugin.patch
@@ -495,12 +495,12 @@
 - [x] 0012-Paper-Metrics.patch
 - [x] 0013-Paper-Plugins.patch
 - ~~0014-Timings-v2.patch~~ (已弃用)
-- ~~0015-Rewrite-dataconverter-system.patch~~ (兼容性问题)
+- [x] 0015-Rewrite-dataconverter-system.patch
 - ~~0016-Starlight.patch~~ (兼容性问题)
-- [ ] 0017-Add-TickThread.patch
-- [ ] 0018-Add-command-line-option-to-load-extra-plugin-jars-no.patch
-- [ ] 0019-Rewrite-chunk-system.patch
-- [ ] 0020-Configurable-cactus-bamboo-and-reed-growth-heights.patch
+- [x] 0017-Add-TickThread.patch
+- [x] 0018-Add-command-line-option-to-load-extra-plugin-jars-no.patch
+- ~~0019-Rewrite-chunk-system.patch~~ (兼容性问题)
+- [x] 0020-Configurable-cactus-bamboo-and-reed-growth-heights.patch
 - [ ] 0021-Configurable-baby-zombie-movement-speed.patch
 - [ ] 0022-Configurable-fishing-time-ranges.patch
 - [ ] 0023-Allow-nerfed-mobs-to-jump-and-take-water-damage.patch
