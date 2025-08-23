@@ -1,5 +1,10 @@
 # Luminara
 
+
+⚠️ Due to the fact that the author has work to do in reality, this project is temporarily suspended from updates! Velocity support features may be available in Arclight 1.20.1.
+
+⚠️ 由于作者一些现实事情要忙，此项目暂停更新！Velocity支持可能将在Arclight 1.20.1可用。
+
 [简体中文](/README_zh.md)
 
 > This server software is an Arclight Fork. Please report any issues encountered while using this server software in *
