@@ -1,9 +1,6 @@
 # Luminara
 
-
-⚠️ Due to the fact that the author has work to do in reality, this project is temporarily suspended from updates! Velocity support features may be available in Arclight 1.20.1.
-
-⚠️ 由于作者一些现实事情要忙，此项目暂停更新！Velocity支持可能将在Arclight 1.20.1可用。
+⚠️ Due to numerous real-life commitments, the update pace of this project will be slowed down (not discontinued).
 
 [简体中文](/README_zh.md)
 

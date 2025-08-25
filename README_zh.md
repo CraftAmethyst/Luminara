@@ -1,5 +1,7 @@
 # Luminara
 
+⚠️ 由于我的一些现实事务繁多，此项目放慢更新速度（不是停更）.
+
 [English](/README.md)
 
 > 本服务端是一个 Arclight Fork，所以使用本服务端过程中出现的任何问题请在本项目 Issue 反馈，请勿在 Arclight 项目 Issue 反馈！
