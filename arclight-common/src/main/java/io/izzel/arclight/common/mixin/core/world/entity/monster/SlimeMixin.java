@@ -13,9 +13,14 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +28,7 @@ import java.util.List;
 public abstract class SlimeMixin extends MobMixin {
 
     private transient List<LivingEntity> arclight$slimes;
+    private static final MethodHandle ARCLIGHT$ENTITY_REMOVE = arclight$findEntityRemove();
 
     // @formatter:off
     @Shadow public abstract int getSize();
@@ -31,13 +37,34 @@ public abstract class SlimeMixin extends MobMixin {
     @Shadow
     public abstract EntityType<? extends net.minecraft.world.entity.monster.Slime> getType();
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite(remap = false)
-    @Override
-    public void remove(Entity.RemovalReason p_149847_) {
+    private static MethodHandle arclight$findEntityRemove() {
+        var lookup = MethodHandles.lookup();
+        var type = MethodType.methodType(void.class, Entity.RemovalReason.class);
+        ReflectiveOperationException error = null;
+        for (String name : new String[]{"remove", "method_5650"}) {
+            try {
+                return lookup.findSpecial(Entity.class, name, type, net.minecraft.world.entity.monster.Slime.class);
+            } catch (NoSuchMethodException | IllegalAccessException ex) {
+                if (error == null) {
+                    error = ex;
+                } else {
+                    error.addSuppressed(ex);
+                }
+            }
+        }
+        throw new ExceptionInInitializerError(error);
+    }
+
+    private void arclight$invokeEntityRemove(Entity.RemovalReason reason) {
+        try {
+            ARCLIGHT$ENTITY_REMOVE.invokeExact((net.minecraft.world.entity.monster.Slime) (Object) this, reason);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Failed to invoke Entity#remove super implementation", throwable);
+        }
+    }
+
+    @Inject(method = "remove", at = @At("HEAD"), cancellable = true)
+    private void arclight$removeWithSplitEvent(Entity.RemovalReason p_149847_, CallbackInfo ci) {
         int i = this.getSize();
         if (!this.level().isClientSide && i > 1 && this.isDeadOrDying()) {
             Component itextcomponent = this.getCustomName();
@@ -50,7 +77,8 @@ public abstract class SlimeMixin extends MobMixin {
                 SlimeSplitEvent event = new SlimeSplitEvent((Slime) this.getBukkitEntity(), k);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled() || event.getCount() <= 0) {
-                    super.remove(p_149847_);
+                    this.arclight$invokeEntityRemove(p_149847_);
+                    ci.cancel();
                     return;
                 }
                 k = event.getCount();
@@ -74,8 +102,9 @@ public abstract class SlimeMixin extends MobMixin {
                 arclight$slimes.add(slimeentity);
             }
             if (CraftEventFactory.callEntityTransformEvent((net.minecraft.world.entity.monster.Slime) (Object) this, arclight$slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
-                super.remove(p_149847_);
+                this.arclight$invokeEntityRemove(p_149847_);
                 arclight$slimes = null;
+                ci.cancel();
                 return;
             }
             for (int l = 0; l < arclight$slimes.size(); l++) {
@@ -88,6 +117,7 @@ public abstract class SlimeMixin extends MobMixin {
             }
             arclight$slimes = null;
         }
-        super.remove(p_149847_);
+        this.arclight$invokeEntityRemove(p_149847_);
+        ci.cancel();
     }
 }

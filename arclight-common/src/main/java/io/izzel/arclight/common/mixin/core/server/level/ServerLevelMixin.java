@@ -211,12 +211,12 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
             if (worldInfo instanceof DerivedLevelData data) {
                 ((DerivedWorldInfoBridge) worldInfo).bridge$setDimType(this.getTypeKey());
                 if (ArclightConfig.spec().getCompat().isSymlinkWorld()) {
-                    WorldSymlink.create(data, levelSave.getDimensionPath(this.dimension()).toFile());
+                    WorldSymlink.create(data, levelSave.getDimensionPath(dimension).toFile());
                 }
             }
         }
         this.spigotConfig = new SpigotWorldConfig(worldInfo.getLevelName());
-        this.uuid = WorldUUID.getUUID(levelSave.getDimensionPath(this.dimension()).toFile());
+        this.uuid = WorldUUID.getUUID(levelSave.getDimensionPath(dimension).toFile());
         ((ServerChunkProviderBridge) this.chunkSource).bridge$setViewDistance(spigotConfig.viewDistance);
         ((WorldInfoBridge) this.K).bridge$setWorld((ServerLevel) (Object) this);
         var data = this.getDataStorage().computeIfAbsent(LevelPersistentData::new, () -> new LevelPersistentData(null), "bukkit_pdc");
@@ -319,7 +319,7 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
     @Inject(method = "save", at = @At("RETURN"))
     private void arclight$saveLevelDat(ProgressListener progress, boolean flush, boolean skipSave, CallbackInfo ci) {
         if (this.serverLevelData instanceof PrimaryLevelData worldInfo) {
-            worldInfo.setWorldBorder(this.getWorldBorder().createSettings());
+            worldInfo.setWorldBorder(((ServerLevel) (Object) this).getWorldBorder().createSettings());
             worldInfo.setCustomBossEvents(this.shadow$getServer().getCustomBossEvents().save());
             this.convertable.saveDataTag(this.shadow$getServer().registryAccess(), worldInfo, this.shadow$getServer().getPlayerList().getSingleplayerData());
         }

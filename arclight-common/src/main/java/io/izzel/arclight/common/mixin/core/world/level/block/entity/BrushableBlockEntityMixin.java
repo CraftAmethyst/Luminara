@@ -27,8 +27,8 @@ public abstract class BrushableBlockEntityMixin extends BlockEntityMixin {
         return true;
     }
 
-    @Inject(method = "load", at = @At("HEAD"))
+    @Inject(method = "load", at = @At("RETURN"))
     private void arclight$load(CompoundTag p_277597_, CallbackInfo ci) {
-        super.load(p_277597_);
+        this.arclight$readPersistentData(p_277597_);
     }
 }

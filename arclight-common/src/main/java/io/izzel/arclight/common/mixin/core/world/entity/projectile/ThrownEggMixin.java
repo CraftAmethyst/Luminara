@@ -8,6 +8,7 @@ import io.izzel.arclight.common.mod.util.Blackhole;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.phys.HitResult;
 import org.bukkit.Bukkit;
@@ -18,8 +19,35 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+
 @Mixin(ThrownEgg.class)
 public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
+
+    private static final MethodHandle ARCLIGHT$PROJECTILE_ON_HIT = arclight$findProjectileOnHit();
+
+    private static MethodHandle arclight$findProjectileOnHit() {
+        try {
+            return MethodHandles.lookup().findSpecial(
+                    Projectile.class,
+                    "onHit",
+                    MethodType.methodType(void.class, HitResult.class),
+                    ThrownEgg.class
+            );
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    private void arclight$invokeProjectileOnHit(HitResult result) {
+        try {
+            ARCLIGHT$PROJECTILE_ON_HIT.invokeExact((ThrownEgg) (Object) this, result);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Failed to invoke Projectile#onHit super implementation", throwable);
+        }
+    }
 
     /**
      * @author IzzelAliz
@@ -27,7 +55,7 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
      */
     @Overwrite
     protected void onHit(final HitResult result) {
-        super.onHit(result);
+        this.arclight$invokeProjectileOnHit(result);
         if (!this.level().isClientSide) {
             boolean hatching = this.random.nextInt(8) == 0;
             byte b0 = 1;
@@ -53,8 +81,7 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
                     var entityType = ((EntityTypeBridge) (Object) hatchingType).bridge$getHandle();
                     var entity = entityType.create(this.level());
                     // Let's do: Meadow mixin compatibility https://github.com/IzzelAliz/Arclight/issues/1149
-                    if (entity instanceof Chicken) {
-                        Chicken chicken = (Chicken) entity;
+                    if (entity instanceof Chicken chicken) {
                         Blackhole.consume(chicken);
                     }
                     if (entity != null) {

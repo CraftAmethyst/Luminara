@@ -32,13 +32,43 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
                                             new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "getServer", "()Lnet/minecraft/server/MinecraftServer;", null, null)
                                     )
                             ))
+                    .put("net.minecraft.server.players.PlayerList",
+                            Maps.immutableEntry(
+                                    ImmutableList.of(
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "f_11193_", "I", null, null),
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "f_11196_", "Ljava/util/List;", null, null),
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "f_11204_", "Ljava/util/Map;", null, null)
+                                    ),
+                                    ImmutableList.of()
+                            ))
+                    .put("net.minecraft.class_3324",
+                            Maps.immutableEntry(
+                                    ImmutableList.of(
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "field_14347", "I", null, null),
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "field_14351", "Ljava/util/List;", null, null),
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "field_14354", "Ljava/util/Map;", null, null)
+                                    ),
+                                    ImmutableList.of()
+                            ))
                     .put("net.minecraft.server.level.TicketType",
                             Maps.immutableEntry(
                                     ImmutableList.of(
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "f_9434_", "J", null, null),
                                             new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, "PLUGIN",
                                                     "Lnet/minecraft/server/level/TicketType;", null, null),
                                             new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, "PLUGIN_TICKET",
                                                     "Lnet/minecraft/server/level/TicketType;", null, null)
+                                    ),
+                                    ImmutableList.of()
+                            ))
+                    .put("net.minecraft.class_3230",
+                            Maps.immutableEntry(
+                                    ImmutableList.of(
+                                            new FieldNode(Opcodes.ACC_PUBLIC, "field_19348", "J", null, null),
+                                            new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, "PLUGIN",
+                                                    "Lnet/minecraft/class_3230;", null, null),
+                                            new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, "PLUGIN_TICKET",
+                                                    "Lnet/minecraft/class_3230;", null, null)
                                     ),
                                     ImmutableList.of()
                             ))

@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mod.mixins;
 
+import io.izzel.arclight.common.mod.ArclightCommon;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
 import org.objectweb.asm.Type;
@@ -14,13 +15,16 @@ public class LoadIfModProcessor {
     private static final String TYPE = Type.getDescriptor(LoadIfMod.class);
 
     static boolean shouldApply(ClassNode node) {
+        if (node.invisibleAnnotations == null || node.invisibleAnnotations.isEmpty()) {
+            return true;
+        }
         for (var ann : node.invisibleAnnotations) {
             if (ann.desc.equals(TYPE)) {
                 var loadIfModData = parse(ann);
                 return switch (loadIfModData.condition()) {
                     case ABSENT -> {
                         for (var modid : loadIfModData.modids()) {
-                            if (ArclightMod.isModLoaded(modid)) {
+                            if (isModLoaded(modid)) {
                                 yield false;
                             }
                         }
@@ -28,7 +32,7 @@ public class LoadIfModProcessor {
                     }
                     case PRESENT -> {
                         for (var modid : loadIfModData.modids()) {
-                            if (ArclightMod.isModLoaded(modid)) {
+                            if (isModLoaded(modid)) {
                                 yield true;
                             }
                         }
@@ -38,6 +42,14 @@ public class LoadIfModProcessor {
             }
         }
         return true;
+    }
+
+    private static boolean isModLoaded(String modid) {
+        var api = ArclightCommon.api();
+        if (api != null) {
+            return api.isModLoaded(modid);
+        }
+        return ArclightMod.isModLoaded(modid);
     }
 
 

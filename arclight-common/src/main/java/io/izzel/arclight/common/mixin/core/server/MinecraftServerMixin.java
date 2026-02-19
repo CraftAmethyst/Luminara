@@ -7,9 +7,11 @@ import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.ArclightConstants;
 import io.izzel.arclight.common.mod.metrics.MetricsManager;
+import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.BukkitOptionParser;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.optimization.paper.WorldCreationOptimizer;
 import it.unimi.dsi.fastutil.longs.LongIterator;
@@ -50,10 +52,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WorldData;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.internal.BrandingControl;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -196,10 +194,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     @Shadow
     protected abstract void setupDebugLevel(WorldData p_240778_1_);
 
-    @Shadow(remap = false)
-    @Deprecated
-    public abstract void markWorldsDirty();
-
     @Shadow
     public abstract boolean isSpawningMonsters();
 
@@ -261,6 +255,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         }
         this.vanillaCommandDispatcher = worldStem.dataPackResources().getCommands();
         this.worldLoader = ArclightCaptures.getDataLoadContext();
+        ArclightServer.setMinecraftServer((MinecraftServer) (Object) this);
     }
 
     /**
@@ -274,7 +269,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
             if (!this.initServer()) {
                 throw new IllegalStateException("Failed to initialize server");
             }
-            ServerLifecycleHooks.handleServerStarted((MinecraftServer) (Object) this);
+            PlatformHooks.handleServerStarted((MinecraftServer) (Object) this);
             long endTime = Util.getMillis();
             this.nextTickTime = endTime;
             this.statusIcon = this.loadStatusIcon().orElse(null);
@@ -325,8 +320,8 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                 JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
             }
             ARCLIGHT_LOGGER.info("server.stopping");
-            ServerLifecycleHooks.handleServerStopping((MinecraftServer) (Object) this);
-            ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
+            PlatformHooks.handleServerStopping((MinecraftServer) (Object) this);
+            PlatformHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
         } catch (Throwable throwable1) {
             ARCLIGHT_LOGGER.error("server.unexpected-exception", throwable1);
             CrashReport crashreport = constructOrExtractCrashReport(throwable1);
@@ -351,7 +346,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                 ARCLIGHT_LOGGER.warn("server.continuing-after-crash");
             }
 
-            net.minecraftforge.server.ServerLifecycleHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
+            PlatformHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
             this.onServerCrash(crashreport);
         } finally {
             try {
@@ -366,7 +361,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                 WatchdogThread.doStop();
                 // Shutdown async world save executor
                 arclight$shutdownAsyncSaveExecutor();
-                ServerLifecycleHooks.handleServerStopped((MinecraftServer) (Object) this);
+                PlatformHooks.handleServerStopped((MinecraftServer) (Object) this);
                 ARCLIGHT_LOGGER.info("server.stopped");
                 this.onServerExit();
             }
@@ -405,9 +400,13 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
     @Inject(method = "createLevels", at = @At("RETURN"))
     public void arclight$enablePlugins(ChunkProgressListener p_240787_1_, CallbackInfo ci) {
-        BukkitRegistry.unlockRegistries();
+        if (PlatformHooks.isForgePresent()) {
+            BukkitRegistry.unlockRegistries();
+        }
         this.server.enablePlugins(PluginLoadOrder.POSTWORLD);
-        BukkitRegistry.lockRegistries();
+        if (PlatformHooks.isForgePresent()) {
+            BukkitRegistry.lockRegistries();
+        }
         this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
 
         try {
@@ -424,6 +423,12 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         this.runAllTasks();
         this.bridge$drainQueuedTasks();
         java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
+    }
+
+    @Unique
+    private void arclight$markWorldsDirty() {
+        // 1.20.1 official mappings on Fabric side do not expose ServerLevel#setUnsaved(boolean).
+        // Keep this hook as a compatibility no-op to avoid startup crashes from missing shadow targets.
     }
 
     @Override
@@ -508,7 +513,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                         ChunkPos chunkpos = new ChunkPos(i);
                         serverWorld.getChunkSource().updateChunkForced(chunkpos, true);
                     }
-                    net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverWorld, forcedchunkssavedata);
+                    PlatformHooks.reinstatePersistentChunks(serverWorld, forcedchunkssavedata);
                 }
             }
             Bukkit.getPluginManager().callEvent(new WorldLoadEvent(((WorldBridge) serverWorld).bridge$getWorld()));
@@ -565,8 +570,8 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
     // bukkit methods
     public void prepareLevels(ChunkProgressListener listener, ServerLevel serverWorld) {
-        this.markWorldsDirty();
-        MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(serverWorld));
+        this.arclight$markWorldsDirty();
+        PlatformHooks.postLevelLoad(serverWorld);
         if (!((WorldBridge) serverWorld).bridge$getWorld().getKeepSpawnInMemory()) {
             return;
         }
@@ -593,7 +598,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverWorld.getChunkSource().updateChunkForced(chunkpos, true);
             }
-            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverWorld, forcedchunkssavedata);
+            PlatformHooks.reinstatePersistentChunks(serverWorld, forcedchunkssavedata);
         }
         this.executeModerately();
         listener.stop();
@@ -605,13 +610,13 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     // bukkit callbacks
     public void addLevel(ServerLevel level) {
         this.levels.put(level.dimension(), level);
-        this.markWorldsDirty();
+        this.arclight$markWorldsDirty();
     }
 
     public void removeLevel(ServerLevel level) {
-        MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(level));
+        PlatformHooks.postLevelUnload(level);
         this.levels.remove(level.dimension());
-        this.markWorldsDirty();
+        this.arclight$markWorldsDirty();
     }
 
     @Inject(method = "tickChildren", at = @At("HEAD"))
@@ -716,7 +721,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     @DontObfuscate
     @Overwrite
     public String getServerModName() {
-        return BrandingControl.getServerBranding() + " luminara/" + ArclightVersion.current().getReleaseName();
+        return PlatformHooks.getServerBranding() + " luminara/" + ArclightVersion.current().getReleaseName();
     }
 
     @Override

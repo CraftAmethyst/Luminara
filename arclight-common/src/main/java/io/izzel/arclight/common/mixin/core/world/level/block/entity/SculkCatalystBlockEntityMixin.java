@@ -31,14 +31,13 @@ public abstract class SculkCatalystBlockEntityMixin extends BlockEntityMixin {
         CraftEventFactory.sourceBlockOverride = null;
     }
 
-    @Override
-    public void setLevel(Level p_155231_) {
-        super.setLevel(p_155231_);
+    @Inject(method = "setLevel", at = @At("RETURN"))
+    private void arclight$setLevel(Level p_155231_, CallbackInfo ci) {
         ((SculkCatalystListenerBridge) this.catalystListener).bridge$setLevel(p_155231_);
     }
 
-    @Inject(method = "load", at = @At("HEAD"))
+    @Inject(method = "load", at = @At("RETURN"))
     private void arclight$load(CompoundTag p_277597_, CallbackInfo ci) {
-        super.load(p_277597_);
+        this.arclight$readPersistentData(p_277597_);
     }
 }

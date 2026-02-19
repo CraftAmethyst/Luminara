@@ -4,9 +4,11 @@ import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
 import org.bukkit.projectiles.ProjectileSource;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface EntityBridge extends ICommandSourceBridge {
@@ -52,4 +54,10 @@ public interface EntityBridge extends ICommandSourceBridge {
     int bridge$getRideCooldown();
 
     boolean bridge$canCollideWith(Entity entity);
+
+    Collection<ItemEntity> bridge$captureDrops();
+
+    Collection<ItemEntity> bridge$captureDrops(Collection<ItemEntity> value);
+
+    void bridge$revive();
 }

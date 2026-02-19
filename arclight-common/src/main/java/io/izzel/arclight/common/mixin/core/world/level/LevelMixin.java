@@ -19,13 +19,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelWriter;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.LevelData;
@@ -34,15 +32,12 @@ import net.minecraft.world.level.storage.WritableLevelData;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.CraftWorld;
-import org.bukkit.craftbukkit.v.block.CraftBlock;
-import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.generator.CraftWorldInfo;
 import org.bukkit.craftbukkit.v.generator.CustomChunkGenerator;
 import org.bukkit.craftbukkit.v.generator.CustomWorldChunkManager;
 import org.bukkit.craftbukkit.v.util.CraftSpawnCategory;
 import org.bukkit.entity.SpawnCategory;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.spigotmc.SpigotWorldConfig;
@@ -95,7 +90,7 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
 
     @Shadow public abstract ResourceKey<Level> dimension();
 
-    @Shadow(remap = false) public abstract void markAndNotifyBlock(BlockPos p_46605_,@org.jetbrains.annotations.Nullable LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_);
+    @Shadow public abstract void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags);
 
     @Shadow public abstract DimensionType dimensionType();
 
@@ -156,37 +151,13 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
     private boolean processCaptures(BlockPos pos, BlockState newState, int flags) {
         Entity entityChangeBlock = ArclightCaptures.getEntityChangeBlock();
         if (entityChangeBlock != null) {
-            if (!CraftEventFactory.callEntityChangeBlockEvent(entityChangeBlock, pos, newState)) {
-                return false;
-            }
+            return CraftEventFactory.callEntityChangeBlockEvent(entityChangeBlock, pos, newState);
         }
         return true;
     }
 
-    @Inject(method = "markAndNotifyBlock", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;updateNeighbourShapes(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;II)V"))
-    private void arclight$callBlockPhysics(BlockPos pos, LevelChunk chunk, BlockState blockstate, BlockState state, int flags, int recursionLeft, CallbackInfo ci) {
-        try {
-            if (this.world != null) {
-                BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at((LevelAccessor) this, pos), CraftBlockData.fromData(state));
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    ci.cancel();
-                }
-            }
-        } catch (StackOverflowError e) {
-            lastPhysicsProblem = pos;
-        }
-    }
-
-    @Inject(method = "markAndNotifyBlock", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;onBlockStateChange(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V"))
-    private void arclight$preventPoiUpdate(BlockPos p_46605_, LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_, CallbackInfo ci) {
-        if (this.preventPoiUpdated) {
-            ci.cancel();
-        }
-    }
-
-    public void notifyAndUpdatePhysics(BlockPos blockposition, LevelChunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
-        this.markAndNotifyBlock(blockposition, chunk, oldBlock, newBlock, i, j);
+    public void notifyAndUpdatePhysics(BlockPos blockposition, @Nullable Object chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
+        this.sendBlockUpdated(blockposition, oldBlock, newBlock, i);
     }
 
     public CraftServer getCraftServer() {

@@ -30,7 +30,7 @@ public abstract class ParrotMixin extends AnimalMixin {
      */
     @Overwrite
     public boolean isPushable() {
-        return super.isPushable(); // CraftBukkit - collidable API
+        return this.isAlive() && !this.onClimbable() && this.collides; // CraftBukkit - collidable API
     }
 
 }

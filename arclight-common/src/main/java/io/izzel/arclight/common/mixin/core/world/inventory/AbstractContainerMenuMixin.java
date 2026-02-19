@@ -4,7 +4,9 @@ import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.ContainerBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.SlotBridge;
 import io.izzel.arclight.common.mod.server.ArclightContainer;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,8 +15,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.v.inventory.CraftInventory;
@@ -134,7 +134,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
     public Component getTitle() {
         if (this.title == null) {
             if (this.menuType != null) {
-                var key = ForgeRegistries.MENU_TYPES.getKey(this.menuType);
+                var key = BuiltInRegistries.MENU.getKey(this.menuType);
                 return Component.translatable(Optional.ofNullable(key).map(Object::toString).orElseGet(this::toString));
             } else {
                 return Component.translatable(this.toString());
@@ -190,7 +190,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 }
             } else if (this.quickcraftStatus == 2) {
                 if (!this.quickcraftSlots.isEmpty()) {
-                    if (false && this.quickcraftSlots.size() == 1) {
+                    if (false) {
                         int l = (this.quickcraftSlots.iterator().next()).index;
                         this.resetQuickCraft();
                         this.doClick(l, this.quickcraftType, ClickType.PICKUP, player);
@@ -285,7 +285,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 ItemStack itemstack10 = slot7.getItem();
                 ItemStack itemstack11 = this.getCarried();
                 player.updateTutorialInventoryAction(itemstack11, slot7.getItem(), clickaction);
-                if (!this.tryItemClickBehaviourOverride(player, clickaction, slot7, itemstack10, itemstack11) && !ForgeHooks.onItemStackedOn(itemstack10, itemstack11, slot7, clickaction, player, this.createCarriedSlotAccess())) {
+                if (!this.tryItemClickBehaviourOverride(player, clickaction, slot7, itemstack10, itemstack11) && !PlatformHooks.onItemStackedOn(itemstack10, itemstack11, slot7, clickaction, player, this.createCarriedSlotAccess())) {
                     if (itemstack10.isEmpty()) {
                         if (!itemstack11.isEmpty()) {
                             int l2 = clickaction == ClickAction.PRIMARY ? itemstack11.getCount() : 1;

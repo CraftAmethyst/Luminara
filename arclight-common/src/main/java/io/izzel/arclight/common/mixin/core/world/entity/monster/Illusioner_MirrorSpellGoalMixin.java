@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class Illusioner_MirrorSpellGoalMixin {
 
     @SuppressWarnings("target")
-    @Shadow(aliases = {"this$0", "f_32955_"}, remap = false)
+    @Shadow(aliases = {"this$0", "f_32955_", "field_7300"}, remap = false)
     private Illusioner outerThis;
 
     @Inject(method = "performSpellCasting", at = @At("HEAD"))

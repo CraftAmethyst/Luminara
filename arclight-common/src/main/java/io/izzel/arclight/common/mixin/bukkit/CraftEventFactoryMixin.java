@@ -52,7 +52,10 @@ public class CraftEventFactoryMixin {
     @Shadow
     public static Block blockDamage;
 
-    @Inject(method = "handleEntityDamageEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;", at = @At("HEAD"))
+    @Inject(method = {
+            "handleEntityDamageEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;",
+            "handleEntityDamageEvent(Lnet/minecraft/class_1297;Lnet/minecraft/class_1282;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;"
+    }, at = @At("HEAD"))
     private static void arclight$captureSource(Entity entity, DamageSource source, Map<EntityDamageEvent.DamageModifier, Double> modifiers, Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>> modifierFunctions, boolean cancelled, CallbackInfoReturnable<EntityDamageEvent> cir) {
         Entity damageEventEntity = ArclightCaptures.getDamageEventEntity();
         BlockPos damageEventBlock = ArclightCaptures.getDamageEventBlock();
@@ -70,7 +73,10 @@ public class CraftEventFactoryMixin {
         }
     }
 
-    @Inject(method = "handleEntityDamageEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;", cancellable = true, at = @At(value = "NEW", target = "java/lang/IllegalStateException"))
+    @Inject(method = {
+            "handleEntityDamageEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;",
+            "handleEntityDamageEvent(Lnet/minecraft/class_1297;Lnet/minecraft/class_1282;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;"
+    }, cancellable = true, at = @At(value = "NEW", target = "java/lang/IllegalStateException"))
     private static void arclight$unhandledDamage(Entity entity, DamageSource source, Map<EntityDamageEvent.DamageModifier, Double> modifiers, Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>> modifierFunctions, boolean cancelled, CallbackInfoReturnable<EntityDamageEvent> cir) {
         // todo blockDamage is lost
         EntityDamageEvent event;

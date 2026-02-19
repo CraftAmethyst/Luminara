@@ -3,29 +3,26 @@ package io.izzel.arclight.common.mixin.core.server.dedicated;
 import io.izzel.arclight.common.mixin.core.server.MinecraftServerMixin;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.ConsoleInput;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.rcon.RconConsoleSource;
-import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.command.CraftRemoteConsoleCommandSender;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +39,14 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin {
 
     @Inject(method = "initServer", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/dedicated/DedicatedServer;setPlayerList(Lnet/minecraft/server/players/PlayerList;)V"))
     public void arclight$loadPlugins(CallbackInfoReturnable<Boolean> cir) {
-        BukkitRegistry.unlockRegistries();
+        if (PlatformHooks.isForgePresent()) {
+            BukkitRegistry.unlockRegistries();
+        }
         ((CraftServer) Bukkit.getServer()).loadPlugins();
         ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.STARTUP);
-        BukkitRegistry.lockRegistries();
+        if (PlatformHooks.isForgePresent()) {
+            BukkitRegistry.lockRegistries();
+        }
     }
 
     @Inject(method = "initServer", at = @At(value = "FIELD", target = "Lnet/minecraft/server/dedicated/DedicatedServerProperties;enableRcon:Z"))
@@ -87,14 +88,23 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin {
 
     @Inject(method = "onServerExit", at = @At("RETURN"))
     public void arclight$exitNow(CallbackInfo ci) {
-        try {
-            TerminalConsoleAppender.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.arclight$closeTerminalConsoleAppender();
         Thread exitThread = new Thread(this::arclight$exit, "Exit Thread");
         exitThread.setDaemon(true);
         exitThread.start();
+    }
+
+    @Unique
+    private void arclight$closeTerminalConsoleAppender() {
+        try {
+            Class<?> appenderClass = Class.forName("net.minecrell.terminalconsole.TerminalConsoleAppender");
+            Method closeMethod = appenderClass.getMethod("close");
+            closeMethod.invoke(null);
+        } catch (ClassNotFoundException ignored) {
+            // Terminal console is optional on Fabric.
+        } catch (ReflectiveOperationException e) {
+            ArclightMod.LOGGER.debug("Failed to close TerminalConsoleAppender", e);
+        }
     }
 
     private void arclight$exit() {

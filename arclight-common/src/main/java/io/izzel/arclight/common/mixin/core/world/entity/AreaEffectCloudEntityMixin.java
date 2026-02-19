@@ -74,7 +74,7 @@ public abstract class AreaEffectCloudEntityMixin extends EntityMixin implements 
      */
     @Overwrite
     public void tick() {
-        super.tick();
+        ((Entity) (Object) this).baseTick();
         boolean flag = this.isWaiting();
         float f = this.getRadius();
         if (this.level().isClientSide) {

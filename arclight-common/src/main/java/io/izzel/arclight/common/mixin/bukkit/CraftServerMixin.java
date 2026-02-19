@@ -1,27 +1,32 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import com.google.common.collect.Lists;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.izzel.arclight.common.bridge.bukkit.CraftServerBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import jline.console.ConsoleReader;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.PlayerList;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CommandEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v.CraftServer;
+import org.bukkit.craftbukkit.v.command.BukkitCommandWrapper;
 import org.bukkit.craftbukkit.v.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v.command.CraftCommandMap;
+import org.bukkit.craftbukkit.v.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v.help.SimpleHelpMap;
@@ -43,6 +48,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +58,9 @@ import java.util.logging.Logger;
 
 @Mixin(value = CraftServer.class, remap = false)
 public abstract class CraftServerMixin implements CraftServerBridge {
+
+    @Unique
+    private static volatile Field arclight$commandDispatcherField;
 
     @Shadow
     public int reloadCount;
@@ -135,33 +144,19 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         return null;
     }
 
-    @ModifyVariable(method = "dispatchCommand", remap = false, index = 2, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lorg/spigotmc/AsyncCatcher;catchOp(Ljava/lang/String;)V"))
-    private String arclight$forgeCommandEvent(String commandLine, CommandSender sender) {
-        CommandSourceStack commandSource;
-        if (sender instanceof CraftEntity) {
-            commandSource = ((CraftEntity) sender).getHandle().createCommandSourceStack();
-        } else if (sender == Bukkit.getConsoleSender()) {
-            commandSource = ArclightServer.getMinecraftServer().createCommandSourceStack();
-        } else if (sender instanceof CraftBlockCommandSender) {
-            commandSource = ((CraftBlockCommandSender) sender).getWrapper();
-        } else {
-            return commandLine;
+    @Unique
+    private static Field arclight$findCommandDispatcherField() {
+        Field cached = arclight$commandDispatcherField;
+        if (cached != null) {
+            return cached;
         }
-        StringReader stringreader = new StringReader("/" + commandLine);
-        if (stringreader.canRead() && stringreader.peek() == '/') {
-            stringreader.skip();
+        for (Field field : Commands.class.getDeclaredFields()) {
+            if (CommandDispatcher.class.isAssignableFrom(field.getType())) {
+                arclight$commandDispatcherField = field;
+                return field;
+            }
         }
-        ParseResults<CommandSourceStack> parse = ArclightServer.getMinecraftServer().getCommands()
-                .getDispatcher().parse(stringreader, commandSource);
-        CommandEvent event = new CommandEvent(parse);
-        if (MinecraftForge.EVENT_BUS.post(event)) {
-            return null;
-        } else if (event.getException() != null) {
-            return null;
-        } else {
-            String s = event.getParseResults().getReader().getString();
-            return s.startsWith("/") ? s.substring(1) : s;
-        }
+        return null;
     }
 
     @Inject(method = "dispatchCommand", remap = false, cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lorg/spigotmc/AsyncCatcher;catchOp(Ljava/lang/String;)V"))
@@ -226,5 +221,89 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
         this.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
+    }
+
+    @ModifyVariable(method = "dispatchCommand", remap = false, index = 2, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lorg/spigotmc/AsyncCatcher;catchOp(Ljava/lang/String;)V"))
+    private String arclight$forgeCommandEvent(String commandLine, CommandSender sender) {
+        CommandSourceStack commandSource;
+        if (sender instanceof CraftEntity) {
+            commandSource = ((CraftEntity) sender).getHandle().createCommandSourceStack();
+        } else if (sender == Bukkit.getConsoleSender()) {
+            commandSource = ArclightServer.getMinecraftServer().createCommandSourceStack();
+        } else if (sender instanceof CraftBlockCommandSender) {
+            commandSource = ((CraftBlockCommandSender) sender).getWrapper();
+        } else {
+            return commandLine;
+        }
+        StringReader stringreader = new StringReader("/" + commandLine);
+        if (stringreader.canRead() && stringreader.peek() == '/') {
+            stringreader.skip();
+        }
+        ParseResults<CommandSourceStack> parse = ArclightServer.getMinecraftServer().getCommands()
+                .getDispatcher().parse(stringreader, commandSource);
+        String parsed = PlatformHooks.processCommandEvent(parse);
+        if (parsed == null) {
+            return null;
+        }
+        return parsed.startsWith("/") ? parsed.substring(1) : parsed;
+    }
+
+    /**
+     * @author QianMo0721
+     * @reason 1.20.1+ no longer has Commands() no-arg constructor; rebuild dispatcher in-place.
+     */
+    @Overwrite(remap = false)
+    public void syncCommands() {
+        Commands commands = this.console.getCommands();
+        this.arclight$resetCommandDispatcher(commands);
+
+        CommandDispatcher<CommandSourceStack> dispatcher = commands.getDispatcher();
+        for (Map.Entry<String, org.bukkit.command.Command> entry : this.commandMap.getKnownCommands().entrySet()) {
+            String label = entry.getKey();
+            org.bukkit.command.Command command = entry.getValue();
+            if (command instanceof VanillaCommandWrapper vanillaCommand) {
+                CommandNode<?> rawNode = vanillaCommand.vanillaCommand;
+                if (!(rawNode instanceof LiteralCommandNode<?> literalRaw)) {
+                    continue;
+                }
+                @SuppressWarnings("unchecked")
+                LiteralCommandNode<CommandSourceStack> literal = (LiteralCommandNode<CommandSourceStack>) literalRaw;
+                LiteralCommandNode<CommandSourceStack> nodeToAdd = literal;
+                if (!literal.getLiteral().equals(label)) {
+                    nodeToAdd = new LiteralCommandNode<>(
+                            label,
+                            literal.getCommand(),
+                            literal.getRequirement(),
+                            literal.getRedirect(),
+                            literal.getRedirectModifier(),
+                            literal.isFork()
+                    );
+                    for (CommandNode<CommandSourceStack> child : literal.getChildren()) {
+                        nodeToAdd.addChild(child);
+                    }
+                }
+                dispatcher.getRoot().addChild(nodeToAdd);
+            } else {
+                new BukkitCommandWrapper((CraftServer) (Object) this, command).register(dispatcher, label);
+            }
+        }
+
+        for (var player : this.playerList.players) {
+            commands.sendCommands(player);
+        }
+    }
+
+    @Unique
+    private void arclight$resetCommandDispatcher(Commands commands) {
+        try {
+            Field dispatcherField = arclight$findCommandDispatcherField();
+            if (dispatcherField == null) {
+                return;
+            }
+            dispatcherField.setAccessible(true);
+            dispatcherField.set(commands, new CommandDispatcher<>());
+        } catch (Throwable throwable) {
+            this.logger.log(Level.WARNING, "Failed to reset command dispatcher before syncCommands", throwable);
+        }
     }
 }

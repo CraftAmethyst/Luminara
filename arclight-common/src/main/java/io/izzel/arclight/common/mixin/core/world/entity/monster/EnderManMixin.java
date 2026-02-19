@@ -51,7 +51,7 @@ public abstract class EnderManMixin extends PathfinderMobMixin implements Enderm
 
     @Override
     public boolean setTarget(LivingEntity livingEntity, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
-        if (!super.setTarget(livingEntity, reason, fireEvent)) {
+        if (!this.bridge$setGoalTarget(livingEntity, reason, fireEvent)) {
             return false;
         }
         bridge$updateTarget(getTarget());
@@ -64,8 +64,7 @@ public abstract class EnderManMixin extends PathfinderMobMixin implements Enderm
      */
     @Overwrite
     public void setTarget(@Nullable LivingEntity entity) {
-        this.bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
-        super.setTarget(entity);
+        this.bridge$setGoalTarget(entity, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
         if (arclight$targetSuccess) {
             bridge$updateTarget(getTarget());
         }

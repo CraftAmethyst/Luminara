@@ -1,0 +1,28 @@
+{
+  "id": "luminara",
+  "version": "${version}",
+  "schemaVersion": 1,
+  "name": "Luminara",
+  "authors": [
+    "Luminara Team"
+  ],
+  "description": "Luminara bukkit layer for Fabric",
+  "license": "GNU GENERAL PUBLIC LICENSE Version 3",
+  "environment": "server",
+  "accessWidener": "luminara.accesswidener",
+  "mixins": [
+    "mixins.arclight.fabric.json",
+    "mixins.arclight.core.json",
+    "mixins.arclight.bukkit.json",
+    "mixins.arclight.compat.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15",
+    "minecraft": "1.20.1"
+  },
+  "entrypoints": {
+    "main": [
+      "io.izzel.arclight.fabric.ArclightModEntrypoint"
+    ]
+  }
+}

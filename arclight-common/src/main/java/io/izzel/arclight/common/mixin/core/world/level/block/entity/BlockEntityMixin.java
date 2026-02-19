@@ -48,6 +48,10 @@ public abstract class BlockEntityMixin implements TileEntityBridge {
 
     @Inject(method = "load", at = @At("RETURN"))
     public void arclight$loadPersistent(CompoundTag compound, CallbackInfo ci) {
+        this.arclight$readPersistentData(compound);
+    }
+
+    protected void arclight$readPersistentData(CompoundTag compound) {
         this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 
         CompoundTag persistentDataTag = compound.getCompound("PublicBukkitValues");

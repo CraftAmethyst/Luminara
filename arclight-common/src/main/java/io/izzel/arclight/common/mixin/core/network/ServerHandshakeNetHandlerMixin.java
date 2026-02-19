@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.mojang.authlib.properties.Property;
 import com.mojang.util.UUIDTypeAdapter;
 import io.izzel.arclight.common.bridge.core.network.NetworkManagerBridge;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
@@ -15,7 +16,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerHandshakePacketListenerImpl;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraft.server.network.ServerStatusPacketListenerImpl;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.spigotmc.SpigotConfig;
@@ -49,7 +49,7 @@ public class ServerHandshakeNetHandlerMixin {
      */
     @Overwrite
     public void handleIntention(ClientIntentionPacket packetIn) {
-        if (!ServerLifecycleHooks.handleServerLogin(packetIn, this.connection)) return;
+        if (!PlatformHooks.handleServerLogin(packetIn, this.connection)) return;
         ((NetworkManagerBridge) this.connection).bridge$setHostname(packetIn.hostName + ":" + packetIn.port);
         switch (packetIn.getIntention()) {
             case LOGIN: {

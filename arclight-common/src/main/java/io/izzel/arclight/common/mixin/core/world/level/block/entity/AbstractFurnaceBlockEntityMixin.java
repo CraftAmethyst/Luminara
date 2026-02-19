@@ -11,7 +11,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -94,6 +93,16 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
         }
     }
 
+    @Inject(method = "serverTick", at = @At("HEAD"))
+    private static void arclight$captureFurnace(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity furnace, CallbackInfo ci) {
+        arclight$captureFurnace = furnace;
+    }
+
+    @Inject(method = "serverTick", at = @At("RETURN"))
+    private static void arclight$resetFurnace(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity furnace, CallbackInfo ci) {
+        arclight$captureFurnace = null;
+    }
+
     @Redirect(method = "createExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
     private static void arclight$expEvent(ServerLevel level, Vec3 vec3, int amount) {
         if (arclight$capturePlayer != null && arclight$captureAmount != 0) {
@@ -115,35 +124,39 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
     public abstract List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_);
 
     @Shadow
-    protected abstract boolean canBurn(RegistryAccess p_266924_, @org.jetbrains.annotations.Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_);
+    private static boolean canBurn(RegistryAccess p_266924_, @org.jetbrains.annotations.Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
+        return false;
+    }
 
     /**
      * @author IzzelAliz
      * @reason
      */
     @Overwrite
-    private boolean burn(RegistryAccess registryAccess, @Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int i) {
-        if (recipe != null && this.canBurn(registryAccess, recipe, items, i)) {
+    private static boolean burn(RegistryAccess registryAccess, @Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int i) {
+        if (recipe != null && canBurn(registryAccess, recipe, items, i)) {
             ItemStack itemstack = items.get(0);
-            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble((AbstractFurnaceBlockEntity) (Object) this, registryAccess);
+            ItemStack itemstack1 = recipe.getResultItem(registryAccess);
             ItemStack itemstack2 = items.get(2);
-            CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
-            org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
+            var furnace = arclight$captureFurnace;
+            if (furnace != null && furnace.getLevel() != null) {
+                CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
+                org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
+                FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(furnace.getLevel(), furnace.getBlockPos()), source, result);
+                Bukkit.getPluginManager().callEvent(furnaceSmeltEvent);
 
-            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(level, worldPosition), source, result);
-            Bukkit.getPluginManager().callEvent(furnaceSmeltEvent);
+                if (furnaceSmeltEvent.isCancelled()) {
+                    return false;
+                }
 
-            if (furnaceSmeltEvent.isCancelled()) {
-                return false;
+                result = furnaceSmeltEvent.getResult();
+                itemstack1 = CraftItemStack.asNMSCopy(result);
             }
-
-            result = furnaceSmeltEvent.getResult();
-            itemstack1 = CraftItemStack.asNMSCopy(result);
 
             if (!itemstack1.isEmpty()) {
                 if (itemstack2.isEmpty()) {
                     items.set(2, itemstack1.copy());
-                } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
+                } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(CraftItemStack.asBukkitCopy(itemstack1))) {
                     itemstack2.grow(itemstack1.getCount());
                 } else {
                     return false;

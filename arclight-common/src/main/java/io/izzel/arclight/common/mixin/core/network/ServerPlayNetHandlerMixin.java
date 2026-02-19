@@ -15,6 +15,7 @@ import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.ArclightConstants;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import net.minecraft.ChatFormatting;
@@ -68,8 +69,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -629,7 +628,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                             if (!this.player.isChangingDimension() && (!this.player.serverLevel().getGameRules().getBoolean(GameRules.RULE_DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isFallFlying())) {
                                 float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
 
-                                if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.isSingleplayerOwner()) {
+                                if (d11 - d10 > Math.max(f2, Math.pow(SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed, 2)) && !this.isSingleplayerOwner()) {
                                     // CraftBukkit end
                                     ARCLIGHT_LOGGER.warn("moved-too-quickly", this.player.getName().getString(), d7, d8, d9);
                                     this.teleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYRot(), this.player.getXRot());
@@ -713,7 +712,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                                 }
 
                                 this.player.absMoveTo(d0, d1, d2, f, f1); // Copied from above
-                                this.clientIsFloating = d12 >= -0.03125D && this.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && !this.server.isFlightAllowed() && !this.player.getAbilities().mayfly && !this.player.hasEffect(MobEffects.LEVITATION) && !this.player.isFallFlying() && this.noBlocksAround((Entity) this.player) && !this.player.isAutoSpinAttack();
+                                this.clientIsFloating = d12 >= -0.03125D && this.player.gameMode.getGameModeForPlayer() != GameType.SPECTATOR && !this.server.isFlightAllowed() && !this.player.getAbilities().mayfly && !this.player.hasEffect(MobEffects.LEVITATION) && !this.player.isFallFlying() && this.noBlocksAround(this.player) && !this.player.isAutoSpinAttack();
                                 // CraftBukkit end
                                 this.player.serverLevel().getChunkSource().move(this.player);
                                 this.player.doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, packetplayinflying.isOnGround());
@@ -753,8 +752,8 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                     // BetterCombat mixin compatibility
                     // https://github.com/ZsoltMolnarrr/BetterCombat/blob/9090f08faf4a3e51256c8a7a13af94a80b6128c0/common/src/main/java/net/bettercombat/mixin/ServerPlayNetworkHandlerMixin.java
                     ItemStack offhandStack = this.player.getItemInHand(InteractionHand.OFF_HAND);
-                    var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.player);
-                    if (event.isCanceled()) return;
+                    var event = PlatformHooks.onLivingSwapHandItems(this.player);
+                    if (event.isCancelled()) return;
                     ItemStack itemstack = event.getItemSwappedToMainHand();
                     ItemStack originMainHand = event.getItemSwappedToOffHand();
                     CraftItemStack mainHand = CraftItemStack.asCraftMirror(itemstack);
@@ -994,7 +993,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                 }
 
                 CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
-                CompletableFuture<Component> completablefuture1 = ForgeHooks.getServerChatSubmittedDecorator().decorate(this.player, playerchatmessage.decoratedContent());
+                CompletableFuture<Component> completablefuture1 = PlatformHooks.decorateServerChat(this.player, playerchatmessage.decoratedContent());
 
                 this.chatMessageChain.append((executor) -> {
                     return CompletableFuture.allOf(completablefuture, completablefuture1).thenAcceptAsync((ovoid) -> {
@@ -1271,7 +1270,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
 
                     // Fish bucket - SPIGOT-4048
                     if ((entity instanceof Bucketable && entity instanceof LivingEntity && origItem != null && origItem.asItem() == Items.WATER_BUCKET) && (event.isCancelled() || player.getInventory().getSelected() == null || player.getInventory().getSelected().getItem() != origItem)) {
-                        send(new ClientboundAddEntityPacket((LivingEntity) entity));
+                        send(new ClientboundAddEntityPacket(entity));
                         player.containerMenu.sendAllDataToRemote();
                     }
 
@@ -1321,7 +1320,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                 @Override
                 public void onInteraction(InteractionHand hand, Vec3 vec) {
                     this.performInteraction(hand, (player, e, h) -> {
-                                var onInteractEntityAtResult = ForgeHooks.onInteractEntityAt(player, entity, vec, hand);
+                                var onInteractEntityAtResult = PlatformHooks.onInteractEntityAt(player, entity, vec, hand);
                                 if (onInteractEntityAtResult != null) return onInteractEntityAtResult;
                                 return e.interactAt(player, vec, h);
                             },
@@ -1786,75 +1785,73 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
         }
     }
 
-    @Inject(method = "handleCustomPayload", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraftforge/network/NetworkHooks;onCustomPayload(Lnet/minecraftforge/network/ICustomPacket;Lnet/minecraft/network/Connection;)Z"))
+    @Inject(method = "handleCustomPayload", at = @At("HEAD"))
     private void arclight$customPayload(ServerboundCustomPayloadPacket packet, CallbackInfo ci) {
         var readerIndex = packet.data.readerIndex();
         var buf = new byte[packet.data.readableBytes()];
         packet.data.readBytes(buf);
         packet.data.readerIndex(readerIndex);
-        ServerLifecycleHooks.getCurrentServer().executeIfPossible(() -> {
-            if (((MinecraftServerBridge) ServerLifecycleHooks.getCurrentServer()).bridge$hasStopped() || bridge$processedDisconnect()) {
-                return;
-            }
-            if (this.connection.isConnected()) {
-                if (packet.identifier.equals(CUSTOM_REGISTER)) {
-                    try {
-                        if (buf.length > 32767) { // Reasonable limit for channel names
-                            ARCLIGHT_LOGGER.warn("custom-payload.register-too-large", buf.length);
-                            this.disconnect("Invalid payload REGISTER!");
-                            return;
-                        }
-
-                        String channels = new String(buf, StandardCharsets.UTF_8);
-                        if (channels.length() > 32767) { // Additional safety check
-                            ARCLIGHT_LOGGER.warn("custom-payload.register-string-too-long", channels.length());
-                            this.disconnect("Invalid payload REGISTER!");
-                            return;
-                        }
-
-                        for (String channel : channels.split("\0")) {
-                            if (!StringUtil.isNullOrEmpty(channel) && channel.length() <= 256) { // Validate channel name length
-                                this.getCraftPlayer().addChannel(channel);
-                            }
-                        }
-                    } catch (Exception ex) {
-                        ARCLIGHT_LOGGER.error("custom-payload.register-error", ex);
+        if (((MinecraftServerBridge) this.server).bridge$hasStopped() || bridge$processedDisconnect()) {
+            return;
+        }
+        if (this.connection.isConnected()) {
+            if (packet.identifier.equals(CUSTOM_REGISTER)) {
+                try {
+                    if (buf.length > 32767) { // Reasonable limit for channel names
+                        ARCLIGHT_LOGGER.warn("custom-payload.register-too-large", buf.length);
                         this.disconnect("Invalid payload REGISTER!");
+                        return;
                     }
-                } else if (packet.identifier.equals(CUSTOM_UNREGISTER)) {
-                    try {
-                        if (buf.length > 32767) { // Reasonable limit for channel names
-                            ARCLIGHT_LOGGER.warn("custom-payload.unregister-too-large", buf.length);
-                            this.disconnect("Invalid payload UNREGISTER!");
-                            return;
-                        }
 
-                        final String channels = new String(buf, StandardCharsets.UTF_8);
-                        if (channels.length() > 32767) { // Additional safety check
-                            ARCLIGHT_LOGGER.warn("custom-payload.unregister-string-too-long", channels.length());
-                            this.disconnect("Invalid payload UNREGISTER!");
-                            return;
-                        }
+                    String channels = new String(buf, StandardCharsets.UTF_8);
+                    if (channels.length() > 32767) { // Additional safety check
+                        ARCLIGHT_LOGGER.warn("custom-payload.register-string-too-long", channels.length());
+                        this.disconnect("Invalid payload REGISTER!");
+                        return;
+                    }
 
-                        for (String channel : channels.split("\0")) {
-                            if (!StringUtil.isNullOrEmpty(channel) && channel.length() <= 256) { // Validate channel name length
-                                this.getCraftPlayer().removeChannel(channel);
-                            }
+                    for (String channel : channels.split("\0")) {
+                        if (!StringUtil.isNullOrEmpty(channel) && channel.length() <= 256) { // Validate channel name length
+                            this.getCraftPlayer().addChannel(channel);
                         }
-                    } catch (Exception ex) {
-                        ARCLIGHT_LOGGER.error("custom-payload.unregister-error", ex);
+                    }
+                } catch (Exception ex) {
+                    ARCLIGHT_LOGGER.error("custom-payload.register-error", ex);
+                    this.disconnect("Invalid payload REGISTER!");
+                }
+            } else if (packet.identifier.equals(CUSTOM_UNREGISTER)) {
+                try {
+                    if (buf.length > 32767) { // Reasonable limit for channel names
+                        ARCLIGHT_LOGGER.warn("custom-payload.unregister-too-large", buf.length);
                         this.disconnect("Invalid payload UNREGISTER!");
+                        return;
                     }
-                } else {
-                    try {
-                        this.cserver.getMessenger().dispatchIncomingMessage(((ServerPlayerEntityBridge) this.player).bridge$getBukkitEntity(), packet.identifier.toString(), buf);
-                    } catch (Exception ex) {
-                        ARCLIGHT_LOGGER.error("custom-payload.dispatch-failed", ex);
-                        this.disconnect("Invalid custom payload!");
+
+                    final String channels = new String(buf, StandardCharsets.UTF_8);
+                    if (channels.length() > 32767) { // Additional safety check
+                        ARCLIGHT_LOGGER.warn("custom-payload.unregister-string-too-long", channels.length());
+                        this.disconnect("Invalid payload UNREGISTER!");
+                        return;
                     }
+
+                    for (String channel : channels.split("\0")) {
+                        if (!StringUtil.isNullOrEmpty(channel) && channel.length() <= 256) { // Validate channel name length
+                            this.getCraftPlayer().removeChannel(channel);
+                        }
+                    }
+                } catch (Exception ex) {
+                    ARCLIGHT_LOGGER.error("custom-payload.unregister-error", ex);
+                    this.disconnect("Invalid payload UNREGISTER!");
+                }
+            } else {
+                try {
+                    this.cserver.getMessenger().dispatchIncomingMessage(((ServerPlayerEntityBridge) this.player).bridge$getBukkitEntity(), packet.identifier.toString(), buf);
+                } catch (Exception ex) {
+                    ARCLIGHT_LOGGER.error("custom-payload.dispatch-failed", ex);
+                    this.disconnect("Invalid custom payload!");
                 }
             }
-        });
+        }
     }
 
     public final boolean isDisconnected() {
@@ -1954,3 +1951,4 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
         return this.connection.channel.remoteAddress();
     }
 }
+

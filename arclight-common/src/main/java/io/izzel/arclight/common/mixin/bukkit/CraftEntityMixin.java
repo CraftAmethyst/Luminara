@@ -1,11 +1,9 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
-import io.izzel.arclight.common.mod.server.entity.ArclightFakePlayer;
 import io.izzel.arclight.common.mod.server.entity.EntityClassLookup;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.entity.CraftComplexPart;
 import org.bukkit.craftbukkit.v.entity.CraftEnderDragonPart;
@@ -28,17 +26,16 @@ public abstract class CraftEntityMixin implements org.bukkit.entity.Entity {
 
     @Inject(method = "getEntity", cancellable = true, at = @At("HEAD"))
     private static void arclight$fakePlayer(CraftServer server, Entity entity, CallbackInfoReturnable<CraftEntity> cir) {
-        if (entity instanceof FakePlayer) {
-            cir.setReturnValue(new ArclightFakePlayer(server, (FakePlayer) entity));
+        if (cir.isCancelled()) {
             return;
         }
         if (entity instanceof EnderDragonPart part) {
             if (part.parentMob instanceof EnderDragon) {
-                cir.setReturnValue(new CraftEnderDragonPart(server, (EnderDragonPart) entity));
+                cir.setReturnValue(new CraftEnderDragonPart(server, part));
                 return;
             }
 
-            cir.setReturnValue(new CraftComplexPart(server, (EnderDragonPart) entity));
+            cir.setReturnValue(new CraftComplexPart(server, part));
             return;
         }
         var convert = EntityClassLookup.getConvert(entity);

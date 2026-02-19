@@ -1,3 +1,6 @@
+run_fabric_smoke
+tmp_arclight_api_src
+
 # User-specific stuff
 .idea/
 

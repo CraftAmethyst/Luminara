@@ -65,7 +65,7 @@ public class CraftMetaItemMixin implements ItemMetaBridge {
     private CompoundTag internalTag;
     private CompoundTag forgeCaps;
 
-    @ModifyVariable(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At(value = "INVOKE", target = "Lorg/bukkit/UnsafeValues;getDataVersion()I"))
+    @ModifyVariable(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At(value = "INVOKE", target = "Lorg/bukkit/UnsafeValues;getDataVersion()I"), require = 0)
     private CompoundTag arclight$provideTag(CompoundTag tag) {
         return tag == null ? new CompoundTag() : tag;
     }

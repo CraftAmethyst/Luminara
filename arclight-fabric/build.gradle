@@ -1,0 +1,872 @@
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Handle
+import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.tree.FieldInsnNode
+import org.objectweb.asm.tree.InvokeDynamicInsnNode
+import org.objectweb.asm.tree.MethodInsnNode
+
+import java.security.MessageDigest
+import java.util.zip.ZipFile
+
+plugins {
+    id 'fabric-loom' version "${fabric_loom_version}"
+    id 'java'
+    id 'idea'
+}
+
+archivesBaseName = 'luminara-fabric-' + minecraftVersion
+
+configurations {
+    launcherEmbed
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://files.minecraftforge.net/maven/' }
+    maven { url = 'https://maven.izzel.io/releases' }
+    maven { url = 'https://jitpack.io/' }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:$minecraftVersion"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:$fabricLoaderVersion"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:$fabricApiVersion"
+
+    implementation(project(':arclight-common')) {
+        transitive = false
+    }
+    launcherEmbed(project(':arclight-common')) {
+        transitive = false
+    }
+    implementation(project(':i18n-config')) {
+        transitive = false
+    }
+    launcherEmbed(project(':i18n-config')) {
+        transitive = false
+    }
+    launcherEmbed("org.spongepowered:configurate-yaml:3.6.1") {
+        transitive = true
+        exclude group: "com.google.guava", module: "guava"
+        exclude group: "org.checkerframework", module: "checker-qual"
+        exclude group: "org.yaml", module: "snakeyaml"
+    }
+    launcherEmbed "org.yaml:snakeyaml:2.0"
+    implementation "io.izzel.arclight:arclight-api:$apiVersion"
+    include "io.izzel.arclight:arclight-api:$apiVersion"
+    implementation(project(':forge-installer')) {
+        transitive = false
+    }
+    launcherEmbed(project(':forge-installer')) {
+        transitive = false
+    }
+    implementation("io.izzel.arclight:mixin-tools:1.2.3") {
+        transitive = false
+    }
+    launcherEmbed("io.izzel.arclight:mixin-tools:1.2.3") {
+        transitive = false
+    }
+    launcherEmbed 'jline:jline:2.12.1'
+    launcherEmbed 'org.xerial:sqlite-jdbc:3.42.0.0'
+    launcherEmbed 'com.mysql:mysql-connector-j:8.0.33'
+    launcherEmbed 'commons-codec:commons-codec:1.15'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    launcherEmbed 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.jetbrains:annotations:23.0.0'
+
+    compileOnly 'net.minecraftforge:eventbus:6.0.5'
+}
+
+processResources {
+    def ver = "${project.version}+$gitHash"
+    inputs.property 'version', ver
+    filesMatching('fabric.mod.json') {
+        expand 'version': ver
+    }
+}
+
+tasks.register('generateFabricInstallerInfo') {
+    inputs.property('minecraftVersion', minecraftVersion)
+    inputs.property('fabricLoaderVersion', fabricLoaderVersion)
+    def installer = file("${project.buildDir}/arclight_installer/META-INF/installer.json")
+    outputs.file(installer)
+    doLast {
+        def sha1 = { File file ->
+            MessageDigest md = MessageDigest.getInstance('SHA-1')
+            file.eachByte(4096) { bytes, size ->
+                md.update(bytes, 0, size)
+            }
+            return md.digest().collect { String.format("%02x", it) }.join()
+        }
+        def loaderCfg = project.configurations.detachedConfiguration(
+                project.dependencies.create("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+        )
+        loaderCfg.transitive = false
+        def loaderFile = loaderCfg.singleFile
+        def intermediaryCfg = project.configurations.detachedConfiguration(
+                project.dependencies.create("net.fabricmc:intermediary:$minecraftVersion")
+        )
+        intermediaryCfg.transitive = false
+        def intermediaryFile = intermediaryCfg.singleFile
+        def fabricExtra = [:]
+        fabricExtra["net.fabricmc:intermediary:$minecraftVersion"] = sha1(intermediaryFile)
+        def output = [
+                installer  : [
+                        minecraft       : minecraftVersion,
+                        fabricLoader    : fabricLoaderVersion,
+                        fabricLoaderHash: sha1(loaderFile)
+                ],
+                libraries  : [:],
+                fabricExtra: fabricExtra
+        ]
+        installer.parentFile.mkdirs()
+        installer.text = groovy.json.JsonOutput.toJson(output)
+    }
+}
+
+tasks.register('generateFabricRefmap') {
+    def outputFile = file("${project.buildDir}/generated/fabric-refmap/mixins.arclight.refmap.json")
+    outputs.file(outputFile)
+    outputs.upToDateWhen { false }
+    dependsOn(':arclight-common:jar', ':arclight-common:createSrgToMcp')
+    doLast {
+        def commonJarFile = project(':arclight-common').tasks.named('jar').get().archiveFile.get().asFile
+        def mixinTargetOwnerByMixin = [:]
+        new ZipFile(commonJarFile).withCloseable { zip ->
+            zip.entries().each { entry ->
+                if (entry.directory || !entry.name.endsWith('.class') || !entry.name.startsWith('io/izzel/arclight/common/mixin/')) {
+                    return
+                }
+                def node = new ClassNode()
+                new ClassReader(zip.getInputStream(entry).bytes).accept(node, ClassReader.SKIP_CODE)
+                def mixinAnn = ((node.visibleAnnotations ?: []) + (node.invisibleAnnotations ?: []))
+                        .find { it.desc == 'Lorg/spongepowered/asm/mixin/Mixin;' }
+                if (mixinAnn == null || mixinAnn.values == null) {
+                    return
+                }
+                def targets = []
+                for (int i = 0; i < mixinAnn.values.size() - 1; i += 2) {
+                    def key = mixinAnn.values[i]
+                    def value = mixinAnn.values[i + 1]
+                    if (key == 'value' && value instanceof List) {
+                        value.each { v ->
+                            if (v instanceof org.objectweb.asm.Type) {
+                                targets << v.internalName
+                            }
+                        }
+                    } else if (key == 'targets' && value instanceof List) {
+                        value.each { v ->
+                            if (v instanceof String) {
+                                targets << v.replace('.', '/')
+                            }
+                        }
+                    }
+                }
+                if (!targets.isEmpty()) {
+                    mixinTargetOwnerByMixin[node.name] = targets.first()
+                }
+            }
+        }
+
+        String refmapText
+        new ZipFile(commonJarFile).withCloseable { zip ->
+            def entry = zip.getEntry('mixins.arclight.refmap.json')
+            if (entry == null) {
+                throw new GradleException("mixins.arclight.refmap.json was not found in ${commonJarFile}")
+            }
+            refmapText = zip.getInputStream(entry).getText('UTF-8')
+        }
+
+        def srgFile = project(':arclight-common').file('build/createSrgToMcp/output.srg')
+        if (!srgFile.exists()) {
+            throw new GradleException("Missing SRG mapping file: ${srgFile}")
+        }
+
+        def loomCacheRoot = new File(gradle.gradleUserHomeDir, "caches/fabric-loom/${minecraftVersion}")
+        def mappingsTiny = fileTree(loomCacheRoot) {
+            include '**/mappings.tiny'
+        }.files.find { it.parentFile.name.startsWith('loom.mappings.') }
+        if (mappingsTiny == null || !mappingsTiny.exists()) {
+            throw new GradleException("Cannot find loom mappings.tiny under ${loomCacheRoot}")
+        }
+
+        def remapDesc = { String desc, Map<String, String> classMap ->
+            if (desc == null) {
+                return null
+            }
+            desc.replaceAll(/L([^;]+);/) { full, cls ->
+                def key = cls.toString()
+                "L${classMap.getOrDefault(key, key)};"
+            }
+        }
+
+        def srgMethodToNamed = [:]
+        def srgFieldToNamed = [:]
+        srgFile.eachLine('UTF-8') { line ->
+            if (line.startsWith('MD: ')) {
+                def parts = line.split(' ')
+                if (parts.length >= 5) {
+                    def fromMember = parts[1]
+                    def fromDesc = parts[2]
+                    def toMember = parts[3]
+                    def fromSep = fromMember.lastIndexOf('/')
+                    def toSep = toMember.lastIndexOf('/')
+                    if (fromSep > 0 && toSep > 0) {
+                        def ownerNamed = toMember.substring(0, toSep)
+                        def srgName = fromMember.substring(fromSep + 1)
+                        def namedName = toMember.substring(toSep + 1)
+                        srgMethodToNamed["${ownerNamed}|${srgName}|${fromDesc}"] = namedName
+                    }
+                }
+            } else if (line.startsWith('FD: ')) {
+                def parts = line.split(' ')
+                if (parts.length >= 3) {
+                    def fromMember = parts[1]
+                    def toMember = parts[2]
+                    def fromSep = fromMember.lastIndexOf('/')
+                    def toSep = toMember.lastIndexOf('/')
+                    if (fromSep > 0 && toSep > 0) {
+                        def ownerNamed = toMember.substring(0, toSep)
+                        def srgName = fromMember.substring(fromSep + 1)
+                        def namedName = toMember.substring(toSep + 1)
+                        srgFieldToNamed["${ownerNamed}|${srgName}"] = namedName
+                    }
+                }
+            }
+        }
+
+        def namedToIntermediary = [:]
+        def namedToOfficial = [:]
+        def methodNamedToInter = [:]
+        def fieldNamedToInter = [:]
+        def methodOfficialToInter = [:]
+        def fieldOfficialToInter = [:]
+        def methodFallback = [:]
+        def fieldFallback = [:]
+        def methodOfficialFallback = [:]
+        def fieldOfficialFallback = [:]
+        String currentNamed = null
+        mappingsTiny.eachLine('UTF-8') { line ->
+            if (line.startsWith('c\t')) {
+                def parts = line.split('\t')
+                if (parts.length >= 4) {
+                    def official = parts[1]
+                    def intermediary = parts[2]
+                    def named = parts[3]
+                    currentNamed = named
+                    namedToIntermediary[named] = intermediary
+                    namedToOfficial[named] = official
+                }
+            } else if (currentNamed != null && line.startsWith('\tf\t')) {
+                def parts = line.split('\t')
+                if (parts.length >= 6) {
+                    def descOfficial = parts[2]
+                    def officialName = parts[3]
+                    def intermediaryName = parts[4]
+                    def namedName = parts[5]
+                    fieldNamedToInter["${currentNamed}|${namedName}|${descOfficial}"] = intermediaryName
+                    fieldOfficialToInter["${currentNamed}|${officialName}|${descOfficial}"] = intermediaryName
+                    def fallbackKey = "${currentNamed}|${namedName}"
+                    if (!fieldFallback.containsKey(fallbackKey)) {
+                        fieldFallback[fallbackKey] = intermediaryName
+                    } else if (fieldFallback[fallbackKey] != intermediaryName) {
+                        fieldFallback[fallbackKey] = '__AMBIG__'
+                    }
+                    def officialFallbackKey = "${currentNamed}|${officialName}"
+                    if (!fieldOfficialFallback.containsKey(officialFallbackKey)) {
+                        fieldOfficialFallback[officialFallbackKey] = intermediaryName
+                    } else if (fieldOfficialFallback[officialFallbackKey] != intermediaryName) {
+                        fieldOfficialFallback[officialFallbackKey] = '__AMBIG__'
+                    }
+                }
+            } else if (currentNamed != null && line.startsWith('\tm\t')) {
+                def parts = line.split('\t')
+                if (parts.length >= 6) {
+                    def descOfficial = parts[2]
+                    def officialName = parts[3]
+                    def intermediaryName = parts[4]
+                    def namedName = parts[5]
+                    methodNamedToInter["${currentNamed}|${namedName}|${descOfficial}"] = intermediaryName
+                    methodOfficialToInter["${currentNamed}|${officialName}|${descOfficial}"] = intermediaryName
+                    def fallbackKey = "${currentNamed}|${namedName}"
+                    if (!methodFallback.containsKey(fallbackKey)) {
+                        methodFallback[fallbackKey] = intermediaryName
+                    } else if (methodFallback[fallbackKey] != intermediaryName) {
+                        methodFallback[fallbackKey] = '__AMBIG__'
+                    }
+                    def officialFallbackKey = "${currentNamed}|${officialName}"
+                    if (!methodOfficialFallback.containsKey(officialFallbackKey)) {
+                        methodOfficialFallback[officialFallbackKey] = intermediaryName
+                    } else if (methodOfficialFallback[officialFallbackKey] != intermediaryName) {
+                        methodOfficialFallback[officialFallbackKey] = '__AMBIG__'
+                    }
+                }
+            }
+        }
+
+        int unresolved = 0
+        def convertValue = { String value, String defaultOwner ->
+            def methodMatcher = value =~ /^L([^;]+);([^(:]+)(\(.*)$/
+            if (methodMatcher.matches()) {
+                def ownerNamed = methodMatcher[0][1]
+                def srgOrNamed = methodMatcher[0][2]
+                def descNamed = methodMatcher[0][3]
+                def ownerInter = namedToIntermediary.getOrDefault(ownerNamed, ownerNamed)
+                def descInter = remapDesc(descNamed, namedToIntermediary)
+                if (srgOrNamed == '<init>' || srgOrNamed == '<clinit>') {
+                    return "L${ownerInter};${srgOrNamed}${descInter}"
+                }
+                def namedName = srgMethodToNamed["${ownerNamed}|${srgOrNamed}|${descNamed}"] ?: srgOrNamed
+                def descOfficial = remapDesc(descNamed, namedToOfficial)
+                def interName = methodNamedToInter["${ownerNamed}|${namedName}|${descOfficial}"]
+                if (interName == null) {
+                    def fallback = methodFallback["${ownerNamed}|${namedName}"]
+                    if (fallback != null && fallback != '__AMBIG__') {
+                        interName = fallback
+                    }
+                }
+                if (interName == null) {
+                    interName = methodOfficialToInter["${ownerNamed}|${srgOrNamed}|${descOfficial}"]
+                    if (interName == null) {
+                        def fallback = methodOfficialFallback["${ownerNamed}|${srgOrNamed}"]
+                        if (fallback != null && fallback != '__AMBIG__') {
+                            interName = fallback
+                        }
+                    }
+                }
+                if (interName == null) {
+                    unresolved++
+                    interName = namedName
+                }
+                return "L${ownerInter};${interName}${descInter}"
+            }
+
+            def fieldMatcher = value =~ /^L([^;]+);([^:]+):(.+)$/
+            if (fieldMatcher.matches()) {
+                def ownerNamed = fieldMatcher[0][1]
+                def srgOrNamed = fieldMatcher[0][2]
+                def descNamed = fieldMatcher[0][3]
+                def ownerInter = namedToIntermediary.getOrDefault(ownerNamed, ownerNamed)
+                def descInter = remapDesc(descNamed, namedToIntermediary)
+                def namedName = srgFieldToNamed["${ownerNamed}|${srgOrNamed}"] ?: srgOrNamed
+                def descOfficial = remapDesc(descNamed, namedToOfficial)
+                def interName = fieldNamedToInter["${ownerNamed}|${namedName}|${descOfficial}"]
+                if (interName == null) {
+                    def fallback = fieldFallback["${ownerNamed}|${namedName}"]
+                    if (fallback != null && fallback != '__AMBIG__') {
+                        interName = fallback
+                    }
+                }
+                if (interName == null) {
+                    interName = fieldOfficialToInter["${ownerNamed}|${srgOrNamed}|${descOfficial}"]
+                    if (interName == null) {
+                        def fallback = fieldOfficialFallback["${ownerNamed}|${srgOrNamed}"]
+                        if (fallback != null && fallback != '__AMBIG__') {
+                            interName = fallback
+                        }
+                    }
+                }
+                if (interName == null) {
+                    unresolved++
+                    interName = namedName
+                }
+                return "L${ownerInter};${interName}:${descInter}"
+            }
+
+            def bareMethodMatcher = value =~ /^([^(:]+)(\(.*)$/
+            if (bareMethodMatcher.matches() && defaultOwner != null) {
+                def ownerNamed = defaultOwner
+                def srgOrNamed = bareMethodMatcher[0][1]
+                def descNamed = bareMethodMatcher[0][2]
+                def descInter = remapDesc(descNamed, namedToIntermediary)
+                if (srgOrNamed == '<init>' || srgOrNamed == '<clinit>') {
+                    return "${srgOrNamed}${descInter}"
+                }
+                def namedName = srgMethodToNamed["${ownerNamed}|${srgOrNamed}|${descNamed}"] ?: srgOrNamed
+                def descOfficial = remapDesc(descNamed, namedToOfficial)
+                def interName = methodNamedToInter["${ownerNamed}|${namedName}|${descOfficial}"]
+                if (interName == null) {
+                    def fallback = methodFallback["${ownerNamed}|${namedName}"]
+                    if (fallback != null && fallback != '__AMBIG__') {
+                        interName = fallback
+                    }
+                }
+                if (interName == null) {
+                    interName = methodOfficialToInter["${ownerNamed}|${srgOrNamed}|${descOfficial}"]
+                    if (interName == null) {
+                        def fallback = methodOfficialFallback["${ownerNamed}|${srgOrNamed}"]
+                        if (fallback != null && fallback != '__AMBIG__') {
+                            interName = fallback
+                        }
+                    }
+                }
+                if (interName == null) {
+                    unresolved++
+                    interName = namedName
+                }
+                return "${interName}${descInter}"
+            }
+
+            def bareFieldMatcher = value =~ /^([^:]+):(.+)$/
+            if (bareFieldMatcher.matches() && defaultOwner != null) {
+                def ownerNamed = defaultOwner
+                def srgOrNamed = bareFieldMatcher[0][1]
+                def descNamed = bareFieldMatcher[0][2]
+                def descInter = remapDesc(descNamed, namedToIntermediary)
+                def namedName = srgFieldToNamed["${ownerNamed}|${srgOrNamed}"] ?: srgOrNamed
+                def descOfficial = remapDesc(descNamed, namedToOfficial)
+                def interName = fieldNamedToInter["${ownerNamed}|${namedName}|${descOfficial}"]
+                if (interName == null) {
+                    def fallback = fieldFallback["${ownerNamed}|${namedName}"]
+                    if (fallback != null && fallback != '__AMBIG__') {
+                        interName = fallback
+                    }
+                }
+                if (interName == null) {
+                    interName = fieldOfficialToInter["${ownerNamed}|${srgOrNamed}|${descOfficial}"]
+                    if (interName == null) {
+                        def fallback = fieldOfficialFallback["${ownerNamed}|${srgOrNamed}"]
+                        if (fallback != null && fallback != '__AMBIG__') {
+                            interName = fallback
+                        }
+                    }
+                }
+                if (interName == null) {
+                    unresolved++
+                    interName = namedName
+                }
+                return "${interName}:${descInter}"
+            }
+
+            if (value.contains('/') && !value.contains(';')) {
+                return namedToIntermediary.getOrDefault(value, value)
+            }
+            if (value.contains('.') && !value.contains(';')) {
+                def slashed = value.replace('.', '/')
+                def mapped = namedToIntermediary[slashed]
+                return mapped == null ? value : mapped.replace('/', '.')
+            }
+            return value
+        }
+
+        def parser = new groovy.json.JsonSlurper()
+        def sourceRefmap = parser.parseText(refmapText)
+        def sourceMappings = sourceRefmap.mappings instanceof Map ? sourceRefmap.mappings : [:]
+        def convertedMappings = [:]
+        sourceMappings.each { mixinClass, remapData ->
+            def converted = [:]
+            def defaultOwner = mixinTargetOwnerByMixin[mixinClass.toString()]
+            if (remapData instanceof Map) {
+                remapData.each { key, value ->
+                    if (value instanceof String) {
+                        converted[key] = convertValue(value, defaultOwner)
+                    } else {
+                        converted[key] = value
+                    }
+                }
+            }
+            convertedMappings[mixinClass] = converted
+        }
+
+        def mixinMapFile = fileTree(project(':arclight-common').file('build/loom-cache')) {
+            include 'mixin-map-*.tiny'
+        }.files.find()
+        if (mixinMapFile != null && mixinMapFile.exists()) {
+            mixinMapFile.eachLine('UTF-8') { line ->
+                if (line.startsWith('FIELD\t')) {
+                    def parts = line.split('\t')
+                    if (parts.length >= 5) {
+                        def mixinClass = parts[1]
+                        def descNamed = parts[2]
+                        def namedName = parts[3]
+                        def interName = parts[4]
+                        def mixinData = convertedMappings.computeIfAbsent(mixinClass) { [:] }
+                        if (!mixinData.containsKey(namedName)) {
+                            mixinData[namedName] = "${interName}:${remapDesc(descNamed, namedToIntermediary)}"
+                        }
+                    }
+                } else if (line.startsWith('METHOD\t')) {
+                    def parts = line.split('\t')
+                    if (parts.length >= 5) {
+                        def mixinClass = parts[1]
+                        def descNamed = parts[2]
+                        def namedName = parts[3]
+                        def interName = parts[4]
+                        def mixinData = convertedMappings.computeIfAbsent(mixinClass) { [:] }
+                        if (!mixinData.containsKey(namedName)) {
+                            mixinData[namedName] = "${interName}${remapDesc(descNamed, namedToIntermediary)}"
+                        }
+                    }
+                }
+            }
+        } else {
+            logger.lifecycle('generateFabricRefmap: mixin-map-*.tiny not found, skipped shadow fallback generation')
+        }
+
+        def levelMixin = convertedMappings['io/izzel/arclight/common/mixin/core/world/level/LevelMixin']
+        if (levelMixin instanceof Map && levelMixin['thread'] == 'f_46423_:Ljava/lang/Thread;') {
+            levelMixin['thread'] = 'field_17086:Ljava/lang/Thread;'
+        }
+
+        def out = [
+                mappings: convertedMappings,
+                data    : ['named:intermediary': convertedMappings]
+        ]
+        outputFile.parentFile.mkdirs()
+        outputFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(out))
+        if (unresolved > 0) {
+            logger.lifecycle("generateFabricRefmap: unresolved entries kept as-is: ${unresolved}")
+        }
+    }
+}
+
+tasks.register('generateFabricMixinClasses') {
+    def outputDir = file("${project.buildDir}/generated/fabric-mixin-classes")
+    outputs.dir(outputDir)
+    outputs.upToDateWhen { false }
+    dependsOn(':arclight-common:jar')
+    dependsOn(tasks.generateFabricRefmap)
+    doLast {
+        def mixinMapFile = fileTree(project(':arclight-common').file('build/loom-cache')) {
+            include 'mixin-map-*.tiny'
+        }.files.find()
+        if (mixinMapFile == null || !mixinMapFile.exists()) {
+            logger.lifecycle('generateFabricMixinClasses: mixin-map-*.tiny not found, skipping bytecode rewrite')
+            outputDir.mkdirs()
+            return
+        }
+
+        def fieldRenames = [:].withDefault { [:] }
+        def methodRenames = [:].withDefault { [:] }
+        mixinMapFile.eachLine('UTF-8') { line ->
+            if (line.startsWith('FIELD\t')) {
+                def parts = line.split('\t')
+                if (parts.length >= 5) {
+                    def owner = parts[1]
+                    def desc = parts[2]
+                    def oldName = parts[3]
+                    def newName = parts[4]
+                    if (oldName != newName) {
+                        fieldRenames[owner]["${oldName}#${desc}"] = newName
+                    }
+                }
+            } else if (line.startsWith('METHOD\t')) {
+                def parts = line.split('\t')
+                if (parts.length >= 5) {
+                    def owner = parts[1]
+                    def desc = parts[2]
+                    def oldName = parts[3]
+                    def newName = parts[4]
+                    if (oldName != newName) {
+                        methodRenames[owner]["${oldName}#${desc}"] = newName
+                    }
+                }
+            }
+        }
+
+        def convertedRefmapFile = file("${project.buildDir}/generated/fabric-refmap/mixins.arclight.refmap.json")
+        if (convertedRefmapFile.exists()) {
+            def parser = new groovy.json.JsonSlurper()
+            def refmap = parser.parse(convertedRefmapFile)
+            def mappings = refmap?.mappings instanceof Map ? refmap.mappings : [:]
+            def commonJarFile = project(':arclight-common').tasks.named('jar').get().archiveFile.get().asFile
+
+            def classMemberIndex = [:].withDefault { [fields: [:].withDefault { [] }, methods: [:].withDefault { [] }] }
+            new ZipFile(commonJarFile).withCloseable { zip ->
+                mappings.keySet().each { mixinClass ->
+                    def owner = mixinClass.toString()
+                    def entry = zip.getEntry("${owner}.class")
+                    if (entry == null) {
+                        return
+                    }
+                    def classNode = new ClassNode()
+                    new ClassReader(zip.getInputStream(entry).bytes).accept(classNode, ClassReader.SKIP_CODE)
+                    classNode.fields.each { field ->
+                        classMemberIndex[owner].fields[field.name] << field.desc
+                    }
+                    classNode.methods.each { method ->
+                        classMemberIndex[owner].methods[method.name] << method.desc
+                    }
+                }
+            }
+
+            mappings.each { mixinClass, remapData ->
+                if (!(remapData instanceof Map)) {
+                    return
+                }
+                def owner = mixinClass.toString()
+                def memberIndex = classMemberIndex[owner]
+                remapData.each { key, value ->
+                    if (!(value instanceof String)) {
+                        return
+                    }
+                    def target = value.toString()
+                    def methodMatcher = target =~ /^L[^;]+;([^(:]+)\((.*)$/
+                    def fieldMatcher = target =~ /^L[^;]+;([^:]+):(.+)$/
+                    if (methodMatcher.matches()) {
+                        def newName = methodMatcher[0][1]
+                        def oldName = key.toString().contains('(') ? key.toString().substring(0, key.toString().indexOf('(')) : key.toString()
+                        if (oldName == newName) {
+                            return
+                        }
+                        def oldDesc = null
+                        if (key.toString().contains('(')) {
+                            oldDesc = key.toString().substring(key.toString().indexOf('('))
+                        }
+                        memberIndex.methods[oldName].each { desc ->
+                            if (oldDesc == null || oldDesc == desc) {
+                                methodRenames[owner]["${oldName}#${desc}"] = newName
+                            }
+                        }
+                    } else if (fieldMatcher.matches()) {
+                        def newName = fieldMatcher[0][1]
+                        def oldName = key.toString().contains(':') ? key.toString().substring(0, key.toString().indexOf(':')) : key.toString()
+                        if (oldName == newName) {
+                            return
+                        }
+                        def oldDesc = null
+                        if (key.toString().contains(':')) {
+                            oldDesc = key.toString().substring(key.toString().indexOf(':') + 1)
+                        }
+                        memberIndex.fields[oldName].each { desc ->
+                            if (oldDesc == null || oldDesc == desc) {
+                                fieldRenames[owner]["${oldName}#${desc}"] = newName
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        def loomCacheRoot = new File(gradle.gradleUserHomeDir, "caches/fabric-loom/${minecraftVersion}")
+        def mappingsTiny = fileTree(loomCacheRoot) {
+            include '**/mappings.tiny'
+        }.files.find { it.parentFile.name.startsWith('loom.mappings.') }
+        if (mappingsTiny != null && mappingsTiny.exists()) {
+            def namedToOfficial = [:]
+            def methodNamedToInter = [:]
+            def fieldNamedToInter = [:]
+            String currentNamed = null
+            mappingsTiny.eachLine('UTF-8') { line ->
+                if (line.startsWith('c\t')) {
+                    def parts = line.split('\t')
+                    if (parts.length >= 4) {
+                        currentNamed = parts[3]
+                        namedToOfficial[currentNamed] = parts[1]
+                    }
+                } else if (currentNamed != null && line.startsWith('\tm\t')) {
+                    def parts = line.split('\t')
+                    if (parts.length >= 6) {
+                        methodNamedToInter["${currentNamed}|${parts[5]}|${parts[2]}"] = parts[4]
+                    }
+                } else if (currentNamed != null && line.startsWith('\tf\t')) {
+                    def parts = line.split('\t')
+                    if (parts.length >= 6) {
+                        fieldNamedToInter["${currentNamed}|${parts[5]}|${parts[2]}"] = parts[4]
+                    }
+                }
+            }
+
+            def remapDescToOfficial = { String desc ->
+                if (desc == null) {
+                    return null
+                }
+                desc.replaceAll(/L([^;]+);/) { full, cls ->
+                    def key = cls.toString()
+                    "L${namedToOfficial.getOrDefault(key, key)};"
+                }
+            }
+            def hasAnnotation = { List annotations, String desc ->
+                annotations != null && annotations.any { it?.desc == desc }
+            }
+            def readMixinTargets = { ClassNode node ->
+                def targets = []
+                def mixinAnn = ((node.visibleAnnotations ?: []) + (node.invisibleAnnotations ?: []))
+                        .find { it.desc == 'Lorg/spongepowered/asm/mixin/Mixin;' }
+                if (mixinAnn != null && mixinAnn.values != null) {
+                    for (int i = 0; i < mixinAnn.values.size() - 1; i += 2) {
+                        def key = mixinAnn.values[i]
+                        def value = mixinAnn.values[i + 1]
+                        if (key == 'value' && value instanceof List) {
+                            value.each { v ->
+                                if (v instanceof org.objectweb.asm.Type) {
+                                    targets << v.internalName
+                                }
+                            }
+                        } else if (key == 'targets' && value instanceof List) {
+                            value.each { v ->
+                                if (v instanceof String) {
+                                    targets << v.replace('.', '/')
+                                }
+                            }
+                        }
+                    }
+                }
+                return targets
+            }
+
+            def commonJarFile = project(':arclight-common').tasks.named('jar').get().archiveFile.get().asFile
+            new ZipFile(commonJarFile).withCloseable { zip ->
+                zip.entries().each { entry ->
+                    if (entry.directory || !entry.name.endsWith('.class') || !entry.name.startsWith('io/izzel/arclight/common/mixin/')) {
+                        return
+                    }
+                    def classNode = new ClassNode()
+                    new ClassReader(zip.getInputStream(entry).bytes).accept(classNode, ClassReader.SKIP_CODE)
+                    def mixinTargets = readMixinTargets(classNode)
+                    if (mixinTargets.isEmpty()) {
+                        return
+                    }
+                    def owner = classNode.name
+                    classNode.fields.each { field ->
+                        if (!hasAnnotation(field.visibleAnnotations, 'Lorg/spongepowered/asm/mixin/Shadow;')
+                                && !hasAnnotation(field.invisibleAnnotations, 'Lorg/spongepowered/asm/mixin/Shadow;')) {
+                            return
+                        }
+                        def oldName = field.name
+                        def descOfficial = remapDescToOfficial(field.desc)
+                        for (String targetOwner : mixinTargets) {
+                            def interName = fieldNamedToInter["${targetOwner}|${oldName}|${descOfficial}"]
+                            if (interName != null && interName != oldName) {
+                                fieldRenames[owner]["${oldName}#${field.desc}"] = interName
+                                break
+                            }
+                        }
+                    }
+                    classNode.methods.each { method ->
+                        if (!hasAnnotation(method.visibleAnnotations, 'Lorg/spongepowered/asm/mixin/Shadow;')
+                                && !hasAnnotation(method.invisibleAnnotations, 'Lorg/spongepowered/asm/mixin/Shadow;')) {
+                            return
+                        }
+                        def oldName = method.name
+                        def descOfficial = remapDescToOfficial(method.desc)
+                        for (String targetOwner : mixinTargets) {
+                            def interName = methodNamedToInter["${targetOwner}|${oldName}|${descOfficial}"]
+                            if (interName != null && interName != oldName) {
+                                methodRenames[owner]["${oldName}#${method.desc}"] = interName
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Some common mixins intentionally use Forge-style names that are absent from mixin-map.
+        methodRenames['io/izzel/arclight/common/mixin/core/world/level/LevelMixin'][
+                'sendBlockUpdated#(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;I)V'
+        ] = 'method_8413'
+
+        def targetClasses = (fieldRenames.keySet() + methodRenames.keySet()) as Set
+        if (targetClasses.isEmpty()) {
+            outputDir.mkdirs()
+            return
+        }
+
+        outputDir.deleteDir()
+        outputDir.mkdirs()
+
+        def commonJarFile = project(':arclight-common').tasks.named('jar').get().archiveFile.get().asFile
+        def transform = { byte[] bytes, String owner ->
+            def classNode = new ClassNode()
+            new ClassReader(bytes).accept(classNode, 0)
+            def classFieldRenames = fieldRenames[owner]
+            def classMethodRenames = methodRenames[owner]
+
+            classNode.fields.each { field ->
+                def renamed = classFieldRenames["${field.name}#${field.desc}"]
+                if (renamed != null) {
+                    field.name = renamed
+                }
+            }
+            classNode.methods.each { method ->
+                def renamed = classMethodRenames["${method.name}#${method.desc}"]
+                if (renamed != null) {
+                    method.name = renamed
+                }
+            }
+            classNode.methods.each { method ->
+                method.instructions?.each { insn ->
+                    if (insn instanceof FieldInsnNode && insn.owner == owner) {
+                        def renamed = classFieldRenames["${insn.name}#${insn.desc}"]
+                        if (renamed != null) {
+                            insn.name = renamed
+                        }
+                    } else if (insn instanceof MethodInsnNode && insn.owner == owner) {
+                        def renamed = classMethodRenames["${insn.name}#${insn.desc}"]
+                        if (renamed != null) {
+                            insn.name = renamed
+                        }
+                    } else if (insn instanceof InvokeDynamicInsnNode) {
+                        for (int i = 0; i < insn.bsmArgs.length; i++) {
+                            def arg = insn.bsmArgs[i]
+                            if (arg instanceof Handle && arg.owner == owner) {
+                                def renamed = classMethodRenames["${arg.name}#${arg.desc}"]
+                                if (renamed != null) {
+                                    insn.bsmArgs[i] = new Handle(arg.tag, arg.owner, renamed, arg.desc, arg.isInterface())
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            def writer = new ClassWriter(0)
+            classNode.accept(writer)
+            return writer.toByteArray()
+        }
+
+        new ZipFile(commonJarFile).withCloseable { zip ->
+            targetClasses.each { owner ->
+                def entryName = "${owner}.class"
+                def entry = zip.getEntry(entryName)
+                if (entry == null) {
+                    return
+                }
+                def bytes = zip.getInputStream(entry).bytes
+                def transformed = transform(bytes, owner)
+                def out = new File(outputDir, entryName)
+                out.parentFile.mkdirs()
+                out.bytes = transformed
+            }
+        }
+    }
+}
+
+project.sourceSets.main.output.dir file("${project.buildDir}/arclight_installer"), builtBy: tasks.generateFabricInstallerInfo
+
+jar {
+    dependsOn tasks.generateFabricRefmap
+    dependsOn tasks.generateFabricMixinClasses
+    from("${project.buildDir}/generated/fabric-mixin-classes") {
+        include "**/*.class"
+    }
+    from({
+        configurations.launcherEmbed.collect { it.isDirectory() ? it : zipTree(it) }
+    }) {
+        exclude "META-INF/MANIFEST.MF"
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+        exclude "mixins.arclight.refmap.json"
+    }
+    from("${project.buildDir}/generated/fabric-refmap") {
+        include "mixins.arclight.refmap.json"
+    }
+    manifest.attributes 'Main-Class': 'io.izzel.arclight.fabric.launch.FabricJarMain'
+    manifest.attributes 'Implementation-Title': 'Luminara'
+    manifest.attributes 'Implementation-Version': "luminara-$minecraftVersion-${project.version}-$gitHash"
+    manifest.attributes 'Implementation-Vendor': 'Luminara Team'
+    manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

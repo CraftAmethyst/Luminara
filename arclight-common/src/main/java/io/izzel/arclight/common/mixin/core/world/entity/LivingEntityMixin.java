@@ -9,6 +9,7 @@ import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import io.izzel.arclight.mixin.Eject;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -47,10 +48,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.CraftEquipmentSlot;
@@ -362,7 +359,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     protected void dropExperience() {
         // if (!this.world.isRemote && (this.isPlayer() || this.recentlyHit > 0 && this.canDropLoot() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))) {
         if (!((Object) this instanceof EnderDragon)) {
-            int reward = ForgeEventFactory.getExperienceDrop((LivingEntity) (Object) this, this.lastHurtByPlayer, this.expToDrop);
+            int reward = PlatformHooks.getExperienceDrop((LivingEntity) (Object) this, this.lastHurtByPlayer, this.expToDrop);
             ExperienceOrb.award((ServerLevel) this.level(), this.position(), reward);
             bridge$setExpToDrop(0);
         }
@@ -384,7 +381,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
                 if (!effectinstance.tick((LivingEntity) (Object) this, () -> {
                     onEffectUpdated(effectinstance, true, null);
                 })) {
-                    if (!this.level().isClientSide && !MinecraftForge.EVENT_BUS.post(new MobEffectEvent.Expired((LivingEntity) (Object) this, effectinstance))) {
+                    if (!this.level().isClientSide && !PlatformHooks.postMobEffectExpired((LivingEntity) (Object) this, effectinstance)) {
 
                         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent((LivingEntity) (Object) this, effectinstance, null, EntityPotionEffectEvent.Cause.EXPIRATION);
                         if (event.isCancelled()) {
@@ -473,7 +470,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
                 return false;
             }
 
-            MinecraftForge.EVENT_BUS.post(new MobEffectEvent.Added((LivingEntity) (Object) this, effectinstance, effectInstanceIn, entity));
+            PlatformHooks.postMobEffectAdded((LivingEntity) (Object) this, effectinstance, effectInstanceIn, entity);
             if (effectinstance == null) {
                 this.activeEffects.put(effectInstanceIn.getEffect(), effectInstanceIn);
                 this.onEffectAdded(effectInstanceIn, entity);
@@ -528,7 +525,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     public int getExpReward() {
         if (this.level() instanceof ServerLevel && !this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
             int exp = this.getExperienceReward();
-            return ForgeEventFactory.getExperienceDrop((LivingEntity) (Object) this, this.lastHurtByPlayer, exp);
+            return PlatformHooks.getExperienceDrop((LivingEntity) (Object) this, this.lastHurtByPlayer, exp);
         } else {
             return 0;
         }
@@ -566,7 +563,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         }
     }
 
-    @Inject(method = "removeAllEffects", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraftforge/eventbus/api/IEventBus;post(Lnet/minecraftforge/eventbus/api/Event;)Z"))
+    @Inject(method = "removeAllEffects", at = @At("HEAD"))
     public void arclight$clearReason(CallbackInfoReturnable<Boolean> cir) {
         arclight$action = EntityPotionEffectEvent.Action.CLEARED;
     }
@@ -640,7 +637,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
 
     @Inject(method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z", at = @At("HEAD"), cancellable = true)
     public void arclight$hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (!ForgeHooks.onLivingAttack((LivingEntity) (Object) this, source, amount)) {
+        if (!PlatformHooks.onLivingAttack((LivingEntity) (Object) this, source, amount)) {
             cir.cancel();
             cir.setReturnValue(false);
             return;
@@ -830,7 +827,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         if (!this.isInvulnerableTo(damagesource)) {
             final boolean human = (Object) this instanceof net.minecraft.world.entity.player.Player;
 
-            f = net.minecraftforge.common.ForgeHooks.onLivingHurt((LivingEntity) (Object) this, damagesource, f);
+            f = PlatformHooks.onLivingHurt((LivingEntity) (Object) this, damagesource, f);
             if (f <= 0) return arclight$damageResult = true;
 
             float originalDamage = f;
@@ -846,9 +843,9 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
             Function<Double, Double> blocking;
             var shieldTakesDamage = false;
             if (this.isDamageSourceBlocked(damagesource)) {
-                var shieldEvent = ForgeHooks.onShieldBlock((LivingEntity) (Object) this, damagesource, f);
-                if (!shieldEvent.isCanceled()) {
-                    var blocked = shieldEvent.getBlockedDamage();
+                var shieldEvent = PlatformHooks.onShieldBlock((LivingEntity) (Object) this, damagesource, f);
+                if (!shieldEvent.cancelled()) {
+                    var blocked = shieldEvent.blockedDamage();
                     shieldTakesDamage = shieldEvent.shieldTakesDamage();
                     blocking = f13 -> -(double) blocked;
                 } else {
@@ -941,7 +938,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
                 ((net.minecraft.world.entity.player.Player) damagesource.getEntity()).awardStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(f2 * 10.0F));
             }
 
-            f = net.minecraftforge.common.ForgeHooks.onLivingDamage((LivingEntity) (Object) this, damagesource, f);
+            f = PlatformHooks.onLivingDamage((LivingEntity) (Object) this, damagesource, f);
 
             if (f > 0 || !human) {
                 if (human) {
@@ -1063,7 +1060,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
             org.bukkit.inventory.EquipmentSlot bukkitHand = null;
             for (InteractionHand hand : InteractionHand.values()) {
                 itemstack1 = this.getItemInHand(hand);
-                if (itemstack1.is(Items.TOTEM_OF_UNDYING) && ForgeHooks.onLivingUseTotem((LivingEntity) (Object) this, damageSourceIn, itemstack1, hand)) {
+                if (itemstack1.is(Items.TOTEM_OF_UNDYING) && PlatformHooks.onLivingUseTotem((LivingEntity) (Object) this, damageSourceIn, itemstack1, hand)) {
                     itemstack = itemstack1.copy();
                     bukkitHand = CraftEquipmentSlot.getHand(hand);
                     // itemstack1.shrink(1);
@@ -1184,16 +1181,17 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     @Redirect(method = "dropAllDeathLoot", at = @At(value = "INVOKE", ordinal = 0, remap = false, target = "Lnet/minecraft/world/entity/LivingEntity;captureDrops(Ljava/util/Collection;)Ljava/util/Collection;"))
     private Collection<ItemEntity> arclight$captureIfNeed(LivingEntity
                                                                   livingEntity, Collection<ItemEntity> value) {
-        Collection<ItemEntity> drops = livingEntity.captureDrops();
+        var bridge = (EntityBridge) livingEntity;
+        Collection<ItemEntity> drops = bridge.bridge$captureDrops();
         // todo this instanceof ArmorStandEntity
-        return drops == null ? livingEntity.captureDrops(value) : drops;
+        return drops == null ? bridge.bridge$captureDrops(value) : drops;
     }
 
     @Redirect(method = "dropAllDeathLoot", at = @At(value = "INVOKE", remap = false, target = "Ljava/util/Collection;forEach(Ljava/util/function/Consumer;)V"))
     private void arclight$cancelEvent(Collection<ItemEntity> collection, Consumer<ItemEntity> action) {
         if (this instanceof ServerPlayerEntityBridge) {
             // recapture for ServerPlayerEntityMixin#onDeath
-            this.captureDrops(collection);
+            this.bridge$captureDrops(collection);
         } else {
             collection.forEach(action);
         }
@@ -1302,3 +1300,4 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         }
     }
 }
+

@@ -6,7 +6,6 @@ import io.izzel.arclight.common.bridge.core.block.PortalInfoBridge;
 import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.InternalEntityBridge;
-import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.network.datasync.SynchedEntityDataBridge;
 import io.izzel.arclight.common.bridge.core.world.TeleporterBridge;
@@ -51,7 +50,6 @@ import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.common.ForgeHooks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -149,6 +147,7 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
     @Shadow private Entity vehicle;
     private CraftEntity bukkitEntity;
     private transient PositionImpl arclight$tpPos;
+    private transient Collection<ItemEntity> arclight$capturedDrops;
 
     private static boolean isLevelAtLeast(CompoundTag tag, int level) {
         return tag.contains("Bukkit.updateLevel") && tag.getInt("Bukkit.updateLevel") >= level;
@@ -213,10 +212,6 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
     @Shadow public void tick() {}
 
     @Shadow public abstract AABB getBoundingBox();
-
-    @Shadow(remap = false) public abstract Collection<ItemEntity> captureDrops();
-
-    @Shadow(remap = false) public abstract Collection<ItemEntity> captureDrops(Collection<ItemEntity> value);
 
     @Shadow public abstract BlockPos blockPosition();
 
@@ -283,8 +278,6 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
     @Shadow public abstract double getEyeY();
 
     @Shadow public abstract Vec3 position();
-
-    @Shadow(remap = false) public abstract void revive();
 
     @Shadow public abstract boolean isPushable();
 
@@ -520,6 +513,23 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
         this.lastDamageCancelled = cancelled;
     }
 
+    @Override
+    public Collection<ItemEntity> bridge$captureDrops() {
+        return this.arclight$capturedDrops;
+    }
+
+    @Override
+    public Collection<ItemEntity> bridge$captureDrops(Collection<ItemEntity> value) {
+        var old = this.arclight$capturedDrops;
+        this.arclight$capturedDrops = value;
+        return old;
+    }
+
+    @Override
+    public void bridge$revive() {
+        this.unsetRemoved();
+    }
+
     public void postTick() {
         // No clean way to break out of ticking once the entity has been copied to a new world, so instead we move the portalling later in the tick cycle
         if (!((Object) this instanceof ServerPlayer)) {
@@ -734,15 +744,6 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
         if (this.persistentInvisibility) {
             ci.cancel();
         }
-    }
-
-    @Redirect(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "INVOKE", remap = false, ordinal = 0, target = "Lnet/minecraft/world/entity/Entity;captureDrops()Ljava/util/Collection;"))
-    public Collection<ItemEntity> arclight$forceDrops(Entity entity) {
-        Collection<ItemEntity> drops = entity.captureDrops();
-        if (this instanceof LivingEntityBridge && ((LivingEntityBridge) this).bridge$isForceDrops()) {
-            drops = null;
-        }
-        return drops;
     }
 
     @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",
@@ -983,67 +984,10 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
         return teleportTo(world, blockPos);
     }
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite(remap = false)
-    @Nullable
-    public Entity changeDimension(ServerLevel server, net.minecraftforge.common.util.ITeleporter teleporter) {
-        if (!ForgeHooks.onTravelToDimension((Entity) (Object) this, server.dimension()))
-            return null;
-        if (this.level() instanceof ServerLevel && !this.isRemoved()) {
-            this.level().getProfiler().push("changeDimension");
-            if (server == null) {
-                return null;
-            }
-            this.level().getProfiler().push("reposition");
-            var bukkitPos = arclight$tpPos;
-            arclight$tpPos = null;
-            PortalInfo portalinfo = bukkitPos == null ? teleporter.getPortalInfo((Entity) (Object) this, server, this::findDimensionEntryPoint)
-                    : new PortalInfo(new Vec3(bukkitPos.x(), bukkitPos.y(), bukkitPos.z()), Vec3.ZERO, this.yRot, this.xRot);
-            if (portalinfo == null) {
-                return null;
-            } else {
-                ServerLevel world = ((PortalInfoBridge) portalinfo).bridge$getWorld() == null ? server : ((PortalInfoBridge) portalinfo).bridge$getWorld();
-                if (world == this.level()) {
-                    this.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, this.getXRot());
-                    this.setDeltaMovement(portalinfo.speed);
-                    return (Entity) (Object) this;
-                }
-                this.unRide();
-                Entity transportedEntity = teleporter.placeEntity((Entity) (Object) this, (ServerLevel) this.level(), world, this.getYRot(), spawnPortal -> { //Forge: Start vanilla logic
-                    this.level().getProfiler().popPush("reloading");
-                    Entity entity = this.getType().create(world);
-                    if (entity != null) {
-                        entity.restoreFrom((Entity) (Object) this);
-                        entity.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, entity.getXRot());
-                        entity.setDeltaMovement(portalinfo.speed);
-                        world.addDuringTeleport(entity);
-                        if (((WorldBridge) world).bridge$getTypeKey() == LevelStem.END && Level.END != null /* fabric dimensions v1 */) {
-                            ArclightCaptures.captureEndPortalEntity((Entity) (Object) this, spawnPortal);
-                            ServerLevel.makeObsidianPlatform(world);
-                        }
-                    }
-                    return entity;
-                }); //Forge: End vanilla logic
-
-                this.removeAfterChangingDimensions();
-                this.level().getProfiler().pop();
-                ((ServerLevel) this.level()).resetEmptyTime();
-                world.resetEmptyTime();
-                this.level().getProfiler().pop();
-                return transportedEntity;
-            }
-        } else {
-            return null;
-        }
-    }
-
     @Inject(method = "restoreFrom", at = @At("HEAD"))
     private void arclight$forwardHandle(Entity entityIn, CallbackInfo ci) {
         ((InternalEntityBridge) entityIn).internal$getBukkitEntity().setHandle((Entity) (Object) this);
-        ((EntityBridge) this).bridge$setBukkitEntity(((InternalEntityBridge) entityIn).internal$getBukkitEntity());
+        this.bridge$setBukkitEntity(((InternalEntityBridge) entityIn).internal$getBukkitEntity());
         if (entityIn instanceof Mob) {
             ((Mob) entityIn).dropLeash(true, false);
         }

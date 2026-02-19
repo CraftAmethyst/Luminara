@@ -6,12 +6,12 @@ import io.izzel.arclight.common.bridge.bukkit.CraftServerBridge;
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.server.api.DefaultArclightServer;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.command.ColouredConsoleSender;
@@ -43,6 +43,7 @@ public class ArclightServer {
             new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d")
                     .setThreadFactory(chatFactory()).build());
     private static CraftServer server;
+    private static volatile MinecraftServer vanillaServer;
 
     private static ThreadFactory chatFactory() {
         var group = Thread.currentThread().getThreadGroup();
@@ -57,7 +58,9 @@ public class ArclightServer {
     @SuppressWarnings("ConstantConditions")
     public static CraftServer createOrLoad(DedicatedServer console, PlayerList playerList) {
         if (server == null) {
-            Arclight.setServer(new DefaultArclightServer());
+            if (PlatformHooks.isForgePresent()) {
+                Arclight.setServer(new DefaultArclightServer());
+            }
             try {
                 server = new CraftServer(console, playerList);
                 ((MinecraftServerBridge) console).bridge$setServer(server);
@@ -69,8 +72,10 @@ public class ArclightServer {
                 throw new RuntimeException("Error initializing Arclight", t);
             }
             try {
-                ArclightMod.LOGGER.info("registry.begin");
-                BukkitRegistry.registerAll(console);
+                if (PlatformHooks.isForgePresent()) {
+                    ArclightMod.LOGGER.info("registry.begin");
+                    BukkitRegistry.registerAll(console);
+                }
                 org.spigotmc.SpigotConfig.init(new File("./spigot.yml"));
                 org.spigotmc.SpigotConfig.registerCommands();
             } catch (Throwable t) {
@@ -96,7 +101,14 @@ public class ArclightServer {
     }
 
     public static MinecraftServer getMinecraftServer() {
-        return ServerLifecycleHooks.getCurrentServer();
+        if (vanillaServer != null) {
+            return vanillaServer;
+        }
+        return PlatformHooks.getCurrentServer();
+    }
+
+    public static void setMinecraftServer(MinecraftServer server) {
+        vanillaServer = server;
     }
 
     public static void executeOnMainThread(Runnable runnable) {

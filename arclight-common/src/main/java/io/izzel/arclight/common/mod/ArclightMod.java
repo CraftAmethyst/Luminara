@@ -5,11 +5,9 @@ import io.izzel.arclight.common.mod.util.BungeeComponentPreloader;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
 import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkConstants;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +40,28 @@ public class ArclightMod {
     }
 
     public static boolean isModLoaded(String modid) {
-        return ModList.get() != null ? ModList.get().isLoaded(modid) : FMLLoader.getLoadingModList().getModFileById(modid) != null;
+        var api = ArclightCommon.api();
+        if (api != null) {
+            return api.isModLoaded(modid);
+        }
+        try {
+            Class<?> modListClass = Class.forName("net.minecraftforge.fml.ModList");
+            Object modList = modListClass.getMethod("get").invoke(null);
+            if (modList != null) {
+                Object loaded = modListClass.getMethod("isLoaded", String.class).invoke(modList, modid);
+                if (loaded instanceof Boolean b) {
+                    return b;
+                }
+            }
+            Class<?> fmlLoaderClass = Class.forName("net.minecraftforge.fml.loading.FMLLoader");
+            Object loadingModList = fmlLoaderClass.getMethod("getLoadingModList").invoke(null);
+            if (loadingModList != null) {
+                Object modFile = loadingModList.getClass().getMethod("getModFileById", String.class).invoke(loadingModList, modid);
+                return modFile != null;
+            }
+        } catch (Throwable ignored) {
+        }
+        return false;
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {

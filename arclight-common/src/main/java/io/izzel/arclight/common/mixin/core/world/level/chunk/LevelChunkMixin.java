@@ -29,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 
@@ -138,7 +139,8 @@ public abstract class LevelChunkMixin extends ChunkAccessMixin implements ChunkB
                 random.setSeed(((ServerLevel) level).getSeed());
                 long xRand = random.nextLong() / 2L * 2L + 1L;
                 long zRand = random.nextLong() / 2L * 2L + 1L;
-                random.setSeed((long) this.chunkPos.x * xRand + (long) this.chunkPos.z * zRand ^ ((ServerLevel) level).getSeed());
+                ChunkPos chunkPos = ((LevelChunk) (Object) this).getPos();
+                random.setSeed((long) chunkPos.x * xRand + (long) chunkPos.z * zRand ^ ((ServerLevel) level).getSeed());
 
                 org.bukkit.World world = ((WorldBridge) this.level).bridge$getWorld();
                 if (world != null) {
@@ -159,7 +161,8 @@ public abstract class LevelChunkMixin extends ChunkAccessMixin implements ChunkB
     public void unloadCallback() {
         org.bukkit.Server server = Bukkit.getServer();
         var bukkitChunk = new CraftChunk((LevelChunk) (Object) this);
-        org.bukkit.event.world.ChunkUnloadEvent unloadEvent = new org.bukkit.event.world.ChunkUnloadEvent(bukkitChunk, this.isUnsaved());
+        // 1.20.1 intermediary on Fabric may not expose LevelChunk#isUnsaved() reliably.
+        org.bukkit.event.world.ChunkUnloadEvent unloadEvent = new org.bukkit.event.world.ChunkUnloadEvent(bukkitChunk, true);
         server.getPluginManager().callEvent(unloadEvent);
         // note: saving can be prevented, but not forced if no saving is actually required
         this.mustNotSave = !unloadEvent.isSaveChunk();
@@ -170,8 +173,8 @@ public abstract class LevelChunkMixin extends ChunkAccessMixin implements ChunkB
         return world.isClientSide && this.arclight$doPlace;
     }
 
-    @Override
-    public boolean isUnsaved() {
-        return super.isUnsaved() && !this.mustNotSave;
+    @Inject(method = "isUnsaved", at = @At("RETURN"), cancellable = true)
+    private void arclight$mustNotSave(CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(cir.getReturnValueZ() && !this.mustNotSave);
     }
 }

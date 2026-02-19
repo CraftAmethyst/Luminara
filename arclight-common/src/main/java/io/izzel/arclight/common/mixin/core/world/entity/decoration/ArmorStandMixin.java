@@ -118,10 +118,10 @@ public abstract class ArmorStandMixin extends LivingEntityMixin {
     }
 
     private Collection<ItemEntity> arclight$drops() {
-        Collection<ItemEntity> drops = this.captureDrops();
+        Collection<ItemEntity> drops = this.bridge$captureDrops();
         if (drops == null) {
             ArrayList<ItemEntity> list = new ArrayList<>();
-            this.captureDrops(list);
+            this.bridge$captureDrops(list);
             return list;
         } else {
             return drops;
@@ -129,7 +129,7 @@ public abstract class ArmorStandMixin extends LivingEntityMixin {
     }
 
     private void arclight$callEntityDeath() {
-        Collection<ItemEntity> captureDrops = this.captureDrops(null);
+        Collection<ItemEntity> captureDrops = this.bridge$captureDrops(null);
         List<org.bukkit.inventory.ItemStack> drops;
         if (captureDrops == null) {
             drops = new ArrayList<>();

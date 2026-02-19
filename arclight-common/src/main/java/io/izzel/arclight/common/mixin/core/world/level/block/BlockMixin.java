@@ -5,7 +5,9 @@ import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.mixin.core.world.level.block.state.BlockBehaviourMixin;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import io.izzel.arclight.common.mod.util.PlatformHooks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.valueproviders.IntProvider;
@@ -17,10 +19,10 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.extensions.IForgeBlock;
 import org.bukkit.craftbukkit.v.CraftWorld;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
@@ -63,6 +65,7 @@ public abstract class BlockMixin extends BlockBehaviourMixin implements BlockBri
 
     // @formatter:off
     @Shadow public abstract BlockState defaultBlockState();
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) { return stateIn; }
     // @formatter:on
 
     @Shadow
@@ -72,9 +75,7 @@ public abstract class BlockMixin extends BlockBehaviourMixin implements BlockBri
     }
 
     public int getExpDrop(BlockState blockState, ServerLevel world, BlockPos blockPos, ItemStack itemStack, boolean flag) {
-        int silkTouch = itemStack.getEnchantmentLevel(Enchantments.SILK_TOUCH);
-        int fortune = itemStack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
-        return ((IForgeBlock) this).getExpDrop(blockState, world, world.random, blockPos, fortune, silkTouch);
+        return PlatformHooks.getBlockExpDrop((Block) (Object) this, blockState, world, blockPos, itemStack, flag);
     }
 
     protected int tryDropExperience(ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, IntProvider intprovider) {

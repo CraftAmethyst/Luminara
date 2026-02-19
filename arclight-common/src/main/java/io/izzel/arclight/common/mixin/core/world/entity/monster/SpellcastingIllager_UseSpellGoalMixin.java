@@ -12,13 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class SpellcastingIllager_UseSpellGoalMixin {
 
     // @formatter:off
-    @SuppressWarnings("target") @Shadow(aliases = {"this$0", "f_33776_"}, remap = false) private SpellcasterIllager outerThis;
-    @Shadow(aliases = "m_7269_") protected abstract SpellcasterIllager.IllagerSpell getSpell();
+    @Shadow(aliases = {"this$0", "f_33776_", "field_7386"}, remap = false) private SpellcasterIllager field_7386;
+    @Shadow(aliases = {"m_7269_", "method_7147"}, remap = false) protected abstract SpellcasterIllager.IllagerSpell getSpell();
     // @formatter:on
 
     @Inject(method = "tick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/SpellcasterIllager$SpellcasterUseSpellGoal;performSpellCasting()V"))
     private void arclight$castSpell(CallbackInfo ci) {
-        if (!CraftEventFactory.handleEntitySpellCastEvent(outerThis, this.getSpell())) {
+        if (!CraftEventFactory.handleEntitySpellCastEvent(this.field_7386, this.getSpell())) {
             ci.cancel();
         }
     }
