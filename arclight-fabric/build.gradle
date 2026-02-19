@@ -77,6 +77,17 @@ dependencies {
         transitive = false
     }
     launcherEmbed 'jline:jline:2.12.1'
+    launcherEmbed('net.minecrell:terminalconsoleappender:1.2.0') {
+        transitive = false
+    }
+    launcherEmbed 'org.jline:jline-terminal:3.12.1'
+    launcherEmbed('org.jline:jline-terminal-jna:3.12.1') {
+        transitive = false
+    }
+    launcherEmbed 'org.jline:jline-reader:3.12.1'
+    launcherEmbed 'org.fusesource.jansi:jansi:1.18'
+    launcherEmbed 'net.java.dev.jna:jna:5.12.1'
+    launcherEmbed 'net.java.dev.jna:jna-platform:5.12.1'
     launcherEmbed 'org.xerial:sqlite-jdbc:3.42.0.0'
     launcherEmbed 'com.mysql:mysql-connector-j:8.0.33'
     launcherEmbed 'commons-codec:commons-codec:1.15'
@@ -98,6 +109,7 @@ processResources {
 tasks.register('generateFabricInstallerInfo') {
     inputs.property('minecraftVersion', minecraftVersion)
     inputs.property('fabricLoaderVersion', fabricLoaderVersion)
+    inputs.property('bootstrapLog4jVersion', '2.19.0')
     def installer = file("${project.buildDir}/arclight_installer/META-INF/installer.json")
     outputs.file(installer)
     doLast {
@@ -118,6 +130,28 @@ tasks.register('generateFabricInstallerInfo') {
         )
         intermediaryCfg.transitive = false
         def intermediaryFile = intermediaryCfg.singleFile
+        def artifacts = { List<String> coords ->
+            def resolved = [:]
+            def cfg = project.configurations.detachedConfiguration(
+                    coords.collect { project.dependencies.create(it) } as org.gradle.api.artifacts.Dependency[]
+            )
+            cfg.transitive = false
+            cfg.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+                def coord = "${artifact.moduleVersion.id.group}:${artifact.moduleVersion.id.name}:${artifact.moduleVersion.id.version}"
+                if (artifact.classifier != null) {
+                    coord += ":${artifact.classifier}"
+                }
+                if (artifact.extension != 'jar') {
+                    coord += "@${artifact.extension}"
+                }
+                resolved[coord] = sha1(artifact.file)
+            }
+            return coords.collectEntries { [(it): resolved[it]] }
+        }
+        def bootstrapLibraries = [
+                "org.apache.logging.log4j:log4j-api:2.19.0",
+                "org.apache.logging.log4j:log4j-core:2.19.0"
+        ]
         def fabricExtra = [:]
         fabricExtra["net.fabricmc:intermediary:$minecraftVersion"] = sha1(intermediaryFile)
         def output = [
@@ -126,7 +160,7 @@ tasks.register('generateFabricInstallerInfo') {
                         fabricLoader    : fabricLoaderVersion,
                         fabricLoaderHash: sha1(loaderFile)
                 ],
-                libraries  : [:],
+                libraries: artifacts(bootstrapLibraries),
                 fabricExtra: fabricExtra
         ]
         installer.parentFile.mkdirs()
@@ -854,6 +888,13 @@ jar {
     from({
         configurations.launcherEmbed.collect { it.isDirectory() ? it : zipTree(it) }
     }) {
+        exclude "org/apache/logging/log4j/**"
+        exclude "META-INF/org/apache/logging/log4j/**"
+        exclude "META-INF/services/org.apache.logging.log4j.spi.Provider"
+        exclude "META-INF/log4j-provider.properties"
+        exclude "Log4j-*.xsd"
+        exclude "Log4j-*.dtd"
+        exclude "Log4j-config.xsd"
         exclude "META-INF/MANIFEST.MF"
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"

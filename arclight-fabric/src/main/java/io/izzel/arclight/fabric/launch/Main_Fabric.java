@@ -17,6 +17,8 @@ public final class Main_Fabric {
     }
 
     public static void main(String[] args) throws Throwable {
+        FabricJarMain.configureLoggingDefaults();
+
         try {
             var install = FabricInstaller.applicationInstall();
             var self = Paths.get(Main_Fabric.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toAbsolutePath();

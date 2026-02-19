@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util"
+               shutdownHook="disable">
+    <filters>
+        <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+    </filters>
+    <Appenders>
+        <TerminalConsole name="Console">
+            <RegexFilter regex=".*will not be sent to client.*" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <PatternLayout charset="${sys:luminara.console.charset:-UTF-8}">
+                <LoggerNamePatternSelector
+                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan}] [%highlight{%level}{INFO=green, WARN=yellow, ERROR=red, FATAL=bright_red}]: %minecraftFormatting{%msg{nolookup}}%n%xEx">
+                    <PatternMatch key="net.minecraft."
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%highlight{%level}{INFO=green, WARN=yellow, ERROR=red, FATAL=bright_red}] [%style{minecraft/%logger{1}}{magenta}]: %minecraftFormatting{%msg{nolookup}}%n%xEx"/>
+                    <PatternMatch key="com.mojang."
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%highlight{%level}{INFO=green, WARN=yellow, ERROR=red, FATAL=bright_red}] [%style{mojang/%logger{1}}{magenta}]: %minecraftFormatting{%msg{nolookup}}%n%xEx"/>
+                </LoggerNamePatternSelector>
+            </PatternLayout>
+        </TerminalConsole>
+        <Queue name="ServerGuiConsole" ignoreExceptions="true">
+            <PatternLayout charset="${sys:luminara.console.charset:-UTF-8}">
+                <LoggerNamePatternSelector
+                        defaultPattern="[%d{HH:mm:ss}] [%level]: %minecraftFormatting{%msg{nolookup}}{strip}%n">
+                    <PatternMatch key="net.minecraft."
+                                  pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
+                    <PatternMatch key="com.mojang."
+                                  pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
+                </LoggerNamePatternSelector>
+            </PatternLayout>
+        </Queue>
+        <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout
+                    pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg{nolookup}}{strip}%n%tEx"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="99" fileIndex="min"/>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.gz">
+            <PatternLayout
+                    pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg{nolookup}}{strip}%n%tEx"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5" fileIndex="min"/>
+        </RollingRandomAccessFile>
+        <Async name="Async">
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="ServerGuiConsole" level="info"/>
+            <AppenderRef ref="File" level="info"/>
+            <AppenderRef ref="DebugFile" level="debug"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Logger level="info" name="com.mojang"/>
+        <Logger level="info" name="net.minecraft"/>
+        <Root level="all">
+            <AppenderRef ref="Async"/>
+        </Root>
+    </Loggers>
+</Configuration>
