@@ -225,8 +225,6 @@ public abstract class EntityMixin implements InternalEntityBridge, EntityBridge,
 
     @Shadow public abstract double distanceToSqr(Entity entityIn);
 
-    @Shadow protected abstract void markHurt();
-
     @Shadow public abstract void ejectPassengers();
 
     @Shadow public abstract boolean hasCustomName();

@@ -34,7 +34,7 @@ public abstract class AllayMixin extends MobMixin {
     }
 
     public void setCanDuplicate(boolean canDuplicate) {
-        this.entityData.set(DATA_CAN_DUPLICATE, canDuplicate);
+        ((Entity) (Object) this).getEntityData().set(DATA_CAN_DUPLICATE, canDuplicate);
     }
 
     @Inject(method = "aiStep", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/allay/Allay;heal(F)V"))

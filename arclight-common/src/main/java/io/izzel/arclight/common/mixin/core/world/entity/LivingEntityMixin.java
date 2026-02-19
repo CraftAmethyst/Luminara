@@ -319,7 +319,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     private void arclight$init(EntityType<? extends LivingEntity> type, Level worldIn, CallbackInfo ci) {
         this.collides = true;
         this.craftAttributes = new CraftAttributeMap(this.attributes);
-        this.entityData.set(DATA_HEALTH_ID, (float) this.getAttributeValue(Attributes.MAX_HEALTH));
+        ((Entity) (Object) this).getEntityData().set(DATA_HEALTH_ID, (float) this.getAttributeValue(Attributes.MAX_HEALTH));
     }
 
     public SoundEvent getHurtSound0(DamageSource damagesource) {
@@ -360,7 +360,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         // if (!this.world.isRemote && (this.isPlayer() || this.recentlyHit > 0 && this.canDropLoot() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))) {
         if (!((Object) this instanceof EnderDragon)) {
             int reward = PlatformHooks.getExperienceDrop((LivingEntity) (Object) this, this.lastHurtByPlayer, this.expToDrop);
-            ExperienceOrb.award((ServerLevel) this.level(), this.position(), reward);
+            ExperienceOrb.award((ServerLevel) ((Entity) (Object) this).level(), ((Entity) (Object) this).position(), reward);
             bridge$setExpToDrop(0);
         }
     }
@@ -381,7 +381,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
                 if (!effectinstance.tick((LivingEntity) (Object) this, () -> {
                     onEffectUpdated(effectinstance, true, null);
                 })) {
-                    if (!this.level().isClientSide && !PlatformHooks.postMobEffectExpired((LivingEntity) (Object) this, effectinstance)) {
+                    if (!((Entity) (Object) this).level().isClientSide && !PlatformHooks.postMobEffectExpired((LivingEntity) (Object) this, effectinstance)) {
 
                         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent((LivingEntity) (Object) this, effectinstance, null, EntityPotionEffectEvent.Cause.EXPIRATION);
                         if (event.isCancelled()) {
@@ -412,7 +412,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         effectsToProcess.clear();
 
         if (this.effectsDirty) {
-            if (!this.level().isClientSide) {
+            if (!((Entity) (Object) this).level().isClientSide) {
                 this.updateInvisibilityStatus();
                 this.updateGlowingStatus();
             }
@@ -420,25 +420,25 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
             this.effectsDirty = false;
         }
 
-        int i = this.entityData.get(DATA_EFFECT_COLOR_ID);
-        boolean flag1 = this.entityData.get(DATA_EFFECT_AMBIENCE_ID);
+        int i = ((Entity) (Object) this).getEntityData().get(DATA_EFFECT_COLOR_ID);
+        boolean flag1 = ((Entity) (Object) this).getEntityData().get(DATA_EFFECT_AMBIENCE_ID);
         if (i > 0) {
             boolean flag;
-            if (this.isInvisible()) {
-                flag = this.random.nextInt(15) == 0;
+            if (((Entity) (Object) this).isInvisible()) {
+                flag = this.getRandom().nextInt(15) == 0;
             } else {
-                flag = this.random.nextBoolean();
+                flag = this.getRandom().nextBoolean();
             }
 
             if (flag1) {
-                flag &= this.random.nextInt(5) == 0;
+                flag &= this.getRandom().nextInt(5) == 0;
             }
 
             if (flag && i > 0) {
                 double d0 = (double) (i >> 16 & 255) / 255.0D;
                 double d1 = (double) (i >> 8 & 255) / 255.0D;
                 double d2 = (double) (i >> 0 & 255) / 255.0D;
-                this.level().addParticle(flag1 ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT, this.getX() + (this.random.nextDouble() - 0.5D) * (double) this.getBbWidth(), this.getY() + this.random.nextDouble() * (double) this.getBbHeight(), this.getZ() + (this.random.nextDouble() - 0.5D) * (double) this.getBbWidth(), d0, d1, d2);
+                ((Entity) (Object) this).level().addParticle(flag1 ? ParticleTypes.AMBIENT_ENTITY_EFFECT : ParticleTypes.ENTITY_EFFECT, ((Entity) (Object) this).getX() + (this.getRandom().nextDouble() - 0.5D) * (double) ((Entity) (Object) this).getBbWidth(), ((Entity) (Object) this).getY() + this.getRandom().nextDouble() * (double) ((Entity) (Object) this).getBbHeight(), ((Entity) (Object) this).getZ() + (this.getRandom().nextDouble() - 0.5D) * (double) ((Entity) (Object) this).getBbWidth(), d0, d1, d2);
             }
         }
     }
@@ -523,7 +523,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     }
 
     public int getExpReward() {
-        if (this.level() instanceof ServerLevel && !this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
+        if (((Entity) (Object) this).level() instanceof ServerLevel && !this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerTime > 0 && this.shouldDropExperience() && ((Entity) (Object) this).level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
             int exp = this.getExperienceReward();
             return PlatformHooks.getExperienceDrop((LivingEntity) (Object) this, this.lastHurtByPlayer, exp);
         } else {
@@ -583,7 +583,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
      */
     @Overwrite
     public boolean isAlive() {
-        return !this.isRemoved() && this.entityData.get(DATA_HEALTH_ID) > 0.0F;
+        return !((Entity) (Object) this).isRemoved() && ((Entity) (Object) this).getEntityData().get(DATA_HEALTH_ID) > 0.0F;
     }
 
     @Inject(method = "getHealth", cancellable = true, at = @At("HEAD"))
@@ -642,15 +642,15 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
             cir.setReturnValue(false);
             return;
         }
-        if (this.isInvulnerableTo(source)) {
+        if (((Entity) (Object) this).isInvulnerableTo(source)) {
             cir.cancel();
             cir.setReturnValue(false);
             return;
-        } else if (this.level().isClientSide) {
+        } else if (((Entity) (Object) this).level().isClientSide) {
             cir.cancel();
             cir.setReturnValue(false);
             return;
-        } else if (this.dead || this.isRemoved() || this.isDeadOrDying()) {
+        } else if (this.dead || ((Entity) (Object) this).isRemoved() || this.isDeadOrDying()) {
             cir.cancel();
             cir.setReturnValue(false);
             return;
@@ -660,7 +660,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
             return;
         }
 
-        if (this.isSleeping() && !this.level().isClientSide) {
+        if (this.isSleeping() && !((Entity) (Object) this).level().isClientSide) {
             this.stopSleeping();
         }
 
@@ -668,23 +668,14 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         float f = amount;
         boolean flag = f > 0.0F && this.isDamageSourceBlocked(source); // Copied from below
         float f1 = 0.0F;
-        // ShieldBlockEvent implemented in damageEntity0
-
-        if (false) {
-            this.hurtCurrentlyUsedShield(amount);
+        // Shield side effects are handled in damageEntity0, but hurt flow still
+        // needs the blocked-damage state for cooldown/stat/result logic.
+        if (flag) {
             f1 = amount;
             amount = 0.0F;
-            if (!source.is(DamageTypeTags.IS_PROJECTILE)) {
-                Entity entity = source.getDirectEntity();
-                if (entity instanceof LivingEntity) {
-                    this.blockUsingShield((LivingEntity) entity);
-                }
-            }
-
-            flag = true;
         }
 
-        if (source.is(DamageTypeTags.IS_FREEZING) && this.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
+        if (source.is(DamageTypeTags.IS_FREEZING) && ((Entity) (Object) this).getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
             f *= 5.0F;
         }
 
@@ -749,20 +740,20 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
 
         if (flag1) {
             if (flag) {
-                this.level().broadcastEntityEvent((LivingEntity) (Object) this, (byte) 29);
+                ((Entity) (Object) this).level().broadcastEntityEvent((LivingEntity) (Object) this, (byte) 29);
             } else {
-                this.level().broadcastDamageEvent((LivingEntity) (Object) this, source);
+                ((Entity) (Object) this).level().broadcastDamageEvent((LivingEntity) (Object) this, source);
             }
 
             if (!source.is(DamageTypeTags.NO_IMPACT) && (!flag || amount > 0.0F)) {
-                this.markHurt();
+                ((Entity) (Object) this).hurtMarked = true;
             }
 
             if (entity1 != null && !source.is(DamageTypeTags.IS_EXPLOSION)) {
-                double d1 = entity1.getX() - this.getX();
+                double d1 = entity1.getX() - ((Entity) (Object) this).getX();
 
                 double d0;
-                for (d0 = entity1.getZ() - this.getZ(); d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D) {
+                for (d0 = entity1.getZ() - ((Entity) (Object) this).getZ(); d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D) {
                     d1 = (Math.random() - Math.random()) * 0.01D;
                 }
 
@@ -775,7 +766,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
             if (!this.checkTotemDeathProtection(source)) {
                 SoundEvent soundevent = this.getDeathSound();
                 if (flag1 && soundevent != null) {
-                    this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
+                    ((Entity) (Object) this).playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
                 }
 
                 this.die(source);
@@ -787,7 +778,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         boolean flag2 = !flag || amount > 0.0F;
         if (flag2) {
             this.lastDamageSource = source;
-            this.lastDamageStamp = this.level().getGameTime();
+            this.lastDamageStamp = ((Entity) (Object) this).level().getGameTime();
         }
 
         if ((Object) this instanceof ServerPlayer) {
@@ -824,7 +815,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     }
 
     protected boolean damageEntity0(DamageSource damagesource, float f) {
-        if (!this.isInvulnerableTo(damagesource)) {
+        if (!((Entity) (Object) this).isInvulnerableTo(damagesource)) {
             final boolean human = (Object) this instanceof net.minecraft.world.entity.player.Player;
 
             f = PlatformHooks.onLivingHurt((LivingEntity) (Object) this, damagesource, f);
@@ -916,7 +907,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
 
             // Apply blocking code // PAIL: steal from above
             if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
-                this.level().broadcastEntityEvent((Entity) (Object) this, (byte) 29); // SPIGOT-4635 - shield damage sound
+                ((Entity) (Object) this).level().broadcastEntityEvent((Entity) (Object) this, (byte) 29); // SPIGOT-4635 - shield damage sound
                 if (shieldTakesDamage) {
                     this.hurtCurrentlyUsedShield((float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING));
                 }
@@ -958,7 +949,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
                 if (!human) {
                     this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
                 }
-                this.gameEvent(GameEvent.ENTITY_DAMAGE, damagesource.getEntity());
+                ((Entity) (Object) this).gameEvent(GameEvent.ENTITY_DAMAGE, damagesource.getEntity());
 
                 return arclight$damageResult = true;
             } else {
@@ -1087,7 +1078,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
                 bridge$pushEffectCause(EntityPotionEffectEvent.Cause.TOTEM);
                 this.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1), EntityPotionEffectEvent.Cause.TOTEM);
                 this.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 1), EntityPotionEffectEvent.Cause.TOTEM);
-                this.level().broadcastEntityEvent((Entity) (Object) this, (byte) 35);
+                ((Entity) (Object) this).level().broadcastEntityEvent((Entity) (Object) this, (byte) 35);
             }
             return !event.isCancelled();
         }
@@ -1128,7 +1119,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
      */
     @Overwrite
     public boolean isPickable() {
-        return !this.isRemoved() && this.collides;
+        return !((Entity) (Object) this).isRemoved() && this.collides;
     }
 
     /**
@@ -1142,7 +1133,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
 
     @Override
     public boolean canCollideWith(Entity entity) {
-        return this.isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
+        return ((Entity) (Object) this).isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
     }
 
     @Eject(method = "completeUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"))
@@ -1167,13 +1158,13 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     @Eject(method = "randomTeleport", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/entity/LivingEntity;teleportTo(DDD)V"))
     private void arclight$entityTeleport(LivingEntity entity, double x, double y, double z, CallbackInfoReturnable<
             Boolean> cir) {
-        EntityTeleportEvent event = new EntityTeleportEvent(getBukkitEntity(), new Location(((WorldBridge) this.level()).bridge$getWorld(), this.getX(), this.getY(), this.getZ()),
-                new Location(((WorldBridge) this.level()).bridge$getWorld(), x, y, z));
+        EntityTeleportEvent event = new EntityTeleportEvent(getBukkitEntity(), new Location(((WorldBridge) ((Entity) (Object) this).level()).bridge$getWorld(), ((Entity) (Object) this).getX(), ((Entity) (Object) this).getY(), ((Entity) (Object) this).getZ()),
+                new Location(((WorldBridge) ((Entity) (Object) this).level()).bridge$getWorld(), x, y, z));
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            this.teleportTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ());
+            ((Entity) (Object) this).teleportTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ());
         } else {
-            this.teleportTo(this.getX(), this.getY(), this.getZ());
+            ((Entity) (Object) this).teleportTo(((Entity) (Object) this).getX(), ((Entity) (Object) this).getY(), ((Entity) (Object) this).getZ());
             cir.setReturnValue(false);
         }
     }
@@ -1243,7 +1234,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         if (arclight$callArrowCountChange(count, reset)) {
             return;
         }
-        this.entityData.set(DATA_ARROW_COUNT_ID, count);
+        ((Entity) (Object) this).getEntityData().set(DATA_ARROW_COUNT_ID, count);
     }
 
     private boolean arclight$callArrowCountChange(int newCount, boolean reset) {
@@ -1264,12 +1255,12 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         if (!flag && !ItemStack.isSameItemSameTags(oldItem, newItem) && !this.firstTick) {
             Equipable equipable = Equipable.get(newItem);
             if (equipable != null && !this.isSpectator() && equipable.getEquipmentSlot() == slot) {
-                if (!this.level().isClientSide() && !this.isSilent() && !silent) {
-                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), equipable.getEquipSound(), this.getSoundSource(), 1.0F, 1.0F);
+                if (!((Entity) (Object) this).level().isClientSide() && !((Entity) (Object) this).isSilent() && !silent) {
+                    ((Entity) (Object) this).level().playSound(null, ((Entity) (Object) this).getX(), ((Entity) (Object) this).getY(), ((Entity) (Object) this).getZ(), equipable.getEquipSound(), this.getSoundSource(), 1.0F, 1.0F);
                 }
 
                 if (this.doesEmitEquipEvent(slot)) {
-                    this.gameEvent(GameEvent.EQUIP);
+                    ((Entity) (Object) this).gameEvent(GameEvent.EQUIP);
                 }
             }
 

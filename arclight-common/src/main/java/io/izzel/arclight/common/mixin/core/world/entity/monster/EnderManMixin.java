@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 import io.izzel.arclight.common.bridge.core.entity.monster.EndermanEntityBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.PathfinderMobMixin;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -37,12 +38,12 @@ public abstract class EnderManMixin extends PathfinderMobMixin implements Enderm
         AttributeInstance modifiableattributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
         if (livingEntity == null) {
             this.targetChangeTime = 0;
-            this.entityData.set(DATA_CREEPY, false);
-            this.entityData.set(DATA_STARED_AT, false);
+            ((Entity) (Object) this).getEntityData().set(DATA_CREEPY, false);
+            ((Entity) (Object) this).getEntityData().set(DATA_STARED_AT, false);
             modifiableattributeinstance.removeModifier(SPEED_MODIFIER_ATTACKING);
         } else {
             this.targetChangeTime = this.tickCount;
-            this.entityData.set(DATA_CREEPY, true);
+            ((Entity) (Object) this).getEntityData().set(DATA_CREEPY, true);
             if (!modifiableattributeinstance.hasModifier(SPEED_MODIFIER_ATTACKING)) {
                 modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
             }

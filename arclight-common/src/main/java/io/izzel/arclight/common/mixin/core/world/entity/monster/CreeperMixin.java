@@ -7,6 +7,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Level;
@@ -40,7 +41,7 @@ public abstract class CreeperMixin extends PathfinderMobMixin implements Creeper
     // @formatter:on
 
     public void setPowered(boolean power) {
-        this.entityData.set(DATA_IS_POWERED, power);
+        ((Entity) (Object) this).getEntityData().set(DATA_IS_POWERED, power);
     }
 
     @Inject(method = "thunderHit", cancellable = true, at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/monster/Creeper;entityData:Lnet/minecraft/network/syncher/SynchedEntityData;"))

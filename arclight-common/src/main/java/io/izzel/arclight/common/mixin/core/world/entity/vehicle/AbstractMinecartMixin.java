@@ -115,7 +115,7 @@ public abstract class AbstractMinecartMixin extends EntityMixin implements IForg
         amount = (float) event.getDamage();
         this.setHurtDir(-this.getHurtDir());
         this.setHurtTime(10);
-        this.markHurt();
+        ((Entity) (Object) this).hurtMarked = true;
         this.setDamage(this.getDamage() + amount * 10.0f);
         this.gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
         boolean flag = source.getEntity() instanceof Player && ((Player) source.getEntity()).getAbilities().instabuild;
