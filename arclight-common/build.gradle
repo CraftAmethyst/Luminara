@@ -35,6 +35,7 @@ arclight {
 
 configurations {
     embed
+    paperApiReference
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -50,6 +51,7 @@ repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     maven { url = 'https://files.minecraftforge.net/maven/' }
     maven { url = 'https://maven.izzel.io/releases' }
     maven { url = 'https://jitpack.io/' }
@@ -60,6 +62,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:$minecraftVersion-$forgeVersion"
     implementation "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT@jar"
+    implementation("io.papermc.paper:paper-api:$minecraftVersion-R0.1-SNAPSHOT@jar") { transitive = false }
     implementation 'org.jetbrains:annotations:23.0.0'
 
     implementation "org.spongepowered:mixin:$mixinVersion"
@@ -77,6 +80,7 @@ dependencies {
     implementation "io.izzel:tools:$toolsVersion"
     implementation "io.izzel.arclight:arclight-api:$apiVersion"
     implementation project(':i18n-config')
+    paperApiReference("io.papermc.paper:paper-api:$minecraftVersion-R0.1-SNAPSHOT@jar") { transitive = false }
 
     // Adventure dependencies - core only to avoid conflicts
     implementation("net.kyori:adventure-api:4.17.0") {
@@ -104,6 +108,7 @@ dependencies {
 
     embed 'net.md-5:bungeecord-chat:1.16-R0.4@jar'
     embed "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT@jar"
+    embed("io.papermc.paper:paper-api:$minecraftVersion-R0.1-SNAPSHOT@jar") { transitive = false }
     embed("net.kyori:adventure-api:4.17.0") {
         exclude group: 'org.slf4j'
         exclude group: 'org.checkerframework'
@@ -129,6 +134,61 @@ dependencies {
     embed("net.kyori:adventure-text-logger-slf4j:4.17.0") {
         exclude group: 'org.slf4j'
         exclude group: 'org.checkerframework'
+    }
+}
+
+tasks.register('paperApiSurfaceReport') {
+    group = 'verification'
+    description = 'Compare local Paper API shim classes against upstream paper-api.'
+
+    def reportDirProvider = layout.buildDirectory.dir('reports/paper-api-surface')
+    outputs.dir(reportDirProvider)
+
+    doLast {
+        File reportDir = reportDirProvider.get().asFile
+        reportDir.mkdirs()
+
+        File paperApiJar = configurations.paperApiReference.resolve().find { it.name.endsWith('.jar') }
+        if (paperApiJar == null) {
+            throw new GradleException('Unable to resolve paper-api reference jar.')
+        }
+
+        Set<String> upstreamClasses = new TreeSet<>()
+        zipTree(paperApiJar).visit { details ->
+            if (details.isDirectory()) return
+            String path = details.path.replace('\\', '/')
+            if (!(path.startsWith('io/papermc/paper/') || path.startsWith('com/destroystokyo/paper/'))) return
+            if (!path.endsWith('.class')) return
+            if (path.endsWith('/package-info.class') || path.endsWith('/module-info.class')) return
+            String topLevel = path.replaceAll('\\$.*\\.class$', '.class').replace('.class', '')
+            upstreamClasses.add(topLevel)
+        }
+
+        Set<String> localClasses = new TreeSet<>()
+        fileTree('src/main/java').matching {
+            include 'io/papermc/paper/**/*.java'
+            include 'com/destroystokyo/paper/**/*.java'
+        }.visit { details ->
+            if (details.isDirectory()) return
+            String path = details.path.replace('\\', '/').replace('.java', '')
+            if (path.endsWith('/package-info') || path.endsWith('/module-info')) return
+            localClasses.add(path)
+        }
+
+        Set<String> missingInLocal = new TreeSet<>(upstreamClasses)
+        missingInLocal.removeAll(localClasses)
+
+        Set<String> localOnly = new TreeSet<>(localClasses)
+        localOnly.removeAll(upstreamClasses)
+
+        File missingFile = new File(reportDir, 'missing-in-local.txt')
+        File localOnlyFile = new File(reportDir, 'local-only.txt')
+        missingFile.text = missingInLocal.isEmpty() ? '' : missingInLocal.join(System.lineSeparator()) + System.lineSeparator()
+        localOnlyFile.text = localOnly.isEmpty() ? '' : localOnly.join(System.lineSeparator()) + System.lineSeparator()
+
+        logger.lifecycle('paperApiSurfaceReport: upstream={}, local={}, missing={}, localOnly={}',
+                upstreamClasses.size(), localClasses.size(), missingInLocal.size(), localOnly.size())
+        logger.lifecycle('Report files: {} , {}', missingFile.absolutePath, localOnlyFile.absolutePath)
     }
 }
 
