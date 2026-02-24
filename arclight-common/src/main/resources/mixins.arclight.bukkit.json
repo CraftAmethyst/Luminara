@@ -11,6 +11,7 @@
   },
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "Bukkit_PaperCompatMixin",
     "ColouredConsoleSenderMixin",
     "CraftAbstractVillagerMixin",
     "CraftBlockMixin",
@@ -39,16 +40,20 @@
     "CraftSpellcasterMixin",
     "CraftVillagerMixin",
     "CraftWorldMixin",
+    "Entity_PaperCompatMixin",
     "EntityTypeMixin",
     "JavaPluginLoaderMixin",
     "JavaPluginMixin",
     "LibraryLoaderMixin",
     "MaterialMixin",
+    "Player_PaperCompatMixin",
     "PlayerLocaleMixin",
+    "PlayerTeleportEvent_PaperCompatMixin",
     "PluginClassLoaderMixin",
     "PotionEffectTypeMixin",
     "RecipeIteratorMixin",
     "Registry_SimpleRegistryMixin",
+    "Server_PaperCompatMixin",
     "SimpleCommandMapMixin",
     "StandardMessengerMixin",
     "WatchdogThreadMixin",
@@ -58,8 +63,10 @@
     "adventure.CraftMagicNumbersAdventureMixin",
     "adventure.CraftPlayerAdventureMixin",
     "adventure.CraftServerAdventureMixin",
+    "adventure.ItemMetaAdventureMixin",
     "adventure.KeyedAdventureMixin",
     "adventure.NameableAdventureMixin",
-    "adventure.NamespacedKeyAdventureMixin"
+    "adventure.NamespacedKeyAdventureMixin",
+    "adventure.TitleAdventureCompatMixin"
   ]
 }

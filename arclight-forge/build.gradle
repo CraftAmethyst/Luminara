@@ -117,7 +117,7 @@ jar {
     }
     from sourceSets.applaunch.output.classesDirs
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    dependsOn(project(':arclight-common').tasks.jar)
+    dependsOn(project(':arclight-common').tasks.reobfJar)
 }
 
 task generateInstallerInfo {

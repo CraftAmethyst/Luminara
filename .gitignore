@@ -1,3 +1,6 @@
+tmp_*
+run_fabric_smoke
+
 # User-specific stuff
 .idea/
 
