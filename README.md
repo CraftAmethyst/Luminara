@@ -4,6 +4,8 @@
 
 中国 / 简体中文用户请加入 [CraftAmethyst 社区 QQ 交流群](https://qm.qq.com/q/u3Dylx2ls6)
 
+# 永久停更 Permanently discontinued
+
 Discord: https://discord.gg/H7RqfGCa
 
 An Arclight fork, aiming to make more optimizations and improvements on Arclight (1.20.1)
