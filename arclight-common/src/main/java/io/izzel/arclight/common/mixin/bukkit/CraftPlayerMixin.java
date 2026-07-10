@@ -28,7 +28,7 @@ public abstract class CraftPlayerMixin extends CraftEntityMixin {
 
     @ModifyConstant(method = "addChannel", constant = @Constant(intValue = 128))
     private int arclight$modifyMaxChannel(int constant) {
-        return 2048;
+        return 16384;
     }
     
     /**
