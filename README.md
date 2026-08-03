@@ -1,48 +1,82 @@
 # Luminara
 
-A Bukkit-compatible server layer that runs on Minecraft Forge. Luminara is a fork of [Arclight](https://github.com/IzzelAliz/Arclight), letting you run **Forge mods and Bukkit plugins side by side** on a single server.
+Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://github.com/IzzelAliz/Arclight). It runs Forge mods and Bukkit plugins together on one Minecraft server.
 
-## Highlights
+## Supported platform
 
-- **Bukkit API on Forge** — full implementation of the Spigot API (`v1_20_R1`) for Minecraft **1.20.1** (Forge **47.4.22**, Java **17**).
-- **Mod + Plugin coexistence** — drop Forge mods into `mods/` and Bukkit plugins into `plugins/` and run them together.
-- **Adventure support** — bundled with Adventure API 4.17.0 including MiniMessage, Gson, Legacy and Plain text serializers.
-- **Partial Paper API** — selected Paper APIs and improvements are implemented, e.g. Paper Adventure integration, signed chat messages, and Paper-style optimizations such as the chunk optimizer and world creation optimizer.
-- **Installable** — ships with a Forge installer that supports multiple download mirrors for network-restricted environments.
-- **i18n-ready** — localized configuration through the bundled `i18n-config` module.
+| Component | Supported version |
+| --- | --- |
+| Minecraft | `1.20.1` |
+| Forge | `47.4.22` |
+| CraftBukkit package | `v1_20_R1` |
+| Java | `17` (64-bit) |
+| Luminara | `1.0.14` |
 
-## Requirements
+Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations are not supported by this repository.
 
-- Java 17 or newer
-- Gradle 8.x (the included `gradlew` wrapper is preferred)
+## Capabilities
 
-## Building from source
+- Spigot-compatible Bukkit API on Forge.
+- Forge mods from `mods/` and Bukkit plugins from `plugins/`.
+- Adventure, MiniMessage, signed-chat, and selected Paper API compatibility.
+- Localized configuration through the bundled `i18n-config` module.
+- Synchronous, vanilla-compatible world persistence defaults.
+
+## Build from source
+
+Use a 64-bit JDK 17 and the checked-in Gradle wrapper. An empty-cache build requires network access to the dependency repositories and to Mojang, Forge, and Spigot build services.
 
 ```bash
-./gradlew build
+./gradlew check
+./gradlew assembleDistribution
+./gradlew verifyDistribution
 ```
 
-On Windows, use `gradlew.bat` instead.
+The build is single-pass; do not run it twice and do not use `--refresh-dependencies` as a workaround. The distribution outputs are:
 
-The build produces the server artifacts under `build/libs`. Due to a MixinGradle quirk, the build may need to be run twice for a fully correct jar — this is also how the CI pipeline (`appveyor-19.yml`) handles it:
+- `build/distributions/luminara-1.20.1-1.0.14.jar`
+- `build/distributions/luminara-1.20.1-1.0.14.jar.sha256`
+
+Verify the checksum with:
 
 ```bash
-./gradlew build
-./gradlew build collect
+(cd build/distributions && sha256sum -c luminara-1.20.1-1.0.14.jar.sha256)
 ```
 
-## Usage
+Run the end-to-end Forge mod and Bukkit plugin smoke test with:
 
-1. Build or download the Luminara server jar.
-2. Launch the server with `java -jar` to start the server
-3. Put Forge mods in `mods/` and Bukkit plugins in `plugins/`.
+```bash
+./gradlew smokeServer
+```
 
-## Documentation & Support
+Use `gradlew.bat` instead of `./gradlew` on Windows.
 
-- Contribution guidelines: [CONTRIBUTING.md](CONTRIBUTING.md)
-- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- Upstream project: [IzzelAliz/Arclight](https://github.com/IzzelAliz/Arclight)
+## Run a server
+
+1. Put `luminara-1.20.1-1.0.14.jar` in a new server directory.
+2. Read the [Minecraft EULA](https://aka.ms/MinecraftEULA). If you accept it, create `eula.txt` in that directory containing exactly `eula=true`.
+3. Start Luminara from that directory:
+
+```bash
+java -jar luminara-1.20.1-1.0.14.jar nogui
+```
+
+The launcher exits without prompting when `eula.txt` is missing or does not contain the exact accepted value. It never accepts the EULA on your behalf.
+
+Add Forge `1.20.1` mods to `mods/` and Bukkit plugins compatible with `v1_20_R1` to `plugins/`. Back up the server before changing either set.
+
+## Distribution policy
+
+This repository has no GitHub Release, Maven publication, or custom binary publication workflow. CI may retain verification artifacts for seven days; those artifacts are not releases. Build the distribution from the reviewed `stable/Trials` branch when you need a binary.
+
+## Project guidance
+
+- [Contributing](CONTRIBUTING.md)
+- [Code of conduct](CODE_OF_CONDUCT.md)
+- [Security policy](SECURITY.md)
+- [Support policy](SUPPORT.md)
+- [Upstream Arclight project](https://github.com/IzzelAliz/Arclight)
 
 ## License
 
-Luminara is licensed under the **GNU General Public License v3.0**. See [LICENSE](LICENSE).
+Luminara is licensed under the [GNU General Public License v3.0](LICENSE). Arclight attribution and upstream notices remain applicable to inherited code.
