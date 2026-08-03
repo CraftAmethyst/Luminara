@@ -58,8 +58,8 @@ dependencies {
     implementation "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
     annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}:processor"
 
-    implementation "com.github.ArclightTeam:mixin-tools:${libs.versions.mixin.tools.get()}"
-    annotationProcessor "com.github.ArclightTeam:mixin-tools:${libs.versions.mixin.tools.get()}"
+    implementation "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
+    annotationProcessor "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
 
     implementation 'jline:jline:2.12.1'
     implementation 'net.md-5:SpecialSource:1.11.0'
