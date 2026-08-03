@@ -27,6 +27,7 @@ public class ArclightMod {
 
     public ArclightMod(FMLJavaModLoadingContext context) {
         LOGGER.info("mod-load");
+        LOGGER.info(LuminaraVersion.current().compatibilityLine());
         System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
         System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
 

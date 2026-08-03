@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mod.command.subcommands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
+import io.izzel.arclight.common.mod.LuminaraVersion;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -40,7 +41,10 @@ public class InfoSubCommand implements LuminaraSubCommand {
 
         try {
             sender.sendMessage("§6=== Luminara Information ===");
-            sender.sendMessage("§eServer Version: §f" + Bukkit.getVersion());
+            LuminaraVersion version = LuminaraVersion.current();
+            sender.sendMessage("§eLuminara Version: §f" + version.luminara() + " (" + version.gitCommit() + ")");
+            sender.sendMessage("§eMinecraft / Forge: §f" + version.minecraft() + " / " + version.forge());
+            sender.sendMessage("§eCraftBukkit Package: §f" + version.craftBukkitPackage());
             sender.sendMessage("§eBukkit Version: §f" + Bukkit.getBukkitVersion());
             sender.sendMessage("§eOnline Players: §f" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers());
 
