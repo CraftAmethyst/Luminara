@@ -6,7 +6,6 @@ import io.izzel.arclight.common.bridge.bukkit.ItemMetaBridge;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.craftbukkit.v.inventory.CraftMetaItem;
 import org.spongepowered.asm.mixin.Final;
@@ -23,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Set;
 
@@ -120,7 +120,7 @@ public class CraftMetaItemMixin implements ItemMetaBridge {
         if (this.forgeCaps != null) {
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             NbtIo.writeCompressed(this.forgeCaps, buf);
-            builder.put("forgeCaps", Base64.encodeBase64String(buf.toByteArray()));
+            builder.put("forgeCaps", Base64.getEncoder().encodeToString(buf.toByteArray()));
         }
     }
 
@@ -165,9 +165,9 @@ public class CraftMetaItemMixin implements ItemMetaBridge {
         if (map.containsKey("forgeCaps")) {
             Object forgeCaps = map.get("forgeCaps");
             try {
-                ByteArrayInputStream buf = new ByteArrayInputStream(Base64.decodeBase64(forgeCaps.toString()));
+                ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(forgeCaps.toString()));
                 this.forgeCaps = NbtIo.readCompressed(buf);
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 LogManager.getLogger(getClass()).error("Reading forge caps", e);
             }
         }
