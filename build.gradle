@@ -137,10 +137,13 @@ tasks.register('smokeServer', SmokeServerTask) {
     ])
 }
 
+def reproducibleWorkspace = new File(System.getProperty('java.io.tmpdir'),
+        "luminara-reproducible-${Integer.toUnsignedString(rootDir.absolutePath.hashCode())}")
+
 tasks.register('verifyReproducibleBuild', VerifyReproducibleBuildTask) {
     group = 'verification'
     description = 'Builds the tracked source twice and compares distribution SHA-256 values.'
     sourceDirectory.set(layout.projectDirectory)
-    workspaceDirectory.set(layout.buildDirectory.dir('reproducible-build'))
+    workspaceDirectory.set(reproducibleWorkspace)
     distributionRelativePath.set("build/distributions/${distributionName}")
 }
