@@ -1,104 +1,102 @@
-name: 🐞 错误报告表格
-description: 通过填写表格来报告错误
-labels: [ "Triage" ]
+name: 错误报告
+description: 报告在受支持运行环境中可复现的 Luminara 缺陷
+title: "[错误]: "
+labels:
+  - Triage
 
 body:
   - type: markdown
     attributes:
       value: |
-        报告前先阅读[常见问题](https://github.com/IzzelAliz/Arclight/wiki/FAQ)！
-        
-        请使用[最新的构建版本](https://github.com/QianMo0721/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials)报告，你发现的问题很可能已经修复。
-        
-        在进行错误报告之前，请确保没有类似的现有的报告。
-        请勿将Luminara的问题反馈到Arclight项目！
+        请使用 `CraftAmethyst/Luminara` 的 `stable/Trials` 分支构建。
+        受支持的版本为 Luminara `1.0.14`、Minecraft `1.20.1`、Forge `47.4.22` 和 64 位 Java 17。
+        提交前请搜索现有问题。除非问题也能在 Arclight 中复现，否则请勿向上游 Arclight 报告 Luminara 缺陷。
 
   - type: checkboxes
-    id: check
+    id: prerequisites
     attributes:
-      label: 请确认您已完成以下几件事
-      description: 市面上大多数整合包，特别是较老版本（1.12.2）的整合包，其自带的插件都无法在高版本环境下运行
+      label: 提交前确认
       options:
-        - label: 正在使用最新的 Luminara
-        - label: 不可在 Arclight 复现
-        - label: 已为所有插件及模组安装依赖
+        - label: 我已搜索现有 Luminara 问题，未发现重复报告。
           required: true
-        - label: 已为所有插件及模组更新至最新版
+        - label: 我已在 Minecraft `1.20.1`、Forge `47.4.22`、Java 17 和 `stable/Trials` 分支构建中复现此问题。
           required: true
-        - label: 不可在 Spigot 复现
+        - label: 我已移除无关 Mod 和插件，并找到了仍会失败的最小组合。
           required: true
-        - label: 不可在 Forge 复现
+        - label: 我已从报告中删除凭据、地址、玩家数据及其他隐私信息。
           required: true
 
   - type: input
-    id: version
+    id: luminara-version
     attributes:
-      label: Luminara 版本
-      description: 在 Luminara 启动时会打印版本，如 luminara-1.20.1-1.0.8-TRIALS-xxx
+      label: Luminara 版本和提交
+      description: 请从 `/luminara info` 或启动输出中复制 Luminara 版本和构建提交。
+      placeholder: "Luminara 1.0.14，提交 1a2b3c4"
     validations:
       required: true
 
   - type: input
-    id: environment
+    id: runtime
     attributes:
-      label: Java 版本 | 操作系统
-      description: 在命令行中键入 `java -version` 后可以获取版本
+      label: 运行环境
+      description: 请包含操作系统、架构、Java、Minecraft 和 Forge 的版本。
+      placeholder: "Ubuntu 24.04 x86_64；Temurin 17.0.x；Minecraft 1.20.1；Forge 47.4.22"
+    validations:
+      required: true
+
+  - type: textarea
+    id: mods-plugins
+    attributes:
+      label: 最小 Mod 和插件组合
+      description: 列出复现所需的每个 Mod、插件及其精确版本；不需要时填写“无”。
       placeholder: |
-        系统: CentOS 7.3 x64, Java: openjdk version "16.0.1" 2021-04-20
+        Mod：
+        - example-mod 1.2.3
+        插件：
+        - ExamplePlugin 4.5.6
     validations:
       required: true
 
   - type: textarea
-    id: related
+    id: expected
     attributes:
-      label: 相关 Mod/插件 的名称及版本
-      description: >-
-        输入 `/plugins` 和 `/forge mods` 命令可获取相关信息
-        <br>如果想要你的问题快速解决，请自行排除无关的模组和插件
-        <br>只将有关此问题的模组和插件填入
-      placeholder: '在这里插件及模组列表'
-      render: 'raw'
+      label: 预期行为
+      description: 说明预期看到的可观察结果。
     validations:
       required: true
 
   - type: textarea
-    id: description
+    id: actual
     attributes:
-      label: 错误描述
-      description: >-
-        请尽可能包含更多描述。
-        <br>对于描述，请假设开发者不知道 Mod 是干什么的。
-        <br>如果可以的话，在安装尽可能少的 Mod 的情况下复现它。
-        <br>越清楚的描述会让该报告处理优先级提高
-      placeholder: "描述这个为什么是一个错误，是哪一方面的，以及其他可能需要的信息"
+      label: 实际行为
+      description: 说明实际发生的情况，包括发生时机和频率。
     validations:
       required: true
 
   - type: textarea
-    id: step
+    id: reproduction
     attributes:
       label: 复现步骤
+      description: 使用上述最小组合，提供从全新服务器开始的逐步复现方法。
       placeholder: |
-        1. 安装 xxx
-
-        2. 进入服务器后 xxxx
-
-        3. ....
+        1. 创建全新的 Luminara 服务器。
+        2. 安装列出的 Mod 或插件版本。
+        3. 启动服务器并执行……
+        4. 观察到……
+    validations:
+      required: true
 
   - type: textarea
     id: logs
     attributes:
-      label: 报错信息
-      description: >-
-        日志能在 /logs/latest.log 中找到
-        <br>服务器关闭后，将日志文件拖拽至输入框上传
-        <br>或上传至 https://paste.ubuntu.com/ 网站，提交后将链接附在下方即可
-        <br>如果选择使用其他在线剪贴板，请确保链接可用
-        <br>**请勿直接复制粘贴日志文本**
-      placeholder: 日志链接，或将日志文件拖到此处上传
+      label: 日志和崩溃报告
+      description: 请附上完整的 `logs/latest.log` 和相关崩溃报告，不要只粘贴最后一段异常。
+      placeholder: 将文件拖到此处，或提供指向完整日志的稳定链接。
+    validations:
+      required: true
 
-  - type: input
-    id: pack
+  - type: textarea
+    id: additional-context
     attributes:
-      label: 复现用压缩包下载链接(可选)
-      description: 如果你有太多的模组或插件，你可以请打包服务端并上传到 OneDrive 上供开发者下载测试
+      label: 其他信息
+      description: 如已在 Forge、Spigot 或 Arclight 中进行对比测试，请附上结果。

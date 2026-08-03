@@ -1,101 +1,102 @@
-name: 🐞 Bug Report
-description: English template for reporting a bug
-labels: [ "Triage" ]
+name: Bug report
+description: Report a reproducible Luminara defect on the supported runtime
+title: "[Bug]: "
+labels:
+  - Triage
 
 body:
   - type: markdown
     attributes:
       value: |
-        Read the [FAQ](https://github.com/IzzelAliz/Arclight/wiki/FAQ) first!
-
-        Report with [latest development version](https://github.com/QianMo0721/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials), your issue is likely to be fixed.
-
-        Make sure you have searched issues and no similar is present.
-        Do not report Luminara issues to the Arclight project!
+        Use a build from the `stable/Trials` branch of `CraftAmethyst/Luminara`.
+        The supported matrix is Luminara `1.0.14`, Minecraft `1.20.1`, Forge `47.4.22`, and 64-bit Java 17.
+        Search existing issues first. Do not report Luminara defects to upstream Arclight unless they also reproduce there.
 
   - type: checkboxes
-    id: preliminary
+    id: prerequisites
     attributes:
-      label: I have confirmed that ...
+      label: Prerequisites
       options:
-        - label: Luminara is up to date
-        - label: unable to reproduce in Arclight
-        - label: all dependencies are installed
+        - label: I searched existing Luminara issues and found no duplicate.
           required: true
-        - label: all plugins and mods are up to date
+        - label: I reproduced this on `stable/Trials` with Minecraft `1.20.1`, Forge `47.4.22`, and Java 17.
           required: true
-        - label: unable to reproduce in Spigot
+        - label: I removed unrelated mods and plugins and identified the smallest failing set.
           required: true
-        - label: unable to reproduce in Forge
+        - label: I removed credentials, addresses, player data, and other private information from this report.
           required: true
 
   - type: input
-    id: version
+    id: luminara-version
     attributes:
-      label: Luminara version
-      description: Versions are printed on startup. i.e. luminara-1.20.1-1.0.8-TRIALS-xxx
+      label: Luminara version and commit
+      description: Copy the Luminara version and build commit from `/luminara info` or startup output.
+      placeholder: "Luminara 1.0.14, commit 1a2b3c4"
     validations:
       required: true
 
   - type: input
-    id: environment
+    id: runtime
     attributes:
-      label: OS & Java versions
-      description: Type `java -version` in console
+      label: Runtime environment
+      description: Include the operating system, architecture, Java version, Minecraft version, and Forge version.
+      placeholder: "Ubuntu 24.04 x86_64; Temurin 17.0.x; Minecraft 1.20.1; Forge 47.4.22"
+    validations:
+      required: true
+
+  - type: textarea
+    id: mods-plugins
+    attributes:
+      label: Minimal mod and plugin set
+      description: List each required mod and plugin with its exact version. Write `none` when the minimal reproduction uses none.
       placeholder: |
-        OS: CentOS 7.3 x64, Java: openjdk version \"16.0.1\" 2021-04-20
+        Mods:
+        - example-mod 1.2.3
+        Plugins:
+        - ExamplePlugin 4.5.6
     validations:
       required: true
 
   - type: textarea
-    id: related
+    id: expected
     attributes:
-      label: Plugins and Mods
-      description: >-
-        Run `/plugins` and `/forge mods` in console.
-        <br>Try to remove unrelated plugins and mods before reporting
-      placeholder: 'Mods & plugins list here'
-      render: 'raw'
+      label: Expected behavior
+      description: State the observable result you expected.
     validations:
       required: true
 
   - type: textarea
-    id: description
+    id: actual
     attributes:
-      label: Description
-      description: >-
-        Please include as much information as possible. 
-        <br>For the description, assume we have no idea how mods work, 
-        be as detailed as possible and include a step by step reproduction. 
-        <br>It is recommended you try to reproduce the issue you are having yourself with as few mods as possible. 
-        <br>The clearer the description, the higher the report processing priority
-      placeholder: "Detailed information about what should(not) happen"
+      label: Actual behavior
+      description: State what happened instead, including timing and frequency.
     validations:
       required: true
 
   - type: textarea
-    id: step
+    id: reproduction
     attributes:
-      label: Step to reproduce
+      label: Reproduction steps
+      description: Provide a fresh-server, step-by-step reproduction using the minimal set above.
       placeholder: |
-        1. Install something...
-
-        2. Join the game...
-
-        3. ....
+        1. Create a new Luminara server.
+        2. Install the listed mod or plugin versions.
+        3. Start the server and run ...
+        4. Observe ...
+    validations:
+      required: true
 
   - type: textarea
     id: logs
     attributes:
-      label: Logs
-      description: >-
-        Logs can be found in /logs/latest.log
-        <br>After server is stopped, drag log file below or upload it to https://paste.ubuntu.com/
-        <br>**DO NOT COPY PASTE LOG CONTENT DIRECTLY!**
-      placeholder: 'Drag log file here to upload or external pastebin link'
+      label: Logs and crash reports
+      description: Attach the complete `logs/latest.log` and relevant crash report. Do not paste only the final exception.
+      placeholder: Drag files here or provide stable links to the complete logs.
+    validations:
+      required: true
 
-  - type: input
-    id: pack
+  - type: textarea
+    id: additional-context
     attributes:
-      label: Server pack link (Optional)
-      description: If you have too much mods/plugins included and you are not able to minimize the reproducible list, you can upload your server pack to GoogleDrive/Mega.
+      label: Additional context
+      description: Include upstream Forge, Spigot, or Arclight comparison results when available.

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Support policy
+    url: https://github.com/CraftAmethyst/Luminara/blob/stable/Trials/SUPPORT.md
+    about: Check supported versions and required diagnostics before reporting.
+  - name: Private security report
+    url: https://github.com/CraftAmethyst/Luminara/security/advisories/new
+    about: Report undisclosed vulnerabilities privately; do not open a public issue.
