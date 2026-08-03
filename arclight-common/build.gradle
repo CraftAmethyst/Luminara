@@ -157,6 +157,19 @@ def renameSpigotJar = tasks.register('renameSpigotJar', net.minecraftforge.gradl
 }
 spigotJar.configure { finalizedBy(renameSpigotJar) }
 
+def reobfVersionMappingFile = layout.buildDirectory.file("arclight_cache/tmp_srg/reobf_version_${libs.versions.bukkit.package.get()}.srg")
+def generateReobfVersionMapping = tasks.register('generateReobfVersionMapping') {
+    outputs.file(reobfVersionMappingFile)
+    doLast {
+        def output = reobfVersionMappingFile.get().asFile
+        output.parentFile.mkdirs()
+        output.setText("PK: org/bukkit/craftbukkit/v org/bukkit/craftbukkit/${libs.versions.bukkit.package.get()}\n", 'UTF-8')
+    }
+}
+tasks.matching { it.name == 'reobfJar' }.configureEach {
+    dependsOn(generateReobfVersionMapping)
+}
+
 tasks.withType(net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace).configureEach {
     if (name == 'reobfJar') {
         extraMappings.from(layout.projectDirectory.file('extra_mapping.tsrg'))
