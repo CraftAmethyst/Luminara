@@ -31,6 +31,7 @@ arclight {
     mcVersion = minecraftVersion
     forgeVersion = project.ext.forgeVersion
     bukkitVersion = libs.versions.bukkit.package.get()
+    sharedSpigot = true
     wipeVersion = true
     reobfVersion = true
     accessTransformer = project.file('bukkit.at')
