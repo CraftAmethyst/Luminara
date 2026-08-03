@@ -65,8 +65,8 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
     private Object2IntOpenHashMap<ResourceLocation> recipesUsed;
     private int maxStack = MAX_STACK;
 
-    @Eject(method = "serverTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;isLit()Z"),
-            slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;litDuration:I"),
+    @Eject(method = "m_155013_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;m_58425_()Z", remap = false),
+            slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;f_58317_:I", remap = false),
                     to = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/ItemStack;hasCraftingRemainingItem()Z")))
     private static boolean arclight$setBurnTime(AbstractFurnaceBlockEntity furnace, CallbackInfo ci) {
         ItemStack itemStack = furnace.getItem(1);

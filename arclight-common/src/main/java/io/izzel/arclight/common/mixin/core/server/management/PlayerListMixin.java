@@ -170,7 +170,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         return ((WorldBridge) playerIn.serverLevel()).bridge$spigotConfig().simulationDistance;
     }
 
-    @Eject(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"))
+    @Eject(method = "m_11261_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;m_240416_(Lnet/minecraft/network/chat/Component;Z)V", remap = false))
     private void arclight$playerJoin(PlayerList playerList, Component component, boolean flag, CallbackInfo ci, Connection netManager, ServerPlayer playerIn) {
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(), CraftChatMessage.fromComponent(component));
         this.players.add(playerIn);

@@ -27,7 +27,7 @@ import java.util.Collections;
 @Mixin(SweetBerryBushBlock.class)
 public class SweetBerryBushBlockMixin {
 
-    @Eject(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+    @Eject(method = "m_213898_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z", remap = false))
     private boolean arclight$cropGrow(ServerLevel world, BlockPos pos, BlockState newState, int flags, CallbackInfo ci) {
         if (!CraftEventFactory.handleBlockGrowEvent(world, pos, newState, flags)) {
             ci.cancel();
@@ -45,7 +45,7 @@ public class SweetBerryBushBlockMixin {
         CraftEventFactory.blockDamage = null;
     }
 
-    @Eject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SweetBerryBushBlock;popResource(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V"))
+    @Eject(method = "m_6227_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SweetBerryBushBlock;m_49840_(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V", remap = false))
     private void arclight$playerHarvest(Level worldIn, BlockPos pos, ItemStack stack, CallbackInfoReturnable<InteractionResult> cir,
                                         BlockState state, Level worldIn1, BlockPos pos1, Player player, InteractionHand hand) {
         PlayerHarvestBlockEvent event = CraftEventFactory.callPlayerHarvestBlockEvent(worldIn, pos, player, hand, Collections.singletonList(stack));

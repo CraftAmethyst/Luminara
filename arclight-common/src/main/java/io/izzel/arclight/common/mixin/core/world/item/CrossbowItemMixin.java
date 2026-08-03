@@ -40,7 +40,7 @@ public class CrossbowItemMixin {
         arclight$capturedBoolean = event.getProjectile() == ((EntityBridge) proj).bridge$getBukkitEntity();
     }
 
-    @Eject(method = "shootProjectile", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    @Eject(method = "m_40894_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z", remap = false))
     private static boolean arclight$addEntity(Level world, Entity entityIn, CallbackInfo ci, Level worldIn, LivingEntity shooter) {
         if (arclight$capturedBoolean) {
             if (!world.addFreshEntity(entityIn)) {

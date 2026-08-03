@@ -81,7 +81,7 @@ public abstract class ZombieMixin extends PathfinderMobMixin {
         }
     }
 
-    @Eject(method = "killedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/Villager;convertTo(Lnet/minecraft/world/entity/EntityType;Z)Lnet/minecraft/world/entity/Mob;"))
+    @Eject(method = "m_214076_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/Villager;m_21406_(Lnet/minecraft/world/entity/EntityType;Z)Lnet/minecraft/world/entity/Mob;", remap = false))
     private <T extends Mob> T arclight$transform(Villager villagerEntity, EntityType<T> entityType, boolean flag, CallbackInfoReturnable<Boolean> cir) {
         ((WorldBridge) villagerEntity.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.INFECTION);
         ((MobEntityBridge) villagerEntity).bridge$pushTransformReason(EntityTransformEvent.TransformReason.INFECTION);

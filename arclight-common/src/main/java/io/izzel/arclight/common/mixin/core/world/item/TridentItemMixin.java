@@ -31,7 +31,7 @@ public class TridentItemMixin {
         if (j != 0) stack.hurtAndBreak(amount, entityIn, onBroken);
     }
 
-    @Eject(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    @Eject(method = "m_5551_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z", remap = false))
     public boolean arclight$addEntity(Level world, Entity entityIn, CallbackInfo ci, ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         if (!world.addFreshEntity(entityIn)) {
             if (entityLiving instanceof ServerPlayer) {

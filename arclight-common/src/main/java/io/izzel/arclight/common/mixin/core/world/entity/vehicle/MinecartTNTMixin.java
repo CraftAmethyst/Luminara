@@ -20,7 +20,7 @@ public abstract class MinecartTNTMixin extends AbstractMinecartMixin {
     @Shadow
     private int fuse;
 
-    @Eject(method = "explode(Lnet/minecraft/world/damagesource/DamageSource;D)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"))
+    @Eject(method = "m_257440_(Lnet/minecraft/world/damagesource/DamageSource;D)V", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_254877_(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;", remap = false))
     private Explosion arclight$explode(Level level, Entity entity, DamageSource source, ExplosionDamageCalculator calculator, double x, double y, double z, float radius, boolean fire, Level.ExplosionInteraction interaction, CallbackInfo ci) {
         var event = new ExplosionPrimeEvent(this.getBukkitEntity(), radius, fire);
         Bukkit.getPluginManager().callEvent(event);

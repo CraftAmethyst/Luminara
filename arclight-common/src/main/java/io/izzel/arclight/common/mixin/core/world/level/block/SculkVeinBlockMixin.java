@@ -27,7 +27,7 @@ public class SculkVeinBlockMixin {
         ArclightCaptures.resetSpreadSource();
     }
 
-    @Eject(method = "attemptPlaceSculk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+    @Eject(method = "m_222375_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelAccessor;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z", remap = false))
     private boolean arclight$blockSpread(LevelAccessor level, BlockPos pos, BlockState state, int i, CallbackInfoReturnable<Boolean> cir) {
         if (!CraftEventFactory.handleBlockSpreadEvent(level, ArclightCaptures.getSpreadPos(), pos, state, i)) {
             cir.setReturnValue(false);

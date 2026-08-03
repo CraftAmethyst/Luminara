@@ -42,7 +42,7 @@ public abstract class BrewingStandBlockEntityMixin extends LockableBlockEntityMi
     @Shadow private NonNullList<ItemStack> items;
     private int maxStack = MAX_STACK;
 
-    @Eject(method = "serverTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"))
+    @Eject(method = "m_155285_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;m_41774_(I)V", remap = false))
     private static void arclight$brewFuel(ItemStack stack, int count, CallbackInfo ci, Level level, BlockPos pos, BlockState state, BrewingStandBlockEntity entity) {
         BrewingStandFuelEvent event = new BrewingStandFuelEvent(CraftBlock.at(level, pos), CraftItemStack.asCraftMirror(stack), 20);
         Bukkit.getServer().getPluginManager().callEvent(event);
