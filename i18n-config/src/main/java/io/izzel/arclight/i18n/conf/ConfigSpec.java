@@ -21,8 +21,6 @@ public class ConfigSpec {
     @Setting("async-catcher")
     private AsyncCatcherSpec asyncCatcherSpec;
 
-    @Setting("async-world-save")
-    private AsyncWorldSaveSpec asyncWorldSaveSpec;
 
     @Setting("velocity")
     private VelocitySpec velocitySpec;
@@ -38,34 +36,31 @@ public class ConfigSpec {
     }
 
     public OptimizationSpec getOptimization() {
-        return optimizationSpec;
+        return optimizationSpec != null ? optimizationSpec : new OptimizationSpec();
     }
 
     public LocaleSpec getLocale() {
-        return localeSpec;
+        return localeSpec != null ? localeSpec : new LocaleSpec();
     }
 
     public CompatSpec getCompat() {
-        return compatSpec;
+        return compatSpec != null ? compatSpec : new CompatSpec();
     }
 
     public AsyncCatcherSpec getAsyncCatcher() {
-        return asyncCatcherSpec;
+        return asyncCatcherSpec != null ? asyncCatcherSpec : new AsyncCatcherSpec();
     }
 
-    public AsyncWorldSaveSpec getAsyncWorldSave() {
-        return asyncWorldSaveSpec != null ? asyncWorldSaveSpec : new AsyncWorldSaveSpec();
-    }
 
     public VelocitySpec getVelocity() {
-        return velocitySpec;
+        return velocitySpec != null ? velocitySpec : new VelocitySpec();
     }
 
     public ErrorHandlingSpec getErrorHandling() {
-        return errorHandlingSpec;
+        return errorHandlingSpec != null ? errorHandlingSpec : new ErrorHandlingSpec();
     }
 
     public LoggingSpec getLogging() {
-        return loggingSpec;
+        return loggingSpec != null ? loggingSpec : new LoggingSpec();
     }
 }

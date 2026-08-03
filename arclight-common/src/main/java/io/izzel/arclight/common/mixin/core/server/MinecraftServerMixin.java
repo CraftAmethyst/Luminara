@@ -11,7 +11,6 @@ import io.izzel.arclight.common.mod.server.BukkitRegistry;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.BukkitOptionParser;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
-import io.izzel.arclight.common.optimization.paper.WorldCreationOptimizer;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -72,7 +71,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -80,17 +78,12 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.Proxy;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<TickTask> implements MinecraftServerBridge, ICommandSourceBridge {
 
-    private static final ExecutorService ASYNC_SAVE_EXECUTOR = Executors.newCachedThreadPool(r -> {
-        Thread thread = new Thread(r, "Async-World-Save-Thread");
-        thread.setDaemon(true);
-        return thread;
-    });
     private static final int TPS = 20;
     private static final int TICK_TIME = 1000000000 / TPS;
     private static final int SAMPLE_INTERVAL = 100;
@@ -364,8 +357,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                     this.services.profileCache().clearExecutor();
                 }
                 WatchdogThread.doStop();
-                // Shutdown async world save executor
-                arclight$shutdownAsyncSaveExecutor();
                 ServerLifecycleHooks.handleServerStopped((MinecraftServer) (Object) this);
                 ARCLIGHT_LOGGER.info("server.stopped");
                 this.onServerExit();
@@ -392,16 +383,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         MetricsManager.shutdown();
     }
 
-    @Inject(method = "stopServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;saveAllChunks(ZZZ)Z"))
-    public void arclight$asyncWorldSave(CallbackInfo ci) {
-        if (io.izzel.arclight.i18n.ArclightConfig.spec().getAsyncWorldSave().isEnabled()) {
-            ARCLIGHT_LOGGER.info("server.async-world-save.starting-shutdown");
-            arclight$saveAllWorldsAsync(true, true, true); // suppressLog = true to avoid duplicate message
-        }
-
-        // Luminara - Cleanup world creation optimizer resources
-        WorldCreationOptimizer.shutdown();
-    }
 
     @Inject(method = "createLevels", at = @At("RETURN"))
     public void arclight$enablePlugins(ChunkProgressListener p_240787_1_, CallbackInfo ci) {
@@ -455,7 +436,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         arclight$capturedLevel = null;
         if (serverWorld != null) {
             this.levels.put(serverWorld.dimension(), serverWorld);
-            WorldCreationOptimizer.optimizeWorldInit(serverWorld, serverWorld.serverLevelData);
 
             if (((CraftServer) Bukkit.getServer()).scoreboardManager == null) {
                 ((CraftServer) Bukkit.getServer()).scoreboardManager = new CraftScoreboardManager((MinecraftServer) (Object) this, serverWorld.getScoreboard());
@@ -475,7 +455,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
      */
     @Overwrite
     public void prepareLevels(ChunkProgressListener listener) {
-        var config = io.izzel.arclight.i18n.ArclightConfig.spec().getOptimization().getWorldCreation();
 
         ServerLevel serverworld = this.overworld();
         this.forceTicks = true;
@@ -486,13 +465,9 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         ServerChunkCache serverchunkprovider = serverworld.getChunkSource();
         this.nextTickTime = Util.getMillis();
 
-        int spawnRadius = config.getSpawnAreaRadius();
-        serverchunkprovider.addRegionTicket(TicketType.START, new ChunkPos(blockpos), spawnRadius, Unit.INSTANCE);
-        if (!config.isSkipSpawnChunkLoading()) {
-            int targetChunks = (spawnRadius * 2 + 1) * (spawnRadius * 2 + 1);
-            while (serverchunkprovider.getTickingGenerated() < targetChunks) {
-                this.executeModerately();
-            }
+        serverchunkprovider.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+        while (serverchunkprovider.getTickingGenerated() < 441) {
+            this.executeModerately();
         }
 
         this.executeModerately();
@@ -523,7 +498,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
     // bukkit methods
     public void initWorld(ServerLevel serverWorld, ServerLevelData worldInfo, WorldData saveData, WorldOptions worldOptions) {
-        var config = io.izzel.arclight.i18n.ArclightConfig.spec().getOptimization().getWorldCreation();
 
         ARCLIGHT_LOGGER.info("world.creating", ((WorldBridge) serverWorld).bridge$getWorld().getName());
 
@@ -534,16 +508,12 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                             ((WorldBridge) serverWorld).bridge$getWorld()));
         }
 
-        if (config.isOptimizeWorldBorderSetup()) {
-            WorldBorder worldborder = serverWorld.getWorldBorder();
-            worldborder.applySettings(worldInfo.getWorldBorder());
-        }
+        WorldBorder worldborder = serverWorld.getWorldBorder();
+        worldborder.applySettings(worldInfo.getWorldBorder());
 
         if (!worldInfo.isInitialized()) {
             try {
-                if (!config.isDeferSpawnAreaPreparation()) {
-                    setInitialSpawn(serverWorld, worldInfo, worldOptions.generateBonusChest(), flag);
-                }
+                setInitialSpawn(serverWorld, worldInfo, worldOptions.generateBonusChest(), flag);
                 worldInfo.setInitialized(true);
                 if (flag) {
                     this.setupDebugLevel(this.worldData);
@@ -621,88 +591,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         this.bridge$drainQueuedTasks();
     }
 
-    @Inject(method = "saveAllChunks", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;overworld()Lnet/minecraft/server/level/ServerLevel;"))
-    private void arclight$skipSave(boolean suppressLog, boolean flush, boolean forced, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(!this.levels.isEmpty());
-    }
-
-    /**
-     * Asynchronously save all worlds
-     * Based on Mohist's DimensionDataStorage async save implementation
-     */
-    private void arclight$saveAllWorldsAsync(boolean suppressLog, boolean flush, boolean forced) {
-        List<CompletableFuture<Void>> saveTasks = new ArrayList<>();
-
-        if (!suppressLog) {
-            ARCLIGHT_LOGGER.info("server.async-world-save.starting");
-        }
-
-        // Create async save tasks for each world
-        for (ServerLevel level : this.levels.values()) {
-            CompletableFuture<Void> saveTask = CompletableFuture.runAsync(() -> {
-                try {
-                    arclight$saveWorldAsync(level, suppressLog, flush, forced);
-                } catch (Exception e) {
-                    ARCLIGHT_LOGGER.error("server.world-save.failed", level.dimension().location(), e);
-                }
-            }, ASYNC_SAVE_EXECUTOR);
-
-            saveTasks.add(saveTask);
-        }
-
-        // Wait for all save tasks to complete
-        if (!saveTasks.isEmpty()) {
-            try {
-                CompletableFuture<Void> allTasks = CompletableFuture.allOf(
-                        saveTasks.toArray(new CompletableFuture[0])
-                );
-
-                int timeoutSeconds = io.izzel.arclight.i18n.ArclightConfig.spec().getAsyncWorldSave().getTimeoutSeconds();
-                allTasks.get(timeoutSeconds, TimeUnit.SECONDS);
-
-                if (!suppressLog) {
-                    ARCLIGHT_LOGGER.info("server.world-save.all-successful");
-                }
-            } catch (Exception e) {
-                ARCLIGHT_LOGGER.warn("server.async-world-save.timeout-or-failed", e);
-            }
-        }
-    }
-
-    /**
-     * Asynchronously save a single world
-     */
-    private void arclight$saveWorldAsync(ServerLevel level, boolean suppressLog, boolean flush, boolean forced) {
-        if (!suppressLog) {
-            ARCLIGHT_LOGGER.debug("world.saving", level.dimension().location());
-        }
-
-        try {
-            // Save world data
-            level.save(null, flush, level.noSave && !forced);
-
-            if (!suppressLog) {
-                ARCLIGHT_LOGGER.debug("world.saved-successfully", level.dimension().location());
-            }
-        } catch (Exception e) {
-            ARCLIGHT_LOGGER.error("world.save-error", level.dimension().location(), e);
-        }
-    }
-
-    /**
-     * Shutdown async save executor
-     */
-    private void arclight$shutdownAsyncSaveExecutor() {
-        ASYNC_SAVE_EXECUTOR.shutdown();
-        try {
-            if (!ASYNC_SAVE_EXECUTOR.awaitTermination(5, TimeUnit.SECONDS)) {
-                ASYNC_SAVE_EXECUTOR.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            ASYNC_SAVE_EXECUTOR.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
-    }
 
     @Inject(method = "desc=/V$/", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;setSelected(Ljava/util/Collection;)V"))
     private void arclight$syncCommand(CallbackInfo ci) {

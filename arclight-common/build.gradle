@@ -175,8 +175,7 @@ def generateMixinInventory = tasks.register('generateMixinInventory', GenerateMi
             'mixins.arclight.core.json',
             'mixins.arclight.bukkit.json',
             'mixins.arclight.forge.json',
-            'mixins.arclight.compat.json',
-            'mixins.arclight.impl.forge.optimization.json'
+            'mixins.arclight.compat.json'
     ].collect { layout.projectDirectory.file("src/main/resources/${it}") })
     mixinClasses.from(sourceSets.main.output.classesDirs)
     targetClasspath.from(sourceSets.main.compileClasspath)
