@@ -24,7 +24,7 @@ public abstract class WitherSkullMixin extends AbstractHurtingProjectileMixin {
         ((LivingEntityBridge) this.getOwner()).bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.WITHER);
     }
 
-    @Inject(method = "onHitEntity", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
+    @Inject(method = "onHitEntity", require = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
     private void arclight$effect(EntityHitResult result, CallbackInfo ci) {
         ((LivingEntityBridge) result.getEntity()).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
     }

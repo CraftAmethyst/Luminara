@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = RootedDirtBlock.class, priority = 1500)
 public class RootedDirtBlockMixin {
 
-    @Redirect(method = "performBonemeal", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+    @Redirect(method = "performBonemeal", require = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
     private boolean arclight$blockSpread(ServerLevel instance, BlockPos pos, BlockState state) {
         return CraftEventFactory.handleBlockSpreadEvent(instance, pos.above(), pos, state);
     }

@@ -8,7 +8,7 @@
   "plugin": "io.izzel.arclight.common.mod.ArclightMixinPlugin",
   "injectors": {
     "maxShiftBy": 2,
-    "defaultRequire": 0
+    "defaultRequire": 1
   },
   "overwrites": {
     "conformVisibility": true
@@ -192,7 +192,6 @@
     "world.entity.monster.HuskMixin",
     "world.entity.monster.Illusioner_BlindnessSpellGoalMixin",
     "world.entity.monster.Illusioner_MirrorSpellGoalMixin",
-    "world.entity.monster.Phantom_AttackPlayerTargetGoalMixin",
     "world.entity.monster.RavagerMixin",
     "world.entity.monster.ShulkerMixin",
     "world.entity.monster.Silverfish_MergeWithStoneGoalMixin",

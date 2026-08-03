@@ -75,7 +75,7 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/item/crafting/RecipeManager;fromJson(Lnet/minecraft/resources/ResourceLocation;Lcom/google/gson/JsonObject;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)Lnet/minecraft/world/item/crafting/Recipe;"
             ),
-            require = 0
+            require = 1
     )
     private Recipe<?> arclight$fromJsonForge(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
         Recipe<?> recipe = RecipeManager.fromJson(recipeId, json, context);
@@ -91,7 +91,7 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
                     value = "INVOKE",
                     target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"
             ),
-            require = 0
+            require = 1
     )
     private void arclight$logParsingError(org.slf4j.Logger logger, String message, Object recipeId, Object exception) {
         ARCLIGHT_LOGGER.error("recipe.loading.parsing-error", recipeId, exception);
@@ -103,7 +103,7 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
                     value = "INVOKE",
                     target = "Lorg/slf4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;)V"
             ),
-            require = 0
+            require = 1
     )
     private void arclight$logLoadedRecipes(org.slf4j.Logger logger, String message, Object count) {
         ARCLIGHT_LOGGER.info("recipe.loading.completed", count);

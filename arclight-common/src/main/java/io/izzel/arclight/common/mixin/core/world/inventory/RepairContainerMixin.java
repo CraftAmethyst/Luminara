@@ -56,12 +56,12 @@ public abstract class RepairContainerMixin extends ItemCombinerMixin {
         sendAllDataToRemote();
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40), require = 0)
+    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40), require = 1)
     private int arclight$maximumRepairCost(int raw) {
         return raw - 40 + maximumRepairCost;
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 39), require = 0)
+    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 39), require = 1)
     private int arclight$maximumRenameCost(int raw) {
         return raw - 40 + maximumRepairCost;
     }

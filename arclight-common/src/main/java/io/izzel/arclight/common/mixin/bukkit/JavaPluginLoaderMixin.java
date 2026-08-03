@@ -60,7 +60,7 @@ public abstract class JavaPluginLoaderMixin implements JavaPluginLoaderBridge {
 
     @Accessor("loaders") public abstract List<URLClassLoader> bridge$getLoaders();
 
-    @Inject(method = "enablePlugin", at = @At("HEAD"), require = 0)
+    @Inject(method = "enablePlugin", at = @At("HEAD"), require = 1)
     private void arclight$reviveCmiExecutor(Plugin plugin, CallbackInfo ci) {
         if (plugin == null || !"CMI".equalsIgnoreCase(plugin.getName())) {
             return;
