@@ -86,6 +86,10 @@ public abstract class VerifyDistributionTask extends DefaultTask {
         String actual = hash(getForgeInstallerJar().get().getAsFile().toPath(), "SHA-1");
         require(expected.equals(actual), "Forge installer SHA-1 mismatch");
         ensureUniqueCoordinates(root.getAsJsonObject("libraries"));
+        JsonObject libraries = root.getAsJsonObject("libraries");
+        require(root.has("runtimeLibraries"), "Missing runtime library metadata");
+        root.getAsJsonArray("runtimeLibraries").forEach(coordinate -> require(libraries.has(coordinate.getAsString()),
+                "Runtime library lacks download metadata: " + coordinate.getAsString()));
     }
 
     private static void ensureUniqueCoordinates(JsonObject libraries) {

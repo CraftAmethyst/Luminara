@@ -166,6 +166,7 @@ def generateInstallerInfo = tasks.register('generateInstallerInfo') {
         def libraries = librariesByGa.values().collectEntries { library ->
             [(library.coordinate): library.hash]
         }
+        def runtimeLibraries = resolvedByGa.values().collect { it.coordinate }
 
         def output = [
             installer: [
@@ -173,7 +174,8 @@ def generateInstallerInfo = tasks.register('generateInstallerInfo') {
                 forge: forgeVersion,
                 hash: sha1(forgeInstallerJar.get().asFile)
             ],
-            libraries: libraries
+            libraries: libraries,
+            runtimeLibraries: runtimeLibraries
         ]
         def target = installerInfoFile.get().asFile
         target.parentFile.mkdirs()

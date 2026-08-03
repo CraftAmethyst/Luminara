@@ -19,7 +19,7 @@ class ForgeInstallerTest {
     @Test
     void readsCompleteInstallerMetadata() {
         InstallInfo info = ForgeInstaller.readInstallInfo(new StringReader("""
-            {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"libraries":{}}
+            {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"libraries":{},"runtimeLibraries":[]}
             """));
 
         assertEquals("1.20.1", info.installer.minecraft);
@@ -31,15 +31,42 @@ class ForgeInstallerTest {
     void rejectsIncompleteInstallerMetadata() {
         IllegalArgumentException missingMinecraft = assertThrows(IllegalArgumentException.class,
             () -> ForgeInstaller.readInstallInfo(new StringReader("""
-                {"installer":{"forge":"47.4.22","hash":"abc"},"libraries":{}}
+                {"installer":{"forge":"47.4.22","hash":"abc"},"libraries":{},"runtimeLibraries":[]}
                 """)));
         assertTrue(missingMinecraft.getMessage().contains("Minecraft"));
 
         IllegalArgumentException missingLibraries = assertThrows(IllegalArgumentException.class,
             () -> ForgeInstaller.readInstallInfo(new StringReader("""
-                {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"}}
+                {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"runtimeLibraries":[]}
                 """)));
         assertTrue(missingLibraries.getMessage().contains("library"));
+
+        IllegalArgumentException missingRuntimeLibraries = assertThrows(IllegalArgumentException.class,
+            () -> ForgeInstaller.readInstallInfo(new StringReader("""
+                {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"libraries":{}}
+                """)));
+        assertTrue(missingRuntimeLibraries.getMessage().contains("runtime library"));
+    }
+
+    @Test
+    void addsOnlyDeclaredRuntimeLibrariesToLegacyClasspath() throws Exception {
+        InstallInfo info = installInfo();
+        String runtime = "example:runtime:1.0";
+        String installerOnly = "example:installer:1.0";
+        info.libraries.put(runtime, "abc");
+        info.libraries.put(installerOnly, "def");
+        info.runtimeLibraries = List.of(runtime);
+        Path runtimePath = directory.resolve("libraries").resolve(Util.mavenToPath(runtime));
+        Path installerPath = directory.resolve("libraries").resolve(Util.mavenToPath(installerOnly));
+        Files.createDirectories(runtimePath.getParent());
+        Files.createFile(runtimePath);
+        Files.createDirectories(installerPath.getParent());
+        Files.createFile(installerPath);
+
+        ForgeArguments arguments = ForgeInstaller.parseArguments(List.of("example.Main"), info, directory);
+
+        assertTrue(arguments.legacyClassPath().contains(runtimePath));
+        assertFalse(arguments.legacyClassPath().contains(installerPath));
     }
 
     @Test
@@ -114,6 +141,7 @@ class ForgeInstallerTest {
         info.installer.forge = "47.4.22";
         info.installer.hash = "abc";
         info.libraries = new LinkedHashMap<>();
+        info.runtimeLibraries = List.of();
         return info;
     }
 }

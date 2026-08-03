@@ -48,6 +48,14 @@ public class ForgeInstaller {
         if (info.libraries == null) {
             throw new IllegalArgumentException("Missing library download metadata in META-INF/installer.json");
         }
+        if (info.runtimeLibraries == null) {
+            throw new IllegalArgumentException("Missing runtime library metadata in META-INF/installer.json");
+        }
+        for (String coordinate : info.runtimeLibraries) {
+            if (!info.libraries.containsKey(coordinate)) {
+                throw new IllegalArgumentException("Runtime library is missing download metadata: " + coordinate);
+            }
+        }
         return info;
     }
 
@@ -67,7 +75,7 @@ public class ForgeInstaller {
             handleFutures(logger, array);
             pool.shutdownNow();
         }
-        return installInfo.libraries.keySet().stream().map(it -> Paths.get("libraries").resolve(Util.mavenToPath(it))).collect(Collectors.toList());
+        return runtimeLibraryPaths(installInfo, Paths.get(".").toAbsolutePath().normalize());
     }
 
     @SuppressWarnings("unused")
@@ -384,9 +392,7 @@ public class ForgeInstaller {
             throw new IllegalArgumentException("Missing main class in Forge argument file");
         }
 
-        List<Path> extraLibraries = installInfo.libraries.keySet().stream()
-                .map(coordinate -> root.resolve("libraries").resolve(Util.mavenToPath(coordinate)).normalize())
-                .collect(Collectors.toList());
+        List<Path> extraLibraries = runtimeLibraryPaths(installInfo, root);
         LinkedHashSet<Path> legacyClassPath = new LinkedHashSet<>();
         try {
             legacyClassPath.add(Paths.get(ForgeInstaller.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toAbsolutePath().normalize());
@@ -410,6 +416,12 @@ public class ForgeInstaller {
 
         return new ForgeArguments(mainClass, gameArguments, modulePath, new ArrayList<>(legacyClassPath),
                 systemProperties, opens, exports);
+    }
+
+    private static List<Path> runtimeLibraryPaths(InstallInfo installInfo, Path root) {
+        return installInfo.runtimeLibraries.stream()
+                .map(coordinate -> root.resolve("libraries").resolve(Util.mavenToPath(coordinate)).normalize())
+                .collect(Collectors.toList());
     }
 
     static void applyArguments(ForgeArguments arguments) throws Throwable {
