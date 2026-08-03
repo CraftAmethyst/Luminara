@@ -1,0 +1,31 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{java,groovy,gradle}]
+indent_style = space
+indent_size = 4
+
+[*.{json,toml,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.bat]
+end_of_line = crlf
+
+[arclight-common/src/main/java/io/izzel/arclight/common/mod/metrics/Metrics.java]
+indent_style = unset
+indent_size = unset
+trim_trailing_whitespace = unset
+
+[arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/generated/*.java]
+indent_style = unset
+indent_size = unset
+trim_trailing_whitespace = unset
