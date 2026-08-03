@@ -7,10 +7,10 @@ buildscript {
         // maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forge_gradle_version}", changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: libs.versions.forgegradle.get()
         // classpath 'org.parchmentmc:librarian:1.+'
-        classpath 'org.spongepowered:mixingradle:0.7.2-SNAPSHOT'
-        classpath "io.izzel.arclight:arclight-gradle-plugin:$agpVersion"
+        classpath "org.spongepowered:mixingradle:${libs.versions.mixingradle.get()}"
+        classpath "io.izzel.arclight:arclight-gradle-plugin:${libs.versions.arclight.gradle.plugin.get()}"
     }
 }
 
@@ -26,7 +26,7 @@ archivesBaseName = 'luminara-common-' + minecraftVersion
 arclight {
     mcVersion = minecraftVersion
     forgeVersion = project.ext.forgeVersion
-    bukkitVersion = 'v1_20_R1'
+    bukkitVersion = libs.versions.bukkit.package.get()
     wipeVersion = true
     reobfVersion = true
     accessTransformer = project.file('bukkit.at')
@@ -59,14 +59,14 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:$minecraftVersion-$forgeVersion"
-    implementation "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT@jar"
+    implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
     implementation 'org.jetbrains:annotations:23.0.0'
 
-    implementation "org.spongepowered:mixin:$mixinVersion"
-    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
+    implementation "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
+    annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}:processor"
 
-    implementation 'com.github.ArclightTeam:mixin-tools:1.0.0'
-    annotationProcessor 'com.github.ArclightTeam:mixin-tools:1.0.0'
+    implementation "com.github.ArclightTeam:mixin-tools:${libs.versions.mixin.tools.get()}"
+    annotationProcessor "com.github.ArclightTeam:mixin-tools:${libs.versions.mixin.tools.get()}"
 
     implementation 'jline:jline:2.12.1'
     implementation 'net.md-5:SpecialSource:1.11.0'
@@ -103,7 +103,7 @@ dependencies {
 
 
     embed 'net.md-5:bungeecord-chat:1.16-R0.4@jar'
-    embed "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT@jar"
+    embed "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
     embed("net.kyori:adventure-api:4.17.0") {
         exclude group: 'org.slf4j'
         exclude group: 'org.checkerframework'

@@ -4,7 +4,7 @@ A Bukkit-compatible server layer that runs on Minecraft Forge. Luminara is a for
 
 ## Highlights
 
-- **Bukkit API on Forge** — full implementation of the Spigot API (`v1_20_R1`) for Minecraft **1.20.1** (Forge **47.4.16**, Java **17**).
+- **Bukkit API on Forge** — full implementation of the Spigot API (`v1_20_R1`) for Minecraft **1.20.1** (Forge **47.4.22**, Java **17**).
 - **Mod + Plugin coexistence** — drop Forge mods into `mods/` and Bukkit plugins into `plugins/` and run them together.
 - **Adventure support** — bundled with Adventure API 4.17.0 including MiniMessage, Gson, Legacy and Plain text serializers.
 - **Partial Paper API** — selected Paper APIs and improvements are implemented, e.g. Paper Adventure integration, signed chat messages, and Paper-style optimizations such as the chunk optimizer and world creation optimizer.
