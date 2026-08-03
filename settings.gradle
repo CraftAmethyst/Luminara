@@ -34,6 +34,14 @@ def configureLuminaraRepositories = { repositories ->
         }
     }
     repositories.maven {
+        name = 'MojangLibraries'
+        url = uri('https://libraries.minecraft.net')
+        content {
+            includeGroupByRegex 'com\\.mojang(\\..*)?'
+            includeGroupByRegex 'net\\.minecraft(\\..*)?'
+        }
+    }
+    repositories.maven {
         name = 'Sponge'
         url = uri('https://repo.spongepowered.org/repository/maven-public')
         content { includeGroupByRegex 'org\\.spongepowered(\\..*)?' }
