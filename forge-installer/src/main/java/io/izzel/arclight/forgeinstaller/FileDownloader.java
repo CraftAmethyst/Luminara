@@ -1,100 +1,149 @@
 package io.izzel.arclight.forgeinstaller;
 
-import io.izzel.arclight.api.Unsafe;
-
 import javax.net.ssl.SSLException;
-import java.io.File;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.rmi.RemoteException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.function.Supplier;
 
 public record FileDownloader(String url, String target, String hash) implements Supplier<Path> {
 
+    static final int CONNECT_TIMEOUT_MILLIS = 15_000;
+    static final int READ_TIMEOUT_MILLIS = 15_000;
+    static final int MAX_REDIRECTS = 8;
+
+    @FunctionalInterface
+    interface ConnectionFactory {
+        HttpURLConnection open(URL url) throws IOException;
+    }
+
     static InputStream read(String url) throws IOException {
-        return redirect(new URL(url));
+        return read(url, current -> (HttpURLConnection) current.openConnection());
     }
 
-    private static InputStream redirect(URL url) throws IOException {
-        return redirect(url, new HashSet<>());
+    static InputStream read(String url, ConnectionFactory connections) throws IOException {
+        URL current = new URL(url);
+        Set<String> history = new LinkedHashSet<>();
+        for (int redirects = 0; ; redirects++) {
+            if (!"https".equalsIgnoreCase(current.getProtocol())) {
+                throw new IOException("Refusing non-HTTPS download URL: " + current);
+            }
+            if (!history.add(current.toExternalForm())) {
+                throw new IOException("Redirect loop: " + String.join(" -> ", history));
+            }
+
+            HttpURLConnection connection = connections.open(current);
+            connection.setInstanceFollowRedirects(false);
+            connection.setConnectTimeout(CONNECT_TIMEOUT_MILLIS);
+            connection.setReadTimeout(READ_TIMEOUT_MILLIS);
+            boolean streamReturned = false;
+            try {
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    InputStream input = connection.getInputStream();
+                    streamReturned = true;
+                    return new FilterInputStream(input) {
+                        @Override
+                        public void close() throws IOException {
+                            try {
+                                super.close();
+                            } finally {
+                                connection.disconnect();
+                            }
+                        }
+                    };
+                }
+                if (isRedirect(responseCode)) {
+                    if (redirects >= MAX_REDIRECTS) {
+                        throw new IOException("Too many redirects (maximum " + MAX_REDIRECTS + "): " + current);
+                    }
+                    String location = connection.getHeaderField("Location");
+                    if (location == null || location.isBlank()) {
+                        throw new IOException("Redirect without Location header: " + current);
+                    }
+                    URL next = new URL(current, location);
+                    if (!"https".equalsIgnoreCase(next.getProtocol())) {
+                        throw new IOException("Refusing non-HTTPS redirect: " + next);
+                    }
+                    current = next;
+                    continue;
+                }
+                if (responseCode == HttpURLConnection.HTTP_NOT_FOUND || responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
+                    throw new IOException("Not found: " + current + " (HTTP " + responseCode + ")");
+                }
+                throw new RemoteException("HTTP " + responseCode + " " + current);
+            } finally {
+                if (!streamReturned) connection.disconnect();
+            }
+        }
     }
 
-    private static InputStream redirect(URL url, Set<String> history) throws IOException {
-        if (history.contains(url.toString())) {
-            StringJoiner joiner = new StringJoiner("\n        ");
-            joiner.add("");
-            history.forEach(joiner::add);
-            throw new RuntimeException("Redirect error " + joiner);
-        } else {
-            history.add(url.toString());
-        }
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setInstanceFollowRedirects(false);
-        connection.setReadTimeout(15000);
-        connection.setConnectTimeout(15000);
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            return connection.getInputStream();
-        } else if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
-            String location = URLDecoder.decode(connection.getHeaderField("Location"), StandardCharsets.UTF_8);
-            return redirect(new URL(url, location));
-        } else if (responseCode == HttpURLConnection.HTTP_NOT_FOUND || responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
-            throw new RuntimeException("Not found " + url);
-        } else {
-            throw new RemoteException("Http " + responseCode + " " + url);
-        }
+    private static boolean isRedirect(int responseCode) {
+        return responseCode == HttpURLConnection.HTTP_MOVED_PERM
+            || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+            || responseCode == HttpURLConnection.HTTP_SEE_OTHER
+            || responseCode == 307
+            || responseCode == 308;
     }
+
 
     @Override
     public Path get() {
+        return download(url, Paths.get(target), hash, current -> (HttpURLConnection) current.openConnection());
+    }
+
+    static Path download(String url, Path path, String expectedHash, ConnectionFactory connections) {
+        Path temporary = path.resolveSibling(path.getFileName() + ".tmp");
+        boolean complete = false;
         try {
-            Path path = new File(target).toPath();
-            if (Files.exists(path) && Files.isDirectory(path)) {
+            Files.deleteIfExists(temporary);
+            if (Files.isDirectory(path)) throw new FileAlreadyExistsException(path.toString());
+            if (Files.isRegularFile(path)) {
+                if (Util.hash(path).equalsIgnoreCase(expectedHash)) return path;
                 Files.delete(path);
             }
-            if (Files.exists(path)) {
-                if (Files.isDirectory(path)) {
-                    throw new FileAlreadyExistsException(target);
-                } else {
-                    if (Util.hash(path).equalsIgnoreCase(hash)) return path;
-                    else Files.delete(path);
-                }
+            if (path.getParent() != null) Files.createDirectories(path.getParent());
+            try (InputStream stream = read(url, connections)) {
+                Files.copy(stream, temporary, StandardCopyOption.REPLACE_EXISTING);
             }
-            if (!Files.exists(path) && path.getParent() != null) {
-                Files.createDirectories(path.getParent());
+            String actualHash = Util.hash(temporary);
+            if (!actualHash.equalsIgnoreCase(expectedHash)) {
+                throw new IOException("Hash mismatch, expected %s but found %s from %s".formatted(expectedHash, actualHash, url));
             }
-            var tmp = new File(target + ".tmp").toPath();
-            try (InputStream stream = read(url)) {
-                Files.copy(stream, tmp, StandardCopyOption.REPLACE_EXISTING);
-            } catch (SocketTimeoutException | SSLException e) {
-                throw new RuntimeException("Timeout " + url);
+            try {
+                Files.move(temporary, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException ignored) {
+                Files.move(temporary, path, StandardCopyOption.REPLACE_EXISTING);
             }
-            if (Files.exists(tmp)) {
-                String hash = Util.hash(tmp);
-                if (hash.equalsIgnoreCase(this.hash)) {
-                    Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING);
-                    return path;
-                } else {
-                    Files.delete(tmp);
-                    throw new RuntimeException("Hash not match, expect %s found %s in %s".formatted(this.hash, hash, url));
-                }
-            } else {
-                throw new RuntimeException("Not found " + url);
-            }
+            complete = true;
+            return path;
         } catch (AccessDeniedException e) {
-            throw new RuntimeException("Access denied for file " + e.getFile(), e);
+            throw new IllegalStateException("Access denied for file " + e.getFile(), e);
+        } catch (SocketTimeoutException | SSLException e) {
+            throw new IllegalStateException("Timed out downloading " + url, e);
         } catch (Exception e) {
-            Unsafe.throwException(e);
-            return null;
+            throw new IllegalStateException("Failed to download " + url + " to " + path, e);
+        } finally {
+            if (!complete) {
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (IOException ignored) {
+                    // Preserve the original download failure.
+                }
+            }
         }
     }
 }

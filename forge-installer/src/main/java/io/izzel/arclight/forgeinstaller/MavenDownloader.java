@@ -46,12 +46,12 @@ public class MavenDownloader implements Supplier<Path> {
                 exceptions.add(e);
             }
         }
-        StringJoiner joiner = new StringJoiner("\n  ");
-        joiner.add("");
+        StringJoiner joiner = new StringJoiner("\n  ", "", "");
         for (int i = 0; i < exceptions.size(); i++) {
-            Exception exception = exceptions.get(i);
-            joiner.add("(" + (i + 1) + ") " + exception);
+            joiner.add("(" + (i + 1) + ") " + exceptions.get(i));
         }
-        throw new RuntimeException("Failed %s %s".formatted(coord, joiner.toString()));
+        RuntimeException failure = new RuntimeException("All mirrors failed for %s\n  %s".formatted(coord, joiner));
+        exceptions.forEach(failure::addSuppressed);
+        throw failure;
     }
 }
