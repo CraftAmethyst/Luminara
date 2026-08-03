@@ -2,7 +2,6 @@ import java.security.MessageDigest
 import io.izzel.arclight.gradle.tasks.SmokeServerTask
 import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
 import io.izzel.arclight.gradle.tasks.VerifyReproducibleBuildTask
-import io.izzel.arclight.gradle.tasks.UploadFilesTask
 
 allprojects {
     group 'io.izzel.luminara'
@@ -144,23 +143,4 @@ tasks.register('verifyReproducibleBuild', VerifyReproducibleBuildTask) {
     sourceDirectory.set(layout.projectDirectory)
     workspaceDirectory.set(layout.buildDirectory.dir('reproducible-build'))
     distributionRelativePath.set("build/distributions/${distributionName}")
-}
-
-def gitBranch() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
-tasks.register('uploadFiles', UploadFilesTask) {
-    mcVersion.set project.ext.minecraftVersion
-    version.set "${project.version}-${project.ext.gitHash}"
-    snapshot.set project.version.toString().endsWith("-SNAPSHOT")
-    gitHash.set project.ext.gitHash
-    branch.set gitBranch()
-    inputs.files assembleDistribution.map { it.outputs.files }
-    dependsOn(assembleDistribution)
 }

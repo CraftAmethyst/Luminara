@@ -3,7 +3,6 @@ import java.security.MessageDigest
 
 apply plugin: 'luminara.java-conventions'
 apply plugin: 'idea'
-apply plugin: 'maven-publish'
 
 base.archivesName = "luminara-${minecraftVersion}"
 
@@ -204,29 +203,4 @@ tasks.register('runProdServer', JavaExec) {
         languageVersion = JavaLanguageVersion.of(17)
     })
     dependsOn project(':arclight-common').tasks.named('build'), tasks.named('build')
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "IzzelAliz"
-            url = uri('https://maven.izzel.io/' + (project.version.toString().endsWith('SNAPSHOT') ? 'snapshots' : 'releases'))
-            credentials {
-                username = project.findProperty("mavenUser") ?: System.getenv("ARCLIGHT_USER")
-                password = project.findProperty("mavenToken") ?: System.getenv("ARCLIGHT_TOKEN")
-            }
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = 'luminara-forge-' + versionName
-            artifact project(':arclight-common').tasks.srgJar
-            artifact project(':arclight-common').tasks.spigotJar
-            //artifact sourceJar
-        }
-    }
-}
-
-if ('true'.equalsIgnoreCase(System.getenv('APPVEYOR_REPO_TAG'))) {
-    tasks.build.dependsOn(tasks.publish)
 }
