@@ -14,6 +14,10 @@ sourceSets {
             runtimeClasspath += main.output
         }
     }
+    test {
+        compileClasspath += applaunch.output
+        runtimeClasspath += applaunch.output
+    }
 }
 
 
@@ -77,6 +81,9 @@ dependencies {
     embed(project(':forge-installer')) {
         transitive = false
     }
+    testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 jar {
