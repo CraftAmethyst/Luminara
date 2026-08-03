@@ -36,8 +36,7 @@ public class ApplicationBootstrap extends AbstractBootstrap implements Consumer<
             return;
         }
         try {
-            this.setupMod();
-            this.dirtyHacks();
+            this.bootstrap();
             int targetIndex = Arrays.asList(args).indexOf("--launchTarget");
             if (targetIndex >= 0 && targetIndex < args.length - 1) {
                 args[targetIndex + 1] = "arclightserver";

@@ -98,8 +98,6 @@ public class ModBootstrap extends AbstractBootstrap {
     }
 
     private void inject() throws Throwable {
-        dirtyHacks();
-        setupMod();
         injectClassPath();
         injectLaunchPlugin();
     }
