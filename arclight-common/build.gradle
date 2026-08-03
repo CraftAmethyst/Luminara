@@ -21,7 +21,7 @@ apply plugin: 'luminara.java-conventions'
 apply plugin: 'idea'
 apply plugin: 'io.izzel.arclight'
 
-archivesBaseName = 'luminara-common-' + minecraftVersion
+base.archivesName = "luminara-common-${minecraftVersion}"
 
 arclight {
     mcVersion = minecraftVersion
@@ -35,6 +35,10 @@ arclight {
 
 configurations {
     embed
+    reobfuscatedElements {
+        canBeConsumed = true
+        canBeResolved = false
+    }
 }
 
 
@@ -135,30 +139,38 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.register('srgJar', Jar) {
-    from(tasks.jar.outputs.files.collect { it.isDirectory() ? it : zipTree(it) }) {
+def mainJar = tasks.named('jar', Jar)
+
+def srgJar = tasks.register('srgJar', Jar) {
+    from(mainJar.flatMap { it.archiveFile }.map { zipTree(it) }) {
         include 'io/izzel/**'
         exclude 'io/izzel/arclight/common/mixin/**'
     }
     archiveClassifier.set('srg')
 }
 
-tasks.register('spigotJar', Jar) {
-    with tasks.srgJar
-    doLast {
-        def task = tasks.create('renameSpigotJar', net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace)
-        task.input.set(archiveFile.get().asFile)
-        task.hasLog = false
-        task.mappings.set(project.file('build/arclight_cache/tmp_srg/bukkit_srg.srg'))
-        task.args.add('--reverse')
-        task.apply()
-    }
+def spigotJar = tasks.register('spigotJar', Jar) {
+    from(srgJar.flatMap { it.archiveFile }.map { zipTree(it) })
     archiveClassifier.set('spigot')
 }
 
-afterEvaluate {
-    tasks.reobfJar.configure {
-        it.extraMappings.from(project.files('extra_mapping.tsrg'))
+def renameSpigotJar = tasks.register('renameSpigotJar', net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace) {
+    input.set(spigotJar.flatMap { it.archiveFile })
+    hasLog = false
+    mappings.set(layout.buildDirectory.file('arclight_cache/tmp_srg/bukkit_srg.srg'))
+    args.add('--reverse')
+}
+spigotJar.configure { finalizedBy(renameSpigotJar) }
+
+tasks.withType(net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace).configureEach {
+    if (name == 'reobfJar') {
+        extraMappings.from(layout.projectDirectory.file('extra_mapping.tsrg'))
+    }
+}
+
+artifacts {
+    add('reobfuscatedElements', mainJar) {
+        builtBy(tasks.matching { it.name == 'reobfJar' })
     }
 }
 

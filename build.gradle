@@ -29,17 +29,14 @@ allprojects {
         gitHash = getGitHash()
     }
 
-    task cleanBuild {
-        doFirst {
-            project.file("build/libs").deleteDir()
-        }
+    tasks.register('cleanBuild', Delete) {
+        delete(layout.buildDirectory.dir('libs'))
     }
 }
 
-task collect(type: Copy) {
-    destinationDir = file('build/libs')
-    from { project(':arclight-forge').tasks.jar.outputs }
-    dependsOn { project(':arclight-forge').tasks.jar }
+tasks.register('collect', Copy) {
+    into(layout.buildDirectory.dir('libs'))
+    from(project(':arclight-forge').tasks.named('jar'))
 }
 
 def gitBranch() {
@@ -57,6 +54,6 @@ tasks.register('uploadFiles', UploadFilesTask) {
     snapshot.set project.version.toString().endsWith("-SNAPSHOT")
     gitHash.set project.ext.gitHash
     branch.set gitBranch()
-    inputs.files tasks.collect.outputs.files
-    dependsOn(tasks.collect)
+    inputs.files tasks.named('collect').map { it.outputs.files }
+    dependsOn(tasks.named('collect'))
 }

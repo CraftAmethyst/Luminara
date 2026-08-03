@@ -2,7 +2,7 @@ plugins {
     id 'luminara.java-conventions'
 }
 
-archivesBaseName = 'luminara-forge-installer'
+base.archivesName = 'luminara-forge-installer'
 
 
 dependencies {
