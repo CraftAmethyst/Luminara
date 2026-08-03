@@ -17,6 +17,7 @@ com.mojang:logging:1.1.1=compileClasspath,runtimeClasspath,testCompileClasspath,
 com.mysql:mysql-connector-j:8.0.33=installer
 com.typesafe:config:1.3.1=installer
 commons-lang:commons-lang:2.6=compileClasspath,embed,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+cpw.mods:bootstraplauncher:1.1.2=testCompileClasspath,testRuntimeClasspath
 cpw.mods:modlauncher:10.0.9=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 cpw.mods:securejarhandler:2.1.10=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 io.izzel.arclight:arclight-api:1.5.4=compileClasspath,embed,runtimeClasspath,testCompileClasspath,testRuntimeClasspath

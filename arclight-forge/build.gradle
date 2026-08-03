@@ -81,6 +81,7 @@ dependencies {
     embed(project(':forge-installer')) {
         transitive = false
     }
+    testImplementation "cpw.mods:bootstraplauncher:${libs.versions.bootstraplauncher.get()}"
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
