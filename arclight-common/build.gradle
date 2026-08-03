@@ -65,8 +65,12 @@ minecraft {
 }
 
 
+def mappedSpigotJar = files(layout.buildDirectory.file("arclight_cache/spigot-${minecraftVersion}-mapped-deobf.jar"))
+mappedSpigotJar.builtBy(tasks.named('remapSpigotJar'))
+
 dependencies {
     minecraft "net.minecraftforge:forge:$minecraftVersion-$forgeVersion"
+    compileOnly mappedSpigotJar
     implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
     implementation 'org.jetbrains:annotations:23.0.0'
 
