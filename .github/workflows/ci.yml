@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - stable/Trials
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Linux verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Java 17
+        uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
+      - name: Verify and assemble
+        run: ./gradlew check assembleDistribution verifyDistribution
+      - name: Smoke test server
+        run: ./gradlew smokeServer
+      - name: Upload verification artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: luminara-verification-${{ github.sha }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            build/distributions/luminara-1.20.1-1.0.14.jar
+            build/distributions/luminara-1.20.1-1.0.14.jar.sha256
+            **/build/test-results/**
+            **/build/reports/tests/**
+
+  windows:
+    name: Windows assembly and launcher smoke
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Java 17
+        uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
+      - name: Verify and assemble
+        run: .\gradlew.bat check assembleDistribution verifyDistribution
+      - name: Smoke test launcher EULA boundary
+        shell: pwsh
+        run: |
+          $jar = (Resolve-Path 'build/distributions/luminara-1.20.1-1.0.14.jar').Path
+          $work = Join-Path $env:RUNNER_TEMP 'luminara-launcher-smoke'
+          New-Item -ItemType Directory -Force -Path $work | Out-Null
+          Push-Location $work
+          try {
+            cmd /c "java -jar `"$jar`" nogui > launcher.log 2>&1"
+            $exitCode = $LASTEXITCODE
+            $output = Get-Content -Raw launcher.log
+            if ($exitCode -eq 0) {
+              throw 'Launcher unexpectedly accepted a missing eula.txt.'
+            }
+            if ($output -notmatch 'Minecraft EULA not accepted' -or $output -notmatch 'https://aka.ms/MinecraftEULA') {
+              throw "Launcher did not report the required EULA boundary:`n$output"
+            }
+          } finally {
+            Pop-Location
+          }
