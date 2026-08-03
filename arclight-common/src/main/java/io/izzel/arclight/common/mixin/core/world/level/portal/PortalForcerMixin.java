@@ -45,8 +45,8 @@ public abstract class PortalForcerMixin implements TeleporterBridge {
 
     @Shadow public abstract Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_);
 
-    @ModifyArg(method = "findPortalAround", 
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;ensureLoadedAndValid(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;I)V", remap = false),
+    @ModifyArg(method = "m_192985_", 
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;m_27056_(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;I)V", remap = false),
         index = 2, remap = false)
     private int arclight$useSearchRadius(int i) {
         return this.arclight$searchRadius == -1 ? i : this.arclight$searchRadius;
