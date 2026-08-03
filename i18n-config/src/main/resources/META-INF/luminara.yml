@@ -1,56 +1,15 @@
 # Luminara Configuration File
 # This is the YAML version of the configuration
 
-_v: 1
+_v: 2
 
 locale:
   fallback: "zh_cn"
 
 optimization:
   cache-plugin-class: true
-  goal-selector-update-interval: 3
-  use-activation-and-tracking-range: true
-  entity-optimization:
-    disable-entity-collisions: false
-    reduce-entity-updates: true
-    entity-update-distance: 64.0
-    max-entities-per-chunk: 100
-    max-entities-per-type: 150
-  chunk-optimization:
-    aggressive-chunk-unloading: true
-    chunk-unload-delay: 200
-    optimize-chunk-loading: true
-    chunk-load-rate-limit: 8
-  memory-optimization:
-    cache-cleanup-enabled: true
-    cache-cleanup-interval: 300
-  async-system:
-    enabled: true
-    max-threads: 6
-    async-ai-enabled: true
-    async-collision-enabled: false
-    async-redstone-enabled: false
-    disable-on-error: true
-    event-class-blacklist:
-      - "net.minecraftforge.event.TickEvent"
-      - "net.minecraftforge.event.level.LevelTickEvent"
-      - "net.minecraftforge.event.entity.living.*"
-    mod-blacklist: [ ]
-    strict-class-checking: true
-    timeout-seconds: 20
-  world-creation:
-    fast-world-creation: true
-    skip-spawn-chunk-loading: true
-    force-close-loading-screen: true
-    early-world-list-addition: true
-    parallel-world-initialization: true
-    world-init-timeout-seconds: 45
-    max-concurrent-world-loads: 3
-    optimize-world-border-setup: true
-    defer-spawn-area-preparation: true
-    spawn-area-radius: 8
-    async-world-data-loading: true
-
+  goal-selector-update-interval: 1
+  use-activation-and-tracking-range: false
 compatibility:
   material-property-overrides: { }
   entity-property-overrides: { }
@@ -58,7 +17,7 @@ compatibility:
   extra-logic-worlds:
     - "com.example.mod.ExtraLogicWorld"
     - "xyz.nucleoid.fantasy.RuntimeWorld"
-  forward-permission: true
+  permission-forwarding: FORGE_TO_BUKKIT
   valid-username-regex: ""
   lenient-item-tag-match: true
   preload-bungee-chat-classes: true
@@ -70,10 +29,6 @@ async-catcher:
   defaultOperation: block
   overrides: { }
 
-async-world-save:
-  enabled: true
-  timeout-seconds: 45
-  save-world-data: true
 
 velocity:
   enabled: false

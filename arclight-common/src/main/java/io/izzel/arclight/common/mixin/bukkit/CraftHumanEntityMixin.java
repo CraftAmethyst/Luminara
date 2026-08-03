@@ -6,6 +6,7 @@ import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.i18n.ArclightConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import io.izzel.arclight.i18n.conf.PermissionForwarding;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
@@ -49,7 +50,7 @@ public abstract class CraftHumanEntityMixin extends CraftEntity {
 
     @Redirect(method = "<init>", at = @At(value = "NEW", target = "org/bukkit/permissions/PermissibleBase"))
     private PermissibleBase arclight$forwardPerm(ServerOperator opable) {
-        if (ArclightConfig.spec().getCompat().isForwardPermissionReverse()) {
+        if (ArclightConfig.spec().getCompat().getPermissionForwarding() == PermissionForwarding.BUKKIT_TO_FORGE) {
             return new ArclightForgePermissible(opable);
         } else {
             return new PermissibleBase(opable);

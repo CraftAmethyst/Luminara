@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mixin.forge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.server.ArclightPermissionHandler;
 import io.izzel.arclight.i18n.ArclightConfig;
+import io.izzel.arclight.i18n.conf.PermissionForwarding;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +20,7 @@ public class PermissionAPIMixin {
 
     @Inject(method = "initializePermissionAPI", at = @At("RETURN"))
     private static void arclight$init(CallbackInfo ci) {
-        if (!ArclightConfig.spec().getCompat().isForwardPermission()) {
+        if (ArclightConfig.spec().getCompat().getPermissionForwarding() != PermissionForwarding.FORGE_TO_BUKKIT) {
             return;
         }
         var handler = new ArclightPermissionHandler(activeHandler);

@@ -54,7 +54,7 @@ public class ConfigSpec {
     }
 
     public AsyncWorldSaveSpec getAsyncWorldSave() {
-        return asyncWorldSaveSpec;
+        return asyncWorldSaveSpec != null ? asyncWorldSaveSpec : new AsyncWorldSaveSpec();
     }
 
     public VelocitySpec getVelocity() {
