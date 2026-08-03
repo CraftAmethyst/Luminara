@@ -34,9 +34,8 @@ The build produces the server artifacts under `build/libs`. Due to a MixinGradle
 ## Usage
 
 1. Build or download the Luminara server jar.
-2. Run the installer to set up a server directory, or place the jar in your server directory together with Forge's libraries.
-3. Launch the server with `java -jar` and start the server the same way you would any Forge server.
-4. Put Forge mods in `mods/` and Bukkit plugins in `plugins/`.
+2. Launch the server with `java -jar` to start the server
+3. Put Forge mods in `mods/` and Bukkit plugins in `plugins/`.
 
 ## Documentation & Support
 
