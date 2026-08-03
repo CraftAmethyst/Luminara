@@ -11,7 +11,6 @@ import java.lang.module.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,15 +28,35 @@ import java.util.function.Supplier;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ForgeInstaller {
 
     private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
 
+    static InstallInfo readInstallInfo(Reader reader) {
+        InstallInfo info = new Gson().fromJson(reader, InstallInfo.class);
+        if (info == null || info.installer == null) {
+            throw new IllegalArgumentException("Missing installer metadata in META-INF/installer.json");
+        }
+        if (info.installer.minecraft == null || info.installer.minecraft.isBlank()) {
+            throw new IllegalArgumentException("Missing Minecraft metadata in META-INF/installer.json");
+        }
+        if (info.installer.forge == null || info.installer.forge.isBlank() || info.installer.hash == null || info.installer.hash.isBlank()) {
+            throw new IllegalArgumentException("Missing Forge download metadata in META-INF/installer.json");
+        }
+        if (info.libraries == null) {
+            throw new IllegalArgumentException("Missing library download metadata in META-INF/installer.json");
+        }
+        return info;
+    }
+
     public static List<Path> modInstall(Consumer<String> logger) throws Throwable {
-        InputStream stream = ForgeInstaller.class.getModule().getResourceAsStream("/META-INF/installer.json");
-        InstallInfo installInfo = new Gson().fromJson(new InputStreamReader(stream), InstallInfo.class);
+        InstallInfo installInfo;
+        try (Reader reader = new InputStreamReader(Objects.requireNonNull(
+                ForgeInstaller.class.getModule().getResourceAsStream("/META-INF/installer.json"),
+                "Missing META-INF/installer.json resource"), StandardCharsets.UTF_8)) {
+            installInfo = readInstallInfo(reader);
+        }
         List<Supplier<Path>> suppliers = checkMavenNoSource(installInfo.libraries);
         if (!suppliers.isEmpty()) {
             logger.accept("Downloading missing libraries ...");
@@ -51,44 +70,39 @@ public class ForgeInstaller {
 
     @SuppressWarnings("unused")
     public static Map.Entry<String, List<String>> applicationInstall() throws Throwable {
-        InputStream stream = ForgeInstaller.class.getResourceAsStream("/META-INF/installer.json");
-        InstallInfo installInfo = new Gson().fromJson(new InputStreamReader(stream), InstallInfo.class);
+        InstallInfo installInfo;
+        try (Reader reader = new InputStreamReader(Objects.requireNonNull(
+                ForgeInstaller.class.getResourceAsStream("/META-INF/installer.json"),
+                "Missing META-INF/installer.json resource"), StandardCharsets.UTF_8)) {
+            installInfo = readInstallInfo(reader);
+        }
+        Path serverDirectory = Paths.get(".").toAbsolutePath().normalize();
         List<Supplier<Path>> suppliers = checkMavenNoSource(installInfo.libraries);
-        var sysType = File.pathSeparatorChar == ';' ? "win" : "unix";
-        Path path = Paths.get("libraries", "net", "minecraftforge", "forge", installInfo.installer.minecraft + "-" + installInfo.installer.forge, sysType + "_args.txt");
-        var installForge = !Files.exists(path) || forgeClasspathMissing(path);
+        String system = File.pathSeparatorChar == ';' ? "win" : "unix";
+        Path argsPath = serverDirectory.resolve(Paths.get("libraries", "net", "minecraftforge", "forge",
+                installInfo.installer.minecraft + "-" + installInfo.installer.forge, system + "_args.txt"));
+        boolean installForge = isForgeInstallRequired(argsPath);
         if (!suppliers.isEmpty() || installForge) {
             System.out.println("Downloading missing libraries ...");
             ExecutorService pool = Executors.newWorkStealingPool(8);
             CompletableFuture<?>[] array = suppliers.stream().map(reportSupply(pool, System.out::println)).toArray(CompletableFuture[]::new);
-            if (installForge) {
-                var futures = installForge(installInfo, pool, System.out::println);
-                handleFutures(System.out::println, futures);
-                System.out.println("Forge installation is starting, please wait... ");
-                try {
-                    ProcessBuilder builder = new ProcessBuilder();
-                    File file = new File(System.getProperty("java.home"), "bin/java");
-                    builder.command(file.getCanonicalPath(), "-Djava.net.useSystemProxies=true", "-jar", futures[0].join().toString(), "--installServer", ".", "--debug");
-                    builder.inheritIO();
-                    Process process = builder.start();
-                    if (process.waitFor() > 0) {
-                        throw new Exception("Forge installation failed");
-                    }
-                } catch (IOException e) {
-                    try (URLClassLoader loader = new URLClassLoader(
-                            new URL[]{new File(String.format("forge-%s-%s-installer.jar", installInfo.installer.minecraft, installInfo.installer.forge)).toURI().toURL()},
-                            ForgeInstaller.class.getClassLoader().getParent())) {
-                        Method method = loader.loadClass("net.minecraftforge.installer.SimpleInstaller").getMethod("main", String[].class);
-                        method.invoke(null, (Object) new String[]{"--installServer", ".", "--debug"});
-                    }
+            try {
+                if (installForge) {
+                    CompletableFuture<Path>[] futures = installForge(installInfo, pool, System.out::println);
+                    handleFutures(System.out::println, futures);
+                    System.out.println("Forge installation is starting, please wait... ");
+                    Path javaExecutable = Paths.get(System.getProperty("java.home"), "bin", File.pathSeparatorChar == ';' ? "java.exe" : "java");
+                    runInstaller(javaExecutable, futures[0].join(), serverDirectory);
+                    cleanupInstallationFiles(installInfo);
                 }
-                // Cleanup installation files after successful Forge installation
-                cleanupInstallationFiles(installInfo);
+                handleFutures(System.out::println, array);
+            } finally {
+                pool.shutdownNow();
             }
-            handleFutures(System.out::println, array);
-            pool.shutdownNow();
         }
-        return classpath(path, installInfo);
+        ForgeArguments arguments = parseArguments(Files.readAllLines(argsPath), installInfo, serverDirectory);
+        applyArguments(arguments);
+        return Map.entry(arguments.mainClass(), arguments.gameArguments());
     }
 
     private static Function<Supplier<Path>, CompletableFuture<Path>> reportSupply(ExecutorService service, Consumer<String> logger) {
@@ -273,114 +287,151 @@ public class ForgeInstaller {
         return incomplete;
     }
 
-    private static boolean forgeClasspathMissing(Path path) throws Exception {
-        for (String arg : Files.lines(path).toList()) {
-            if (arg.startsWith("-p ")) {
-                var modules = arg.substring(2).trim();
-                if (!Arrays.stream(modules.split(File.pathSeparator)).map(Paths::get).allMatch(Files::exists)) {
-                    return true;
+    static boolean isForgeInstallRequired(Path argsFile) {
+        if (!Files.isRegularFile(argsFile)) return true;
+        Path serverDirectory = Paths.get(".").toAbsolutePath().normalize();
+        try {
+            for (String argument : Files.readAllLines(argsFile)) {
+                String pathList = null;
+                if (argument.startsWith("-p ")) {
+                    pathList = argument.substring(2).trim();
+                } else if (argument.startsWith("-DlegacyClassPath=")) {
+                    pathList = argument.substring("-DlegacyClassPath=".length()).trim();
                 }
-            } else if (arg.startsWith("-DlegacyClassPath")) {
-                var classpath = arg.substring("-DlegacyClassPath=".length()).trim();
-                if (!Arrays.stream(classpath.split(File.pathSeparator)).map(Paths::get).allMatch(Files::exists)) {
+                if (pathList != null && Arrays.stream(pathList.split(java.util.regex.Pattern.quote(File.pathSeparator)))
+                        .map(path -> resolvePath(serverDirectory, path))
+                        .anyMatch(path -> !Files.exists(path))) {
                     return true;
                 }
             }
+            return false;
+        } catch (IOException e) {
+            return true;
         }
-        return false;
     }
 
-    private static Map.Entry<String, List<String>> classpath(Path path, InstallInfo installInfo) throws Throwable {
-        boolean jvmArgs = true;
+    static void runInstaller(Path javaExecutable, Path installer, Path serverDirectory) throws Exception {
+        if (!Files.isRegularFile(javaExecutable)) {
+            throw new IOException("Java executable does not exist: " + javaExecutable);
+        }
+        if (!Files.isRegularFile(installer)) {
+            throw new IOException("Forge installer does not exist: " + installer);
+        }
+        Process process = new ProcessBuilder(
+                javaExecutable.toAbsolutePath().normalize().toString(),
+                "-Djava.net.useSystemProxies=true", "-jar", installer.toAbsolutePath().normalize().toString(),
+                "--installServer", ".", "--debug")
+                .directory(serverDirectory.toFile())
+                .inheritIO()
+                .start();
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new IOException("Forge installation failed with exit code " + exitCode);
+        }
+    }
+
+    static ForgeArguments parseArguments(List<String> lines, InstallInfo installInfo, Path serverDirectory) {
+        Objects.requireNonNull(lines, "Forge argument lines");
+        Objects.requireNonNull(installInfo, "Install metadata");
+        Objects.requireNonNull(installInfo.libraries, "Library download metadata");
+        Path root = serverDirectory.toAbsolutePath().normalize();
+        boolean parsingJvmArguments = true;
         String mainClass = null;
-        List<String> userArgs = new ArrayList<>();
+        List<String> gameArguments = new ArrayList<>();
+        List<Path> modulePath = new ArrayList<>();
+        List<Path> suppliedLegacyClassPath = new ArrayList<>();
+        Map<String, String> systemProperties = new LinkedHashMap<>();
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
         exports.add("cpw.mods.bootstraplauncher/cpw.mods.bootstraplauncher=ALL-UNNAMED");
-        List<String> ignores = new ArrayList<>();
-        List<String> merges = new ArrayList<>();
-        var self = new File(ForgeInstaller.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath();
-        for (String arg : Files.lines(path).toList()) {
-            if (jvmArgs && arg.startsWith("-")) {
-                if (arg.startsWith("-p ")) {
-                    addModules(arg.substring(2).trim());
-                } else if (arg.startsWith("--add-opens ")) {
-                    opens.add(arg.substring("--add-opens ".length()).trim());
-                } else if (arg.startsWith("--add-exports ")) {
-                    exports.add(arg.substring("--add-exports ".length()).trim());
-                } else if (arg.startsWith("-D")) {
-                    var split = arg.substring(2).split("=", 2);
-                    if (split[0].equals("legacyClassPath")) {
-                        List<String> legacy = Arrays.stream(split[1].split(File.pathSeparator))
-                                .filter(p -> !isGsonPath(p))
-                                .collect(Collectors.toList());
-                        List<String> extra = installInfo.libraries.keySet().stream()
-                                .map(it -> Paths.get("libraries", Util.mavenToPath(it)))
-                                .peek(it -> {
-                                    var name = it.getFileName().toString();
-                                    if (name.contains("maven-model")) {
-                                        merges.add(name);
-                                    }
-                                })
-                                .map(Path::toString)
-                                .collect(Collectors.toList());
-                        String gsonPath = extra.stream().filter(ForgeInstaller::isGsonPath).findFirst().orElse(null);
 
-                        Stream<String> classpath = Stream.of(self.toString());
-                        if (gsonPath != null) {
-                            classpath = Stream.concat(classpath, Stream.of(gsonPath));
-                        }
-                        classpath = Stream.concat(classpath, legacy.stream());
-                        classpath = Stream.concat(classpath, extra.stream().filter(p -> !p.equals(gsonPath)));
-
-                        split[1] = classpath.sorted((a, b) -> {
-                                    // damn stupid jpms
-                                    if (a.contains("maven-repository-metadata")) {
-                                        return -1;
-                                    } else if (b.contains("maven-repository-metadata")) {
-                                        return 1;
-                                    } else {
-                                        return 0;
-                                    }
-                                }).collect(Collectors.joining(File.pathSeparator));
-                    } else if (split[0].equals("ignoreList")) {
-                        ignores.addAll(Arrays.asList(split[1].split(",")));
+        for (String rawLine : lines) {
+            String argument = rawLine.trim();
+            if (argument.isEmpty()) continue;
+            if (parsingJvmArguments && argument.startsWith("-")) {
+                if (argument.startsWith("-p ")) {
+                    modulePath.addAll(parsePathList(root, argument.substring(2).trim(), "module path"));
+                } else if (argument.startsWith("--add-opens ")) {
+                    opens.add(argument.substring("--add-opens ".length()).trim());
+                } else if (argument.startsWith("--add-exports ")) {
+                    exports.add(argument.substring("--add-exports ".length()).trim());
+                } else if (argument.startsWith("-D")) {
+                    String property = argument.substring(2);
+                    int separator = property.indexOf('=');
+                    if (separator <= 0) {
+                        throw new IllegalArgumentException("Malformed system property in Forge argument file: " + rawLine);
                     }
-                    System.setProperty(split[0], split[1]);
+                    String key = property.substring(0, separator);
+                    String value = property.substring(separator + 1);
+                    if (key.equals("legacyClassPath")) {
+                        suppliedLegacyClassPath.addAll(parsePathList(root, value, "legacy classpath"));
+                    } else {
+                        systemProperties.put(key, value);
+                    }
                 }
+            } else if (parsingJvmArguments) {
+                parsingJvmArguments = false;
+                mainClass = argument;
             } else {
-                if (jvmArgs) {
-                    jvmArgs = false;
-                    mainClass = arg;
-                } else {
-                    userArgs.addAll(Arrays.asList(arg.split(" ")));
-                }
+                gameArguments.addAll(Arrays.asList(argument.split("\\s+")));
             }
         }
-        var merge = String.join(",", merges);
-        var mergeModules = System.getProperty("mergeModules");
-        if (mergeModules != null) {
-            System.setProperty("mergeModules", mergeModules + ";" + merge);
-        } else {
-            System.setProperty("mergeModules", merge);
+
+        if (mainClass == null || mainClass.isBlank()) {
+            throw new IllegalArgumentException("Missing main class in Forge argument file");
         }
-        addOpens(opens);
-        addExports(exports);
-        /*
-        JarFile jarFile = new JarFile(path.toFile());
-        Manifest manifest = jarFile.getManifest();
-        String[] split = manifest.getMainAttributes().getValue("Class-Path").split(" ");
-        for (String s : split) {
-            addToPath(Paths.get(s));
+
+        List<Path> extraLibraries = installInfo.libraries.keySet().stream()
+                .map(coordinate -> root.resolve("libraries").resolve(Util.mavenToPath(coordinate)).normalize())
+                .collect(Collectors.toList());
+        LinkedHashSet<Path> legacyClassPath = new LinkedHashSet<>();
+        try {
+            legacyClassPath.add(Paths.get(ForgeInstaller.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toAbsolutePath().normalize());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot determine Luminara installer classpath", e);
         }
-        for (String library : installInfo.libraries.keySet()) {
-            addToPath(Paths.get("libraries", Util.mavenToPath(library)));
+        extraLibraries.stream().filter(path -> isGsonPath(path.toString())).findFirst().ifPresent(legacyClassPath::add);
+        suppliedLegacyClassPath.stream().filter(path -> !isGsonPath(path.toString())).forEach(legacyClassPath::add);
+        extraLibraries.stream().filter(path -> !isGsonPath(path.toString())).forEach(legacyClassPath::add);
+
+        requireExistingFiles(modulePath, "module path");
+        requireExistingFiles(legacyClassPath, "legacy classpath");
+        if (!legacyClassPath.isEmpty()) {
+            systemProperties.put("legacyClassPath", legacyClassPath.stream().map(Path::toString).collect(Collectors.joining(File.pathSeparator)));
         }
-        addToPath(path);
-        for (String library : installInfo.libraries.keySet()) {
-            addToPath(Paths.get("libraries", Util.mavenToPath(library)), false);
-        }*/
-        return Map.entry(Objects.requireNonNull(mainClass, "No main class found"), userArgs);
+        List<String> merges = extraLibraries.stream().map(Path::getFileName).map(Path::toString)
+                .filter(name -> name.contains("maven-model")).toList();
+        if (!merges.isEmpty()) {
+            systemProperties.merge("mergeModules", String.join(",", merges), (existing, added) -> existing + ";" + added);
+        }
+
+        return new ForgeArguments(mainClass, gameArguments, modulePath, new ArrayList<>(legacyClassPath),
+                systemProperties, opens, exports);
+    }
+
+    static void applyArguments(ForgeArguments arguments) throws Throwable {
+        if (!arguments.modulePath().isEmpty()) addModules(arguments.modulePath());
+        arguments.systemProperties().forEach(System::setProperty);
+        addOpens(arguments.opens());
+        addExports(arguments.exports());
+    }
+
+    private static List<Path> parsePathList(Path root, String value, String source) {
+        if (value.isBlank()) throw new IllegalArgumentException("Empty " + source + " in Forge argument file");
+        return Arrays.stream(value.split(java.util.regex.Pattern.quote(File.pathSeparator)))
+                .map(path -> resolvePath(root, path))
+                .collect(Collectors.toList());
+    }
+
+    private static Path resolvePath(Path root, String value) {
+        Path path = Paths.get(value);
+        return (path.isAbsolute() ? path : root.resolve(path)).normalize();
+    }
+
+    private static void requireExistingFiles(Collection<Path> paths, String source) {
+        paths.stream().filter(path -> !Files.exists(path)).findFirst().ifPresent(path -> {
+            throw new IllegalArgumentException("Missing " + source + " file: " + path);
+        });
     }
 
     @SuppressWarnings("removal")
@@ -469,10 +520,10 @@ public class ForgeInstaller {
     }
 
     @SuppressWarnings("unchecked")
-    private static void addModules(String modulePath) throws Throwable {
+    private static void addModules(List<Path> modulePath) throws Throwable {
 
         // Find all extra modules
-        ModuleFinder finder = ModuleFinder.of(Arrays.stream(modulePath.split(File.pathSeparator)).map(Paths::get).peek(ForgeInstaller::addToPath).toArray(Path[]::new));
+        ModuleFinder finder = ModuleFinder.of(modulePath.stream().peek(ForgeInstaller::addToPath).toArray(Path[]::new));
         MethodHandle loadModuleMH = IMPL_LOOKUP.findVirtual(Class.forName("jdk.internal.loader.BuiltinClassLoader"), "loadModule", MethodType.methodType(void.class, ModuleReference.class));
 
         // Resolve modules to a new config
