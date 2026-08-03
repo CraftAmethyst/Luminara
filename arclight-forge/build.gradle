@@ -4,7 +4,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2' apply false
 }
 
-apply plugin: 'java'
+apply plugin: 'luminara.java-conventions'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -20,7 +20,6 @@ sourceSets {
     }
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 configurations {
     installer
@@ -81,10 +80,6 @@ dependencies {
 
 jar {
     manifest.attributes 'Main-Class': 'io.izzel.arclight.server.Launcher'
-    manifest.attributes 'Implementation-Title': 'Luminara'
-    manifest.attributes 'Implementation-Version': "luminara-$minecraftVersion-${project.version}-$gitHash"
-    manifest.attributes 'Implementation-Vendor': 'Luminara Team'
-    manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
     manifest.attributes 'Automatic-Module-Name': 'arclight.boot'
     from(configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude "META-INF/MANIFEST.MF"
@@ -178,13 +173,7 @@ task generateInstallerInfo {
 project.sourceSets.main.output.dir file("${project.buildDir}/arclight_installer"), builtBy: tasks.generateInstallerInfo
 
 compileJava {
-    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
     options.compilerArgs << '-XDignore.symbol.file' << '-XDenableSunApiLintControl'
-    options.encoding = 'UTF-8'
-}
-
-compileApplaunchJava {
-    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_7
 }
 
 task runProdServer(type: JavaExec) {

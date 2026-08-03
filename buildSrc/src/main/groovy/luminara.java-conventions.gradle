@@ -1,0 +1,43 @@
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.compile.JavaCompile
+
+plugins {
+    id 'java'
+}
+
+def catalog = project.rootProject.extensions.getByType(VersionCatalogsExtension).named('libs')
+def javaRelease = catalog.findVersion('java').get().requiredVersion.toInteger()
+def minecraftVersion = catalog.findVersion('minecraft').get().requiredVersion
+
+def gitCommit = providers.provider {
+    rootProject.ext.has('gitHash') ? rootProject.ext.gitHash.toString() : 'unknown'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaRelease)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release.set(name == 'compileApplaunchJava' ? 7 : javaRelease)
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+tasks.withType(Jar).configureEach {
+    manifest.attributes(
+        'Implementation-Title': 'Luminara',
+        'Implementation-Version': "luminara-${minecraftVersion}-${project.version}-${gitCommit.get()}",
+        'Implementation-Vendor': 'Luminara Team'
+    )
+}

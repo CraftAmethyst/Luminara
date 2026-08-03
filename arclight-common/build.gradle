@@ -17,7 +17,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 // apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'java'
+apply plugin: 'luminara.java-conventions'
 apply plugin: 'idea'
 apply plugin: 'io.izzel.arclight'
 
@@ -37,7 +37,6 @@ configurations {
     embed
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
     //mappings channel: 'parchment', version: "2021.08.22-$minecraftVersion"
@@ -124,10 +123,6 @@ dependencies {
 
 jar {
     manifest.attributes 'MixinConnector': 'io.izzel.arclight.common.mod.ArclightConnector'
-    manifest.attributes 'Implementation-Title': 'Luminara'
-    manifest.attributes 'Implementation-Version': "luminara-$minecraftVersion-${project.version}-$gitHash"
-    manifest.attributes 'Implementation-Vendor': 'Luminara Team'
-    manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
     from { configurations.embed.collect { it.isDirectory() ? it : zipTree(it) } } {
         exclude "META-INF/MANIFEST.MF"
         exclude "META-INF/*.SF"
@@ -183,5 +178,4 @@ mixin {
 
 compileJava {
     options.compilerArgs << '-XDignore.symbol.file' << '-XDenableSunApiLintControl'
-    options.encoding = 'UTF-8'
 }
