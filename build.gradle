@@ -1,4 +1,5 @@
 import java.security.MessageDigest
+import io.izzel.arclight.gradle.tasks.SmokeServerTask
 import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
 import io.izzel.arclight.gradle.tasks.UploadFilesTask
 
@@ -100,6 +101,32 @@ tasks.register('verifyDistribution', VerifyDistributionTask) {
             'net.minecraftforge.forgespi.locating.IModLocator': 'io.izzel.arclight.boot.mod.ArclightLocator_Forge',
             'cpw.mods.modlauncher.serviceapi.ILaunchPluginService': 'io.izzel.arclight.boot.asm.ArclightImplementer',
             'cpw.mods.modlauncher.api.ILaunchHandlerService': 'io.izzel.arclight.boot.application.ArclightLaunchHandler'
+    ])
+}
+
+tasks.register('smokeServer', SmokeServerTask) {
+    group = 'verification'
+    outputs.upToDateWhen { false }
+    description = 'Starts an isolated Forge server with smoke mod and plugin fixtures.'
+    dependsOn(assembleDistribution, ':arclight-common:smokePluginJar', ':arclight-common:smokeModJar')
+    distributionJar.set(distributionOutputJar)
+    pluginJar.set(project(':arclight-common').tasks.named('smokePluginJar', Jar).flatMap { it.archiveFile })
+    modJar.set(project(':arclight-common').tasks.named('smokeModJar', Jar).flatMap { it.archiveFile })
+    fixtureDirectory.set(layout.buildDirectory.dir('smoke-server'))
+    startupTimeoutSeconds.set(900)
+    expectedOutput.set([
+            'Done (',
+            'For help, type "help"',
+            'LUMINARA_SMOKE_MOD_ENABLED',
+            'LUMINARA_SMOKE_PLUGIN_ENABLED',
+            'LUMINARA_SMOKE_COMMAND_OK',
+            'Luminara Version: ',
+            '1.0.14',
+            project.ext.gitHash,
+            'Minecraft / Forge / Java: ',
+            '1.20.1 / 47.4.22 / 17',
+            'CraftBukkit Package: ',
+            'v1_20_R1'
     ])
 }
 

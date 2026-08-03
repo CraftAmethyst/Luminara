@@ -45,6 +45,16 @@ configurations {
     }
 }
 
+sourceSets {
+    smokePlugin
+    smokeMod
+}
+
+configurations {
+    smokePluginImplementation.extendsFrom(implementation)
+    smokeModImplementation.extendsFrom(implementation)
+}
+
 
 minecraft {
     //mappings channel: 'parchment', version: "2021.08.22-$minecraftVersion"
@@ -159,6 +169,26 @@ processResources {
     filesMatching("**/mods.toml") {
         expand 'version': "$minecraftVersion-${project.version}-$gitHash"
     }
+}
+
+def smokePluginJar = tasks.register('smokePluginJar', Jar) {
+    archiveFileName.set('luminara-smoke-plugin.jar')
+    destinationDirectory.set(layout.buildDirectory.dir('smoke-fixtures'))
+    from(sourceSets.smokePlugin.output)
+}
+
+def smokeModJar = tasks.register('smokeModJar', Jar) {
+    archiveFileName.set('luminara-smoke-mod.jar')
+    destinationDirectory.set(layout.buildDirectory.dir('smoke-fixtures'))
+    from(sourceSets.smokeMod.output)
+}
+
+tasks.named('compileSmokePluginJava') {
+    dependsOn(tasks.named('remapSpigotJar'))
+}
+
+tasks.named('compileSmokeModJava') {
+    dependsOn(tasks.named('remapSpigotJar'))
 }
 
 remapSpigotJar {
