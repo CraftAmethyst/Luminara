@@ -6,7 +6,7 @@ base.archivesName = 'luminara-i18n-config'
 
 
 dependencies {
-    implementation 'org.spongepowered:configurate-yaml:3.6.1'
-    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+    implementation "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
+    implementation "org.apache.logging.log4j:log4j-api:${libs.versions.log4j.get()}"
+    implementation "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
 }

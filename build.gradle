@@ -28,6 +28,16 @@ allprojects {
         versionName = 'trials'
         gitHash = getGitHash()
     }
+
+    dependencyLocking {
+        lockAllConfigurations()
+    }
+
+    configurations.configureEach {
+        if (name.startsWith('art_rev_')) {
+            resolutionStrategy.deactivateDependencyLocking()
+        }
+    }
 }
 
 def distributionName = "luminara-${libs.versions.minecraft.get()}-${libs.versions.project.get()}.jar"

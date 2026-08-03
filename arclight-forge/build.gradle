@@ -31,45 +31,43 @@ configurations {
 }
 
 
-def embedLibs = [/*"org.spongepowered:mixin:$mixinVersion", */ 'org.yaml:snakeyaml:2.0',
-                 'org.xerial:sqlite-jdbc:3.42.0.0', 'com.mysql:mysql-connector-j:8.0.33',
-                 /*'commons-lang:commons-lang:2.6',*/ 'com.googlecode.json-simple:json-simple:1.1.1',
-                 'org.apache.logging.log4j:log4j-jul:2.17.2', 'net.md-5:SpecialSource:1.11.0',
-                 'org.jline:jline-terminal-jansi:3.12.1', 'org.fusesource.jansi:jansi:1.18',
-                 /*'org.jline:jline-terminal:3.12.1', 'org.jline:jline-reader:3.12.1',*/
-                 'jline:jline:2.12.1', 'org.apache.maven:maven-resolver-provider:3.8.5',
-                 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3', 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3',
-                 'org.apache.maven:maven-model:3.8.5', 'org.codehaus.plexus:plexus-utils:3.3.0',
-                 'org.apache.maven:maven-model-builder:3.8.5', 'org.codehaus.plexus:plexus-interpolation:1.26',
-                 'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.4', 'org.apache.maven:maven-builder-support:3.8.5',
-                 'org.apache.maven:maven-repository-metadata:3.8.5', 'org.apache.maven.resolver:maven-resolver-api:1.6.3',
-                 'org.apache.maven.resolver:maven-resolver-spi:1.6.3', 'org.apache.maven.resolver:maven-resolver-util:1.6.3',
-                 'org.apache.maven.resolver:maven-resolver-impl:1.6.3', 'org.apache.httpcomponents:httpclient:4.5.13',
-                 'org.apache.httpcomponents:httpcore:4.4.14', 'commons-codec:commons-codec:1.15',
-                 'org.slf4j:jcl-over-slf4j:1.7.30', /*'org.apache.logging.log4j:log4j-slf4j18-impl:2.14.1',*/
-                 'org.spongepowered:configurate-hocon:3.6.1', 'org.spongepowered:configurate-core:3.6.1', 'org.spongepowered:configurate-yaml:3.6.1',
-                 'com.typesafe:config:1.3.1', 'javax.inject:javax.inject:1']
+def embedLibs = [
+    'org.yaml:snakeyaml:2.0',
+    "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}",
+    "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}",
+    'com.googlecode.json-simple:json-simple:1.1.1',
+    "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}",
+    'net.md-5:SpecialSource:1.11.0',
+    'org.jline:jline-terminal-jansi:3.12.1',
+    'org.fusesource.jansi:jansi:1.18',
+    'jline:jline:2.12.1',
+    "org.spongepowered:configurate-hocon:${libs.versions.configurate.get()}",
+    "org.spongepowered:configurate-core:${libs.versions.configurate.get()}",
+    "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}",
+    'com.typesafe:config:1.3.1',
+    'javax.inject:javax.inject:1'
+]
 
 dependencies {
     commonReobfuscated project(path: ':arclight-common', configuration: 'reobfuscatedElements')
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'org.ow2.asm:asm:9.5'
-    implementation 'org.ow2.asm:asm-tree:9.5'
-    implementation 'cpw.mods:modlauncher:9.0.24'
-    implementation 'cpw.mods:securejarhandler:2.1.4'
-    implementation 'net.minecraftforge:forgespi:6.0.0'
-    gson 'com.google.code.gson:gson:2.10.1'
-    implementation 'org.apache.logging.log4j:log4j-api:2.17.2'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
+    implementation "com.google.guava:guava:${libs.versions.guava.get()}"
+    implementation "org.ow2.asm:asm:${libs.versions.asm.get()}"
+    implementation "org.ow2.asm:asm-tree:${libs.versions.asm.get()}"
+    implementation "cpw.mods:modlauncher:${libs.versions.modlauncher.get()}"
+    implementation "cpw.mods:securejarhandler:${libs.versions.securejarhandler.get()}"
+    implementation "net.minecraftforge:forgespi:${libs.versions.forgespi.get()}"
+    gson "com.google.code.gson:gson:${libs.versions.gson.get()}"
+    implementation "org.apache.logging.log4j:log4j-api:${libs.versions.log4j.get()}"
+    implementation "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
     implementation 'org.jetbrains:annotations:23.0.0'
-    implementation 'org.spongepowered:mixin:0.8.3'
-    implementation 'org.apache.logging.log4j:log4j-jul:2.17.2'
+    implementation "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
+    implementation "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
     implementation "net.minecraftforge:fmlloader:${minecraftVersion}-${forgeVersion}"
     for (def lib : embedLibs) {
         installer lib
     }
-    installer 'com.google.code.gson:gson:2.10.1'
-    embed 'io.izzel.arclight:mixin-tools:1.0.1'
+    installer "com.google.code.gson:gson:${libs.versions.gson.get()}"
+    embed "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
     embed "io.izzel:tools:$toolsVersion"
     embed "io.izzel.arclight:arclight-api:$apiVersion"
     embed 'commons-lang:commons-lang:2.6@jar'
@@ -131,15 +129,34 @@ def generateInstallerInfo = tasks.register('generateInstallerInfo') {
             digest.digest().collect { String.format('%02x', it) }.join()
         }
 
-        def hashes = new LinkedHashMap<String, String>()
-        configurations.installer.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-            hashes.put(coordinate(artifact), sha1(artifact.file))
+        def librariesByGa = new LinkedHashMap<String, Map<String, String>>()
+        new java.util.zip.ZipFile(forgeInstallerJar.get().asFile).withCloseable { archive ->
+            ['install_profile.json', 'version.json'].each { profileName ->
+                def profile = new groovy.json.JsonSlurper().parse(archive.getInputStream(archive.getEntry(profileName)))
+                profile.libraries.each { library ->
+                    def artifact = library.downloads?.artifact
+                    if (artifact?.sha1) {
+                        def parts = library.name.toString().split(':')
+                        librariesByGa.put("${parts[0]}:${parts[1]}", [coordinate: library.name.toString(), hash: artifact.sha1.toString()])
+                    }
+                }
+            }
         }
-        def libraries = configurations.installer.dependencies.collectEntries { dependency ->
-            def classifier = dependency.artifacts.find { it.classifier }?.classifier
-            def key = "${dependency.group}:${dependency.name}:${dependency.version}"
-            if (classifier != null) key += ":${classifier}"
-            [(key): hashes.get(key)]
+
+        def resolvedByGa = new LinkedHashMap<String, Map<String, String>>()
+        configurations.installer.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            def value = coordinate(artifact)
+            def parts = value.split(':')
+            resolvedByGa.put("${parts[0]}:${parts[1]}", [coordinate: value, hash: sha1(artifact.file)])
+        }
+        configurations.installer.dependencies.each { dependency ->
+            def ga = "${dependency.group}:${dependency.name}"
+            def resolved = resolvedByGa.get(ga)
+            if (resolved == null) throw new GradleException("No resolved installer artifact for ${ga}")
+            librariesByGa.put(ga, resolved)
+        }
+        def libraries = librariesByGa.values().collectEntries { library ->
+            [(library.coordinate): library.hash]
         }
 
         def output = [

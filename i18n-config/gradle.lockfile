@@ -1,0 +1,11 @@
+# This is a Gradle generated file for dependency locking.
+# Manual edits can break the build and are not advised.
+# This file is expected to be part of source control.
+com.google.guava:guava:21.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.apache.logging.log4j:log4j-api:2.19.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.apache.logging.log4j:log4j-core:2.19.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.checkerframework:checker-qual:2.4.0=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.spongepowered:configurate-core:3.6.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.spongepowered:configurate-yaml:3.6.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.yaml:snakeyaml:1.18=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+empty=annotationProcessor,testAnnotationProcessor

@@ -105,14 +105,14 @@ public class ForgeInstaller {
             for (Map.Entry<String, String> entry : Mirrors.getVersionManifest()) {
                 try (var stream = FileDownloader.read(entry.getValue())) {
                     var bytes = stream.readAllBytes();
-                    var element = new JsonParser().parse(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject();
+                    var element = JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject();
                     var versions = element.getAsJsonArray("versions");
                     for (var version : versions) {
                         var id = version.getAsJsonObject().get("id").getAsString();
                         if (Objects.equals(id, info.installer.minecraft)) {
                             var url = version.getAsJsonObject().get("url").getAsString();
                             try (var versionStream = FileDownloader.read(url)) {
-                                var object = new JsonParser().parse(new String(versionStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
+                                var object = JsonParser.parseString(new String(versionStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
                                 var downloads = object.getAsJsonObject("downloads");
                                 var server = downloads.getAsJsonObject("server");
                                 var serverUrl = server.get("url").getAsString();
@@ -178,7 +178,7 @@ public class ForgeInstaller {
                         continue;
                     }
                     if (name.equals("install_profile.json")) {
-                        var element = new JsonParser().parse(new InputStreamReader(from.getInputStream(entry)));
+                        var element = JsonParser.parseReader(new InputStreamReader(from.getInputStream(entry)));
                         var processors = element.getAsJsonObject().getAsJsonArray("processors");
                         outer:
                         for (var i = 0; i < processors.size(); i++) {
@@ -221,7 +221,7 @@ public class ForgeInstaller {
 
     private static Map<String, Map.Entry<String, String>> profileLibraries(Reader reader, String minecraft, MinecraftData minecraftData) throws IOException {
         Map<String, Map.Entry<String, String>> ret = new HashMap<>();
-        var object = new JsonParser().parse(reader).getAsJsonObject();
+        var object = JsonParser.parseReader(reader).getAsJsonObject();
         JsonArray array = object.getAsJsonArray("libraries");
         for (JsonElement element : array) {
             String name = element.getAsJsonObject().get("name").getAsString();

@@ -6,6 +6,6 @@ base.archivesName = 'luminara-forge-installer'
 
 
 dependencies {
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation "com.google.code.gson:gson:${libs.versions.gson.get()}"
     implementation "io.izzel.arclight:arclight-api:$apiVersion"
 }

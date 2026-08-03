@@ -63,66 +63,39 @@ dependencies {
 
     implementation 'jline:jline:2.12.1'
     implementation 'net.md-5:SpecialSource:1.11.0'
-    implementation 'org.apache.logging.log4j:log4j-jul:2.15.0'
+    implementation "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
     implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
-    implementation 'mysql:mysql-connector-java:5.1.49'
+    implementation "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
     implementation 'org.yaml:snakeyaml:2.0'
     implementation "io.izzel:tools:$toolsVersion"
     implementation "io.izzel.arclight:arclight-api:$apiVersion"
     implementation project(':i18n-config')
 
-    // Adventure dependencies - core only to avoid conflicts
-    implementation("net.kyori:adventure-api:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
+    def adventureArtifacts = [
+        'adventure-api',
+        'adventure-text-serializer-gson',
+        'adventure-text-serializer-legacy',
+        'adventure-text-serializer-plain',
+        'adventure-text-minimessage',
+        'adventure-text-logger-slf4j'
+    ]
+    implementation platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
+    embed platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
+    adventureArtifacts.each { artifact ->
+        implementation("net.kyori:${artifact}") {
+            exclude group: 'org.slf4j'
+            exclude group: 'org.checkerframework'
+            if (artifact == 'adventure-text-serializer-gson') exclude group: 'com.google.code.gson'
+        }
+        embed("net.kyori:${artifact}") {
+            exclude group: 'org.slf4j'
+            exclude group: 'org.checkerframework'
+            if (artifact == 'adventure-text-serializer-gson') exclude group: 'com.google.code.gson'
+        }
     }
-    implementation("net.kyori:adventure-text-serializer-gson:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-        exclude group: 'com.google.code.gson'
-    }
-    implementation("net.kyori:adventure-text-serializer-legacy:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
-    implementation("net.kyori:adventure-text-serializer-plain:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
-    implementation("net.kyori:adventure-text-minimessage:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
-
 
     embed 'net.md-5:bungeecord-chat:1.16-R0.4@jar'
     embed "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
-    embed("net.kyori:adventure-api:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
-    embed("net.kyori:adventure-text-serializer-gson:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-        exclude group: 'com.google.code.gson'
-    }
-    embed("net.kyori:adventure-text-serializer-legacy:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
-    embed("net.kyori:adventure-text-serializer-plain:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
-    embed("net.kyori:adventure-text-minimessage:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
-
-    embed("net.kyori:adventure-text-logger-slf4j:4.17.0") {
-        exclude group: 'org.slf4j'
-        exclude group: 'org.checkerframework'
-    }
 }
 
 jar {
