@@ -210,6 +210,7 @@ def generateMixinInventory = tasks.register('generateMixinInventory', GenerateMi
     ].collect { layout.projectDirectory.file("src/main/resources/${it}") })
     mixinClasses.from(sourceSets.main.output.classesDirs)
     targetClasspath.from(sourceSets.main.compileClasspath)
+    targetClasspath.from(layout.buildDirectory.file("fg_cache/net/minecraftforge/forge/${minecraftVersion}-${forgeVersion}/forge-${minecraftVersion}-${forgeVersion}-injected.jar"))
     outputFile.set(rootProject.layout.buildDirectory.file('reports/mixins/inventory.json'))
 }
 

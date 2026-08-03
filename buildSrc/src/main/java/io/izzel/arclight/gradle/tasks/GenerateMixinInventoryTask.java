@@ -156,15 +156,15 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
             return;
         }
         for (String targetClass : targetClasses) {
-            ClassNode targetNode = targets.read(targetClass.replace('.', '/'));
+            List<ClassNode> targetNodes = targets.readAll(targetClass.replace('.', '/'));
             for (String selector : selectors) {
                 TargetMethod targetMethod = TargetMethod.parse(selector, handler);
                 String status;
                 if (loadIfMod != null) {
                     status = "CONDITIONAL";
-                } else if (targetNode == null) {
+                } else if (targetNodes.isEmpty()) {
                     status = "MISSING_CLASS";
-                } else if (targetMethod.matches(targetNode)) {
+                } else if (targetNodes.stream().anyMatch(targetMethod::matches)) {
                     status = "ACTIVE";
                 } else {
                     status = "MISSING_METHOD";
@@ -286,8 +286,7 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
 
     private static final class ClassLookup {
         private final List<File> roots;
-        private final Map<String, ClassNode> cache = new HashMap<>();
-        private final Set<String> missing = new TreeSet<>();
+        private final Map<String, List<ClassNode>> cache = new HashMap<>();
 
         private ClassLookup(Collection<File> roots) {
             this.roots = new ArrayList<>(roots);
@@ -295,9 +294,14 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
         }
 
         private ClassNode read(String internalName) throws IOException {
+            List<ClassNode> nodes = readAll(internalName);
+            return nodes.isEmpty() ? null : nodes.get(0);
+        }
+
+        private List<ClassNode> readAll(String internalName) throws IOException {
             if (cache.containsKey(internalName)) return cache.get(internalName);
-            if (missing.contains(internalName)) return null;
             String entryName = internalName + ".class";
+            List<ClassNode> nodes = new ArrayList<>();
             for (File root : roots) {
                 byte[] bytes = null;
                 if (root.isDirectory()) {
@@ -316,12 +320,12 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
                 if (bytes != null) {
                     ClassNode node = new ClassNode();
                     new ClassReader(bytes).accept(node, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-                    cache.put(internalName, node);
-                    return node;
+                    nodes.add(node);
                 }
             }
-            missing.add(internalName);
-            return null;
+            List<ClassNode> result = List.copyOf(nodes);
+            cache.put(internalName, result);
+            return result;
         }
     }
 }
