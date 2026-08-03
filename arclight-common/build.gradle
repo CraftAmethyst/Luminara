@@ -1,3 +1,5 @@
+import io.izzel.arclight.gradle.tasks.GenerateMappingInventoryTask
+
 import io.izzel.arclight.gradle.tasks.GenerateMixinInventoryTask
 
 buildscript {
@@ -177,8 +179,27 @@ def generateMixinInventory = tasks.register('generateMixinInventory', GenerateMi
     outputFile.set(rootProject.layout.buildDirectory.file('reports/mixins/inventory.json'))
 }
 
+def generateMappingInventory = tasks.register('generateMappingInventory', GenerateMappingInventoryTask) {
+    dependsOn(tasks.named('compileJava'), tasks.named('remapSpigotJar'))
+    forgeAccessTransformer.set(layout.projectDirectory.file('src/main/resources/META-INF/accesstransformer.cfg'))
+    bukkitAccessTransformer.set(layout.projectDirectory.file('bukkit.at'))
+    forgeAccessLog.set(layout.buildDirectory.file('_atJar_4/accesstransform.log'))
+    extraMappings.set(layout.projectDirectory.file('extra_mapping.tsrg'))
+    srgMappings.set(layout.buildDirectory.file('createMcpToSrg/output.tsrg'))
+    bukkitJar.set(rootProject.layout.buildDirectory.file("arclight_cache/buildtools/spigot-${minecraftVersion}.jar"))
+    bukkitPatchJar.set(layout.buildDirectory.file("arclight_cache/spigot-${minecraftVersion}-mapped-deobf.jar"))
+    bukkitMappings.set(layout.buildDirectory.file('arclight_cache/tmp_srg/bukkit_srg.srg'))
+    minecraftClasspath.from(layout.buildDirectory.file("fg_cache/net/minecraftforge/forge/${minecraftVersion}-${forgeVersion}_mapped_official_${minecraftVersion}/forge-${minecraftVersion}-${forgeVersion}_mapped_official_${minecraftVersion}.jar"))
+    referenceSources.from(fileTree('src/main/java') { include '**/*.java' })
+    generatedRemapperInputs.from(
+            layout.buildDirectory.file('arclight_cache/tmp_srg/bukkit_srg.srg'),
+            layout.buildDirectory.file('arclight_cache/tmp_srg/inheritanceMap.txt')
+    )
+    outputFile.set(rootProject.layout.buildDirectory.file('reports/mappings/inventory.json'))
+}
+
 tasks.named('check') {
-    dependsOn(generateMixinInventory)
+    dependsOn(generateMixinInventory, generateMappingInventory)
 }
 
 compileJava {
