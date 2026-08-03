@@ -100,6 +100,9 @@ dependencies {
 
     embed 'net.md-5:bungeecord-chat:1.16-R0.4@jar'
     embed "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+    testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 jar {

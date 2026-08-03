@@ -6,7 +6,6 @@ import io.izzel.arclight.api.PluginPatcher;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.mod.util.remapper.patcher.ArclightPluginPatcher;
-import io.izzel.arclight.common.mod.util.remapper.patcher.PluginLoggerTransformer;
 import io.izzel.arclight.common.mod.util.remapper.resource.RemapSourceHandler;
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarMapping;
@@ -17,7 +16,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -67,7 +65,7 @@ public class ArclightRemapper {
     public final InheritanceMap inheritanceMap;
     private final JarMapping toNmsMapping;
     private final JarMapping toBukkitMapping;
-    private final List<PluginTransformer> transformerList = new ArrayList<>();
+    private final List<PluginTransformer> transformerList;
     private final JarRemapper toBukkitRemapper;
     private final JarRemapper toNmsRemapper;
     private final List<PluginPatcher> patchers;
@@ -103,14 +101,9 @@ public class ArclightRemapper {
         inheritanceProvider.add(new ClassLoaderProvider(ClassLoader.getSystemClassLoader()));
         this.toNmsMapping.setFallbackInheritanceProvider(inheritanceProvider);
         this.toBukkitMapping.setFallbackInheritanceProvider(inheritanceProvider);
-        this.transformerList.add(CraftBukkitVersionRemapper.INSTANCE);
-        this.transformerList.add(ArclightInterfaceInvokerGen.INSTANCE);
-        this.transformerList.add(ArclightRedirectAdapter.INSTANCE);
-        this.transformerList.add(ClassLoaderAdapter.INSTANCE);
-        if (!(java.util.logging.LogManager.getLogManager() instanceof org.apache.logging.log4j.jul.LogManager)) {
-            this.transformerList.add(new PluginLoggerTransformer());
-        }
-        this.patchers = ArclightPluginPatcher.load(this.transformerList);
+        this.patchers = ArclightPluginPatcher.load();
+        boolean useJulBridge = java.util.logging.LogManager.getLogManager() instanceof org.apache.logging.log4j.jul.LogManager;
+        this.transformerList = RemapperPipeline.create(useJulBridge, patchers);
         toBukkitMapping.setFallbackInheritanceProvider(GlobalClassRepo.inheritanceProvider());
         this.toBukkitRemapper = new LenientJarRemapper(toBukkitMapping);
         this.toNmsRemapper = new LenientJarRemapper(toNmsMapping);

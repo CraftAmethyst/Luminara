@@ -97,14 +97,18 @@ public class BukkitRegistry {
         loadEndDragonPhase();
         loadCookingBookCategory();
         loadFluids();
-        try {
-            for (var field : org.bukkit.Registry.class.getFields()) {
-                if (Modifier.isStatic(field.getModifiers()) && field.get(null) instanceof org.bukkit.Registry.SimpleRegistry<?> registry) {
-                    ((SimpleRegistryBridge) (Object) registry).bridge$reload();
-                }
+        List<RegistryReloads.Operation> reloads = new ArrayList<>();
+        for (var field : org.bukkit.Registry.class.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                reloads.add(new RegistryReloads.Operation(field.getName(), () -> {
+                    Object value = field.get(null);
+                    if (value instanceof org.bukkit.Registry.SimpleRegistry<?> registry) {
+                        ((SimpleRegistryBridge) (Object) registry).bridge$reload();
+                    }
+                }));
             }
-        } catch (Throwable ignored) {
         }
+        RegistryReloads.run(reloads);
     }
 
     private static void loadFluids() {

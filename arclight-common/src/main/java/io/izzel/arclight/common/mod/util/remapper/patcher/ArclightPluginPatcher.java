@@ -30,7 +30,7 @@ public class ArclightPluginPatcher implements PluginTransformer {
         this.list = list;
     }
 
-    public static List<PluginPatcher> load(List<PluginTransformer> transformerList) {
+    public static List<PluginPatcher> load() {
         var list = new ArrayList<PluginPatcher>();
         File pluginFolder = new File("plugins");
         if (pluginFolder.exists()) {
@@ -49,8 +49,7 @@ public class ArclightPluginPatcher implements PluginTransformer {
         }
         list.add(new IntegratedPatcher());
         list.sort(Comparator.comparing(PluginPatcher::priority));
-        transformerList.add(new ArclightPluginPatcher(list));
-        return list;
+        return List.copyOf(list);
     }
 
     private static Optional<PluginPatcher> loadFromJar(File file) {
