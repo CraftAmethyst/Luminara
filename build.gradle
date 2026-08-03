@@ -1,4 +1,5 @@
 import java.security.MessageDigest
+import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
 import io.izzel.arclight.gradle.tasks.UploadFilesTask
 
 allprojects {
@@ -41,7 +42,7 @@ allprojects {
 }
 
 def distributionName = "luminara-${libs.versions.minecraft.get()}-${libs.versions.project.get()}.jar"
-def distributionJar = layout.buildDirectory.file("distributions/${distributionName}")
+def distributionOutputJar = layout.buildDirectory.file("distributions/${distributionName}")
 def distributionChecksum = layout.buildDirectory.file("distributions/${distributionName}.sha256")
 def distributionInput = configurations.create('distributionInput') {
     canBeConsumed = false
@@ -54,7 +55,7 @@ def assembleDistribution = tasks.register('assembleDistribution') {
     group = 'build'
     description = 'Assembles the reproducible Luminara server distribution.'
     inputs.files(distributionInput)
-    outputs.files(distributionJar, distributionChecksum)
+    outputs.files(distributionOutputJar, distributionChecksum)
 
     doLast {
         if (project.ext.gitHash == 'unknown') {
@@ -62,14 +63,44 @@ def assembleDistribution = tasks.register('assembleDistribution') {
         }
         copy {
             from(distributionInput.singleFile)
-            into(distributionJar.get().asFile.parentFile)
+            into(distributionOutputJar.get().asFile.parentFile)
             rename { distributionName }
         }
-        def jarFile = distributionJar.get().asFile
+        def jarFile = distributionOutputJar.get().asFile
         MessageDigest digest = MessageDigest.getInstance('SHA-256')
         jarFile.eachByte(8192) { bytes, size -> digest.update(bytes, 0, size) }
         distributionChecksum.get().asFile.text = digest.digest().collect { String.format('%02x', it) }.join() + "  ${distributionName}\n"
     }
+}
+
+tasks.register('verifyDistribution', VerifyDistributionTask) {
+    group = 'verification'
+    description = 'Validates the assembled Luminara distribution contract.'
+    dependsOn(assembleDistribution)
+    distributionJar.set(distributionOutputJar)
+    forgeInstallerJar.set(project(':arclight-common').layout.buildDirectory.file("arclight_cache/forge-${libs.versions.minecraft.get()}-${libs.versions.forge.get()}-installer.jar"))
+    minecraftVersion.set(libs.versions.minecraft.get())
+    forgeVersion.set(libs.versions.forge.get())
+    mainClass.set('io.izzel.arclight.server.Launcher')
+    requiredEntries.set([
+            'common.jar',
+            'gson.jar',
+            'META-INF/installer.json',
+            'META-INF/luminara-version.properties'
+    ])
+    requiredCommonEntries.set([
+            'mixins.arclight.core.json',
+            'mixins.arclight.bukkit.json',
+            'mixins.arclight.forge.json',
+            'mixins.arclight.compat.json',
+            'mixins.arclight.impl.forge.optimization.json'
+    ])
+    expectedServices.set([
+            'java.util.function.Consumer': 'io.izzel.arclight.boot.application.ApplicationBootstrap',
+            'net.minecraftforge.forgespi.locating.IModLocator': 'io.izzel.arclight.boot.mod.ArclightLocator_Forge',
+            'cpw.mods.modlauncher.serviceapi.ILaunchPluginService': 'io.izzel.arclight.boot.asm.ArclightImplementer',
+            'cpw.mods.modlauncher.api.ILaunchHandlerService': 'io.izzel.arclight.boot.application.ArclightLaunchHandler'
+    ])
 }
 
 def gitBranch() {
