@@ -4,14 +4,6 @@ plugins {
 
 archivesBaseName = 'luminara-forge-installer'
 
-repositories {
-    mavenCentral()
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-    maven { url = 'https://maven.izzel.io/releases' }
-}
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'

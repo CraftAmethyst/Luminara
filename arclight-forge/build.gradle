@@ -29,18 +29,6 @@ configurations {
     implementation.extendsFrom(embed, gson)
 }
 
-repositories {
-    maven {
-        name = 'sponge-repo'
-        url = 'https://repo.spongepowered.org/repository/maven-public'
-    }
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    maven { url = 'https://files.minecraftforge.net/maven/' }
-    maven { url = 'https://maven.izzel.io/releases' }
-    maven { url = 'https://jitpack.io/' }
-    mavenCentral()
-}
 
 def embedLibs = [/*"org.spongepowered:mixin:$mixinVersion", */ 'org.yaml:snakeyaml:2.0',
                  'org.xerial:sqlite-jdbc:3.42.0.0', 'com.mysql:mysql-connector-j:8.0.33',

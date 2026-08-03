@@ -4,13 +4,6 @@ plugins {
 
 archivesBaseName = 'luminara-i18n-config'
 
-repositories {
-    mavenCentral()
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-}
 
 dependencies {
     implementation 'org.spongepowered:configurate-yaml:3.6.1'

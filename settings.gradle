@@ -1,3 +1,67 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'Forge'
+            url = uri('https://maven.minecraftforge.net')
+            content {
+                includeGroupByRegex 'net\\.minecraftforge(\\..*)?'
+                includeGroupByRegex 'cpw\\.mods(\\..*)?'
+            }
+        }
+        maven {
+            name = 'Sponge'
+            url = uri('https://repo.spongepowered.org/repository/maven-public')
+            content { includeGroupByRegex 'org\\.spongepowered(\\..*)?' }
+        }
+        maven {
+            name = 'Izzel'
+            url = uri('https://maven.izzel.io/releases')
+            content { includeGroupByRegex 'io\\.izzel(\\..*)?' }
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    // ForgeGradle injects generated Minecraft repositories that cannot be declared statically.
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'Forge'
+            url = uri('https://maven.minecraftforge.net')
+            content {
+                includeGroupByRegex 'net\\.minecraftforge(\\..*)?'
+                includeGroupByRegex 'cpw\\.mods(\\..*)?'
+                includeGroup 'de.oceanlabs.mcp'
+            }
+        }
+        maven {
+            name = 'Sponge'
+            url = uri('https://repo.spongepowered.org/repository/maven-public')
+            content { includeGroupByRegex 'org\\.spongepowered(\\..*)?' }
+        }
+        maven {
+            name = 'Spigot'
+            url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots')
+            content { includeGroupByRegex 'org\\.spigotmc(\\..*)?' }
+        }
+        maven {
+            name = 'Izzel'
+            url = uri('https://maven.izzel.io/releases')
+            content {
+                includeGroupByRegex 'io\\.izzel(\\..*)?'
+                includeGroup 'net.md-5'
+            }
+        }
+        maven {
+            name = 'JitPackArclight'
+            url = uri('https://jitpack.io')
+            content { includeGroupByRegex 'com\\.github\\.ArclightTeam(\\..*)?' }
+        }
+    }
+}
+
 rootProject.name = 'luminara'
 include 'arclight-common'
 include 'forge-installer'
