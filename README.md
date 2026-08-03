@@ -1,84 +1,49 @@
 # Luminara
 
-[简体中文](README_zh.md)
+A Bukkit-compatible server layer that runs on Minecraft Forge. Luminara is a fork of [Arclight](https://github.com/IzzelAliz/Arclight), letting you run **Forge mods and Bukkit plugins side by side** on a single server.
 
-中国 / 简体中文用户请加入 [CraftAmethyst 社区 QQ 交流群](https://qm.qq.com/q/u3Dylx2ls6)
+## Highlights
 
-# 永久停更 Permanently discontinued
+- **Bukkit API on Forge** — full implementation of the Spigot API (`v1_20_R1`) for Minecraft **1.20.1** (Forge **47.4.16**, Java **17**).
+- **Mod + Plugin coexistence** — drop Forge mods into `mods/` and Bukkit plugins into `plugins/` and run them together.
+- **Adventure support** — bundled with Adventure API 4.17.0 including MiniMessage, Gson, Legacy and Plain text serializers.
+- **Partial Paper API** — selected Paper APIs and improvements are implemented, e.g. Paper Adventure integration, signed chat messages, and Paper-style optimizations such as the chunk optimizer and world creation optimizer.
+- **Installable** — ships with a Forge installer that supports multiple download mirrors for network-restricted environments.
+- **i18n-ready** — localized configuration through the bundled `i18n-config` module.
 
-Discord: https://discord.gg/H7RqfGCa
+## Requirements
 
-An Arclight fork, aiming to make more optimizations and improvements on Arclight (1.20.1)
+- Java 17 or newer
+- Gradle 8.x (the included `gradlew` wrapper is preferred)
 
-> Any issues encountered while using this server software should be reported in this project's Issues, not in the
-> Arclight project Issues!
+## Building from source
 
-## Features
+```bash
+./gradlew build
+```
 
-- **Strong Compatibility** - Supports Bukkit/Spigot plugins and Forge mods running simultaneously
-- **High Performance** - Asynchronous world saving, chunk optimization...
-- **Easy to Use** - Simple installation and usage
-- **Velocity Support** - Supports Velocity Modern forwarding enabling cross-server functionality
+On Windows, use `gradlew.bat` instead.
 
-## Main Maintained Version
+The build produces the server artifacts under `build/libs`. Due to a MixinGradle quirk, the build may need to be run twice for a fully correct jar — this is also how the CI pipeline (`appveyor-19.yml`) handles it:
 
-> **Currently Main Maintained Version: Minecraft 1.20.1**
->
-> - **Forge Version**: 47.4.16
-> - **Stability**: Good
-> - **Plugin Compatibility**: Average, Spigot only
-> - **Mod Compatibility**: Excellent
+```bash
+./gradlew build
+./gradlew build collect
+```
 
-## Download
+## Usage
 
-### Stable Versions
+1. Build or download the Luminara server jar.
+2. Run the installer to set up a server directory, or place the jar in your server directory together with Forge's libraries.
+3. Launch the server with `java -jar` and start the server the same way you would any Forge server.
+4. Put Forge mods in `mods/` and Bukkit plugins in `plugins/`.
 
-- [GitHub Releases](https://github.com/QianMo0721/Luminara/releases) - Recommended for production environments
+## Documentation & Support
 
-### Development Versions
-
-- [Daily Build Versions](https://github.com/QianMo0721/Luminara/actions/workflows/gradle.yml?query=branch%3ATrials) *(
-  Requires
-  GitHub login)*
-
-### Self-Build
-
-- Clone this project locally `git clone -b <branch> https://github.com/QianMo0721/Luminara.git`
-- Run `./gradlew cleanBuild remapSpigotJar idea --no-daemon -i --stacktrace --refresh-dependencies` for configuration
-- Run `./gradlew build collect` to build the project
-- After building, the jar file is located in the `./build/libs` directory
-
-## Installation and Usage
-
-1. **Download** the jar file
-2. **Start the server**:
-
-   ```bash
-   java -jar luminara.jar nogui
-   ```
-
-   > The `nogui` parameter will disable the server control panel
-   >
-3. Before each update, replace the old JAR file with the new one, then delete the .arclight folder. Otherwise, certain fixes will not take effect!
-
-## Incompatibilities
-
-- May not be compatible with some optimization mods.
-- Incompatible with all optimized Bukkit plugins
-
-## Support and Help
-
-### Documentation
-
-- [Arclight Documentation](https://wiki.izzel.io/s/arclight-docs) - Detailed usage guides and configuration instructions
-- [To-Do List](TODO.md)
-
-### Issue Reporting
-
-- [Submit Bug](https://github.com/QianMo0721/Luminara/issues/new/choose) - Report problems here
-- [Discussion Forum](https://github.com/QianMo0721/Luminara/discussions) - Ask questions and discuss
-- Do not report issues with this server software to Arclight!
+- Contribution guidelines: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Upstream project: [IzzelAliz/Arclight](https://github.com/IzzelAliz/Arclight)
 
 ## License
 
-This project is open source under the [GPL v3](LICENSE) license.
+Luminara is licensed under the **GNU General Public License v3.0**. See [LICENSE](LICENSE).
