@@ -66,6 +66,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -1148,7 +1149,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         return this.isPushable() && this.collides != this.collidableExemptions.contains(entity.getUUID());
     }
 
-    @Eject(method = "completeUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"))
+    @Eject(method = "m_8095_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;m_41671_(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;", remap = false))
     private ItemStack arclight$itemConsume(ItemStack itemStack, Level worldIn, LivingEntity
             entityLiving, CallbackInfo ci) {
         if (this instanceof ServerPlayerEntityBridge) {
@@ -1167,18 +1168,32 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
         return itemStack.finishUsingItem(worldIn, entityLiving);
     }
 
-    @Eject(method = "randomTeleport", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/entity/LivingEntity;teleportTo(DDD)V"))
-    private void arclight$entityTeleport(LivingEntity entity, double x, double y, double z, CallbackInfoReturnable<
-            Boolean> cir) {
-        EntityTeleportEvent event = new EntityTeleportEvent(getBukkitEntity(), new Location(((WorldBridge) this.level()).bridge$getWorld(), this.getX(), this.getY(), this.getZ()),
+    @Unique private transient boolean arclight$teleportCancelled;
+
+    @Inject(method = "randomTeleport", at = @At("HEAD"))
+    private void arclight$resetTeleportEvent(double x, double y, double z, boolean particles,
+                                             CallbackInfoReturnable<Boolean> cir) {
+        this.arclight$teleportCancelled = false;
+    }
+
+    @Redirect(method = "randomTeleport", at = @At(value = "INVOKE", ordinal = 0,
+            target = "Lnet/minecraft/world/entity/LivingEntity;teleportTo(DDD)V"))
+    private void arclight$entityTeleport(LivingEntity entity, double x, double y, double z) {
+        EntityTeleportEvent event = new EntityTeleportEvent(getBukkitEntity(),
+                new Location(((WorldBridge) this.level()).bridge$getWorld(), this.getX(), this.getY(), this.getZ()),
                 new Location(((WorldBridge) this.level()).bridge$getWorld(), x, y, z));
         Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            this.teleportTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ());
+        if (event.isCancelled()) {
+            this.arclight$teleportCancelled = true;
         } else {
-            this.teleportTo(this.getX(), this.getY(), this.getZ());
-            cir.setReturnValue(false);
+            entity.teleportTo(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ());
         }
+    }
+
+    @Inject(method = "randomTeleport", at = @At("RETURN"), cancellable = true)
+    private void arclight$finishTeleportEvent(double x, double y, double z, boolean particles,
+                                              CallbackInfoReturnable<Boolean> cir) {
+        if (this.arclight$teleportCancelled) cir.setReturnValue(false);
     }
 
     @Redirect(method = "dropAllDeathLoot", at = @At(value = "INVOKE", ordinal = 0, remap = false, target = "Lnet/minecraft/world/entity/LivingEntity;captureDrops(Ljava/util/Collection;)Ljava/util/Collection;"))
