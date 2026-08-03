@@ -2,6 +2,7 @@ package io.izzel.arclight.forgeinstaller;
 
 import com.google.gson.*;
 import io.izzel.arclight.api.Unsafe;
+import io.izzel.arclight.i18n.LuminaraVersion;
 
 import java.io.*;
 import java.lang.invoke.MethodHandle;
@@ -57,6 +58,7 @@ public class ForgeInstaller {
                 "Missing META-INF/installer.json resource"), StandardCharsets.UTF_8)) {
             installInfo = readInstallInfo(reader);
         }
+        LuminaraVersion.verify(installInfo.installer.minecraft, installInfo.installer.forge);
         List<Supplier<Path>> suppliers = checkMavenNoSource(installInfo.libraries);
         if (!suppliers.isEmpty()) {
             logger.accept("Downloading missing libraries ...");
@@ -76,6 +78,7 @@ public class ForgeInstaller {
                 "Missing META-INF/installer.json resource"), StandardCharsets.UTF_8)) {
             installInfo = readInstallInfo(reader);
         }
+        LuminaraVersion.verify(installInfo.installer.minecraft, installInfo.installer.forge);
         Path serverDirectory = Paths.get(".").toAbsolutePath().normalize();
         List<Supplier<Path>> suppliers = checkMavenNoSource(installInfo.libraries);
         String system = File.pathSeparatorChar == ';' ? "win" : "unix";

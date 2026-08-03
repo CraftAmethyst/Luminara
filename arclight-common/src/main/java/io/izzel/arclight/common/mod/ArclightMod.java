@@ -1,15 +1,18 @@
 package io.izzel.arclight.common.mod;
 
+import io.izzel.arclight.common.mod.command.LuminaraCommand;
 import io.izzel.arclight.common.mod.server.event.ArclightEventDispatcherRegistry;
 import io.izzel.arclight.common.mod.util.BungeeComponentPreloader;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
+import io.izzel.arclight.i18n.LuminaraVersion;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkConstants;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +30,7 @@ public class ArclightMod {
 
     public ArclightMod(FMLJavaModLoadingContext context) {
         LOGGER.info("mod-load");
-        LOGGER.info(LuminaraVersion.current().compatibilityLine());
+        LOGGER.info(LuminaraVersion.compatibilityLine());
         System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
         System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
 
@@ -36,6 +39,7 @@ public class ArclightMod {
         }
 
         ArclightEventDispatcherRegistry.registerAllEventDispatchers();
+        MinecraftForge.EVENT_BUS.addListener(LuminaraCommand::onRegisterCommands);
         context.registerExtensionPoint(IExtensionPoint.DisplayTest.class,
                 () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 

@@ -154,36 +154,8 @@ artifacts {
     }
 }
 
-def generateLuminaraVersion = tasks.register('generateLuminaraVersion') {
-    def outputDirectory = layout.buildDirectory.dir('generated/resources/luminara')
-    def outputFile = outputDirectory.map { it.file('META-INF/luminara-version.properties') }
-    inputs.property('projectVersion', project.version.toString())
-    inputs.property('minecraftVersion', minecraftVersion)
-    inputs.property('forgeVersion', forgeVersion)
-    inputs.property('craftBukkitPackage', libs.versions.bukkit.package.get())
-    inputs.property('gitCommit', gitHash)
-    outputs.file(outputFile)
-    doLast {
-        def properties = new Properties()
-        properties.setProperty('luminara.version', project.version.toString())
-        properties.setProperty('minecraft.version', minecraftVersion)
-        properties.setProperty('forge.version', forgeVersion)
-        properties.setProperty('craftbukkit.package', libs.versions.bukkit.package.get())
-        properties.setProperty('git.commit', gitHash)
-        def target = outputFile.get().asFile
-        target.parentFile.mkdirs()
-        target.withWriter('UTF-8') { writer ->
-            properties.entrySet().sort { left, right -> left.key <=> right.key }.each { entry ->
-                writer.write("${entry.key}=${entry.value}\n")
-            }
-        }
-    }
-}
-
-sourceSets.main.resources.srcDir(generateLuminaraVersion.map { layout.buildDirectory.dir('generated/resources/luminara').get().asFile })
 
 processResources {
-    dependsOn(generateLuminaraVersion)
     filesMatching("**/mods.toml") {
         expand 'version': "$minecraftVersion-${project.version}-$gitHash"
     }

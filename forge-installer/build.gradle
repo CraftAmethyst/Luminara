@@ -8,6 +8,7 @@ base.archivesName = 'luminara-forge-installer'
 dependencies {
     implementation "com.google.code.gson:gson:${libs.versions.gson.get()}"
     implementation "io.izzel.arclight:arclight-api:$apiVersion"
+    implementation project(':i18n-config')
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

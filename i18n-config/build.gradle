@@ -4,9 +4,42 @@ plugins {
 
 base.archivesName = 'luminara-i18n-config'
 
+def generateLuminaraVersion = tasks.register('generateLuminaraVersion') {
+    def outputDirectory = layout.buildDirectory.dir('generated/resources/luminara')
+    def outputFile = outputDirectory.map { it.file('META-INF/luminara-version.properties') }
+    inputs.property('minecraftVersion', minecraftVersion)
+    inputs.property('forgeVersion', forgeVersion)
+    inputs.property('javaVersion', libs.versions.java.get())
+    inputs.property('bukkitPackage', libs.versions.bukkit.package.get())
+    inputs.property('version', project.version.toString())
+    inputs.property('gitCommit', gitHash)
+    outputs.file(outputFile)
+    doLast {
+        def values = [
+                minecraftVersion: minecraftVersion,
+                forgeVersion: forgeVersion,
+                javaVersion: libs.versions.java.get(),
+                bukkitPackage: libs.versions.bukkit.package.get(),
+                version: project.version.toString(),
+                gitCommit: gitHash
+        ]
+        def target = outputFile.get().asFile
+        target.parentFile.mkdirs()
+        target.withWriter('UTF-8') { writer ->
+            values.keySet().sort().each { key -> writer.write("${key}=${values[key]}\n") }
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir(generateLuminaraVersion.map { layout.buildDirectory.dir('generated/resources/luminara').get().asFile })
+processResources.dependsOn(generateLuminaraVersion)
+
 
 dependencies {
     implementation "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
     implementation "org.apache.logging.log4j:log4j-api:${libs.versions.log4j.get()}"
     implementation "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
+    testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
