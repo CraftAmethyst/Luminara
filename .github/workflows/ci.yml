@@ -69,9 +69,9 @@ jobs:
           New-Item -ItemType Directory -Force -Path $work | Out-Null
           Push-Location $work
           try {
-            cmd /c "java -jar `"$jar`" nogui > launcher.log 2>&1"
-            $exitCode = $LASTEXITCODE
-            $output = Get-Content -Raw launcher.log
+            $process = Start-Process -FilePath 'java' -ArgumentList '-jar', $jar, 'nogui' -WorkingDirectory $work -RedirectStandardOutput launcher.stdout.log -RedirectStandardError launcher.stderr.log -Wait -PassThru
+            $exitCode = $process.ExitCode
+            $output = (Get-Content -Raw launcher.stdout.log), (Get-Content -Raw launcher.stderr.log) -join "`n"
             if ($exitCode -eq 0) {
               throw 'Launcher unexpectedly accepted a missing eula.txt.'
             }
