@@ -32,7 +32,7 @@ public class AsyncCatcherSpec {
     }
 
     public Map<String, Operation> getOverrides() {
-        return overrides;
+        return overrides == null ? Map.of() : overrides;
     }
 
     public enum Operation {

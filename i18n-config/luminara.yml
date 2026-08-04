@@ -2,21 +2,22 @@
 # This is the YAML version of the configuration
 
 _v: 2
-locale: { fallback: zh_cn }
+locale:
+  fallback: zh_cn
+  current: en_us
 optimization:
-  {
-    cache-plugin-class: true,
-    goal-selector-update-interval: 1,
-    use-activation-and-tracking-range: false,
-  }
+  cache-plugin-class: true
+  goal-selector-update-interval: 1
+  use-activation-and-tracking-range: false
 compatibility:
   material-property-overrides: {}
   entity-property-overrides: {}
   symlink-world: false
   extra-logic-worlds:
-    [com.example.mod.ExtraLogicWorld, xyz.nucleoid.fantasy.RuntimeWorld]
+  - com.example.mod.ExtraLogicWorld
+  - xyz.nucleoid.fantasy.RuntimeWorld
   permission-forwarding: FORGE_TO_BUKKIT
-  valid-username-regex: ""
+  valid-username-regex: ''
   lenient-item-tag-match: true
   preload-bungee-chat-classes: true
   enable-bukkit-reload-command: true
@@ -26,12 +27,12 @@ async-catcher:
   defaultOperation: block
   overrides: {}
 velocity:
-  {
-    enabled: false,
-    online-mode: false,
-    forwarding-secret: "",
-    debug-logging: false,
-  }
+  enabled: false
+  online-mode: false
+  forwarding-secret: ''
+  debug-logging: false
 error-handling:
-  { continue-on-crash: false, crash-report-directory: crash-reports }
-logging: { use-simple-format: false }
+  continue-on-crash: false
+  crash-report-directory: crash-reports
+logging:
+  use-simple-format: false

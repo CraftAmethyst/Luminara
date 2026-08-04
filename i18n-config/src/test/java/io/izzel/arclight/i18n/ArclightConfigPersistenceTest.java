@@ -1,6 +1,7 @@
 package io.izzel.arclight.i18n;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,6 +27,10 @@ class ArclightConfigPersistenceTest {
         node.getNode("_v").setValue(2);
         node.getNode("locale", "current").setValue("en_us");
 
+        node.getNode("optimization", "cache-plugin-class").setValue(true);
+        node
+            .getNode("compatibility", "extra-logic-worlds")
+            .setValue(java.util.List.of("example.First", "example.Second"));
         ArclightConfig.saveAtomically(config, node);
 
         ConfigurationNode reloaded = YAMLConfigurationLoader.builder()
@@ -37,6 +42,18 @@ class ArclightConfigPersistenceTest {
             "en_us",
             reloaded.getNode("locale", "current").getString()
         );
+        String serialized = Files.readString(config, StandardCharsets.UTF_8);
+        assertTrue(
+            serialized.contains("optimization:\n  cache-plugin-class: true")
+        );
+        assertTrue(
+            serialized.contains(
+                "extra-logic-worlds:\n  - example.First\n  - example.Second"
+            )
+        );
+        assertFalse(serialized.contains("{"));
+        assertFalse(serialized.contains("["));
+        assertFalse(serialized.contains(","));
     }
 
     @Test

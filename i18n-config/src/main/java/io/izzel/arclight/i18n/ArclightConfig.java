@@ -15,6 +15,7 @@ import java.nio.file.StandardOpenOption;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.yaml.snakeyaml.DumperOptions;
 
 public class ArclightConfig {
 
@@ -132,6 +133,7 @@ public class ArclightConfig {
         return YAMLConfigurationLoader.builder()
             .setPath(path)
             .setIndent(2)
+            .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
             .build();
     }
 
