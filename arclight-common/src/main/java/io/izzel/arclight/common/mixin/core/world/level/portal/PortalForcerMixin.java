@@ -3,8 +3,7 @@ package io.izzel.arclight.common.mixin.core.world.level.portal;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.world.TeleporterBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
-import io.izzel.arclight.common.mod.compat.ModIds;
-import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
+import io.izzel.arclight.common.mod.compat.mixin.PortalForcerSearchRadiusAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +53,7 @@ public abstract class PortalForcerMixin implements TeleporterBridge {
         WorldBorder worldborder,
         int searchRadius
     ) {
-        if (this instanceof SearchRadiusAccess access) {
+        if (this instanceof PortalForcerSearchRadiusAccess access) {
             return access.arclight$findPortalAround(
                 pos,
                 worldborder,
@@ -64,61 +63,6 @@ public abstract class PortalForcerMixin implements TeleporterBridge {
         return this.findPortalAround(pos, false, worldborder);
     }
 
-    @Mixin(PortalForcer.class)
-    @LoadIfMod(
-        modid = ModIds.RADIUM,
-        condition = LoadIfMod.ModCondition.ABSENT
-    )
-    public abstract static class SearchRadiusMixin
-        implements SearchRadiusAccess {
-        private transient int arclight$searchRadius = -1;
-
-
-        @Shadow
-        public abstract Optional<BlockUtil.FoundRectangle> findPortalAround(
-            BlockPos pos,
-            boolean destinationIsNether,
-            WorldBorder worldBorder
-        );
-
-        @ModifyArg(
-            method = "m_192985_",
-            at = @At(
-                value = "INVOKE",
-                target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;m_27056_(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;I)V",
-                remap = false
-            ),
-            index = 2,
-            remap = false
-        )
-        private int arclight$useSearchRadius(int original) {
-            return this.arclight$searchRadius == -1
-                ? original
-                : this.arclight$searchRadius;
-        }
-
-        @Override
-        public Optional<BlockUtil.FoundRectangle> arclight$findPortalAround(
-            BlockPos pos,
-            WorldBorder worldBorder,
-            int searchRadius
-        ) {
-            this.arclight$searchRadius = searchRadius;
-            try {
-                return this.findPortalAround(pos, false, worldBorder);
-            } finally {
-                this.arclight$searchRadius = -1;
-            }
-        }
-    }
-
-    private interface SearchRadiusAccess {
-        Optional<BlockUtil.FoundRectangle> arclight$findPortalAround(
-            BlockPos pos,
-            WorldBorder worldBorder,
-            int searchRadius
-        );
-    }
 
     @ModifyArg(method = "createPortal", index = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;spiralAround(Lnet/minecraft/core/BlockPos;ILnet/minecraft/core/Direction;Lnet/minecraft/core/Direction;)Ljava/lang/Iterable;"))
     private int arclight$changeRadius(int i) {

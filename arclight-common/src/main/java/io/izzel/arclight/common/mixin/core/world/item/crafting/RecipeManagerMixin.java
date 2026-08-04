@@ -6,8 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.item.crafting.RecipeManagerBridge;
-import io.izzel.arclight.common.mod.compat.ModIds;
-import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.util.HashMap;
@@ -124,69 +122,6 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
     }
 
 
-    @Mixin(RecipeManager.class)
-    @LoadIfMod(
-        modid = ModIds.MODERNFIX,
-        condition = LoadIfMod.ModCondition.ABSENT
-    )
-    public static class ParsingErrorLoggerMixin {
-
-        private static final Logger ARCLIGHT_PARSING_LOGGER =
-            ArclightI18nLogger.getLogger("RecipeManager");
-
-        @Redirect(
-            method = "apply",
-            at = @At(
-                value = "INVOKE",
-                target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"
-            ),
-            require = 1
-        )
-        private void arclight$logParsingError(
-            org.slf4j.Logger logger,
-            String message,
-            Object recipeId,
-            Object exception
-        ) {
-            ARCLIGHT_PARSING_LOGGER.error(
-                "recipe.loading.parsing-error",
-                recipeId,
-                exception
-            );
-        }
-    }
-
-    @Mixin(value = RecipeManager.class, priority = 2100)
-    @LoadIfMod(
-        modid = ModIds.MODERNFIX,
-        condition = LoadIfMod.ModCondition.PRESENT
-    )
-    public static class ModernFixParsingErrorLoggerMixin {
-
-        private static final Logger ARCLIGHT_MODERNFIX_PARSING_LOGGER =
-            ArclightI18nLogger.getLogger("RecipeManager");
-
-        @Redirect(
-            method = "apply",
-            at = @At(
-                value = "INVOKE",
-                target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"
-            ),
-            require = 1
-        )
-        private void arclight$logParsingError(
-            org.slf4j.Logger logger,
-            String message,
-            Object recipeId,
-            Object exception
-        ) {
-            ARCLIGHT_MODERNFIX_PARSING_LOGGER.error(
-                "recipe.loading.parsing-error",
-                recipeId,
-                exception
-            );
-        }
-    }
 
     /**
      * @author IzzelAliz

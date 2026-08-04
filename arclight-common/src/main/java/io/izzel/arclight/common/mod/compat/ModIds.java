@@ -9,4 +9,5 @@ public class ModIds {
     public static final String RADIUM = "radium";
     public static final String CANARY = "canary";
     public static final String BLUEPRINT = "blueprint";
+    public static final String APOTHEOSIS = "apotheosis";
 }
