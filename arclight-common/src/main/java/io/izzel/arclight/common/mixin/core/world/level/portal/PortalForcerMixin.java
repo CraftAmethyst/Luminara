@@ -3,7 +3,7 @@ package io.izzel.arclight.common.mixin.core.world.level.portal;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.world.TeleporterBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
-import io.izzel.arclight.common.mod.compat.mixin.PortalForcerSearchRadiusAccess;
+import io.izzel.arclight.common.mod.compat.PortalForcerSearchRadiusAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

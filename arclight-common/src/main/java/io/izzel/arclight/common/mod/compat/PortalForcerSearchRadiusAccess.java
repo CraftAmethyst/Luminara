@@ -1,4 +1,4 @@
-package io.izzel.arclight.common.mod.compat.mixin;
+package io.izzel.arclight.common.mod.compat;
 
 import java.util.Optional;
 import net.minecraft.BlockUtil;

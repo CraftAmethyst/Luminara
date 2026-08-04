@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mod.compat.mixin;
 
 import io.izzel.arclight.common.mod.compat.ModIds;
+import io.izzel.arclight.common.mod.compat.PortalForcerSearchRadiusAccess;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
 import java.util.Optional;
 import net.minecraft.BlockUtil;
