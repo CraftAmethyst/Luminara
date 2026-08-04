@@ -28,20 +28,30 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 ## 已知不兼容的模组
 
 - [ServerCore](https://modrinth.com/mod/servercore)
+
   > 它的大部分优化方法源自 Spigot 或 Paper。本服务端本身就是一个 Forge + Spigot + Paper API 服务器，强行加入会导致行为异常或崩溃，因此永远不会兼容
 - [Sinytra Connector](https://modrinth.com/mod/connector)
+
   > 恩情课文：Connector 爷爷使用大量 Fabric API 转译层击落 Forge 服务端兼容性。
+
 - [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
+
   > 下一版本将实现兼容
 
 ## 已知不兼容的插件
 
 - 任何声称能优化服务器性能的插件（例如 LaggRemover）
+
   > 这类插件大多是假优化——要么对性能毫无帮助，要么反而会损害性能
+
 - 任何反作弊插件（例如 GrimAC、Matrix、Vulcan）
+
   > 反作弊插件有时会误判玩家与模组物品的交互（因为这些插件只检测原版行为）~~有些 Bukkit 反作弊其实连原版行为都能多次误判~~
+
 - 70% 使用 Paper API 的插件
+
   > 本服务器仅支持少数 Paper API——只有十几种常用的——因此你可能会遇到功能缺失、行为异常甚至崩溃的情况。我们目前正在努力实现更多的 Paper API
+
   > 有些插件提供备选的"Spigot API"版本——那才是最佳的兼容路径
 
 ## 如何在此服务端上实现最大优化？
@@ -53,7 +63,9 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
   > ~~我最近才发现这破服务端还有下游~~
 
 - 如果你想优化大型整合包，我们推荐一些常见的优化模组组合（下面提到的所有模组都与本服务端兼容）
-  > 对大多数整合包来说，仅三个模组就能击落 MSPT：[ModernFix](https://modrinth.com/mod/modernfix)、[FerriteCore](https://modrinth.com/mod/ferrite-core) 和 [Radium](https://modrinth.com/mod/radium)——Luminara 与这三个全部兼容
+
+  > 对大多数整合包来说，仅三个模组就能击落 MSPT：[ModernFix](https://modrinth.com/mod/modernfix)、[FerriteCore](https://modrinth.com/mod/ferrite-core) 和 [Radium](https://modrinth.com/mod/radium)
+  
   > 对于涉及大量探索的整合包，两个模组可以大幅加快区块生成速度：[FastNoise](https://modrinth.com/mod/zfastnoise) 和 [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
 
 ## 从源码构建
