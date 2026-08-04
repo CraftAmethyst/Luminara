@@ -319,6 +319,8 @@
     "world.item.crafting.CustomRecipeMixin",
     "world.item.crafting.IngredientMixin",
     "world.item.crafting.RecipeManagerMixin",
+    "world.item.crafting.RecipeManagerMixin$ParsingErrorLoggerMixin",
+    "world.item.crafting.RecipeManagerMixin$ModernFixParsingErrorLoggerMixin",
     "world.item.crafting.RecipeMixin",
     "world.item.crafting.ServerRecipeBookMixin",
     "world.item.crafting.ShapedRecipeMixin",
