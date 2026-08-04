@@ -112,9 +112,9 @@ tasks.register('verifyDistribution', VerifyDistributionTask) {
     description = 'Validates the assembled Luminara distribution contract.'
     dependsOn(assembleDistribution)
     distributionJar.set(distributionOutputJar)
-    forgeInstallerJar.set(project(':arclight-common').layout.buildDirectory.file("arclight_cache/forge-${libs.versions.minecraft.get()}-${libs.versions.forge.get()}-installer.jar"))
+    forgeInstallerJar.set(project(':arclight-common').layout.buildDirectory.file("arclight_cache/forge-${project.ext.minecraftVersion}-${project.ext.forgeVersion}-installer.jar"))
     minecraftVersion.set(libs.versions.minecraft.get())
-    forgeVersion.set(libs.versions.forge.get())
+    forgeVersion.set(project.ext.forgeVersion)
     mainClass.set('io.izzel.arclight.server.Launcher')
     requiredEntries.set([
             'common.jar',
