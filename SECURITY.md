@@ -2,7 +2,7 @@
 
 ## Supported line
 
-Security fixes target the current `stable/Trials` branch and the supported runtime matrix: Luminara `1.0.14`, Minecraft `1.20.1`, the latest Forge promotion for that Minecraft version, and Java 17. Older commits, other Minecraft versions, and Fabric or NeoForge configurations are unsupported.
+Security fixes target the current `stable/Trials` branch and the supported runtime matrix: Luminara `1.0.15`, Minecraft `1.20.1`, the latest Forge promotion for that Minecraft version, and Java 17. Older commits, other Minecraft versions, and Fabric or NeoForge configurations are unsupported.
 
 ## Report a vulnerability
 
