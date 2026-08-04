@@ -4,7 +4,6 @@ import io.izzel.arclight.common.mod.compat.ModIds;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
 import net.minecraft.world.inventory.AnvilMenu;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
@@ -16,23 +15,21 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 )
 public abstract class RepairCostMixin {
 
-    @Shadow public int maximumRepairCost;
-
     @ModifyConstant(
         method = "createResult",
         constant = @Constant(intValue = 40),
-        require = 1
+        require = 0
     )
     private int arclight$maximumRepairCost(int raw) {
-        return raw - 40 + maximumRepairCost;
+        return raw;
     }
 
     @ModifyConstant(
         method = "createResult",
         constant = @Constant(intValue = 39),
-        require = 1
+        require = 0
     )
     private int arclight$maximumRenameCost(int raw) {
-        return raw - 40 + maximumRepairCost;
+        return raw;
     }
 }
