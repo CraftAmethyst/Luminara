@@ -2,8 +2,10 @@ package io.izzel.arclight.i18n;
 
 @SuppressWarnings("unchecked")
 public interface LocalizedException {
-
-    static <T extends Exception & LocalizedException> T checked(String node, Object... args) {
+    static <T extends Exception & LocalizedException> T checked(
+        String node,
+        Object... args
+    ) {
         class Checked extends Exception implements LocalizedException {
 
             @Override
@@ -19,7 +21,10 @@ public interface LocalizedException {
         return (T) new Checked();
     }
 
-    static <T extends RuntimeException & LocalizedException> T unchecked(String node, Object... args) {
+    static <T extends RuntimeException & LocalizedException> T unchecked(
+        String node,
+        Object... args
+    ) {
         class Unchecked extends RuntimeException implements LocalizedException {
 
             @Override

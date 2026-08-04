@@ -8,13 +8,19 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 public interface WorldEntitySpawnerBridge {
-
     interface EntityDensityManagerBridge {
-
         void bridge$updateDensity(Mob mobEntity, ChunkAccess chunk);
 
-        boolean bridge$canSpawn(MobCategory classification, ChunkPos pos, int limit);
+        boolean bridge$canSpawn(
+            MobCategory classification,
+            ChunkPos pos,
+            int limit
+        );
 
-        boolean bridge$canSpawn(EntityType<?> entityType, BlockPos pos, ChunkAccess chunk);
+        boolean bridge$canSpawn(
+            EntityType<?> entityType,
+            BlockPos pos,
+            ChunkAccess chunk
+        );
     }
 }

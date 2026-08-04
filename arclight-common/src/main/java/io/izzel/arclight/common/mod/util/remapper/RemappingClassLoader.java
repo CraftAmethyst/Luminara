@@ -6,9 +6,10 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
 public interface RemappingClassLoader {
-
     static ClassLoader tryRedirect(ClassLoader classLoader) {
-        return classLoader instanceof TransformingClassLoader ? RemappingClassLoader.class.getClassLoader() : classLoader;
+        return classLoader instanceof TransformingClassLoader
+            ? RemappingClassLoader.class.getClassLoader()
+            : classLoader;
     }
 
     static boolean needRemap(ClassLoader cl) {
@@ -23,10 +24,14 @@ public interface RemappingClassLoader {
     // Bytecode version of the above code
     static void implementNeedRemap(ClassNode node) {
         MethodNode needRemap = new MethodNode(
-                Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
-                "needRemap",
-                Type.getMethodDescriptor(Type.getType(boolean.class), Type.getType(ClassLoader.class)),
-                null, null
+            Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
+            "needRemap",
+            Type.getMethodDescriptor(
+                Type.getType(boolean.class),
+                Type.getType(ClassLoader.class)
+            ),
+            null,
+            null
         );
         var l = needRemap.instructions;
         {
@@ -45,7 +50,12 @@ public interface RemappingClassLoader {
             l.add(label2);
             l.add(new LineNumberNode(-102, label2));
             l.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            l.add(new TypeInsnNode(Opcodes.INSTANCEOF, Type.getInternalName(TransformingClassLoader.class)));
+            l.add(
+                new TypeInsnNode(
+                    Opcodes.INSTANCEOF,
+                    Type.getInternalName(TransformingClassLoader.class)
+                )
+            );
 
             var label3 = new LabelNode();
             l.add(new JumpInsnNode(Opcodes.IFEQ, label3));
@@ -62,7 +72,15 @@ public interface RemappingClassLoader {
                 l.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
             }
             l.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            l.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/ClassLoader", "getParent", "()Ljava/lang/ClassLoader;", false));
+            l.add(
+                new MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    "java/lang/ClassLoader",
+                    "getParent",
+                    "()Ljava/lang/ClassLoader;",
+                    false
+                )
+            );
             l.add(new VarInsnNode(Opcodes.ASTORE, 0));
             l.add(new JumpInsnNode(Opcodes.GOTO, label0));
 
@@ -76,7 +94,16 @@ public interface RemappingClassLoader {
 
             var label5 = new LabelNode();
             l.add(label5);
-            needRemap.localVariables.add(new LocalVariableNode("cl", "Ljava/lang/ClassLoader;", null, label0, label5, 0));
+            needRemap.localVariables.add(
+                new LocalVariableNode(
+                    "cl",
+                    "Ljava/lang/ClassLoader;",
+                    null,
+                    label0,
+                    label5,
+                    0
+                )
+            );
         }
         needRemap.visitMaxs(1, 1);
         node.methods.add(needRemap);

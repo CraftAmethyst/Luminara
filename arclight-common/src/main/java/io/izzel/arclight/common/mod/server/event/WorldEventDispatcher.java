@@ -9,7 +9,10 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
 public class WorldEventDispatcher {
-    private static final Logger LOGGER = ArclightI18nLogger.getLogger("WorldEventDispatcher");
+
+    private static final Logger LOGGER = ArclightI18nLogger.getLogger(
+        "WorldEventDispatcher"
+    );
 
     @SubscribeEvent
     public void onWorldUnload(LevelEvent.Unload event) {

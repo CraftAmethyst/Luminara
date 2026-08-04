@@ -1,12 +1,11 @@
 package io.izzel.arclight.common.mod.util.remapper;
 
 import io.izzel.arclight.api.PluginPatcher;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class RuntimeRepo implements ClassRepo, PluginPatcher.ClassRepo {
 

@@ -1,20 +1,22 @@
 package io.izzel.arclight.common.mod.util.remapper;
 
 import com.google.common.collect.ImmutableSet;
-import net.md_5.specialsource.provider.InheritanceProvider;
-import net.md_5.specialsource.repo.ClassRepo;
-import org.objectweb.asm.tree.ClassNode;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import net.md_5.specialsource.provider.InheritanceProvider;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.objectweb.asm.tree.ClassNode;
 
 public class PluginInheritanceProvider implements InheritanceProvider {
 
-    private static final Map<String, Collection<String>> SHARED_INHERITANCE_MAP = new ConcurrentHashMap<>();
+    private static final Map<
+        String,
+        Collection<String>
+    > SHARED_INHERITANCE_MAP = new ConcurrentHashMap<>();
 
     private final ClassRepo classRepo;
 
@@ -58,19 +60,30 @@ public class PluginInheritanceProvider implements InheritanceProvider {
 
         private final PluginInheritanceProvider provider;
 
-        public Remapping(ClassRepo classRepo, PluginInheritanceProvider provider) {
+        public Remapping(
+            ClassRepo classRepo,
+            PluginInheritanceProvider provider
+        ) {
             super(classRepo);
             this.provider = provider;
         }
 
         @Override
         public Collection<String> getAll(String className) {
-            return provider.getAll(className).stream().map(ArclightRemapper.getNmsMapper()::map).collect(Collectors.toSet());
+            return provider
+                .getAll(className)
+                .stream()
+                .map(ArclightRemapper.getNmsMapper()::map)
+                .collect(Collectors.toSet());
         }
 
         @Override
         public Collection<String> getParents(String className) {
-            return provider.getParents(className).stream().map(ArclightRemapper.getNmsMapper()::map).collect(Collectors.toSet());
+            return provider
+                .getParents(className)
+                .stream()
+                .map(ArclightRemapper.getNmsMapper()::map)
+                .collect(Collectors.toSet());
         }
     }
 }

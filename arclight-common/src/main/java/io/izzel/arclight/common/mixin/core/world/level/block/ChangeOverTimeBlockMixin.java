@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -11,15 +12,15 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Optional;
-
 @Mixin(ChangeOverTimeBlock.class)
 public interface ChangeOverTimeBlockMixin<T extends Enum<T>> {
-
     // @formatter:off
     @Shadow T getAge();
+
     @Shadow float getChanceModifier();
+
     @Shadow Optional<BlockState> getNext(BlockState p_153040_);
+
     // @formatter:on
 
     /**
@@ -27,7 +28,12 @@ public interface ChangeOverTimeBlockMixin<T extends Enum<T>> {
      * @reason
      */
     @Overwrite
-    default void applyChangeOverTime(BlockState p_220953_, ServerLevel level, BlockPos pos, RandomSource p_220956_) {
+    default void applyChangeOverTime(
+        BlockState p_220953_,
+        ServerLevel level,
+        BlockPos pos,
+        RandomSource p_220956_
+    ) {
         int i = this.getAge().ordinal();
         int j = 0;
         int k = 0;
@@ -62,7 +68,7 @@ public interface ChangeOverTimeBlockMixin<T extends Enum<T>> {
         float f = (float) (k + 1) / (float) (k + j + 1);
         float f1 = f * f * this.getChanceModifier();
         if (p_220956_.nextFloat() < f1) {
-            this.getNext(p_220953_).ifPresent((newState) -> {
+            this.getNext(p_220953_).ifPresent(newState -> {
                 // level.setBlockAndUpdate(pos, newState);
                 CraftEventFactory.handleBlockFormEvent(level, pos, newState);
             });

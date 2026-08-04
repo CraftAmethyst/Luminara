@@ -22,12 +22,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class LightningRodBlockMixin {
 
     @Inject(method = "onLightningStrike", cancellable = true, at = @At("HEAD"))
-    private void arclight$redstoneChange(BlockState state, Level level, BlockPos pos, CallbackInfo ci) {
+    private void arclight$redstoneChange(
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        CallbackInfo ci
+    ) {
         boolean powered = state.getValue(LightningRodBlock.POWERED);
         int old = (powered) ? 15 : 0;
         int current = (!powered) ? 15 : 0;
 
-        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(CraftBlock.at(level, pos), old, current);
+        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
+            CraftBlock.at(level, pos),
+            old,
+            current
+        );
         Bukkit.getPluginManager().callEvent(eventRedstone);
 
         if (eventRedstone.getNewCurrent() <= 0) {
@@ -35,10 +44,19 @@ public class LightningRodBlockMixin {
         }
     }
 
-    @Redirect(method = "onProjectileHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    @Redirect(
+        method = "onProjectileHit",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     private boolean arclight$strikeReason(Level level, Entity entity) {
         if (!DistValidate.isValid(level)) return level.addFreshEntity(entity);
-        ((ServerWorldBridge) level).bridge$strikeLightning((LightningBolt) entity, LightningStrikeEvent.Cause.TRIDENT);
+        ((ServerWorldBridge) level).bridge$strikeLightning(
+            (LightningBolt) entity,
+            LightningStrikeEvent.Cause.TRIDENT
+        );
         return true;
     }
 }

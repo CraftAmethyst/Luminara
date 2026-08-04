@@ -2,6 +2,8 @@ package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.common.bridge.core.item.crafting.IngredientBridge;
 import io.izzel.arclight.common.mod.inventory.ArclightSpecialIngredient;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v.inventory.CraftRecipe;
@@ -11,12 +13,8 @@ import org.bukkit.inventory.RecipeChoice;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(value = CraftRecipe.class, remap = false)
 public interface CraftRecipeMixin {
-
     /**
      * @author IzzelAliz
      * @reason
@@ -38,7 +36,9 @@ public interface CraftRecipeMixin {
                 }
                 return new RecipeChoice.ExactChoice(choices);
             } else {
-                List<org.bukkit.Material> choices = new ArrayList<>(items.length);
+                List<org.bukkit.Material> choices = new ArrayList<>(
+                    items.length
+                );
                 for (net.minecraft.world.item.ItemStack i : items) {
                     choices.add(CraftMagicNumbers.getMaterial(i.getItem()));
                 }
@@ -57,23 +57,41 @@ public interface CraftRecipeMixin {
         if (bukkit == null) {
             stack = Ingredient.EMPTY;
         } else if (bukkit instanceof RecipeChoice.MaterialChoice) {
-            stack = new Ingredient(((RecipeChoice.MaterialChoice) bukkit).getChoices().stream().map((mat) -> {
-                return new Ingredient.ItemValue(CraftItemStack.asNMSCopy(new ItemStack(mat)));
-            }));
+            stack = new Ingredient(
+                ((RecipeChoice.MaterialChoice) bukkit).getChoices()
+                    .stream()
+                    .map(mat -> {
+                        return new Ingredient.ItemValue(
+                            CraftItemStack.asNMSCopy(new ItemStack(mat))
+                        );
+                    })
+            );
         } else if (bukkit instanceof RecipeChoice.ExactChoice) {
-            stack = new Ingredient(((RecipeChoice.ExactChoice) bukkit).getChoices().stream().map((mat) -> {
-                return new Ingredient.ItemValue(CraftItemStack.asNMSCopy(mat));
-            }));
+            stack = new Ingredient(
+                ((RecipeChoice.ExactChoice) bukkit).getChoices()
+                    .stream()
+                    .map(mat -> {
+                        return new Ingredient.ItemValue(
+                            CraftItemStack.asNMSCopy(mat)
+                        );
+                    })
+            );
             ((IngredientBridge) stack).bridge$setExact(true);
         } else if (bukkit instanceof ArclightSpecialIngredient) {
             stack = ((ArclightSpecialIngredient) bukkit).getIngredient();
         } else {
-            throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
+            throw new IllegalArgumentException(
+                "Unknown recipe stack instance " + bukkit
+            );
         }
 
         stack.getItems();
-        if (stack.isVanilla() && requireNotEmpty && stack.getItems().length == 0) {
-            throw new IllegalArgumentException("Recipe requires at least one non-air choice!");
+        if (
+            stack.isVanilla() && requireNotEmpty && stack.getItems().length == 0
+        ) {
+            throw new IllegalArgumentException(
+                "Recipe requires at least one non-air choice!"
+            );
         } else {
             return stack;
         }

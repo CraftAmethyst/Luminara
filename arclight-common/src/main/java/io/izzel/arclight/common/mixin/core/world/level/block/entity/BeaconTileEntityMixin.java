@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
 import io.izzel.arclight.common.bridge.core.tileentity.BeaconTileEntityBridge;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -13,15 +14,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-
 @Mixin(BeaconBlockEntity.class)
 public abstract class BeaconTileEntityMixin implements BeaconTileEntityBridge {
 
     // @formatter:off
     @Shadow @Nullable public MobEffect primaryPower;
+
     @Shadow public int levels;
+
     @Shadow @Nullable public MobEffect secondaryPower;
+
     // @formatter:on
 
     @Inject(method = "load", at = @At("RETURN"))
@@ -30,11 +32,31 @@ public abstract class BeaconTileEntityMixin implements BeaconTileEntityBridge {
     }
 
     public PotionEffect getPrimaryEffect() {
-        return (this.primaryPower != null) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.primaryPower, this.getLevel(), this.getAmplification(), true, true)) : null;
+        return (this.primaryPower != null)
+            ? CraftPotionUtil.toBukkit(
+                  new MobEffectInstance(
+                      this.primaryPower,
+                      this.getLevel(),
+                      this.getAmplification(),
+                      true,
+                      true
+                  )
+              )
+            : null;
     }
 
     public PotionEffect getSecondaryEffect() {
-        return (this.hasSecondaryEffect()) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.secondaryPower, getLevel(), getAmplification(), true, true)) : null;
+        return (this.hasSecondaryEffect())
+            ? CraftPotionUtil.toBukkit(
+                  new MobEffectInstance(
+                      this.secondaryPower,
+                      getLevel(),
+                      getAmplification(),
+                      true,
+                      true
+                  )
+              )
+            : null;
     }
 
     private byte getAmplification() {
@@ -51,7 +73,11 @@ public abstract class BeaconTileEntityMixin implements BeaconTileEntityBridge {
     }
 
     private boolean hasSecondaryEffect() {
-        if (this.levels >= 4 && this.primaryPower != this.secondaryPower && this.secondaryPower != null) {
+        if (
+            this.levels >= 4 &&
+            this.primaryPower != this.secondaryPower &&
+            this.secondaryPower != null
+        ) {
             return true;
         }
         return false;

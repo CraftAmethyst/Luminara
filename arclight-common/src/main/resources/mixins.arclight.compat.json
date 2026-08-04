@@ -10,7 +10,5 @@
     "defaultRequire": 1
   },
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "BlueprintFallingBlockEventMixin"
-  ]
+  "mixins": ["BlueprintFallingBlockEventMixin"]
 }

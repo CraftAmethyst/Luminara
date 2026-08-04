@@ -6,10 +6,12 @@ import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.inventory.InventoryView;
 
 public interface ContainerBridge {
-
     InventoryView bridge$getBukkitView();
 
-    void bridge$transferTo(AbstractContainerMenu other, CraftHumanEntity player);
+    void bridge$transferTo(
+        AbstractContainerMenu other,
+        CraftHumanEntity player
+    );
 
     Component bridge$getTitle();
 

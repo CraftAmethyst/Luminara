@@ -2,40 +2,70 @@ package io.izzel.arclight.common.mixin.optimization.general;
 
 import io.izzel.arclight.common.mod.compat.ModIds;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
+import java.util.*;
 import net.minecraft.util.ClassInstanceMultiMap;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.*;
-
 @Mixin(ClassInstanceMultiMap.class)
-@LoadIfMod(modid = {ModIds.RECRUITS, ModIds.RADIUM, ModIds.CANARY}, condition = LoadIfMod.ModCondition.ABSENT)
+@LoadIfMod(
+    modid = { ModIds.RECRUITS, ModIds.RADIUM, ModIds.CANARY },
+    condition = LoadIfMod.ModCondition.ABSENT
+)
 public class ClassInheritanceMultiMapMixin<T> {
 
     private static final ArrayList<?> EMPTY_LIST = new ArrayList<>();
+
     // @formatter:off
     @Shadow @Final private Class<T> baseClass;
+
     @Shadow @Final @Mutable private Map<Class<?>, List<T>> byClass;
+
     // @formatter:on
     @Shadow
     @Final
     @Mutable
     private List<T> allInstances;
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", remap = false, target = "Lcom/google/common/collect/Maps;newHashMap()Ljava/util/HashMap;"))
+    @Redirect(
+        method = "<init>",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Lcom/google/common/collect/Maps;newHashMap()Ljava/util/HashMap;"
+        )
+    )
     private HashMap<Class<?>, List<T>> optimization$dropClass() {
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", remap = false, target = "Lcom/google/common/collect/Lists;newArrayList()Ljava/util/ArrayList;"))
+    @Redirect(
+        method = "<init>",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Lcom/google/common/collect/Lists;newArrayList()Ljava/util/ArrayList;"
+        )
+    )
     private ArrayList<T> optimization$dropList() {
         return (ArrayList<T>) EMPTY_LIST;
     }
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", remap = false, target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
-    private Object optimization$dropPut(Map<?, ?> map, Object key, Object value) {
+    @Redirect(
+        method = "<init>",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
+        )
+    )
+    private Object optimization$dropPut(
+        Map<?, ?> map,
+        Object key,
+        Object value
+    ) {
         return null;
     }
 
@@ -89,7 +119,10 @@ public class ClassInheritanceMultiMapMixin<T> {
      */
     @Overwrite
     public boolean contains(Object p_contains_1_) {
-        return byClass != null && this.find(p_contains_1_.getClass()).contains(p_contains_1_);
+        return (
+            byClass != null &&
+            this.find(p_contains_1_.getClass()).contains(p_contains_1_)
+        );
     }
 
     /**
@@ -99,7 +132,9 @@ public class ClassInheritanceMultiMapMixin<T> {
     @Overwrite
     public <S> Collection<S> find(Class<S> p_219790_1_) {
         if (p_219790_1_ == baseClass) {
-            return (Collection<S>) Collections.unmodifiableCollection(allInstances);
+            return (Collection<S>) Collections.unmodifiableCollection(
+                allInstances
+            );
         }
         if (byClass == null) {
             return Collections.emptyList();
@@ -113,7 +148,9 @@ public class ClassInheritanceMultiMapMixin<T> {
 
     private <S> Collection<T> createList(Class<S> p_219790_1_) {
         if (!this.baseClass.isAssignableFrom(p_219790_1_)) {
-            throw new IllegalArgumentException("Don't know how to search for " + p_219790_1_);
+            throw new IllegalArgumentException(
+                "Don't know how to search for " + p_219790_1_
+            );
         } else {
             List<T> list = new ArrayList<>();
             for (T value : this.allInstances) {

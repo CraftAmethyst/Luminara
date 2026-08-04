@@ -19,13 +19,25 @@ public class TargetGoalMixin {
     @Final
     protected Mob mob;
 
-    @Inject(method = "canContinueToUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"))
+    @Inject(
+        method = "canContinueToUse",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Mob;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"
+        )
+    )
     private void arclight$reason(CallbackInfoReturnable<Boolean> cir) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
+        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
+            EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
+            true
+        );
     }
 
     @Inject(method = "stop", at = @At("HEAD"))
     private void arclight$reason(CallbackInfo ci) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
+        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
+            EntityTargetEvent.TargetReason.FORGOT_TARGET,
+            true
+        );
     }
 }

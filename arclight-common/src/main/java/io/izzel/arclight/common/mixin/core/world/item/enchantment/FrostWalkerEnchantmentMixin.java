@@ -21,21 +21,66 @@ public class FrostWalkerEnchantmentMixin {
      * @reason
      */
     @Overwrite
-    public static void onEntityMoved(LivingEntity living, Level worldIn, BlockPos pos, int level) {
+    public static void onEntityMoved(
+        LivingEntity living,
+        Level worldIn,
+        BlockPos pos,
+        int level
+    ) {
         if (living.onGround()) {
             BlockState blockstate = Blocks.FROSTED_ICE.defaultBlockState();
             int f = Math.min(16, 2 + level);
-            BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos blockpos$mutable =
+                new BlockPos.MutableBlockPos();
 
-            for (BlockPos blockpos : BlockPos.betweenClosed(pos.offset(-f, -1, -f), pos.offset(f, -1, f))) {
+            for (BlockPos blockpos : BlockPos.betweenClosed(
+                pos.offset(-f, -1, -f),
+                pos.offset(f, -1, f)
+            )) {
                 if (blockpos.closerToCenterThan(living.position(), f)) {
-                    blockpos$mutable.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
-                    BlockState blockstate1 = worldIn.getBlockState(blockpos$mutable);
+                    blockpos$mutable.set(
+                        blockpos.getX(),
+                        blockpos.getY() + 1,
+                        blockpos.getZ()
+                    );
+                    BlockState blockstate1 = worldIn.getBlockState(
+                        blockpos$mutable
+                    );
                     if (blockstate1.isAir()) {
-                        BlockState blockstate2 = worldIn.getBlockState(blockpos);
-                        if (blockstate2 == FrostedIceBlock.meltsInto() && blockstate.canSurvive(worldIn, blockpos) && worldIn.isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(living, net.minecraftforge.common.util.BlockSnapshot.create(worldIn.dimension(), worldIn, blockpos), net.minecraft.core.Direction.UP)) {
-                            if (CraftEventFactory.handleBlockFormEvent(worldIn, blockpos, blockstate, living)) {
-                                worldIn.scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(living.getRandom(), 60, 120));
+                        BlockState blockstate2 = worldIn.getBlockState(
+                            blockpos
+                        );
+                        if (
+                            blockstate2 == FrostedIceBlock.meltsInto() &&
+                            blockstate.canSurvive(worldIn, blockpos) &&
+                            worldIn.isUnobstructed(
+                                blockstate,
+                                blockpos,
+                                CollisionContext.empty()
+                            ) &&
+                            !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(
+                                living,
+                                net.minecraftforge.common.util.BlockSnapshot.create(
+                                    worldIn.dimension(),
+                                    worldIn,
+                                    blockpos
+                                ),
+                                net.minecraft.core.Direction.UP
+                            )
+                        ) {
+                            if (
+                                CraftEventFactory.handleBlockFormEvent(
+                                    worldIn,
+                                    blockpos,
+                                    blockstate,
+                                    living
+                                )
+                            ) {
+                                worldIn.scheduleTick(
+                                    blockpos,
+                                    Blocks.FROSTED_ICE,
+                                    Mth.nextInt(living.getRandom(), 60, 120)
+                                );
                             }
                         }
                     }

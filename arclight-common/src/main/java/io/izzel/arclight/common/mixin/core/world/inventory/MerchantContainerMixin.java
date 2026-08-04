@@ -17,18 +17,29 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MerchantMenu.class)
-public abstract class MerchantContainerMixin extends AbstractContainerMenuMixin {
+public abstract class MerchantContainerMixin
+    extends AbstractContainerMenuMixin {
 
     // @formatter:off
     @Shadow @Final private Merchant trader;
+
     @Shadow @Final private MerchantContainer tradeContainer;
+
     // @formatter:on
 
     private CraftInventoryView bukkitEntity = null;
     private Inventory playerInventory;
 
-    @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/item/trading/Merchant;)V", at = @At("RETURN"))
-    public void arclight$init(int id, Inventory playerInventoryIn, Merchant merchantIn, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/item/trading/Merchant;)V",
+        at = @At("RETURN")
+    )
+    public void arclight$init(
+        int id,
+        Inventory playerInventoryIn,
+        Merchant merchantIn,
+        CallbackInfo ci
+    ) {
         this.playerInventory = playerInventoryIn;
     }
 
@@ -42,7 +53,11 @@ public abstract class MerchantContainerMixin extends AbstractContainerMenuMixin 
     @Override
     public CraftInventoryView getBukkitView() {
         if (bukkitEntity == null) {
-            bukkitEntity = new CraftInventoryView(((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(), new CraftInventoryMerchant(this.trader, this.tradeContainer), (AbstractContainerMenu) (Object) this);
+            bukkitEntity = new CraftInventoryView(
+                ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+                new CraftInventoryMerchant(this.trader, this.tradeContainer),
+                (AbstractContainerMenu) (Object) this
+            );
         }
         return bukkitEntity;
     }

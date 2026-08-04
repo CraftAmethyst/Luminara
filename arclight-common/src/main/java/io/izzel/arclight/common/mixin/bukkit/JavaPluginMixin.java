@@ -11,9 +11,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(JavaPlugin.class)
 public class JavaPluginMixin {
 
-    @Redirect(method = "init", remap = false, at = @At(value = "NEW", target = "org/bukkit/plugin/PluginLogger"))
+    @Redirect(
+        method = "init",
+        remap = false,
+        at = @At(value = "NEW", target = "org/bukkit/plugin/PluginLogger")
+    )
     private PluginLogger arclight$createLogger(Plugin plugin) {
         return new ArclightPluginLogger(plugin);
     }
-
 }

@@ -30,8 +30,16 @@ public abstract class AxolotlMixin extends AnimalMixin {
         return AXOLOTL_TOTAL_AIR_SUPPLY;
     }
 
-    @Inject(method = "applySupportingEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
+    @Inject(
+        method = "applySupportingEffects",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     private void arclight$cause(Player player, CallbackInfo ci) {
-        ((MobEntityBridge) player).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.AXOLOTL);
+        ((MobEntityBridge) player).bridge$pushEffectCause(
+            EntityPotionEffectEvent.Cause.AXOLOTL
+        );
     }
 }

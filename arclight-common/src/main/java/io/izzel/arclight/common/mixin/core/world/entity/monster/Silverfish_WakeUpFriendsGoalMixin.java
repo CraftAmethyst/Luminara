@@ -17,11 +17,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(targets = "net.minecraft.world.entity.monster.Silverfish$SilverfishWakeUpFriendsGoal")
+@Mixin(
+    targets = "net.minecraft.world.entity.monster.Silverfish$SilverfishWakeUpFriendsGoal"
+)
 public abstract class Silverfish_WakeUpFriendsGoalMixin extends Goal {
 
     @Shadow
     private int lookForFriends;
+
     @Shadow
     @Final
     private Silverfish silverfish;
@@ -40,22 +43,49 @@ public abstract class Silverfish_WakeUpFriendsGoalMixin extends Goal {
 
             for (int i = 0; i <= 5 && i >= -5; i = (i <= 0 ? 1 : 0) - i) {
                 for (int j = 0; j <= 10 && j >= -10; j = (j <= 0 ? 1 : 0) - j) {
-                    for (int k = 0; k <= 10 && k >= -10; k = (k <= 0 ? 1 : 0) - k) {
+                    for (
+                        int k = 0;
+                        k <= 10 && k >= -10;
+                        k = (k <= 0 ? 1 : 0) - k
+                    ) {
                         BlockPos blockpos1 = blockpos.offset(j, i, k);
                         BlockState blockstate = world.getBlockState(blockpos1);
                         Block block = blockstate.getBlock();
                         if (block instanceof InfestedBlock) {
-                            if (!CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, Blocks.AIR.defaultBlockState())) {
+                            if (
+                                !CraftEventFactory.callEntityChangeBlockEvent(
+                                    this.silverfish,
+                                    blockpos1,
+                                    Blocks.AIR.defaultBlockState()
+                                )
+                            ) {
                                 continue;
                             }
-                            if (ForgeEventFactory.getMobGriefingEvent(world, this.silverfish)) {
-                                if (ArclightVersion.atLeast(ArclightVersion.v1_15)) {
-                                    world.destroyBlock(blockpos1, true, this.silverfish);
+                            if (
+                                ForgeEventFactory.getMobGriefingEvent(
+                                    world,
+                                    this.silverfish
+                                )
+                            ) {
+                                if (
+                                    ArclightVersion.atLeast(
+                                        ArclightVersion.v1_15
+                                    )
+                                ) {
+                                    world.destroyBlock(
+                                        blockpos1,
+                                        true,
+                                        this.silverfish
+                                    );
                                 } else {
                                     world.destroyBlock(blockpos1, true);
                                 }
                             } else {
-                                world.setBlock(blockpos1, ((InfestedBlock) block).getHostBlock().defaultBlockState(), 3);
+                                world.setBlock(
+                                    blockpos1,
+                                    ((InfestedBlock) block).getHostBlock().defaultBlockState(),
+                                    3
+                                );
                             }
 
                             if (random.nextBoolean()) {
@@ -66,6 +96,5 @@ public abstract class Silverfish_WakeUpFriendsGoalMixin extends Goal {
                 }
             }
         }
-
     }
 }

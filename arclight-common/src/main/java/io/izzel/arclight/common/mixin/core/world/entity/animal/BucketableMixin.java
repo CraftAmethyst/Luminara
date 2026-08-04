@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.entity.animal;
 
 import io.izzel.arclight.common.bridge.core.network.datasync.SynchedEntityDataBridge;
+import java.util.Optional;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,17 +20,20 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.Optional;
-
 @Mixin(Bucketable.class)
 public interface BucketableMixin {
-
     /**
      * @author IzzelAliz
      * @reason
      */
     @Overwrite
-    static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(Player player, InteractionHand hand, LivingEntity livingEntity) {
+    static <T extends LivingEntity & Bucketable> Optional<
+        InteractionResult
+    > bucketMobPickup(
+        Player player,
+        InteractionHand hand,
+        LivingEntity livingEntity
+    ) {
         @SuppressWarnings("unchecked")
         T entity = (T) livingEntity;
         ItemStack itemstack = player.getItemInHand(hand);
@@ -37,24 +41,45 @@ public interface BucketableMixin {
             // entity.playSound(entity.getPickupSound(), 1.0F, 1.0F);
             ItemStack itemstack1 = entity.getBucketItemStack();
             entity.saveToBucketTag(itemstack1);
-            PlayerBucketEntityEvent event = CraftEventFactory.callPlayerFishBucketEvent(entity, player, itemstack, itemstack1, hand);
+            PlayerBucketEntityEvent event =
+                CraftEventFactory.callPlayerFishBucketEvent(
+                    entity,
+                    player,
+                    itemstack,
+                    itemstack1,
+                    hand
+                );
             itemstack1 = CraftItemStack.asNMSCopy(event.getEntityBucket());
             if (event.isCancelled()) {
                 player.containerMenu.sendAllDataToRemote(); // We need to update inventory to resync client's bucket
-                ((ServerPlayer) player).connection.send(new ClientboundAddEntityPacket(entity)); // We need to play out these packets as the client assumes the fish is gone
-                ((SynchedEntityDataBridge) livingEntity.getEntityData()).bridge$refresh((ServerPlayer) player); // Need to send data such as the display name to client
+                ((ServerPlayer) player).connection.send(
+                    new ClientboundAddEntityPacket(entity)
+                ); // We need to play out these packets as the client assumes the fish is gone
+                ((SynchedEntityDataBridge) livingEntity.getEntityData()).bridge$refresh(
+                    (ServerPlayer) player
+                ); // Need to send data such as the display name to client
                 return Optional.of(InteractionResult.FAIL);
             }
             entity.playSound(entity.getPickupSound(), 1.0F, 1.0F);
-            ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, player, itemstack1, false);
+            ItemStack itemstack2 = ItemUtils.createFilledResult(
+                itemstack,
+                player,
+                itemstack1,
+                false
+            );
             player.setItemInHand(hand, itemstack2);
             Level level = entity.level();
             if (!level.isClientSide) {
-                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) player, itemstack1);
+                CriteriaTriggers.FILLED_BUCKET.trigger(
+                    (ServerPlayer) player,
+                    itemstack1
+                );
             }
 
             entity.discard();
-            return Optional.of(InteractionResult.sidedSuccess(level.isClientSide));
+            return Optional.of(
+                InteractionResult.sidedSuccess(level.isClientSide)
+            );
         } else {
             return Optional.empty();
         }

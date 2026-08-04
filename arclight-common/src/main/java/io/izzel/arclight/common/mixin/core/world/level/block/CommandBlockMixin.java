@@ -21,27 +21,51 @@ public abstract class CommandBlockMixin {
      * @reason
      */
     @Overwrite
-    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Block blockIn,
+        BlockPos fromPos,
+        boolean isMoving
+    ) {
         if (!worldIn.isClientSide) {
             BlockEntity tileentity = worldIn.getBlockEntity(pos);
-            if (tileentity instanceof CommandBlockEntity commandblocktileentity) {
+            if (
+                tileentity instanceof CommandBlockEntity commandblocktileentity
+            ) {
                 boolean flag = worldIn.hasNeighborSignal(pos);
                 boolean flag1 = commandblocktileentity.isPowered();
 
-                org.bukkit.block.Block bukkitBlock = CraftBlock.at(worldIn, pos);
+                org.bukkit.block.Block bukkitBlock = CraftBlock.at(
+                    worldIn,
+                    pos
+                );
                 int old = flag1 ? 15 : 0;
                 int current = flag ? 15 : 0;
-                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
+                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
+                    bukkitBlock,
+                    old,
+                    current
+                );
                 Bukkit.getPluginManager().callEvent(eventRedstone);
                 flag = eventRedstone.getNewCurrent() > 0;
 
                 commandblocktileentity.setPowered(flag);
-                if (!flag1 && !commandblocktileentity.isAutomatic() && commandblocktileentity.getMode() != CommandBlockEntity.Mode.SEQUENCE) {
+                if (
+                    !flag1 &&
+                    !commandblocktileentity.isAutomatic() &&
+                    commandblocktileentity.getMode() !=
+                    CommandBlockEntity.Mode.SEQUENCE
+                ) {
                     if (flag) {
                         commandblocktileentity.markConditionMet();
-                        worldIn.scheduleTick(pos, (CommandBlock) (Object) this, 1);
+                        worldIn.scheduleTick(
+                            pos,
+                            (CommandBlock) (Object) this,
+                            1
+                        );
                     }
-
                 }
             }
         }

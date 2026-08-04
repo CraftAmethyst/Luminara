@@ -13,7 +13,12 @@ public class AsyncChatCommandDecorateEvent extends AsyncChatDecorateEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     @ApiStatus.Internal
-    public AsyncChatCommandDecorateEvent(boolean async, @Nullable Player player, @NotNull Component originalMessage, @NotNull Component result) {
+    public AsyncChatCommandDecorateEvent(
+        boolean async,
+        @Nullable Player player,
+        @NotNull Component originalMessage,
+        @NotNull Component result
+    ) {
         super(async, player, originalMessage, result);
     }
 

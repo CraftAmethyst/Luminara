@@ -6,14 +6,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = NamespacedKey.class, remap = false)
-public abstract class NamespacedKeyAdventureMixin implements net.kyori.adventure.key.Key {
+public abstract class NamespacedKeyAdventureMixin
+    implements net.kyori.adventure.key.Key {
 
     @Shadow
     public abstract @NotNull String getNamespace();
 
     @Shadow
     public abstract @NotNull String getKey();
-
 
     @Override
     public @NotNull String namespace() {
@@ -43,6 +43,8 @@ public abstract class NamespacedKeyAdventureMixin implements net.kyori.adventure
             return false;
         }
         if (!(obj instanceof net.kyori.adventure.key.Key key)) return false;
-        return namespace().equals(key.namespace()) && value().equals(key.value());
+        return (
+            namespace().equals(key.namespace()) && value().equals(key.value())
+        );
     }
 }

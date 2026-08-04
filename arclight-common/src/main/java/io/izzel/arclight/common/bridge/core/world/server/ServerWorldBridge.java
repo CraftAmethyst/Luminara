@@ -11,20 +11,42 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 
 public interface ServerWorldBridge extends WorldBridge {
-
-    <T extends ParticleOptions> int bridge$sendParticles(T type, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed, boolean force);
+    <T extends ParticleOptions> int bridge$sendParticles(
+        T type,
+        double posX,
+        double posY,
+        double posZ,
+        int particleCount,
+        double xOffset,
+        double yOffset,
+        double zOffset,
+        double speed,
+        boolean force
+    );
 
     void bridge$pushStrikeLightningCause(LightningStrikeEvent.Cause cause);
 
-    void bridge$strikeLightning(LightningBolt entity, LightningStrikeEvent.Cause cause);
+    void bridge$strikeLightning(
+        LightningBolt entity,
+        LightningStrikeEvent.Cause cause
+    );
 
     BlockEntity bridge$getTileEntity(BlockPos blockPos);
 
-    boolean bridge$addEntitySerialized(Entity entity, CreatureSpawnEvent.SpawnReason reason);
+    boolean bridge$addEntitySerialized(
+        Entity entity,
+        CreatureSpawnEvent.SpawnReason reason
+    );
 
-    boolean bridge$addAllEntities(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason);
+    boolean bridge$addAllEntities(
+        Entity entity,
+        org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason
+    );
 
-    boolean bridge$addAllEntitiesSafely(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason);
+    boolean bridge$addAllEntitiesSafely(
+        Entity entity,
+        org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason
+    );
 
     LevelStorageSource.LevelStorageAccess bridge$getConvertable();
 }

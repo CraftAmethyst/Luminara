@@ -19,13 +19,36 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(LecternBlock.class)
 public class LecternBlockMixin {
 
-    @Redirect(method = "popBook", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"))
+    @Redirect(
+        method = "popBook",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"
+        )
+    )
     private BlockEntity arclight$noValidate(Level world, BlockPos pos) {
         return ((WorldBridge) world).bridge$getTileEntity(pos, false);
     }
 
-    @Inject(method = "popBook", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/Direction;getStepX()I"))
-    private void arclight$returnIfEmpty(BlockState state, Level worldIn, BlockPos pos, CallbackInfo ci, BlockEntity tileEntity, LecternBlockEntity lecternTileEntity, Direction direction, ItemStack itemStack) {
+    @Inject(
+        method = "popBook",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/core/Direction;getStepX()I"
+        )
+    )
+    private void arclight$returnIfEmpty(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        CallbackInfo ci,
+        BlockEntity tileEntity,
+        LecternBlockEntity lecternTileEntity,
+        Direction direction,
+        ItemStack itemStack
+    ) {
         if (itemStack.isEmpty()) ci.cancel();
     }
 }

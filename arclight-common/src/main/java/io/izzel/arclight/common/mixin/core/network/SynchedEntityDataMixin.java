@@ -2,6 +2,8 @@ package io.izzel.arclight.common.mixin.core.network;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.network.datasync.SynchedEntityDataBridge;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -16,14 +18,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 @Mixin(SynchedEntityData.class)
-public abstract class SynchedEntityDataMixin implements SynchedEntityDataBridge {
+public abstract class SynchedEntityDataMixin
+    implements SynchedEntityDataBridge {
 
     @Shadow
     private boolean isDirty;
+
     @Shadow
     @Final
     private Entity entity;
@@ -32,14 +33,28 @@ public abstract class SynchedEntityDataMixin implements SynchedEntityDataBridge 
     @Shadow protected abstract <T> SynchedEntityData.DataItem<T> getItem(EntityDataAccessor<T> key);
 
     @Shadow @Nullable public abstract List<SynchedEntityData.DataValue<?>> getNonDefaultValues();
+
     @Shadow public abstract boolean isEmpty();
+
     // @formatter:on
 
-    @Inject(method = "set(Lnet/minecraft/network/syncher/EntityDataAccessor;Ljava/lang/Object;Z)V", at = @At("HEAD"))
-    private <T> void arclight$syncHealth(EntityDataAccessor<T> key, T value, boolean b, CallbackInfo ci) {
-        if (key == LivingEntity.DATA_HEALTH_ID && this.entity instanceof ServerPlayerEntityBridge
-                && ((ServerPlayerEntityBridge) this.entity).bridge$initialized()) {
-            CraftPlayer player = ((ServerPlayerEntityBridge) this.entity).bridge$getBukkitEntity();
+    @Inject(
+        method = "set(Lnet/minecraft/network/syncher/EntityDataAccessor;Ljava/lang/Object;Z)V",
+        at = @At("HEAD")
+    )
+    private <T> void arclight$syncHealth(
+        EntityDataAccessor<T> key,
+        T value,
+        boolean b,
+        CallbackInfo ci
+    ) {
+        if (
+            key == LivingEntity.DATA_HEALTH_ID &&
+            this.entity instanceof ServerPlayerEntityBridge &&
+            ((ServerPlayerEntityBridge) this.entity).bridge$initialized()
+        ) {
+            CraftPlayer player =
+                ((ServerPlayerEntityBridge) this.entity).bridge$getBukkitEntity();
             player.setRealHealth(((Float) value));
         }
     }
@@ -59,7 +74,12 @@ public abstract class SynchedEntityDataMixin implements SynchedEntityDataBridge 
         if (!this.isEmpty()) {
             var list = this.getNonDefaultValues();
             if (list != null) {
-                player.connection.send(new ClientboundSetEntityDataPacket(this.entity.getId(), list));
+                player.connection.send(
+                    new ClientboundSetEntityDataPacket(
+                        this.entity.getId(),
+                        list
+                    )
+                );
             }
         }
     }

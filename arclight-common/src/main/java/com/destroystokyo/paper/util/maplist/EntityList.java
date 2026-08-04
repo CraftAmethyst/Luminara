@@ -1,11 +1,10 @@
 package com.destroystokyo.paper.util.maplist;
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import net.minecraft.world.entity.Entity;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import net.minecraft.world.entity.Entity;
 
 // list with O(1) remove & contains
 
@@ -15,7 +14,10 @@ import java.util.NoSuchElementException;
 public final class EntityList implements Iterable<Entity> {
 
     private static final Entity[] EMPTY_LIST = new Entity[0];
-    private final Int2IntOpenHashMap entityToIndex = new Int2IntOpenHashMap(2, 0.8f);
+    private final Int2IntOpenHashMap entityToIndex = new Int2IntOpenHashMap(
+        2,
+        0.8f
+    );
     private Entity[] entities = EMPTY_LIST;
     private int count;
 
@@ -52,7 +54,10 @@ public final class EntityList implements Iterable<Entity> {
 
     public boolean add(final Entity entity) {
         final int count = this.count;
-        final int currIndex = this.entityToIndex.putIfAbsent(entity.getId(), count);
+        final int currIndex = this.entityToIndex.putIfAbsent(
+            entity.getId(),
+            count
+        );
 
         if (currIndex != Integer.MIN_VALUE) {
             return false; // already in this list
@@ -62,7 +67,10 @@ public final class EntityList implements Iterable<Entity> {
 
         if (list.length == count) {
             // resize required
-            list = this.entities = Arrays.copyOf(list, (int) Math.max(4L, count * 2L)); // overflow results in negative
+            list = this.entities = Arrays.copyOf(
+                list,
+                (int) Math.max(4L, count * 2L)
+            ); // overflow results in negative
         }
 
         list[count] = entity;
@@ -73,7 +81,9 @@ public final class EntityList implements Iterable<Entity> {
 
     public Entity getChecked(final int index) {
         if (index < 0 || index >= this.count) {
-            throw new IndexOutOfBoundsException("Index: " + index + " is out of bounds, size: " + this.count);
+            throw new IndexOutOfBoundsException(
+                "Index: " + index + " is out of bounds, size: " + this.count
+            );
         }
         return this.entities[index];
     }
@@ -95,7 +105,6 @@ public final class EntityList implements Iterable<Entity> {
     @Override
     public Iterator<Entity> iterator() {
         return new Iterator<Entity>() {
-
             Entity lastRet;
             int current;
 

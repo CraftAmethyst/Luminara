@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Spottedleaf
  */
 public final class WeakSeqLock {
+
     // TODO when the switch to J11 is made, nuke this class from orbit
 
     private final AtomicLong lock = new AtomicLong();
@@ -46,10 +47,15 @@ public final class WeakSeqLock {
         int failures = 0;
         long curr;
 
-        for (curr = this.lock.get(); !this.canRead(curr); curr = this.lock.get()) {
+        for (
+            curr = this.lock.get();
+            !this.canRead(curr);
+            curr = this.lock.get()
+        ) {
             // without j11, our only backoff is the yield() call...
 
-            if (++failures > 5_000) { /* TODO determine a threshold */
+            if (++failures > 5_000) {
+                /* TODO determine a threshold */
                 Thread.yield();
             }
             /* Better waiting is beyond the scope of this lock; if it is needed the lock is being misused */

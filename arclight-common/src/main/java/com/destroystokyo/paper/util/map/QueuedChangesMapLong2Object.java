@@ -4,7 +4,6 @@ import com.destroystokyo.paper.util.concurrent.WeakSeqLock;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectBidirectionalIterator;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,9 +26,18 @@ public class QueuedChangesMapLong2Object<V> {
         this(16, 0.75f); // dfl for fastutil
     }
 
-    public QueuedChangesMapLong2Object(final int capacity, final float loadFactor) {
-        this.updatingMap = new Long2ObjectLinkedOpenHashMap<>(capacity, loadFactor);
-        this.visibleMap = new Long2ObjectLinkedOpenHashMap<>(capacity, loadFactor);
+    public QueuedChangesMapLong2Object(
+        final int capacity,
+        final float loadFactor
+    ) {
+        this.updatingMap = new Long2ObjectLinkedOpenHashMap<>(
+            capacity,
+            loadFactor
+        );
+        this.visibleMap = new Long2ObjectLinkedOpenHashMap<>(
+            capacity,
+            loadFactor
+        );
         this.queuedChanges = new Long2ObjectLinkedOpenHashMap<>();
     }
 
@@ -75,7 +83,6 @@ public class QueuedChangesMapLong2Object<V> {
                 // ignore...
                 continue;
             }
-
         } while (!this.updatingMapSeqLock.tryReleaseRead(readlock));
 
         return ret;
@@ -97,7 +104,6 @@ public class QueuedChangesMapLong2Object<V> {
                 // ignore...
                 continue;
             }
-
         } while (!this.updatingMapSeqLock.tryReleaseRead(readlock));
 
         return ret;
@@ -150,7 +156,9 @@ public class QueuedChangesMapLong2Object<V> {
             return false;
         }
 
-        final ObjectBidirectionalIterator<Long2ObjectMap.Entry<Object>> iterator = this.queuedChanges.long2ObjectEntrySet().fastIterator();
+        final ObjectBidirectionalIterator<
+            Long2ObjectMap.Entry<Object>
+        > iterator = this.queuedChanges.long2ObjectEntrySet().fastIterator();
         while (iterator.hasNext()) {
             final Long2ObjectMap.Entry<Object> entry = iterator.next();
             final long key = entry.getLongKey();
@@ -177,7 +185,9 @@ public class QueuedChangesMapLong2Object<V> {
             return false;
         }
 
-        final ObjectBidirectionalIterator<Long2ObjectMap.Entry<Object>> iterator = this.queuedChanges.long2ObjectEntrySet().fastIterator();
+        final ObjectBidirectionalIterator<
+            Long2ObjectMap.Entry<Object>
+        > iterator = this.queuedChanges.long2ObjectEntrySet().fastIterator();
 
         try {
             this.updatingMapSeqLock.acquireWrite();

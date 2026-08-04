@@ -10,15 +10,19 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = CommandSender.class, remap = false)
 public interface CommandSenderAdventureMixin extends Audience {
-
     @Override
     default void sendMessage(@NotNull Component message) {
         CommandSender sender = (CommandSender) this;
         // Enhanced message handling for better format preservation
         try {
             // If this is an ArclightDummyCommandSender, it has its own Adventure implementation
-            if (sender instanceof io.izzel.arclight.common.mod.command.ArclightDummyCommandSender) {
-                ((io.izzel.arclight.common.mod.command.ArclightDummyCommandSender) sender).sendMessage(message);
+            if (
+                sender instanceof
+                    io.izzel.arclight.common.mod.command.ArclightDummyCommandSender
+            ) {
+                ((io.izzel.arclight.common.mod.command.ArclightDummyCommandSender) sender).sendMessage(
+                    message
+                );
                 return;
             }
             // Convert Adventure Component to legacy string and send
@@ -32,17 +36,27 @@ public interface CommandSenderAdventureMixin extends Audience {
     }
 
     @Override
-    default void sendMessage(@NotNull Component message, net.kyori.adventure.audience.MessageType type) {
+    default void sendMessage(
+        @NotNull Component message,
+        net.kyori.adventure.audience.MessageType type
+    ) {
         sendMessage(message);
     }
 
     @Override
-    default void sendMessage(@NotNull Identity source, @NotNull Component message) {
+    default void sendMessage(
+        @NotNull Identity source,
+        @NotNull Component message
+    ) {
         sendMessage(message);
     }
 
     @Override
-    default void sendMessage(@NotNull Identity source, @NotNull Component message, net.kyori.adventure.audience.MessageType type) {
+    default void sendMessage(
+        @NotNull Identity source,
+        @NotNull Component message,
+        net.kyori.adventure.audience.MessageType type
+    ) {
         sendMessage(message);
     }
 }

@@ -18,19 +18,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(AbstractHurtingProjectile.class)
-public abstract class AbstractHurtingProjectileMixin extends ProjectileMixin implements DamagingProjectileEntityBridge {
+public abstract class AbstractHurtingProjectileMixin
+    extends ProjectileMixin
+    implements DamagingProjectileEntityBridge {
 
     // @formatter:off
     @Shadow public double xPower;
+
     @Shadow public double yPower;
+
     @Shadow public double zPower;
+
     // @formatter:on
 
     public float bukkitYield;
     public boolean isIncendiary;
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V", at = @At("RETURN"))
-    private void arclight$init(EntityType<? extends AbstractHurtingProjectile> p_i50173_1_, Level p_i50173_2_, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V",
+        at = @At("RETURN")
+    )
+    private void arclight$init(
+        EntityType<? extends AbstractHurtingProjectile> p_i50173_1_,
+        Level p_i50173_2_,
+        CallbackInfo ci
+    ) {
         this.bukkitYield = 1;
         this.isIncendiary = true;
     }
@@ -38,26 +50,68 @@ public abstract class AbstractHurtingProjectileMixin extends ProjectileMixin imp
     public void setDirection(double d0, double d1, double d2) {
         double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
 
-        this.xPower = d0 / d3 * 0.1D;
-        this.yPower = d1 / d3 * 0.1D;
-        this.zPower = d2 / d3 * 0.1D;
+        this.xPower = (d0 / d3) * 0.1D;
+        this.yPower = (d1 / d3) * 0.1D;
+        this.zPower = (d2 / d3) * 0.1D;
     }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractHurtingProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"))
-    private void arclight$preOnHit(AbstractHurtingProjectile abstractHurtingProjectile, HitResult hitResult) {
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/projectile/AbstractHurtingProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"
+        )
+    )
+    private void arclight$preOnHit(
+        AbstractHurtingProjectile abstractHurtingProjectile,
+        HitResult hitResult
+    ) {
         this.preOnHit(hitResult);
     }
 
-    @Inject(method = "tick", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/projectile/AbstractHurtingProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"))
-    private void arclight$projectileHit(CallbackInfo ci, Entity entity, HitResult rayTraceResult) {
+    @Inject(
+        method = "tick",
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/projectile/AbstractHurtingProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"
+        )
+    )
+    private void arclight$projectileHit(
+        CallbackInfo ci,
+        Entity entity,
+        HitResult rayTraceResult
+    ) {
         if (this.isRemoved()) {
-            CraftEventFactory.callProjectileHitEvent((AbstractHurtingProjectile) (Object) this, rayTraceResult);
+            CraftEventFactory.callProjectileHitEvent(
+                (AbstractHurtingProjectile) (Object) this,
+                rayTraceResult
+            );
         }
     }
 
-    @Inject(method = "hurt", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getLookAngle()Lnet/minecraft/world/phys/Vec3;"))
-    private void arclight$nonLivingAttack(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (CraftEventFactory.handleNonLivingEntityDamageEvent((AbstractHurtingProjectile) (Object) this, source, amount, false)) {
+    @Inject(
+        method = "hurt",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;getLookAngle()Lnet/minecraft/world/phys/Vec3;"
+        )
+    )
+    private void arclight$nonLivingAttack(
+        DamageSource source,
+        float amount,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (
+            CraftEventFactory.handleNonLivingEntityDamageEvent(
+                (AbstractHurtingProjectile) (Object) this,
+                source,
+                amount,
+                false
+            )
+        ) {
             cir.setReturnValue(false);
         }
     }

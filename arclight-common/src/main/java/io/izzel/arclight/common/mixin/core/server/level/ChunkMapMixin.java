@@ -4,6 +4,10 @@ import com.mojang.datafixers.DataFixer;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ChunkMapBridge;
 import io.izzel.arclight.common.mod.util.ArclightCallbackExecutor;
+import java.util.concurrent.Executor;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ChunkHolder;
@@ -31,21 +35,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.concurrent.Executor;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-
 @Mixin(ChunkMap.class)
 public abstract class ChunkMapMixin implements ChunkMapBridge {
 
-    public final ArclightCallbackExecutor callbackExecutor = new ArclightCallbackExecutor();
+    public final ArclightCallbackExecutor callbackExecutor =
+        new ArclightCallbackExecutor();
+
     @Shadow
     @Mutable
     public ChunkGenerator generator;
+
     @Shadow
     @Final
     public ServerLevel level;
+
     @Shadow
     @Final
     @Mutable
@@ -59,18 +62,42 @@ public abstract class ChunkMapMixin implements ChunkMapBridge {
     @Shadow protected abstract void tick();
 
     @Invoker("tick") public abstract void bridge$tick(BooleanSupplier hasMoreTime);
+
     // @formatter:on
 
     @Invoker("setViewDistance")
     public abstract void bridge$setViewDistance(int i);
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$updateRandom(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier p_214846_, int p_214847_, boolean p_214848_, CallbackInfo ci) {
+    private void arclight$updateRandom(
+        ServerLevel p_214836_,
+        LevelStorageSource.LevelStorageAccess p_214837_,
+        DataFixer p_214838_,
+        StructureTemplateManager p_214839_,
+        Executor p_214840_,
+        BlockableEventLoop p_214841_,
+        LightChunkGetter p_214842_,
+        ChunkGenerator p_214843_,
+        ChunkProgressListener p_214844_,
+        ChunkStatusUpdateListener p_214845_,
+        Supplier p_214846_,
+        int p_214847_,
+        boolean p_214848_,
+        CallbackInfo ci
+    ) {
         this.bridge$setChunkGenerator(this.generator);
     }
 
-    @Redirect(method = "upgradeChunkTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;dimension()Lnet/minecraft/resources/ResourceKey;"))
-    private ResourceKey<LevelStem> arclight$useTypeKey(ServerLevel serverWorld) {
+    @Redirect(
+        method = "upgradeChunkTag",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;dimension()Lnet/minecraft/resources/ResourceKey;"
+        )
+    )
+    private ResourceKey<LevelStem> arclight$useTypeKey(
+        ServerLevel serverWorld
+    ) {
         return ((WorldBridge) serverWorld).bridge$getTypeKey();
     }
 
@@ -100,10 +127,21 @@ public abstract class ChunkMapMixin implements ChunkMapBridge {
         if (generator instanceof CustomChunkGenerator custom) {
             generator = custom.getDelegate();
         }
-        if (generator instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
-            this.randomState = RandomState.create(noisebasedchunkgenerator.generatorSettings().value(), this.level.registryAccess().lookupOrThrow(Registries.NOISE), this.level.getSeed());
+        if (
+            generator instanceof
+                NoiseBasedChunkGenerator noisebasedchunkgenerator
+        ) {
+            this.randomState = RandomState.create(
+                noisebasedchunkgenerator.generatorSettings().value(),
+                this.level.registryAccess().lookupOrThrow(Registries.NOISE),
+                this.level.getSeed()
+            );
         } else {
-            this.randomState = RandomState.create(NoiseGeneratorSettings.dummy(), this.level.registryAccess().lookupOrThrow(Registries.NOISE), this.level.getSeed());
+            this.randomState = RandomState.create(
+                NoiseGeneratorSettings.dummy(),
+                this.level.registryAccess().lookupOrThrow(Registries.NOISE),
+                this.level.getSeed()
+            );
         }
     }
 }

@@ -7,6 +7,7 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.network.datasync.SynchedEntityDataBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.EntityMixin;
+import java.util.UUID;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,14 +31,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.UUID;
-
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends EntityMixin {
 
     // @formatter:off
     @Shadow @Final private static EntityDataAccessor<ItemStack> DATA_ITEM;
+
     @Shadow public int pickupDelay;
+
     @Shadow public UUID target;
 
     @Inject(method = "merge(Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/world/item/ItemStack;)V", cancellable = true, at = @At("HEAD"))
@@ -46,10 +47,20 @@ public abstract class ItemEntityMixin extends EntityMixin {
             ci.cancel();
         }
     }
+
     // @formatter:on
 
-    @Redirect(method = "merge(Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;setItem(Lnet/minecraft/world/item/ItemStack;)V"))
-    private static void arclight$setNonEmpty(ItemEntity itemEntity, ItemStack stack) {
+    @Redirect(
+        method = "merge(Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/item/ItemEntity;setItem(Lnet/minecraft/world/item/ItemStack;)V"
+        )
+    )
+    private static void arclight$setNonEmpty(
+        ItemEntity itemEntity,
+        ItemStack stack
+    ) {
         if (!stack.isEmpty()) {
             itemEntity.setItem(stack);
         }
@@ -58,9 +69,26 @@ public abstract class ItemEntityMixin extends EntityMixin {
     @Shadow
     public abstract ItemStack getItem();
 
-    @Inject(method = "hurt", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;markHurt()V"))
-    private void arclight$damageNonLiving(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (CraftEventFactory.handleNonLivingEntityDamageEvent((ItemEntity) (Object) this, source, amount)) {
+    @Inject(
+        method = "hurt",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/item/ItemEntity;markHurt()V"
+        )
+    )
+    private void arclight$damageNonLiving(
+        DamageSource source,
+        float amount,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (
+            CraftEventFactory.handleNonLivingEntityDamageEvent(
+                (ItemEntity) (Object) this,
+                source,
+                amount
+            )
+        ) {
             cir.setReturnValue(false);
         }
     }
@@ -83,22 +111,42 @@ public abstract class ItemEntityMixin extends EntityMixin {
             ItemStack itemstack = this.getItem();
             int i = itemstack.getCount();
 
-            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup((ItemEntity) (Object) this, entity);
+            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(
+                (ItemEntity) (Object) this,
+                entity
+            );
             if (hook < 0) return;
 
-            final int canHold = ((PlayerInventoryBridge) entity.getInventory()).bridge$canHold(itemstack);
+            final int canHold =
+                ((PlayerInventoryBridge) entity.getInventory()).bridge$canHold(
+                    itemstack
+                );
             final int remaining = itemstack.getCount() - canHold;
             if (this.pickupDelay <= 0 && canHold > 0) {
                 itemstack.setCount(canHold);
-                final PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent(((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity(), (Item) this.getBukkitEntity(), remaining);
-                playerEvent.setCancelled(!((PlayerEntityBridge) entity).bridge$canPickUpLoot());
+                final PlayerPickupItemEvent playerEvent =
+                    new PlayerPickupItemEvent(
+                        ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity(),
+                        (Item) this.getBukkitEntity(),
+                        remaining
+                    );
+                playerEvent.setCancelled(
+                    !((PlayerEntityBridge) entity).bridge$canPickUpLoot()
+                );
                 Bukkit.getPluginManager().callEvent(playerEvent);
                 if (playerEvent.isCancelled()) {
                     itemstack.setCount(canHold + remaining);
                     return;
                 }
-                final EntityPickupItemEvent entityEvent = new EntityPickupItemEvent(((LivingEntityBridge) entity).bridge$getBukkitEntity(), (Item) this.getBukkitEntity(), remaining);
-                entityEvent.setCancelled(!((PlayerEntityBridge) entity).bridge$canPickUpLoot());
+                final EntityPickupItemEvent entityEvent =
+                    new EntityPickupItemEvent(
+                        ((LivingEntityBridge) entity).bridge$getBukkitEntity(),
+                        (Item) this.getBukkitEntity(),
+                        remaining
+                    );
+                entityEvent.setCancelled(
+                    !((PlayerEntityBridge) entity).bridge$canPickUpLoot()
+                );
                 Bukkit.getPluginManager().callEvent(entityEvent);
                 if (entityEvent.isCancelled()) {
                     itemstack.setCount(canHold + remaining);
@@ -115,15 +163,27 @@ public abstract class ItemEntityMixin extends EntityMixin {
                 this.pickupDelay = -1;
             }
             ItemStack copy = itemstack.copy();
-            if (this.pickupDelay == 0 && (this.target == null /*|| 6000 - this.age <= 200*/ || this.target.equals(entity.getUUID())) && (hook == 1 || entity.getInventory().add(itemstack))) {
+            if (
+                this.pickupDelay == 0 &&
+                (this.target == null /*|| 6000 - this.age <= 200*/ ||
+                    this.target.equals(entity.getUUID())) &&
+                (hook == 1 || entity.getInventory().add(itemstack))
+            ) {
                 copy.setCount(copy.getCount() - itemstack.getCount());
-                ForgeEventFactory.firePlayerItemPickupEvent(entity, (ItemEntity) (Object) this, copy);
+                ForgeEventFactory.firePlayerItemPickupEvent(
+                    entity,
+                    (ItemEntity) (Object) this,
+                    copy
+                );
                 entity.take((ItemEntity) (Object) this, i);
                 if (itemstack.isEmpty()) {
                     this.discard();
                     itemstack.setCount(i);
                 }
-                entity.awardStat(Stats.ITEM_PICKED_UP.get(itemstack.getItem()), i);
+                entity.awardStat(
+                    Stats.ITEM_PICKED_UP.get(itemstack.getItem()),
+                    i
+                );
                 entity.onItemPickup((ItemEntity) (Object) this);
             }
         }
@@ -131,11 +191,24 @@ public abstract class ItemEntityMixin extends EntityMixin {
 
     @Inject(method = "setItem", at = @At("RETURN"))
     private void arclight$markDirty(ItemStack stack, CallbackInfo ci) {
-        ((SynchedEntityDataBridge) this.getEntityData()).bridge$markDirty(DATA_ITEM);
+        ((SynchedEntityDataBridge) this.getEntityData()).bridge$markDirty(
+            DATA_ITEM
+        );
     }
 
-    @Redirect(method = "mergeWithNeighbours", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
-    private AABB arclight$mergeRadius(AABB instance, double pX, double pY, double pZ) {
+    @Redirect(
+        method = "mergeWithNeighbours",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"
+        )
+    )
+    private AABB arclight$mergeRadius(
+        AABB instance,
+        double pX,
+        double pY,
+        double pZ
+    ) {
         double radius = ((WorldBridge) level()).bridge$spigotConfig().itemMerge;
         return instance.inflate(radius);
     }

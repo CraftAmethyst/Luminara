@@ -14,18 +14,41 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class EntityTeleportEventDispatcher {
 
     @SubscribeEvent(receiveCanceled = true)
-    public void onTeleport(net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event) {
+    public void onTeleport(
+        net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event
+    ) {
         if (event.getEntity() instanceof ServerPlayer) {
-            CraftPlayer player = ((ServerPlayerEntityBridge) event.getEntity()).bridge$getBukkitEntity();
-            PlayerTeleportEvent bukkitEvent = new PlayerTeleportEvent(player, player.getLocation(), new Location(player.getWorld(), event.getTargetX(), event.getTargetY(), event.getTargetZ()), PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
+            CraftPlayer player =
+                ((ServerPlayerEntityBridge) event.getEntity()).bridge$getBukkitEntity();
+            PlayerTeleportEvent bukkitEvent = new PlayerTeleportEvent(
+                player,
+                player.getLocation(),
+                new Location(
+                    player.getWorld(),
+                    event.getTargetX(),
+                    event.getTargetY(),
+                    event.getTargetZ()
+                ),
+                PlayerTeleportEvent.TeleportCause.ENDER_PEARL
+            );
             Bukkit.getPluginManager().callEvent(bukkitEvent);
             event.setCanceled(bukkitEvent.isCancelled());
             event.setTargetX(bukkitEvent.getTo().getX());
             event.setTargetY(bukkitEvent.getTo().getY());
             event.setTargetZ(bukkitEvent.getTo().getZ());
         } else {
-            CraftEntity entity = ((EntityBridge) event.getEntity()).bridge$getBukkitEntity();
-            EntityTeleportEvent bukkitEvent = new EntityTeleportEvent(entity, entity.getLocation(), new Location(entity.getWorld(), event.getTargetX(), event.getTargetY(), event.getTargetZ()));
+            CraftEntity entity =
+                ((EntityBridge) event.getEntity()).bridge$getBukkitEntity();
+            EntityTeleportEvent bukkitEvent = new EntityTeleportEvent(
+                entity,
+                entity.getLocation(),
+                new Location(
+                    entity.getWorld(),
+                    event.getTargetX(),
+                    event.getTargetY(),
+                    event.getTargetZ()
+                )
+            );
             Bukkit.getPluginManager().callEvent(bukkitEvent);
             event.setCanceled(bukkitEvent.isCancelled());
             event.setTargetX(bukkitEvent.getTo().getX());

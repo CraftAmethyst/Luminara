@@ -14,8 +14,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PotionItem.class)
 public class PotionItemMixin {
 
-    @Inject(method = "finishUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    public void arclight$drinkPotion(ItemStack stack, Level worldIn, LivingEntity entityLiving, CallbackInfoReturnable<ItemStack> cir) {
-        ((LivingEntityBridge) entityLiving).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.POTION_DRINK);
+    @Inject(
+        method = "finishUsingItem",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"
+        )
+    )
+    public void arclight$drinkPotion(
+        ItemStack stack,
+        Level worldIn,
+        LivingEntity entityLiving,
+        CallbackInfoReturnable<ItemStack> cir
+    ) {
+        ((LivingEntityBridge) entityLiving).bridge$pushEffectCause(
+            EntityPotionEffectEvent.Cause.POTION_DRINK
+        );
     }
 }

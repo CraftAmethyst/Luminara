@@ -12,8 +12,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(VillageSiege.class)
 public class VillageSiegeMixin {
 
-    @Inject(method = "trySpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
+    @Inject(
+        method = "trySpawn",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"
+        )
+    )
     public void arclight$addEntityReason(ServerLevel world, CallbackInfo ci) {
-        ((ServerWorldBridge) world).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION);
+        ((ServerWorldBridge) world).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION
+        );
     }
 }

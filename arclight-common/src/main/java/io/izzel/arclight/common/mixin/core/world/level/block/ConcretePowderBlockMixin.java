@@ -23,20 +23,52 @@ public abstract class ConcretePowderBlockMixin extends FallingBlockMixin {
 
     // @formatter:off
     @Shadow @Final private BlockState concrete;
+
     // @formatter:on
 
-    @Redirect(method = "onLand", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public boolean arclight$blockForm(Level world, BlockPos pos, BlockState newState, int flags) {
-        return CraftEventFactory.handleBlockFormEvent(world, pos, newState, flags);
+    @Redirect(
+        method = "onLand",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    public boolean arclight$blockForm(
+        Level world,
+        BlockPos pos,
+        BlockState newState,
+        int flags
+    ) {
+        return CraftEventFactory.handleBlockFormEvent(
+            world,
+            pos,
+            newState,
+            flags
+        );
     }
 
-    @Redirect(method = "getStateForPlacement", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/ConcretePowderBlock;concrete:Lnet/minecraft/world/level/block/state/BlockState;"))
-    public BlockState arclight$blockForm(ConcretePowderBlock instance, BlockPlaceContext context) {
+    @Redirect(
+        method = "getStateForPlacement",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/world/level/block/ConcretePowderBlock;concrete:Lnet/minecraft/world/level/block/state/BlockState;"
+        )
+    )
+    public BlockState arclight$blockForm(
+        ConcretePowderBlock instance,
+        BlockPlaceContext context
+    ) {
         Level world = context.getLevel();
         BlockPos blockPos = context.getClickedPos();
-        CraftBlockState blockState = CraftBlockStates.getBlockState(world, blockPos);
+        CraftBlockState blockState = CraftBlockStates.getBlockState(
+            world,
+            blockPos
+        );
         blockState.setData(this.concrete);
-        BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
+        BlockFormEvent event = new BlockFormEvent(
+            blockState.getBlock(),
+            blockState
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             return blockState.getHandle();
@@ -44,18 +76,45 @@ public abstract class ConcretePowderBlockMixin extends FallingBlockMixin {
         return super.getStateForPlacement(context);
     }
 
-    @Redirect(method = "updateShape", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/ConcretePowderBlock;concrete:Lnet/minecraft/world/level/block/state/BlockState;"))
-    public BlockState arclight$blockForm(ConcretePowderBlock instance, BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+    @Redirect(
+        method = "updateShape",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/world/level/block/ConcretePowderBlock;concrete:Lnet/minecraft/world/level/block/state/BlockState;"
+        )
+    )
+    public BlockState arclight$blockForm(
+        ConcretePowderBlock instance,
+        BlockState stateIn,
+        Direction facing,
+        BlockState facingState,
+        LevelAccessor worldIn,
+        BlockPos currentPos,
+        BlockPos facingPos
+    ) {
         if (!(worldIn instanceof Level)) {
             return this.concrete;
         }
-        CraftBlockState blockState = CraftBlockStates.getBlockState(worldIn, currentPos);
+        CraftBlockState blockState = CraftBlockStates.getBlockState(
+            worldIn,
+            currentPos
+        );
         blockState.setData(this.concrete);
-        BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
+        BlockFormEvent event = new BlockFormEvent(
+            blockState.getBlock(),
+            blockState
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             return blockState.getHandle();
         }
-        return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        return super.updateShape(
+            stateIn,
+            facing,
+            facingState,
+            worldIn,
+            currentPos,
+            facingPos
+        );
     }
 }

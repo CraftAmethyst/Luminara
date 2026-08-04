@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.bridge.core.inventory;
 
 import io.izzel.arclight.common.mod.util.WrappedContents;
+import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -11,10 +12,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.List;
-
 public interface IInventoryBridge {
-
     int MAX_STACK = 64;
 
     default List<ItemStack> getContents() {
@@ -39,8 +37,7 @@ public interface IInventoryBridge {
         return null;
     }
 
-    default void setCurrentRecipe(Recipe<?> recipe) {
-    }
+    default void setCurrentRecipe(Recipe<?> recipe) {}
 
     default Inventory getOwnerInventory() {
         InventoryHolder owner = this.getOwner();

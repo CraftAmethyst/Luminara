@@ -15,21 +15,55 @@ public class MerchantOfferMixin implements MerchantOfferBridge {
 
     // @formatter:off
     @Shadow public ItemStack baseCostA;
+
     @Shadow private int demand;
+
     // @formatter:on
 
     private CraftMerchantRecipe bukkitHandle;
 
     public CraftMerchantRecipe asBukkit() {
-        return (bukkitHandle == null) ? bukkitHandle = new CraftMerchantRecipe((MerchantOffer) (Object) this) : bukkitHandle;
+        return (bukkitHandle == null)
+            ? bukkitHandle = new CraftMerchantRecipe(
+                  (MerchantOffer) (Object) this
+              )
+            : bukkitHandle;
     }
 
-    public void arclight$constructor(ItemStack buyingStackFirstIn, ItemStack buyingStackSecondIn, ItemStack sellingStackIn, int usesIn, int maxUsesIn, int givenEXPIn, float priceMultiplierIn, int demand) {
+    public void arclight$constructor(
+        ItemStack buyingStackFirstIn,
+        ItemStack buyingStackSecondIn,
+        ItemStack sellingStackIn,
+        int usesIn,
+        int maxUsesIn,
+        int givenEXPIn,
+        float priceMultiplierIn,
+        int demand
+    ) {
         throw new RuntimeException();
     }
 
-    public void arclight$constructor(ItemStack buyingStackFirstIn, ItemStack buyingStackSecondIn, ItemStack sellingStackIn, int usesIn, int maxUsesIn, int givenEXPIn, float priceMultiplierIn, int demand, CraftMerchantRecipe bukkit) {
-        arclight$constructor(buyingStackFirstIn, buyingStackSecondIn, sellingStackIn, usesIn, maxUsesIn, givenEXPIn, priceMultiplierIn, demand);
+    public void arclight$constructor(
+        ItemStack buyingStackFirstIn,
+        ItemStack buyingStackSecondIn,
+        ItemStack sellingStackIn,
+        int usesIn,
+        int maxUsesIn,
+        int givenEXPIn,
+        float priceMultiplierIn,
+        int demand,
+        CraftMerchantRecipe bukkit
+    ) {
+        arclight$constructor(
+            buyingStackFirstIn,
+            buyingStackSecondIn,
+            sellingStackIn,
+            usesIn,
+            maxUsesIn,
+            givenEXPIn,
+            priceMultiplierIn,
+            demand
+        );
         this.bukkitHandle = bukkit;
     }
 

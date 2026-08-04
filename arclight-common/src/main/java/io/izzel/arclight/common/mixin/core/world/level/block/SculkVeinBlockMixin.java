@@ -18,18 +18,56 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class SculkVeinBlockMixin {
 
     @Inject(method = "attemptUseCharge", at = @At("HEAD"))
-    private void arclight$captureSource(SculkSpreader.ChargeCursor p_222369_, LevelAccessor p_222370_, BlockPos source, RandomSource p_222372_, SculkSpreader p_222373_, boolean p_222374_, CallbackInfoReturnable<Integer> cir) {
+    private void arclight$captureSource(
+        SculkSpreader.ChargeCursor p_222369_,
+        LevelAccessor p_222370_,
+        BlockPos source,
+        RandomSource p_222372_,
+        SculkSpreader p_222373_,
+        boolean p_222374_,
+        CallbackInfoReturnable<Integer> cir
+    ) {
         ArclightCaptures.captureSpreadSource(source);
     }
 
     @Inject(method = "attemptUseCharge", at = @At("RETURN"))
-    private void arclight$resetSource(SculkSpreader.ChargeCursor p_222369_, LevelAccessor p_222370_, BlockPos source, RandomSource p_222372_, SculkSpreader p_222373_, boolean p_222374_, CallbackInfoReturnable<Integer> cir) {
+    private void arclight$resetSource(
+        SculkSpreader.ChargeCursor p_222369_,
+        LevelAccessor p_222370_,
+        BlockPos source,
+        RandomSource p_222372_,
+        SculkSpreader p_222373_,
+        boolean p_222374_,
+        CallbackInfoReturnable<Integer> cir
+    ) {
         ArclightCaptures.resetSpreadSource();
     }
 
-    @Eject(method = "m_222375_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelAccessor;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z", remap = false))
-    private boolean arclight$blockSpread(LevelAccessor level, BlockPos pos, BlockState state, int i, CallbackInfoReturnable<Boolean> cir) {
-        if (!CraftEventFactory.handleBlockSpreadEvent(level, ArclightCaptures.getSpreadPos(), pos, state, i)) {
+    @Eject(
+        method = "m_222375_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/LevelAccessor;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",
+            remap = false
+        )
+    )
+    private boolean arclight$blockSpread(
+        LevelAccessor level,
+        BlockPos pos,
+        BlockState state,
+        int i,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (
+            !CraftEventFactory.handleBlockSpreadEvent(
+                level,
+                ArclightCaptures.getSpreadPos(),
+                pos,
+                state,
+                i
+            )
+        ) {
             cir.setReturnValue(false);
             return false;
         }

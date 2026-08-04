@@ -3,6 +3,8 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
@@ -19,16 +21,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(ChiseledBookShelfBlockEntity.class)
-public abstract class ChiseledBookShelfBlockEntityMixin extends BlockEntityMixin implements IInventoryBridge, Container {
+public abstract class ChiseledBookShelfBlockEntityMixin
+    extends BlockEntityMixin
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction = new ArrayList<>();
+
     @Shadow
     @Final
     private NonNullList<ItemStack> items;
+
     private int maxStack = 1;
 
     @Override
@@ -52,8 +55,7 @@ public abstract class ChiseledBookShelfBlockEntityMixin extends BlockEntityMixin
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {
@@ -68,7 +70,12 @@ public abstract class ChiseledBookShelfBlockEntityMixin extends BlockEntityMixin
     @Override
     public Location getLocation() {
         if (!DistValidate.isValid(level)) return null;
-        return new org.bukkit.Location(((WorldBridge) level).bridge$getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
+        return new org.bukkit.Location(
+            ((WorldBridge) level).bridge$getWorld(),
+            worldPosition.getX(),
+            worldPosition.getY(),
+            worldPosition.getZ()
+        );
     }
 
     @Inject(method = "updateState", cancellable = true, at = @At("HEAD"))

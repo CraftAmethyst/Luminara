@@ -15,7 +15,13 @@ public class ColouredConsoleSenderMixin extends CraftConsoleCommandSenderMixin {
 
     private static final Logger LOGGER = LogManager.getLogger("Console");
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Ljline/console/ConsoleReader;getTerminal()Ljline/Terminal;"))
+    @Redirect(
+        method = "<init>",
+        at = @At(
+            value = "INVOKE",
+            target = "Ljline/console/ConsoleReader;getTerminal()Ljline/Terminal;"
+        )
+    )
     private Terminal arclight$terminal(ConsoleReader instance) {
         return null;
     }

@@ -56,19 +56,43 @@ public abstract class ItemFrameMixin extends HangingEntityMixin {
         d4 /= 32.0;
         return new AABB(locX - d2, locY - d3, locZ - d4, locX + d2, locY + d3, locZ + d4);
     }
+
     // @formatter:on
 
     @Shadow
     protected abstract void onItemChanged(ItemStack p_218866_);
 
-    @Inject(method = "hurt", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/ItemFrame;dropItem(Lnet/minecraft/world/entity/Entity;Z)V"))
-    private void arclight$damageNonLiving(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (CraftEventFactory.handleNonLivingEntityDamageEvent((ItemFrame) (Object) this, source, amount, false) || this.isRemoved()) {
+    @Inject(
+        method = "hurt",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/decoration/ItemFrame;dropItem(Lnet/minecraft/world/entity/Entity;Z)V"
+        )
+    )
+    private void arclight$damageNonLiving(
+        DamageSource source,
+        float amount,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (
+            CraftEventFactory.handleNonLivingEntityDamageEvent(
+                (ItemFrame) (Object) this,
+                source,
+                amount,
+                false
+            ) ||
+            this.isRemoved()
+        ) {
             cir.setReturnValue(true);
         }
     }
 
-    public void setItem(ItemStack itemstack, final boolean flag, final boolean playSound) {
+    public void setItem(
+        ItemStack itemstack,
+        final boolean flag,
+        final boolean playSound
+    ) {
         if (!itemstack.isEmpty()) {
             itemstack = itemstack.copy();
             itemstack.setCount(1);

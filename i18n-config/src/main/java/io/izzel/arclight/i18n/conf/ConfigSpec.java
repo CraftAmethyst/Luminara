@@ -21,7 +21,6 @@ public class ConfigSpec {
     @Setting("async-catcher")
     private AsyncCatcherSpec asyncCatcherSpec;
 
-
     @Setting("velocity")
     private VelocitySpec velocitySpec;
 
@@ -36,7 +35,9 @@ public class ConfigSpec {
     }
 
     public OptimizationSpec getOptimization() {
-        return optimizationSpec != null ? optimizationSpec : new OptimizationSpec();
+        return optimizationSpec != null
+            ? optimizationSpec
+            : new OptimizationSpec();
     }
 
     public LocaleSpec getLocale() {
@@ -48,16 +49,19 @@ public class ConfigSpec {
     }
 
     public AsyncCatcherSpec getAsyncCatcher() {
-        return asyncCatcherSpec != null ? asyncCatcherSpec : new AsyncCatcherSpec();
+        return asyncCatcherSpec != null
+            ? asyncCatcherSpec
+            : new AsyncCatcherSpec();
     }
-
 
     public VelocitySpec getVelocity() {
         return velocitySpec != null ? velocitySpec : new VelocitySpec();
     }
 
     public ErrorHandlingSpec getErrorHandling() {
-        return errorHandlingSpec != null ? errorHandlingSpec : new ErrorHandlingSpec();
+        return errorHandlingSpec != null
+            ? errorHandlingSpec
+            : new ErrorHandlingSpec();
     }
 
     public LoggingSpec getLogging() {

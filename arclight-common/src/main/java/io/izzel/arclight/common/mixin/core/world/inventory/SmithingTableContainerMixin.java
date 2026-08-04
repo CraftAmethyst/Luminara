@@ -18,8 +18,18 @@ public abstract class SmithingTableContainerMixin extends ItemCombinerMixin {
 
     private CraftInventoryView bukkitEntity;
 
-    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
-    private void arclight$prepareSmithing(ResultContainer craftResultInventory, int index, ItemStack stack) {
+    @Redirect(
+        method = "createResult",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"
+        )
+    )
+    private void arclight$prepareSmithing(
+        ResultContainer craftResultInventory,
+        int index,
+        ItemStack stack
+    ) {
         CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), stack);
     }
 
@@ -28,7 +38,15 @@ public abstract class SmithingTableContainerMixin extends ItemCombinerMixin {
         if (this.bukkitEntity != null) {
             return this.bukkitEntity;
         }
-        CraftInventory inventory = new CraftInventorySmithing(((IWorldPosCallableBridge) this.access).bridge$getLocation(), this.inputSlots, this.resultSlots);
-        return this.bukkitEntity = new CraftInventoryView(((PlayerEntityBridge) this.player).bridge$getBukkitEntity(), inventory, (SmithingMenu) (Object) this);
+        CraftInventory inventory = new CraftInventorySmithing(
+            ((IWorldPosCallableBridge) this.access).bridge$getLocation(),
+            this.inputSlots,
+            this.resultSlots
+        );
+        return this.bukkitEntity = new CraftInventoryView(
+            ((PlayerEntityBridge) this.player).bridge$getBukkitEntity(),
+            inventory,
+            (SmithingMenu) (Object) this
+        );
     }
 }

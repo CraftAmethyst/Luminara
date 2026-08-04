@@ -15,15 +15,30 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(WanderingTrader.class)
 public abstract class WanderingTraderMixin extends AbstractVillagerMixin {
 
-    @Redirect(method = "updateTrades", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/trading/MerchantOffers;add(Ljava/lang/Object;)Z"))
-    private boolean arclight$gainOffer(MerchantOffers merchantOffers, Object e) {
+    @Redirect(
+        method = "updateTrades",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Lnet/minecraft/world/item/trading/MerchantOffers;add(Ljava/lang/Object;)Z"
+        )
+    )
+    private boolean arclight$gainOffer(
+        MerchantOffers merchantOffers,
+        Object e
+    ) {
         MerchantOffer offer = (MerchantOffer) e;
-        VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent((AbstractVillager) getBukkitEntity(), ((MerchantOfferBridge) offer).bridge$asBukkit());
+        VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent(
+            (AbstractVillager) getBukkitEntity(),
+            ((MerchantOfferBridge) offer).bridge$asBukkit()
+        );
         if (this.valid) {
             Bukkit.getPluginManager().callEvent(event);
         }
         if (!event.isCancelled()) {
-            return merchantOffers.add(CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
+            return merchantOffers.add(
+                CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft()
+            );
         }
         return false;
     }

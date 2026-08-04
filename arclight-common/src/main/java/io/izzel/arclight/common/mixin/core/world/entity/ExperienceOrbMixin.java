@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.entity;
 
+import java.util.Map;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -23,15 +24,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
-
 @Mixin(ExperienceOrb.class)
 public abstract class ExperienceOrbMixin extends EntityMixin {
 
     @Shadow
     public int value;
+
     // @formatter:off
     @Shadow private Player followingPlayer;
+
     private transient Player arclight$lastPlayer;
 
     @Inject(method = "getExperienceValue", cancellable = true, at = @At("HEAD"))
@@ -58,6 +59,7 @@ public abstract class ExperienceOrbMixin extends EntityMixin {
 
     @Shadow
     public abstract boolean hurt(DamageSource source, float amount);
+
     // @formatter:on
 
     @Shadow
@@ -66,7 +68,14 @@ public abstract class ExperienceOrbMixin extends EntityMixin {
     @Shadow
     protected abstract int xpToDurability(int p_20799_);
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+    @Inject(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/Entity;tick()V"
+        )
+    )
     private void arclight$captureLast(CallbackInfo ci) {
         arclight$lastPlayer = this.followingPlayer;
     }
@@ -76,30 +85,70 @@ public abstract class ExperienceOrbMixin extends EntityMixin {
         arclight$lastPlayer = null;
     }
 
-    @Redirect(method = "tick", at = @At(value = "FIELD", ordinal = 4, target = "Lnet/minecraft/world/entity/ExperienceOrb;followingPlayer:Lnet/minecraft/world/entity/player/Player;"))
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "FIELD",
+            ordinal = 4,
+            target = "Lnet/minecraft/world/entity/ExperienceOrb;followingPlayer:Lnet/minecraft/world/entity/player/Player;"
+        )
+    )
     private Player arclight$targetPlayer(ExperienceOrb entity) {
         if (this.followingPlayer != arclight$lastPlayer) {
-            EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent((ExperienceOrb) (Object) this, this.followingPlayer, (this.followingPlayer != null) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.FORGOT_TARGET);
-            LivingEntity target = (event.getTarget() == null) ? null : ((CraftLivingEntity) event.getTarget()).getHandle();
+            EntityTargetLivingEntityEvent event =
+                CraftEventFactory.callEntityTargetLivingEvent(
+                    (ExperienceOrb) (Object) this,
+                    this.followingPlayer,
+                    (this.followingPlayer != null)
+                        ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER
+                        : EntityTargetEvent.TargetReason.FORGOT_TARGET
+                );
+            LivingEntity target = (event.getTarget() == null)
+                ? null
+                : ((CraftLivingEntity) event.getTarget()).getHandle();
 
             if (event.isCancelled()) {
                 this.followingPlayer = arclight$lastPlayer;
                 return null;
             } else {
-                this.followingPlayer = (target instanceof Player) ? (Player) target : null;
+                this.followingPlayer = (target instanceof Player)
+                    ? (Player) target
+                    : null;
             }
         }
         return this.followingPlayer;
     }
 
-    @Redirect(method = "playerTouch", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;giveExperiencePoints(I)V"))
+    @Redirect(
+        method = "playerTouch",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;giveExperiencePoints(I)V"
+        )
+    )
     private void arclight$expChange(Player player, int amount) {
-        player.giveExperiencePoints(CraftEventFactory.callPlayerExpChangeEvent(player, amount).getAmount());
+        player.giveExperiencePoints(
+            CraftEventFactory.callPlayerExpChangeEvent(
+                player,
+                amount
+            ).getAmount()
+        );
     }
 
-    @Redirect(method = "playerTouch", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/world/entity/player/Player;takeXpDelay:I"))
+    @Redirect(
+        method = "playerTouch",
+        at = @At(
+            value = "FIELD",
+            opcode = Opcodes.PUTFIELD,
+            target = "Lnet/minecraft/world/entity/player/Player;takeXpDelay:I"
+        )
+    )
     private void arclight$cooldown(Player instance, int value) {
-        instance.takeXpDelay = CraftEventFactory.callPlayerXpCooldownEvent(instance, value, PlayerExpCooldownChangeEvent.ChangeReason.PICKUP_ORB).getNewCooldown();
+        instance.takeXpDelay = CraftEventFactory.callPlayerXpCooldownEvent(
+            instance,
+            value,
+            PlayerExpCooldownChangeEvent.ChangeReason.PICKUP_ORB
+        ).getNewCooldown();
     }
 
     /**
@@ -108,13 +157,28 @@ public abstract class ExperienceOrbMixin extends EntityMixin {
      */
     @Overwrite
     private int repairPlayerItems(Player player, int i) {
-        Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, player, ItemStack::isDamaged);
+        Map.Entry<EquipmentSlot, ItemStack> entry =
+            EnchantmentHelper.getRandomItemWith(
+                Enchantments.MENDING,
+                player,
+                ItemStack::isDamaged
+            );
 
         if (entry != null) {
             ItemStack itemstack = entry.getValue();
-            int j = Math.min(this.xpToDurability(this.value), itemstack.getDamageValue());
+            int j = Math.min(
+                this.xpToDurability(this.value),
+                itemstack.getDamageValue()
+            );
             // CraftBukkit start
-            org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(player, (ExperienceOrb) (Object) this, itemstack, entry.getKey(), j);
+            org.bukkit.event.player.PlayerItemMendEvent event =
+                CraftEventFactory.callPlayerItemMendEvent(
+                    player,
+                    (ExperienceOrb) (Object) this,
+                    itemstack,
+                    entry.getKey(),
+                    j
+                );
             j = event.getRepairAmount();
             if (event.isCancelled()) {
                 return i;

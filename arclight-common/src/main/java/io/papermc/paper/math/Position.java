@@ -4,7 +4,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public interface Position {
-
     static FinePosition fine(final double x, final double y, final double z) {
         return new FinePositionImpl(x, y, z);
     }
@@ -31,10 +30,11 @@ public interface Position {
         return (int) Math.floor(this.z());
     }
 
-    record FinePositionImpl(double x, double y, double z) implements FinePosition {
-    }
+    record FinePositionImpl(double x, double y, double z) implements
+        FinePosition {}
 
-    record BlockPositionImpl(int blockX, int blockY, int blockZ) implements BlockPosition {
+    record BlockPositionImpl(int blockX, int blockY, int blockZ) implements
+        BlockPosition {
         @Override
         public double x() {
             return this.blockX;

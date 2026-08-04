@@ -18,13 +18,20 @@ public abstract class ItemCombinerMixin extends AbstractContainerMenuMixin {
 
     // @formatter:off
     @Shadow @Final protected ContainerLevelAccess access;
+
     @Shadow @Final @Mutable protected Container inputSlots;
+
     @Shadow @Final protected ResultContainer resultSlots;
+
     @Shadow @Final protected Player player;
+
     // @formatter:on
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    private void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    private void arclight$unreachable(
+        Player playerIn,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (!bridge$isCheckReachable()) cir.setReturnValue(true);
     }
 }

@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mod.command;
 
 import io.izzel.arclight.common.adventure.PaperAdventure;
 import io.izzel.arclight.common.mod.permission.ArclightDummyPermissible;
+import java.util.UUID;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -16,9 +17,9 @@ import org.bukkit.craftbukkit.v.util.CraftChatMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
-public class ArclightDummyCommandSender extends ArclightDummyPermissible implements CommandSender, Audience {
+public class ArclightDummyCommandSender
+    extends ArclightDummyPermissible
+    implements CommandSender, Audience {
 
     public CommandSourceStack stack;
     public Spigot spigot;
@@ -44,11 +45,14 @@ public class ArclightDummyCommandSender extends ArclightDummyPermissible impleme
     // Adventure Audience implementation
     @Override
     public void sendMessage(@NotNull Component message) {
-        net.minecraft.network.chat.Component vanillaComponent = PaperAdventure.asVanilla(message);
+        net.minecraft.network.chat.Component vanillaComponent =
+            PaperAdventure.asVanilla(message);
         sendToAppropriateTarget(vanillaComponent);
     }
 
-    private void sendToAppropriateTarget(net.minecraft.network.chat.Component message) {
+    private void sendToAppropriateTarget(
+        net.minecraft.network.chat.Component message
+    ) {
         try {
             // Try to get the player from the CommandSourceStack
             ServerPlayer player = stack.getPlayer();
@@ -64,17 +68,27 @@ public class ArclightDummyCommandSender extends ArclightDummyPermissible impleme
     }
 
     @Override
-    public void sendMessage(@NotNull Component message, net.kyori.adventure.audience.MessageType type) {
+    public void sendMessage(
+        @NotNull Component message,
+        net.kyori.adventure.audience.MessageType type
+    ) {
         sendMessage(message);
     }
 
     @Override
-    public void sendMessage(@NotNull Identity source, @NotNull Component message) {
+    public void sendMessage(
+        @NotNull Identity source,
+        @NotNull Component message
+    ) {
         sendMessage(message);
     }
 
     @Override
-    public void sendMessage(@NotNull Identity source, @NotNull Component message, net.kyori.adventure.audience.MessageType type) {
+    public void sendMessage(
+        @NotNull Identity source,
+        @NotNull Component message,
+        net.kyori.adventure.audience.MessageType type
+    ) {
         sendMessage(message);
     }
 
@@ -119,6 +133,7 @@ public class ArclightDummyCommandSender extends ArclightDummyPermissible impleme
     }
 
     public class Spigot extends CommandSender.Spigot {
+
         @Override
         public void sendMessage(@NotNull BaseComponent... components) {
             for (var raw : components) {
@@ -127,12 +142,18 @@ public class ArclightDummyCommandSender extends ArclightDummyPermissible impleme
         }
 
         @Override
-        public void sendMessage(@Nullable UUID sender, @NotNull BaseComponent component) {
+        public void sendMessage(
+            @Nullable UUID sender,
+            @NotNull BaseComponent component
+        ) {
             sendMessage(component);
         }
 
         @Override
-        public void sendMessage(@Nullable UUID sender, @NotNull BaseComponent... components) {
+        public void sendMessage(
+            @Nullable UUID sender,
+            @NotNull BaseComponent... components
+        ) {
             sendMessage(components);
         }
 
@@ -141,19 +162,28 @@ public class ArclightDummyCommandSender extends ArclightDummyPermissible impleme
             try {
                 // Enhanced BaseComponent handling for better MineDown support
                 var json = ComponentSerializer.toString(component);
-                var result = net.minecraft.network.chat.Component.Serializer.fromJson(json);
+                var result =
+                    net.minecraft.network.chat.Component.Serializer.fromJson(
+                        json
+                    );
                 if (result != null) {
                     sendToAppropriateTarget(result);
                 } else {
                     // Fallback to plain text if JSON parsing fails
                     String plainText = component.toPlainText();
-                    Component adventureComponent = PaperAdventure.parseMessage(plainText);
-                    ArclightDummyCommandSender.this.sendMessage(adventureComponent);
+                    Component adventureComponent = PaperAdventure.parseMessage(
+                        plainText
+                    );
+                    ArclightDummyCommandSender.this.sendMessage(
+                        adventureComponent
+                    );
                 }
             } catch (Exception e) {
                 // Final fallback to plain text
                 String plainText = component.toPlainText();
-                sendToAppropriateTarget(net.minecraft.network.chat.Component.literal(plainText));
+                sendToAppropriateTarget(
+                    net.minecraft.network.chat.Component.literal(plainText)
+                );
             }
         }
     }

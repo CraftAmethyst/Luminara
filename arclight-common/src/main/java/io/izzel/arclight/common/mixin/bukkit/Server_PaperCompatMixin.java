@@ -9,14 +9,21 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = Server.class, remap = false)
 public interface Server_PaperCompatMixin {
-
     // Paper API compatibility: Server#getCurrentTick()
     default int getCurrentTick() {
         return ArclightConstants.currentTick;
     }
 
     // Paper API compatibility: Server#createInventory(InventoryHolder, int, Component)
-    default Inventory createInventory(InventoryHolder owner, int size, net.kyori.adventure.text.Component title) throws IllegalArgumentException {
-        return ((Server) this).createInventory(owner, size, PaperAdventure.adventureToLegacy(title));
+    default Inventory createInventory(
+        InventoryHolder owner,
+        int size,
+        net.kyori.adventure.text.Component title
+    ) throws IllegalArgumentException {
+        return ((Server) this).createInventory(
+            owner,
+            size,
+            PaperAdventure.adventureToLegacy(title)
+        );
     }
 }

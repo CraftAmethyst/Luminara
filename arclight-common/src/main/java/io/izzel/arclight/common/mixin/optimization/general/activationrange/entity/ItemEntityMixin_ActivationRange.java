@@ -16,28 +16,53 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemEntity.class)
-public abstract class ItemEntityMixin_ActivationRange extends EntityMixin_ActivationRange {
+public abstract class ItemEntityMixin_ActivationRange
+    extends EntityMixin_ActivationRange {
 
     // @formatter:off
     @Shadow public int pickupDelay;
+
     @Shadow public int age;
+
     @Shadow(remap = false) public int lifespan;
+
     private int lastTick = ArclightConstants.currentTick - 1;
+
     // @formatter:on
 
-    @Shadow public abstract ItemStack getItem();
+    @Shadow
+    public abstract ItemStack getItem();
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V", at = @At("RETURN"))
-    private void activationRange$init(EntityType<? extends ItemEntity> entityType, Level world, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V",
+        at = @At("RETURN")
+    )
+    private void activationRange$init(
+        EntityType<? extends ItemEntity> entityType,
+        Level world,
+        CallbackInfo ci
+    ) {
         if (DistValidate.isValid(this.level())) {
-            this.lifespan = ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
+            this.lifespan =
+                ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
         }
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V", at = @At("RETURN"))
-    private void activationRange$init(Level worldIn, double x, double y, double z, ItemStack stack, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V",
+        at = @At("RETURN")
+    )
+    private void activationRange$init(
+        Level worldIn,
+        double x,
+        double y,
+        double z,
+        ItemStack stack,
+        CallbackInfo ci
+    ) {
         if (DistValidate.isValid(this.level()) && this.lifespan == 6000) {
-            this.lifespan = ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
+            this.lifespan =
+                ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
         }
     }
 
@@ -45,12 +70,19 @@ public abstract class ItemEntityMixin_ActivationRange extends EntityMixin_Activa
     public void inactiveTick() {
         super.inactiveTick();
         int elapsedTicks = ArclightConstants.currentTick - this.lastTick;
-        if (this.pickupDelay > 0 && this.pickupDelay != 32767 && elapsedTicks > 0) this.pickupDelay -= elapsedTicks;
+        if (
+            this.pickupDelay > 0 &&
+            this.pickupDelay != 32767 &&
+            elapsedTicks > 0
+        ) this.pickupDelay -= elapsedTicks;
         if (this.age != -32768) this.age += elapsedTicks;
         this.lastTick = ArclightConstants.currentTick;
 
         if (!this.level().isClientSide && this.age >= this.lifespan) {
-            int hook = ForgeEventFactory.onItemExpire((ItemEntity) (Object) this, this.getItem());
+            int hook = ForgeEventFactory.onItemExpire(
+                (ItemEntity) (Object) this,
+                this.getItem()
+            );
             if (hook < 0) this.discard();
             else this.lifespan += hook;
         }

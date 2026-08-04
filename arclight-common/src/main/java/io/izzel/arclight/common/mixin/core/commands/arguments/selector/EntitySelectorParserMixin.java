@@ -11,24 +11,29 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntitySelectorParser.class)
-public abstract class EntitySelectorParserMixin implements EntitySelectorParserBridge {
+public abstract class EntitySelectorParserMixin
+    implements EntitySelectorParserBridge {
 
     // @formatter:off
     @Shadow private boolean usesSelectors;
+
     private Boolean arclight$overridePermissions;
 
     @Shadow protected abstract void shadow$parseSelector() throws CommandSyntaxException;
+
     // @formatter:on
 
     @Shadow
     public abstract EntitySelector parse() throws CommandSyntaxException;
 
     @Override
-    public EntitySelector bridge$parse(boolean overridePermissions) throws CommandSyntaxException {
+    public EntitySelector bridge$parse(boolean overridePermissions)
+        throws CommandSyntaxException {
         return this.parse(overridePermissions);
     }
 
-    public EntitySelector parse(boolean overridePermissions) throws CommandSyntaxException {
+    public EntitySelector parse(boolean overridePermissions)
+        throws CommandSyntaxException {
         try {
             this.arclight$overridePermissions = overridePermissions;
             return this.parse();
@@ -38,11 +43,13 @@ public abstract class EntitySelectorParserMixin implements EntitySelectorParserB
     }
 
     @Override
-    public void bridge$parseSelector(boolean overridePermissions) throws CommandSyntaxException {
+    public void bridge$parseSelector(boolean overridePermissions)
+        throws CommandSyntaxException {
         this.parseSelector(overridePermissions);
     }
 
-    public void parseSelector(boolean overridePermissions) throws CommandSyntaxException {
+    public void parseSelector(boolean overridePermissions)
+        throws CommandSyntaxException {
         this.usesSelectors = !overridePermissions;
         this.shadow$parseSelector();
     }

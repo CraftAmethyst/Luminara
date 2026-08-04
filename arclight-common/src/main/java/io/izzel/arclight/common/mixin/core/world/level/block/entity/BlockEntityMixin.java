@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
 import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -19,16 +20,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.annotation.Nullable;
-
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin implements TileEntityBridge {
 
-    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
+    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY =
+        new CraftPersistentDataTypeRegistry();
     public CraftPersistentDataContainer persistentDataContainer;
 
     // @formatter:off
     @Shadow @Nullable public Level level;
+
     @Shadow @Final protected BlockPos worldPosition;
 
     @Shadow protected static void setChanged(Level p_155233_, BlockPos p_155234_, BlockState p_155235_) { }
@@ -42,30 +43,50 @@ public abstract class BlockEntityMixin implements TileEntityBridge {
     @Shadow public abstract boolean onlyOpCanSetNbt();
 
     @Shadow public abstract BlockEntityType<?> getType();
+
     @Shadow public void load(CompoundTag p_155245_) {}
+
     @Shadow public void setLevel(Level p_155231_) {}
+
     // @formatter:on
 
     @Inject(method = "load", at = @At("RETURN"))
     public void arclight$loadPersistent(CompoundTag compound, CallbackInfo ci) {
-        this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
+        this.persistentDataContainer = new CraftPersistentDataContainer(
+            DATA_TYPE_REGISTRY
+        );
 
-        CompoundTag persistentDataTag = compound.getCompound("PublicBukkitValues");
+        CompoundTag persistentDataTag = compound.getCompound(
+            "PublicBukkitValues"
+        );
         if (persistentDataTag != null) {
             this.persistentDataContainer.putAll(persistentDataTag);
         }
     }
 
     @Inject(method = "saveWithoutMetadata", at = @At("RETURN"))
-    private void arclight$savePersistent(CallbackInfoReturnable<CompoundTag> cir) {
-        if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
-            cir.getReturnValue().put("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
+    private void arclight$savePersistent(
+        CallbackInfoReturnable<CompoundTag> cir
+    ) {
+        if (
+            this.persistentDataContainer != null &&
+            !this.persistentDataContainer.isEmpty()
+        ) {
+            cir
+                .getReturnValue()
+                .put(
+                    "PublicBukkitValues",
+                    this.persistentDataContainer.toTagCompound()
+                );
         }
     }
 
     public InventoryHolder getOwner() {
         if (this.level == null) return null;
-        org.bukkit.block.Block block = CraftBlock.at(this.level, this.worldPosition);
+        org.bukkit.block.Block block = CraftBlock.at(
+            this.level,
+            this.worldPosition
+        );
         org.bukkit.block.BlockState state = block.getState();
         if (state instanceof InventoryHolder) return (InventoryHolder) state;
         return null;

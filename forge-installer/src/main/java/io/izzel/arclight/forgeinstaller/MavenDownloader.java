@@ -14,7 +14,12 @@ public class MavenDownloader implements Supplier<Path> {
     private final String target;
     private final String hash;
 
-    public MavenDownloader(String[] repos, String coord, String target, String hash) {
+    public MavenDownloader(
+        String[] repos,
+        String coord,
+        String target,
+        String hash
+    ) {
         this.urls = new LinkedList<>();
         this.coord = coord;
         this.target = target;
@@ -25,7 +30,13 @@ public class MavenDownloader implements Supplier<Path> {
         }
     }
 
-    public MavenDownloader(String[] repos, String coord, String target, String hash, String sourceUrl) {
+    public MavenDownloader(
+        String[] repos,
+        String coord,
+        String target,
+        String hash,
+        String sourceUrl
+    ) {
         this(repos, coord, target, hash);
         if (sourceUrl != null && !this.urls.contains(sourceUrl)) {
             if (Mirrors.isMirrorUrl(sourceUrl)) {
@@ -50,7 +61,9 @@ public class MavenDownloader implements Supplier<Path> {
         for (int i = 0; i < exceptions.size(); i++) {
             joiner.add("(" + (i + 1) + ") " + exceptions.get(i));
         }
-        RuntimeException failure = new RuntimeException("All mirrors failed for %s\n  %s".formatted(coord, joiner));
+        RuntimeException failure = new RuntimeException(
+            "All mirrors failed for %s\n  %s".formatted(coord, joiner)
+        );
         exceptions.forEach(failure::addSuppressed);
         throw failure;
     }

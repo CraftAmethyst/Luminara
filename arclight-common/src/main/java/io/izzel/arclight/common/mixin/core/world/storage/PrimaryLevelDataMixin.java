@@ -36,15 +36,20 @@ public abstract class PrimaryLevelDataMixin implements WorldInfoBridge {
 
     @Shadow
     public LevelSettings settings;
+
     public ServerLevel world;
     public Registry<LevelStem> customDimensions;
+
     @Shadow
     private boolean thundering;
+
     @Shadow
     private boolean raining;
+
     @Shadow
     @Final
     private Lifecycle worldGenSettingsLifecycle;
+
     // @formatter:on
 
     // @formatter:off

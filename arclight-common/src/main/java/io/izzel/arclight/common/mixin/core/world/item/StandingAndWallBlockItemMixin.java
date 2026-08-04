@@ -17,13 +17,31 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(StandingAndWallBlockItem.class)
 public class StandingAndWallBlockItemMixin {
 
-    @Inject(method = "getPlacementState", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
-    private void arclight$blockCanPlace(BlockPlaceContext context, CallbackInfoReturnable<BlockState> cir, BlockState place, BlockState defaultReturn) {
+    @Inject(
+        method = "getPlacementState",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At("RETURN")
+    )
+    private void arclight$blockCanPlace(
+        BlockPlaceContext context,
+        CallbackInfoReturnable<BlockState> cir,
+        BlockState place,
+        BlockState defaultReturn
+    ) {
         if (defaultReturn != null) {
             var result = cir.getReturnValue() != null;
-            var player = (context.getPlayer() instanceof ServerPlayerEntityBridge bridge) ? bridge.bridge$getBukkitEntity() : null;
+            var player = (context.getPlayer() instanceof
+                        ServerPlayerEntityBridge bridge)
+                ? bridge.bridge$getBukkitEntity()
+                : null;
 
-            var event = new BlockCanBuildEvent(CraftBlock.at(context.getLevel(), context.getClickedPos()), player, CraftBlockData.fromData(defaultReturn), result);
+            var event = new BlockCanBuildEvent(
+                CraftBlock.at(context.getLevel(), context.getClickedPos()),
+                player,
+                CraftBlockData.fromData(defaultReturn),
+                result
+            );
             Bukkit.getPluginManager().callEvent(event);
 
             cir.setReturnValue(event.isBuildable() ? defaultReturn : null);

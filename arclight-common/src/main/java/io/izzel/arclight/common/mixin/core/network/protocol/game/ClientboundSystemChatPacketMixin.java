@@ -26,8 +26,15 @@ public class ClientboundSystemChatPacketMixin {
         arclight$constructor(ComponentSerializer.toString(content), overlay);
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/network/chat/Component;Z)V", at = @At("RETURN"))
-    private void arclight$init(Component content, boolean overlay, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(Lnet/minecraft/network/chat/Component;Z)V",
+        at = @At("RETURN")
+    )
+    private void arclight$init(
+        Component content,
+        boolean overlay,
+        CallbackInfo ci
+    ) {
         this.content = Component.Serializer.toJson(content);
     }
 

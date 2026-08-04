@@ -15,13 +15,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ThrowableProjectile.class)
 public abstract class ThrowableProjectileMixin extends ProjectileMixin {
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;)V", at = @At("RETURN"))
-    private void arclight$init(EntityType<? extends ThrowableProjectile> type, LivingEntity livingEntityIn, Level worldIn, CallbackInfo ci) {
-        this.projectileSource = ((LivingEntityBridge) livingEntityIn).bridge$getBukkitEntity();
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;)V",
+        at = @At("RETURN")
+    )
+    private void arclight$init(
+        EntityType<? extends ThrowableProjectile> type,
+        LivingEntity livingEntityIn,
+        Level worldIn,
+        CallbackInfo ci
+    ) {
+        this.projectileSource =
+            ((LivingEntityBridge) livingEntityIn).bridge$getBukkitEntity();
     }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/ThrowableProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"))
-    private void arclight$projectileHit(ThrowableProjectile entity, HitResult result) {
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/projectile/ThrowableProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"
+        )
+    )
+    private void arclight$projectileHit(
+        ThrowableProjectile entity,
+        HitResult result
+    ) {
         this.preOnHit(result);
     }
 }

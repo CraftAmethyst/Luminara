@@ -13,9 +13,20 @@ public class EntityPotionEffectEventDispatcher {
         if (event.getEffectInstance() == null) {
             return;
         }
-        EntityPotionEffectEvent.Cause cause = ((LivingEntityBridge) event.getEntity()).bridge$getEffectCause().orElse(EntityPotionEffectEvent.Cause.UNKNOWN);
-        EntityPotionEffectEvent.Action action = ((LivingEntityBridge) event.getEntity()).bridge$getAndResetAction();
-        EntityPotionEffectEvent bukkitEvent = CraftEventFactory.callEntityPotionEffectChangeEvent(event.getEntity(), event.getEffectInstance(), null, cause, action);
+        EntityPotionEffectEvent.Cause cause =
+            ((LivingEntityBridge) event.getEntity()).bridge$getEffectCause().orElse(
+                EntityPotionEffectEvent.Cause.UNKNOWN
+            );
+        EntityPotionEffectEvent.Action action =
+            ((LivingEntityBridge) event.getEntity()).bridge$getAndResetAction();
+        EntityPotionEffectEvent bukkitEvent =
+            CraftEventFactory.callEntityPotionEffectChangeEvent(
+                event.getEntity(),
+                event.getEffectInstance(),
+                null,
+                cause,
+                action
+            );
         event.setCanceled(bukkitEvent.isCancelled());
     }
 }

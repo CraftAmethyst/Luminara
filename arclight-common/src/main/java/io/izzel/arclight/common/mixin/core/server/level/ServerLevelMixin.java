@@ -20,6 +20,11 @@ import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DelegateWorldInfo;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import io.izzel.arclight.i18n.ArclightConfig;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Executor;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -79,46 +84,50 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Executor;
-
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin extends LevelMixin implements ServerWorldBridge {
+public abstract class ServerLevelMixin
+    extends LevelMixin
+    implements ServerWorldBridge {
 
     @Shadow
     @Final
     public static BlockPos END_SPAWN_POINT;
+
     @Shadow
     @Final
     public ServerLevelData serverLevelData;
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+
+    @SuppressWarnings({ "FieldCanBeLocal", "unused" })
     public PrimaryLevelData K; // Stupid CraftBukkit patch.
+
     public LevelStorageSource.LevelStorageAccess convertable;
     public UUID uuid;
     public ResourceKey<LevelStem> typeKey;
+
     @Shadow
     @Final
     private List<ServerPlayer> players;
+
     @Shadow
     @Final
     private ServerChunkCache chunkSource;
+
     @Shadow
     @Final
     private PersistentEntitySectionManager<Entity> entityManager;
+
     private transient boolean arclight$force;
     private transient LightningStrikeEvent.Cause arclight$cause;
     private transient CreatureSpawnEvent.SpawnReason arclight$reason;
     private transient boolean arclight$timeSkipCancelled;
+
     // @formatter:on
 
     /**
      * @author IzzelAliz
      * @reason
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Overwrite
     public static void makeObsidianPlatform(ServerLevel world) {
         BlockPos blockpos = END_SPAWN_POINT;
@@ -126,12 +135,21 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
         int j = blockpos.getY() - 2;
         int k = blockpos.getZ();
         BlockStateListPopulator blockList = new BlockStateListPopulator(world);
-        BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((pos) -> {
+        BlockPos.betweenClosed(
+            i - 2,
+            j + 1,
+            k - 2,
+            i + 2,
+            j + 3,
+            k + 2
+        ).forEach(pos -> {
             blockList.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
         });
-        BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2).forEach((pos) -> {
-            blockList.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
-        });
+        BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2).forEach(
+            pos -> {
+                blockList.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+            }
+        );
         if (!DistValidate.isValid(world)) {
             blockList.updateList();
             ArclightCaptures.getEndPortalEntity();
@@ -140,7 +158,14 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
         CraftWorld bworld = ((WorldBridge) world).bridge$getWorld();
         boolean spawnPortal = ArclightCaptures.getEndPortalSpawn();
         Entity entity = ArclightCaptures.getEndPortalEntity();
-        PortalCreateEvent portalEvent = new PortalCreateEvent((List) blockList.getList(), bworld, entity == null ? null : ((EntityBridge) entity).bridge$getBukkitEntity(), PortalCreateEvent.CreateReason.END_PLATFORM);
+        PortalCreateEvent portalEvent = new PortalCreateEvent(
+            (List) blockList.getList(),
+            bworld,
+            entity == null
+                ? null
+                : ((EntityBridge) entity).bridge$getBukkitEntity(),
+            PortalCreateEvent.CreateReason.END_PLATFORM
+        );
         portalEvent.setCancelled(!spawnPortal);
         Bukkit.getPluginManager().callEvent(portalEvent);
         if (!portalEvent.isCancelled()) {

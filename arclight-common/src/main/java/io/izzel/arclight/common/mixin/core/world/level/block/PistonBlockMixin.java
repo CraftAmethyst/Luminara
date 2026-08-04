@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
 import com.google.common.collect.ImmutableList;
+import java.util.AbstractList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -23,21 +25,37 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.AbstractList;
-import java.util.List;
-
 @Mixin(PistonBaseBlock.class)
 public class PistonBlockMixin {
 
     // @formatter:off
     @Shadow @Final private boolean isSticky;
+
     // @formatter:on
 
-    @Inject(method = "checkIfExtend", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;blockEvent(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;II)V"))
-    public void arclight$pistonRetract(Level worldIn, BlockPos pos, BlockState state, CallbackInfo ci, Direction direction) {
+    @Inject(
+        method = "checkIfExtend",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;blockEvent(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;II)V"
+        )
+    )
+    public void arclight$pistonRetract(
+        Level worldIn,
+        BlockPos pos,
+        BlockState state,
+        CallbackInfo ci,
+        Direction direction
+    ) {
         if (!this.isSticky) {
             Block block = CraftBlock.at(worldIn, pos);
-            BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.of(), CraftBlock.notchToBlockFace(direction));
+            BlockPistonRetractEvent event = new BlockPistonRetractEvent(
+                block,
+                ImmutableList.of(),
+                CraftBlock.notchToBlockFace(direction)
+            );
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 ci.cancel();
@@ -45,10 +63,24 @@ public class PistonBlockMixin {
         }
     }
 
-    @Inject(method = "moveBlocks", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
-            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;getToDestroy()Ljava/util/List;"))
-    public void arclight$pistonAction(Level worldIn, BlockPos pos, Direction directionIn, boolean extending, CallbackInfoReturnable<Boolean> cir,
-                                      BlockPos blockPos, PistonStructureResolver helper) {
+    @Inject(
+        method = "moveBlocks",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE_ASSIGN",
+            target = "Lnet/minecraft/world/level/block/piston/PistonStructureResolver;getToDestroy()Ljava/util/List;"
+        )
+    )
+    public void arclight$pistonAction(
+        Level worldIn,
+        BlockPos pos,
+        Direction directionIn,
+        boolean extending,
+        CallbackInfoReturnable<Boolean> cir,
+        BlockPos blockPos,
+        PistonStructureResolver helper
+    ) {
         final Block craftBlock = CraftBlock.at(worldIn, pos);
 
         final List<BlockPos> moved = helper.getToPush();
@@ -66,30 +98,59 @@ public class PistonBlockMixin {
                 if (index >= size() || index < 0) {
                     throw new ArrayIndexOutOfBoundsException(index);
                 }
-                BlockPos pos = index < moved.size() ? moved.get(index) : broken.get(index - moved.size());
-                return craftBlock.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+                BlockPos pos = index < moved.size()
+                    ? moved.get(index)
+                    : broken.get(index - moved.size());
+                return craftBlock
+                    .getWorld()
+                    .getBlockAt(pos.getX(), pos.getY(), pos.getZ());
             }
         }
 
         List<Block> blocks = new BlockList();
 
-        Direction direction = extending ? directionIn : directionIn.getOpposite();
+        Direction direction = extending
+            ? directionIn
+            : directionIn.getOpposite();
         BlockPistonEvent event;
         if (extending) {
-            event = new BlockPistonExtendEvent(craftBlock, blocks, CraftBlock.notchToBlockFace(direction));
+            event = new BlockPistonExtendEvent(
+                craftBlock,
+                blocks,
+                CraftBlock.notchToBlockFace(direction)
+            );
         } else {
-            event = new BlockPistonRetractEvent(craftBlock, blocks, CraftBlock.notchToBlockFace(direction));
+            event = new BlockPistonRetractEvent(
+                craftBlock,
+                blocks,
+                CraftBlock.notchToBlockFace(direction)
+            );
         }
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
             for (BlockPos b : broken) {
-                worldIn.sendBlockUpdated(b, Blocks.AIR.defaultBlockState(), worldIn.getBlockState(b), 3);
+                worldIn.sendBlockUpdated(
+                    b,
+                    Blocks.AIR.defaultBlockState(),
+                    worldIn.getBlockState(b),
+                    3
+                );
             }
             for (BlockPos b : moved) {
-                worldIn.sendBlockUpdated(b, Blocks.AIR.defaultBlockState(), worldIn.getBlockState(b), 3);
+                worldIn.sendBlockUpdated(
+                    b,
+                    Blocks.AIR.defaultBlockState(),
+                    worldIn.getBlockState(b),
+                    3
+                );
                 b = b.relative(direction);
-                worldIn.sendBlockUpdated(b, Blocks.AIR.defaultBlockState(), worldIn.getBlockState(b), 3);
+                worldIn.sendBlockUpdated(
+                    b,
+                    Blocks.AIR.defaultBlockState(),
+                    worldIn.getBlockState(b),
+                    3
+                );
             }
             cir.setReturnValue(false);
         }

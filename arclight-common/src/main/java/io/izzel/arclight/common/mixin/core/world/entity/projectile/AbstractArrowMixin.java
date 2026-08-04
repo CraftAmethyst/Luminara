@@ -30,25 +30,56 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
 
     // @formatter:off
     @Shadow public boolean inGround;
+
     @Shadow public int shakeTime;
+
     @Shadow public net.minecraft.world.entity.projectile.AbstractArrow.Pickup pickup;
 
     @Shadow public abstract boolean isNoPhysics();
 
     @Shadow protected abstract ItemStack getPickupItem();
+
     // @formatter:on
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;onHit(Lnet/minecraft/world/phys/HitResult;)V"))
-    private void arclight$hitEvent(net.minecraft.world.entity.projectile.AbstractArrow abstractArrow, HitResult hitResult) {
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            opcode = Opcodes.PUTFIELD,
+            target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;onHit(Lnet/minecraft/world/phys/HitResult;)V"
+        )
+    )
+    private void arclight$hitEvent(
+        net.minecraft.world.entity.projectile.AbstractArrow abstractArrow,
+        HitResult hitResult
+    ) {
         this.preOnHit(hitResult);
     }
 
-    @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setSecondsOnFire(I)V"))
-    private void arclight$fireShot(Entity entity, int seconds, EntityHitResult result) {
-        EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), ((EntityBridge) entity).bridge$getBukkitEntity(), seconds);
+    @Redirect(
+        method = "onHitEntity",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;setSecondsOnFire(I)V"
+        )
+    )
+    private void arclight$fireShot(
+        Entity entity,
+        int seconds,
+        EntityHitResult result
+    ) {
+        EntityCombustByEntityEvent combustEvent =
+            new EntityCombustByEntityEvent(
+                this.getBukkitEntity(),
+                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                seconds
+            );
         Bukkit.getPluginManager().callEvent(combustEvent);
         if (!combustEvent.isCancelled()) {
-            ((EntityBridge) entity).bridge$setOnFire(combustEvent.getDuration(), false);
+            ((EntityBridge) entity).bridge$setOnFire(
+                combustEvent.getDuration(),
+                false
+            );
         }
     }
 
@@ -58,19 +89,55 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
      */
     @Overwrite
     public void playerTouch(Player playerEntity) {
-        if (!this.level().isClientSide && (this.inGround || this.isNoPhysics()) && this.shakeTime <= 0) {
+        if (
+            !this.level().isClientSide &&
+            (this.inGround || this.isNoPhysics()) &&
+            this.shakeTime <= 0
+        ) {
             ItemStack itemstack = this.getPickupItem();
-            if (this.pickup == net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED && !itemstack.isEmpty() && ((PlayerInventoryBridge) playerEntity.getInventory()).bridge$canHold(itemstack) > 0) {
-                ItemEntity item = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), itemstack);
-                PlayerPickupArrowEvent event = new PlayerPickupArrowEvent(((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity(), new CraftItem(((CraftServer) Bukkit.getServer()), (net.minecraft.world.entity.projectile.AbstractArrow) (Object) this, item), (AbstractArrow) this.getBukkitEntity());
+            if (
+                this.pickup ==
+                    net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED &&
+                !itemstack.isEmpty() &&
+                ((PlayerInventoryBridge) playerEntity.getInventory()).bridge$canHold(
+                    itemstack
+                ) >
+                0
+            ) {
+                ItemEntity item = new ItemEntity(
+                    this.level(),
+                    this.getX(),
+                    this.getY(),
+                    this.getZ(),
+                    itemstack
+                );
+                PlayerPickupArrowEvent event = new PlayerPickupArrowEvent(
+                    ((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity(),
+                    new CraftItem(
+                        ((CraftServer) Bukkit.getServer()),
+                        (net.minecraft.world.entity.projectile.AbstractArrow) (Object) this,
+                        item
+                    ),
+                    (AbstractArrow) this.getBukkitEntity()
+                );
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) {
                     return;
                 }
                 itemstack = item.getItem();
             }
-            if ((this.pickup == net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED && playerEntity.getInventory().add(itemstack)) || (this.pickup == net.minecraft.world.entity.projectile.AbstractArrow.Pickup.CREATIVE_ONLY && playerEntity.getAbilities().instabuild)) {
-                playerEntity.take((net.minecraft.world.entity.projectile.AbstractArrow) (Object) this, 1);
+            if (
+                (this.pickup ==
+                        net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED &&
+                    playerEntity.getInventory().add(itemstack)) ||
+                (this.pickup ==
+                        net.minecraft.world.entity.projectile.AbstractArrow.Pickup.CREATIVE_ONLY &&
+                    playerEntity.getAbilities().instabuild)
+            ) {
+                playerEntity.take(
+                    (net.minecraft.world.entity.projectile.AbstractArrow) (Object) this,
+                    1
+                );
                 this.discard();
             }
         }
@@ -78,6 +145,8 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
 
     @Inject(method = "setOwner", at = @At("HEAD"))
     private void arclight$setShooter(Entity entityIn, CallbackInfo ci) {
-        this.projectileSource = entityIn == null ? null : (ProjectileSource) ((EntityBridge) entityIn).bridge$getBukkitEntity();
+        this.projectileSource = entityIn == null
+            ? null
+            : (ProjectileSource) ((EntityBridge) entityIn).bridge$getBukkitEntity();
     }
 }

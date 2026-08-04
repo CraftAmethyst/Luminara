@@ -2,6 +2,8 @@ package io.izzel.arclight.common.mod.util;
 
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.i18n.ArclightConfig;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.item.context.UseOnContext;
@@ -10,22 +12,18 @@ import net.minecraft.world.level.LevelAccessor;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class DistValidate {
 
     private static final Marker MARKER = MarkerManager.getMarker("EXT_LOGIC");
-    private static final Map<Class<?>, Boolean> SEEN_CLASSES = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Boolean> SEEN_CLASSES =
+        new ConcurrentHashMap<>();
 
     public static boolean isValid(UseOnContext context) {
         return context != null && isValid(context.getLevel());
     }
 
     public static boolean isValid(LevelAccessor level) {
-        return level != null
-                && !level.isClientSide()
-                && isLogicWorld(level);
+        return level != null && !level.isClientSide() && isLogicWorld(level);
     }
 
     public static boolean isValid(BlockGetter getter) {
@@ -34,15 +32,26 @@ public class DistValidate {
 
     private static boolean isLogicWorld(LevelAccessor level) {
         var cl = level.getClass();
-        return cl == ServerLevel.class || cl == WorldGenRegion.class
-                || isLogicWorld(cl);
+        return (
+            cl == ServerLevel.class ||
+            cl == WorldGenRegion.class ||
+            isLogicWorld(cl)
+        );
     }
 
     private static boolean isLogicWorld(Class<?> cl) {
         return SEEN_CLASSES.computeIfAbsent(cl, c -> {
             var name = c.getName();
-            var result = ArclightConfig.spec().getCompat().getExtraLogicWorlds().contains(cl.getName());
-            ArclightMod.LOGGER.warn(MARKER, "dist.logic-world-check", name, result);
+            var result = ArclightConfig.spec()
+                .getCompat()
+                .getExtraLogicWorlds()
+                .contains(cl.getName());
+            ArclightMod.LOGGER.warn(
+                MARKER,
+                "dist.logic-world-check",
+                name,
+                result
+            );
             return result;
         });
     }

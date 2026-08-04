@@ -13,9 +13,28 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(SculkBlock.class)
 public class SculkBlockMixin {
 
-    @Redirect(method = "attemptUseCharge", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private boolean arclight$blockSpread(LevelAccessor level, BlockPos pos, BlockState state, int i,
-                                         SculkSpreader.ChargeCursor p_222073_, LevelAccessor p_222074_, BlockPos source) {
-        return CraftEventFactory.handleBlockSpreadEvent(level, source, pos, state, i);
+    @Redirect(
+        method = "attemptUseCharge",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    private boolean arclight$blockSpread(
+        LevelAccessor level,
+        BlockPos pos,
+        BlockState state,
+        int i,
+        SculkSpreader.ChargeCursor p_222073_,
+        LevelAccessor p_222074_,
+        BlockPos source
+    ) {
+        return CraftEventFactory.handleBlockSpreadEvent(
+            level,
+            source,
+            pos,
+            state,
+            i
+        );
     }
 }

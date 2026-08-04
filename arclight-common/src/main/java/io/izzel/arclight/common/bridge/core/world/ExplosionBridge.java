@@ -4,7 +4,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 
 public interface ExplosionBridge {
-
     Entity bridge$getExploder();
 
     float bridge$getSize();

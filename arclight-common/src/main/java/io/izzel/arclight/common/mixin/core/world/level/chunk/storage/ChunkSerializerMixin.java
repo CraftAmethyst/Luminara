@@ -17,21 +17,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChunkSerializer.class)
 public class ChunkSerializerMixin {
 
-    @Redirect(method = "read", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/ChunkAccess;setLightCorrect(Z)V"))
-    private static void arclight$loadPersistent(ChunkAccess instance, boolean correct, ServerLevel level, PoiManager poiManager, ChunkPos pos, CompoundTag tag) {
+    @Redirect(
+        method = "read",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/chunk/ChunkAccess;setLightCorrect(Z)V"
+        )
+    )
+    private static void arclight$loadPersistent(
+        ChunkAccess instance,
+        boolean correct,
+        ServerLevel level,
+        PoiManager poiManager,
+        ChunkPos pos,
+        CompoundTag tag
+    ) {
         net.minecraft.nbt.Tag persistentBase = tag.get("ChunkBukkitValues");
         if (persistentBase instanceof CompoundTag) {
-            ((CraftPersistentDataContainer) ((ChunkAccessBridge) instance).bridge$getPersistentDataContainer()).putAll((CompoundTag) persistentBase);
+            ((CraftPersistentDataContainer) ((ChunkAccessBridge) instance).bridge$getPersistentDataContainer()).putAll(
+                (CompoundTag) persistentBase
+            );
         }
         instance.setLightCorrect(correct);
     }
 
-
     @Inject(method = "write", at = @At("RETURN"))
-    private static void arclight$savePersistent(ServerLevel level, ChunkAccess chunkAccess, CallbackInfoReturnable<CompoundTag> cir) {
-        var container = (CraftPersistentDataContainer) ((ChunkAccessBridge) chunkAccess).bridge$getPersistentDataContainer();
+    private static void arclight$savePersistent(
+        ServerLevel level,
+        ChunkAccess chunkAccess,
+        CallbackInfoReturnable<CompoundTag> cir
+    ) {
+        var container =
+            (CraftPersistentDataContainer) ((ChunkAccessBridge) chunkAccess).bridge$getPersistentDataContainer();
         if (!container.isEmpty()) {
-            cir.getReturnValue().put("ChunkBukkitValues", container.toTagCompound());
+            cir
+                .getReturnValue()
+                .put("ChunkBukkitValues", container.toTagCompound());
         }
     }
 }

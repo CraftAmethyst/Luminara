@@ -14,12 +14,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ForgeHooksMixin {
 
     @Inject(method = "onPlaceItemIntoWorld", remap = false, at = @At("HEAD"))
-    private static void arclight$captureHand(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
+    private static void arclight$captureHand(
+        UseOnContext context,
+        CallbackInfoReturnable<InteractionResult> cir
+    ) {
         ArclightCaptures.capturePlaceEventHand(context.getHand());
     }
 
     @Inject(method = "onPlaceItemIntoWorld", remap = false, at = @At("RETURN"))
-    private static void arclight$removeHand(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
+    private static void arclight$removeHand(
+        UseOnContext context,
+        CallbackInfoReturnable<InteractionResult> cir
+    ) {
         ArclightCaptures.getPlaceEventHand(InteractionHand.MAIN_HAND);
     }
 }

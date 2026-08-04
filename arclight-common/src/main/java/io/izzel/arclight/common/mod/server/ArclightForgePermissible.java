@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mod.server;
 
 import io.izzel.arclight.api.Unsafe;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
@@ -15,17 +17,27 @@ import org.bukkit.permissions.ServerOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
-
 public class ArclightForgePermissible extends PermissibleBase {
 
     private static final MethodHandle H_handler, H_newNode;
 
     static {
         try {
-            H_handler = Unsafe.lookup().findStaticGetter(PermissionAPI.class, "activeHandler", IPermissionHandler.class);
-            H_newNode = Unsafe.lookup().findConstructor(PermissionNode.class, MethodType.methodType(void.class, String.class, PermissionType.class, PermissionNode.PermissionResolver.class, PermissionDynamicContextKey[].class));
+            H_handler = Unsafe.lookup().findStaticGetter(
+                PermissionAPI.class,
+                "activeHandler",
+                IPermissionHandler.class
+            );
+            H_newNode = Unsafe.lookup().findConstructor(
+                PermissionNode.class,
+                MethodType.methodType(
+                    void.class,
+                    String.class,
+                    PermissionType.class,
+                    PermissionNode.PermissionResolver.class,
+                    PermissionDynamicContextKey[].class
+                )
+            );
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -47,9 +59,18 @@ public class ArclightForgePermissible extends PermissibleBase {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> PermissionNode<T> newNode(String nodeName, PermissionNode.PermissionResolver<T> defaultResolver, PermissionDynamicContextKey... dynamics) {
+    private static <T> PermissionNode<T> newNode(
+        String nodeName,
+        PermissionNode.PermissionResolver<T> defaultResolver,
+        PermissionDynamicContextKey... dynamics
+    ) {
         try {
-            return (PermissionNode<T>) H_newNode.invokeExact(nodeName, PermissionTypes.BOOLEAN, defaultResolver, dynamics);
+            return (PermissionNode<T>) H_newNode.invokeExact(
+                nodeName,
+                PermissionTypes.BOOLEAN,
+                defaultResolver,
+                dynamics
+            );
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -57,21 +78,31 @@ public class ArclightForgePermissible extends PermissibleBase {
 
     @Override
     public boolean hasPermission(@NotNull String inName) {
-        var node = newNode(inName, (player, playerUUID, context) -> super.hasPermission(inName));
+        var node = newNode(inName, (player, playerUUID, context) ->
+            super.hasPermission(inName)
+        );
         if (player.getHandle() instanceof ServerPlayer player) {
             return getHandler().getPermission(player, node);
         } else {
-            return getHandler().getOfflinePermission(player.getUniqueId(), node);
+            return getHandler().getOfflinePermission(
+                player.getUniqueId(),
+                node
+            );
         }
     }
 
     @Override
     public boolean hasPermission(@NotNull Permission perm) {
-        var node = newNode(perm.getName(), (player, playerUUID, context) -> super.hasPermission(perm));
+        var node = newNode(perm.getName(), (player, playerUUID, context) ->
+            super.hasPermission(perm)
+        );
         if (player.getHandle() instanceof ServerPlayer player) {
             return getHandler().getPermission(player, node);
         } else {
-            return getHandler().getOfflinePermission(player.getUniqueId(), node);
+            return getHandler().getOfflinePermission(
+                player.getUniqueId(),
+                node
+            );
         }
     }
 }

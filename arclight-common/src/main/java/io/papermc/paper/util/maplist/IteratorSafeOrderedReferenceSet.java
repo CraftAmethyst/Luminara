@@ -2,10 +2,9 @@ package io.papermc.paper.util.maplist;
 
 import it.unimi.dsi.fastutil.objects.Reference2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
-import org.bukkit.Bukkit;
-
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import org.bukkit.Bukkit;
 
 public final class IteratorSafeOrderedReferenceSet<E> {
 
@@ -28,14 +27,26 @@ public final class IteratorSafeOrderedReferenceSet<E> {
         this(16, 0.75f, 16, 0.2, threadRestricted);
     }
 
-    public IteratorSafeOrderedReferenceSet(final int setCapacity, final float setLoadFactor, final int arrayCapacity,
-                                           final double maxFragFactor) {
+    public IteratorSafeOrderedReferenceSet(
+        final int setCapacity,
+        final float setLoadFactor,
+        final int arrayCapacity,
+        final double maxFragFactor
+    ) {
         this(setCapacity, setLoadFactor, arrayCapacity, maxFragFactor, false);
     }
 
-    public IteratorSafeOrderedReferenceSet(final int setCapacity, final float setLoadFactor, final int arrayCapacity,
-                                           final double maxFragFactor, final boolean threadRestricted) {
-        this.indexMap = new Reference2IntLinkedOpenHashMap<>(setCapacity, setLoadFactor);
+    public IteratorSafeOrderedReferenceSet(
+        final int setCapacity,
+        final float setLoadFactor,
+        final int arrayCapacity,
+        final double maxFragFactor,
+        final boolean threadRestricted
+    ) {
+        this.indexMap = new Reference2IntLinkedOpenHashMap<>(
+            setCapacity,
+            setLoadFactor
+        );
         this.indexMap.defaultReturnValue(-1);
         this.maxFragFactor = maxFragFactor;
         this.listElements = (E[]) new Object[arrayCapacity];
@@ -99,7 +110,9 @@ public final class IteratorSafeOrderedReferenceSet<E> {
         if (this.indexMap.isEmpty()) {
             return -1;
         } else {
-            return this.firstInvalidIndex == 0 ? this.indexMap.getInt(this.indexMap.firstKey()) : 0;
+            return this.firstInvalidIndex == 0
+                ? this.indexMap.getInt(this.indexMap.firstKey())
+                : 0;
         }
     }
 
@@ -133,7 +146,11 @@ public final class IteratorSafeOrderedReferenceSet<E> {
                 throw new IllegalStateException();
             }
             this.listElements[index] = null;
-            if (this.allowSafeIteration() && this.iteratorCount == 0 && this.getFragFactor() >= this.maxFragFactor) {
+            if (
+                this.allowSafeIteration() &&
+                this.iteratorCount == 0 &&
+                this.getFragFactor() >= this.maxFragFactor
+            ) {
                 this.defrag();
             }
             //this.check();
@@ -188,22 +205,24 @@ public final class IteratorSafeOrderedReferenceSet<E> {
         } else {
             lastValidIndex = this.firstInvalidIndex;
             final E key = backingArray[lastValidIndex - 1];
-            iterator = this.indexMap.reference2IntEntrySet().fastIterator(new Reference2IntMap.Entry<E>() {
-                @Override
-                public int getIntValue() {
-                    throw new UnsupportedOperationException();
-                }
+            iterator = this.indexMap.reference2IntEntrySet().fastIterator(
+                new Reference2IntMap.Entry<E>() {
+                    @Override
+                    public int getIntValue() {
+                        throw new UnsupportedOperationException();
+                    }
 
-                @Override
-                public int setValue(int i) {
-                    throw new UnsupportedOperationException();
-                }
+                    @Override
+                    public int setValue(int i) {
+                        throw new UnsupportedOperationException();
+                    }
 
-                @Override
-                public E getKey() {
-                    return key;
+                    @Override
+                    public E getKey() {
+                        return key;
+                    }
                 }
-            });
+            );
         }
 
         while (iterator.hasNext()) {
@@ -234,11 +253,19 @@ public final class IteratorSafeOrderedReferenceSet<E> {
         return this.iterator(0);
     }
 
-    public IteratorSafeOrderedReferenceSet.Iterator<E> iterator(final int flags) {
+    public IteratorSafeOrderedReferenceSet.Iterator<E> iterator(
+        final int flags
+    ) {
         if (this.allowSafeIteration()) {
             ++this.iteratorCount;
         }
-        return new BaseIterator<>(this, true, (flags & ITERATOR_FLAG_SEE_ADDITIONS) != 0 ? Integer.MAX_VALUE : this.listSize);
+        return new BaseIterator<>(
+            this,
+            true,
+            (flags & ITERATOR_FLAG_SEE_ADDITIONS) != 0
+                ? Integer.MAX_VALUE
+                : this.listSize
+        );
     }
 
     public java.util.Iterator<E> unsafeIterator() {
@@ -246,16 +273,21 @@ public final class IteratorSafeOrderedReferenceSet<E> {
     }
 
     public java.util.Iterator<E> unsafeIterator(final int flags) {
-        return new BaseIterator<>(this, false, (flags & ITERATOR_FLAG_SEE_ADDITIONS) != 0 ? Integer.MAX_VALUE : this.listSize);
+        return new BaseIterator<>(
+            this,
+            false,
+            (flags & ITERATOR_FLAG_SEE_ADDITIONS) != 0
+                ? Integer.MAX_VALUE
+                : this.listSize
+        );
     }
 
     public interface Iterator<E> extends java.util.Iterator<E> {
-
         void finishedIterating();
-
     }
 
-    protected static final class BaseIterator<E> implements IteratorSafeOrderedReferenceSet.Iterator<E> {
+    protected static final class BaseIterator<E>
+        implements IteratorSafeOrderedReferenceSet.Iterator<E> {
 
         protected final IteratorSafeOrderedReferenceSet<E> set;
         protected final boolean canFinish;
@@ -265,7 +297,11 @@ public final class IteratorSafeOrderedReferenceSet<E> {
         protected boolean finished;
         protected E lastReturned;
 
-        protected BaseIterator(final IteratorSafeOrderedReferenceSet<E> set, final boolean canFinish, final int maxIndex) {
+        protected BaseIterator(
+            final IteratorSafeOrderedReferenceSet<E> set,
+            final boolean canFinish,
+            final int maxIndex
+        ) {
             this.set = set;
             this.canFinish = canFinish;
             this.maxIndex = maxIndex;
@@ -282,7 +318,12 @@ public final class IteratorSafeOrderedReferenceSet<E> {
 
             final E[] elements = this.set.listElements;
             int index, len;
-            for (index = this.nextIndex, len = Math.min(this.maxIndex, this.set.listSize); index < len; ++index) {
+            for (
+                index = this.nextIndex,
+                    len = Math.min(this.maxIndex, this.set.listSize);
+                index < len;
+                ++index
+            ) {
                 final E element = elements[index];
                 if (element != null) {
                     this.pendingValue = element;

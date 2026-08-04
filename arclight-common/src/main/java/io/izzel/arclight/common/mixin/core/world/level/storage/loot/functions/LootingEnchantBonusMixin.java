@@ -18,8 +18,11 @@ public abstract class LootingEnchantBonusMixin {
 
     // @formatter:off
     @Shadow @Final NumberProvider value;
+
     @Shadow @Final int limit;
+
     @Shadow abstract boolean hasLimit();
+
     // @formatter:on
 
     /**

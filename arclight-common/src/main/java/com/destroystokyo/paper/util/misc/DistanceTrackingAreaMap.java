@@ -12,7 +12,8 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
 
     // use this map only if you need distance tracking, the tracking here is obviously going to hit harder.
 
-    protected final Long2IntOpenHashMap chunkToNearestDistance = new Long2IntOpenHashMap(1024, 0.7f);
+    protected final Long2IntOpenHashMap chunkToNearestDistance =
+        new Long2IntOpenHashMap(1024, 0.7f);
     protected final DistanceChangeCallback<E> distanceChangeCallback;
 
     {
@@ -24,12 +25,18 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
     }
 
     // let users define a "global" or "shared" pooled sets if they wish
-    public DistanceTrackingAreaMap(final PooledLinkedHashSets<E> pooledHashSets) {
+    public DistanceTrackingAreaMap(
+        final PooledLinkedHashSets<E> pooledHashSets
+    ) {
         this(pooledHashSets, null, null, null);
     }
 
-    public DistanceTrackingAreaMap(final PooledLinkedHashSets<E> pooledHashSets, final ChangeCallback<E> addCallback, final ChangeCallback<E> removeCallback,
-                                   final DistanceChangeCallback<E> distanceChangeCallback) {
+    public DistanceTrackingAreaMap(
+        final PooledLinkedHashSets<E> pooledHashSets,
+        final ChangeCallback<E> addCallback,
+        final ChangeCallback<E> removeCallback,
+        final DistanceChangeCallback<E> distanceChangeCallback
+    ) {
         super(pooledHashSets, addCallback, removeCallback);
         this.distanceChangeCallback = distanceChangeCallback;
     }
@@ -41,17 +48,28 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
 
     // ret -1 if there is nothing mapped
     public final int getNearestObjectDistance(final ChunkPos chunkPos) {
-        return this.chunkToNearestDistance.get(MCUtil.getCoordinateKey(chunkPos));
+        return this.chunkToNearestDistance.get(
+            MCUtil.getCoordinateKey(chunkPos)
+        );
     }
 
     // ret -1 if there is nothing mapped
-    public final int getNearestObjectDistance(final int chunkX, final int chunkZ) {
-        return this.chunkToNearestDistance.get(MCUtil.getCoordinateKey(chunkX, chunkZ));
+    public final int getNearestObjectDistance(
+        final int chunkX,
+        final int chunkZ
+    ) {
+        return this.chunkToNearestDistance.get(
+            MCUtil.getCoordinateKey(chunkX, chunkZ)
+        );
     }
 
-    protected final void recalculateDistance(final int chunkX, final int chunkZ) {
+    protected final void recalculateDistance(
+        final int chunkX,
+        final int chunkZ
+    ) {
         final long key = MCUtil.getCoordinateKey(chunkX, chunkZ);
-        final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> state = this.areaMap.get(key);
+        final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> state =
+            this.areaMap.get(key);
         if (state == null) {
             final int oldDistance = this.chunkToNearestDistance.remove(key);
             // nothing here.
@@ -60,7 +78,13 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
                 return;
             }
             if (this.distanceChangeCallback != null) {
-                this.distanceChangeCallback.accept(chunkX, chunkZ, oldDistance, -1, null);
+                this.distanceChangeCallback.accept(
+                    chunkX,
+                    chunkZ,
+                    oldDistance,
+                    -1,
+                    null
+                );
             }
             return;
         }
@@ -78,24 +102,45 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
             final E object = (E) raw;
             final long location = this.objectToLastCoordinate.getLong(object);
 
-            final int distance = Math.max(IntegerUtil.branchlessAbs(chunkX - MCUtil.getCoordinateX(location)), IntegerUtil.branchlessAbs(chunkZ - MCUtil.getCoordinateZ(location)));
+            final int distance = Math.max(
+                IntegerUtil.branchlessAbs(
+                    chunkX - MCUtil.getCoordinateX(location)
+                ),
+                IntegerUtil.branchlessAbs(
+                    chunkZ - MCUtil.getCoordinateZ(location)
+                )
+            );
 
             if (distance < newDistance) {
                 newDistance = distance;
             }
         }
 
-        final int oldDistance = this.chunkToNearestDistance.put(key, newDistance);
+        final int oldDistance = this.chunkToNearestDistance.put(
+            key,
+            newDistance
+        );
 
         if (oldDistance != newDistance) {
             if (this.distanceChangeCallback != null) {
-                this.distanceChangeCallback.accept(chunkX, chunkZ, oldDistance, newDistance, state);
+                this.distanceChangeCallback.accept(
+                    chunkX,
+                    chunkZ,
+                    oldDistance,
+                    newDistance,
+                    state
+                );
             }
         }
     }
 
     @Override
-    protected void addObjectCallback(final E object, final int chunkX, final int chunkZ, final int viewDistance) {
+    protected void addObjectCallback(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int viewDistance
+    ) {
         final int maxX = chunkX + viewDistance;
         final int maxZ = chunkZ + viewDistance;
         final int minX = chunkX - viewDistance;
@@ -108,7 +153,12 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
     }
 
     @Override
-    protected void removeObjectCallback(final E object, final int chunkX, final int chunkZ, final int viewDistance) {
+    protected void removeObjectCallback(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int viewDistance
+    ) {
         final int maxX = chunkX + viewDistance;
         final int maxZ = chunkZ + viewDistance;
         final int minX = chunkX - viewDistance;
@@ -121,7 +171,13 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
     }
 
     @Override
-    protected void updateObjectCallback(final E object, final long oldPosition, final long newPosition, final int oldViewDistance, final int newViewDistance) {
+    protected void updateObjectCallback(
+        final E object,
+        final long oldPosition,
+        final long newPosition,
+        final int oldViewDistance,
+        final int newViewDistance
+    ) {
         if (oldPosition == newPosition && newViewDistance == oldViewDistance) {
             return;
         }
@@ -134,17 +190,32 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
         final int totalX = IntegerUtil.branchlessAbs(fromX - toX);
         final int totalZ = IntegerUtil.branchlessAbs(fromZ - toZ);
 
-        if (Math.max(totalX, totalZ) > (2 * Math.max(newViewDistance, oldViewDistance))) {
+        if (
+            Math.max(totalX, totalZ) >
+            (2 * Math.max(newViewDistance, oldViewDistance))
+        ) {
             // teleported?
             this.removeObjectCallback(object, fromX, fromZ, oldViewDistance);
             this.addObjectCallback(object, toX, toZ, newViewDistance);
             return;
         }
 
-        final int minX = Math.min(fromX - oldViewDistance, toX - newViewDistance);
-        final int maxX = Math.max(fromX + oldViewDistance, toX + newViewDistance);
-        final int minZ = Math.min(fromZ - oldViewDistance, toZ - newViewDistance);
-        final int maxZ = Math.max(fromZ + oldViewDistance, toZ + newViewDistance);
+        final int minX = Math.min(
+            fromX - oldViewDistance,
+            toX - newViewDistance
+        );
+        final int maxX = Math.max(
+            fromX + oldViewDistance,
+            toX + newViewDistance
+        );
+        final int minZ = Math.min(
+            fromZ - oldViewDistance,
+            toZ - newViewDistance
+        );
+        final int maxZ = Math.max(
+            fromZ + oldViewDistance,
+            toZ + newViewDistance
+        );
 
         for (int x = minX; x <= maxX; ++x) {
             for (int z = minZ; z <= maxZ; ++z) {
@@ -169,9 +240,12 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
 
     @FunctionalInterface
     public interface DistanceChangeCallback<E> {
-
-        void accept(final int posX, final int posZ, final int oldNearestDistance, final int newNearestDistance,
-                    final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> state);
-
+        void accept(
+            final int posX,
+            final int posZ,
+            final int oldNearestDistance,
+            final int newNearestDistance,
+            final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> state
+        );
     }
 }

@@ -19,8 +19,12 @@ public class CraftInventoryMixin {
     protected Container inventory;
 
     @Inject(method = "getType", cancellable = true, at = @At("HEAD"))
-    private void arclight$lecternType(CallbackInfoReturnable<InventoryType> cir) {
-        if (inventory.getClass().getDeclaringClass() == LecternBlockEntity.class) {
+    private void arclight$lecternType(
+        CallbackInfoReturnable<InventoryType> cir
+    ) {
+        if (
+            inventory.getClass().getDeclaringClass() == LecternBlockEntity.class
+        ) {
             cir.setReturnValue(InventoryType.LECTERN);
         }
     }

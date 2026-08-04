@@ -20,19 +20,32 @@ public class SmithingTransformRecipeMixin implements IRecipeBridge {
 
     // @formatter:off
     @Shadow @Final ItemStack result;
+
     @Shadow @Final Ingredient template;
+
     @Shadow @Final Ingredient base;
+
     @Shadow @Final Ingredient addition;
+
     @Shadow @Final private ResourceLocation id;
+
     // @formatter:on
 
     @Override
     public Recipe bridge$toBukkitRecipe() {
         if (this.result.isEmpty()) {
-            return new ArclightSpecialRecipe((SmithingTransformRecipe) (Object) this);
+            return new ArclightSpecialRecipe(
+                (SmithingTransformRecipe) (Object) this
+            );
         }
         CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 
-        return new CraftSmithingTransformRecipe(CraftNamespacedKey.fromMinecraft(this.id), result, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
+        return new CraftSmithingTransformRecipe(
+            CraftNamespacedKey.fromMinecraft(this.id),
+            result,
+            CraftRecipe.toBukkit(this.template),
+            CraftRecipe.toBukkit(this.base),
+            CraftRecipe.toBukkit(this.addition)
+        );
     }
 }

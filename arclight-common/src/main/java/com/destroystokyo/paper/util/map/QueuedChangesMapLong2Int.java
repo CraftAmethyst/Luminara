@@ -24,7 +24,10 @@ public class QueuedChangesMapLong2Int {
         this(16, 0.75f);
     }
 
-    public QueuedChangesMapLong2Int(final int capacity, final float loadFactor) {
+    public QueuedChangesMapLong2Int(
+        final int capacity,
+        final float loadFactor
+    ) {
         this.updatingMap = new Long2IntOpenHashMap(capacity, loadFactor);
         this.visibleMap = new Long2IntOpenHashMap(capacity, loadFactor);
         this.queuedPuts = new Long2IntOpenHashMap();
@@ -73,7 +76,6 @@ public class QueuedChangesMapLong2Int {
                 // ignore...
                 continue;
             }
-
         } while (!this.updatingMapSeqLock.tryReleaseRead(readlock));
 
         return ret;
@@ -89,7 +91,8 @@ public class QueuedChangesMapLong2Int {
         }
 
         // update puts
-        final ObjectIterator<Long2IntMap.Entry> iterator0 = this.queuedPuts.long2IntEntrySet().fastIterator();
+        final ObjectIterator<Long2IntMap.Entry> iterator0 =
+            this.queuedPuts.long2IntEntrySet().fastIterator();
         while (iterator0.hasNext()) {
             final Long2IntMap.Entry entry = iterator0.next();
             final long key = entry.getLongKey();
@@ -132,7 +135,8 @@ public class QueuedChangesMapLong2Int {
             }
 
             // update puts
-            final ObjectIterator<Long2IntMap.Entry> iterator0 = this.queuedPuts.long2IntEntrySet().fastIterator();
+            final ObjectIterator<Long2IntMap.Entry> iterator0 =
+                this.queuedPuts.long2IntEntrySet().fastIterator();
             while (iterator0.hasNext()) {
                 final Long2IntMap.Entry entry = iterator0.next();
                 final long key = entry.getLongKey();

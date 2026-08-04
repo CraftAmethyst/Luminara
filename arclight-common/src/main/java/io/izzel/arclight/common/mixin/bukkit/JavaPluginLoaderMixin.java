@@ -4,6 +4,18 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.bridge.bukkit.JavaPluginLoaderBridge;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Server;
 import org.bukkit.Warning;
@@ -27,31 +39,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-
 @Mixin(value = JavaPluginLoader.class, remap = false)
 public abstract class JavaPluginLoaderMixin implements JavaPluginLoaderBridge {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
-    private static final Cache<Method, Class<? extends EventExecutor>> EXECUTOR_CACHE = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.HOURS)
-            .build();
+    private static final Cache<
+        Method,
+        Class<? extends EventExecutor>
+    > EXECUTOR_CACHE = CacheBuilder.newBuilder()
+        .expireAfterAccess(1, TimeUnit.HOURS)
+        .build();
     private static final AtomicInteger CMI_THREAD_COUNTER = new AtomicInteger();
-    private static final String HIDDEN_FORM =
-            Float.parseFloat(System.getProperty("java.class.version")) < 57
-                    ? "Ljava/lang/invoke/LambdaForm$Hidden;"
-                    : "Ljdk/internal/vm/annotation/Hidden;";
+    private static final String HIDDEN_FORM = Float.parseFloat(
+            System.getProperty("java.class.version")
+        ) <
+        57
+        ? "Ljava/lang/invoke/LambdaForm$Hidden;"
+        : "Ljdk/internal/vm/annotation/Hidden;";
+
     // @formatter:on
     // @formatter:off
     @Shadow @Final Server server;

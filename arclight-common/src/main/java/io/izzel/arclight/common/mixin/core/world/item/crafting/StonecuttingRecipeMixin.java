@@ -13,9 +13,18 @@ import org.bukkit.inventory.Recipe;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(StonecutterRecipe.class)
-public abstract class StonecuttingRecipeMixin extends SingleItemRecipe implements IRecipeBridge {
+public abstract class StonecuttingRecipeMixin
+    extends SingleItemRecipe
+    implements IRecipeBridge {
 
-    public StonecuttingRecipeMixin(RecipeType<?> type, RecipeSerializer<?> serializer, ResourceLocation id, String group, Ingredient ingredient, ItemStack result) {
+    public StonecuttingRecipeMixin(
+        RecipeType<?> type,
+        RecipeSerializer<?> serializer,
+        ResourceLocation id,
+        String group,
+        Ingredient ingredient,
+        ItemStack result
+    ) {
         super(type, serializer, id, group, ingredient, result);
     }
 
@@ -25,7 +34,11 @@ public abstract class StonecuttingRecipeMixin extends SingleItemRecipe implement
             return new ArclightSpecialRecipe(this);
         }
         CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-        CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(CraftNamespacedKey.fromMinecraft(this.getId()), result, CraftRecipe.toBukkit(this.ingredient));
+        CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(
+            CraftNamespacedKey.fromMinecraft(this.getId()),
+            result,
+            CraftRecipe.toBukkit(this.ingredient)
+        );
         recipe.setGroup(this.group == null ? "" : this.group);
         return recipe;
     }

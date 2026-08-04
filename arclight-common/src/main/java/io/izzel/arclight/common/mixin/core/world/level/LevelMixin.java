@@ -9,6 +9,10 @@ import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.server.world.WrappedWorlds;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import java.lang.reflect.Field;
+import java.util.Optional;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -55,17 +59,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.util.Optional;
-import java.util.function.Supplier;
-
 @Mixin(Level.class)
 public abstract class LevelMixin implements WorldBridge, LevelWriter {
 
     @SuppressWarnings("unused") // Access transformed to public by ArclightMixinPlugin
     private static BlockPos lastPhysicsProblem; // Spigot
-    public final Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new Object2LongOpenHashMap<>();
+
+    public final Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory =
+        new Object2LongOpenHashMap<>();
     public boolean pvpMode;
     public boolean keepSpawnInMemory = true;
     public boolean populating;
@@ -75,6 +76,7 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
     protected CraftWorld world;
     protected org.bukkit.World.Environment environment;
     protected org.bukkit.generator.BiomeProvider biomeProvider;
+
     // @formatter:on
     @Shadow
     @Final

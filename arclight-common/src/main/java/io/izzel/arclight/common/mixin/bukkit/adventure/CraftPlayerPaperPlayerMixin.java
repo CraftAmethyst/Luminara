@@ -72,18 +72,22 @@ public abstract class CraftPlayerPaperPlayerMixin {
 
     public boolean isFakePlayer() {
         CraftPlayer player = (CraftPlayer) (Object) this;
-        return player.getHandle() instanceof net.minecraftforge.common.util.FakePlayer;
+        return (
+            player.getHandle() instanceof
+                net.minecraftforge.common.util.FakePlayer
+        );
     }
-
 
     // Paper's playerListName methods
     @Nullable
     public Component playerListName() {
         CraftPlayer player = (CraftPlayer) (Object) this;
         String listName = player.getPlayerListName();
-        return listName != null ?
-                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(listName) :
-                null;
+        return listName != null
+            ? net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(
+                  listName
+              )
+            : null;
     }
 
     public void playerListName(@Nullable Component name) {
@@ -91,7 +95,10 @@ public abstract class CraftPlayerPaperPlayerMixin {
         if (name == null) {
             player.setPlayerListName(null);
         } else {
-            String legacy = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(name);
+            String legacy =
+                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(
+                    name
+                );
             player.setPlayerListName(legacy);
         }
     }
@@ -99,13 +106,19 @@ public abstract class CraftPlayerPaperPlayerMixin {
     // Additional Paper Player methods that plugins might expect
     public void kick(@NotNull Component message) {
         CraftPlayer player = (CraftPlayer) (Object) this;
-        String legacy = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(message);
+        String legacy =
+            net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(
+                message
+            );
         player.kickPlayer(legacy);
     }
 
     public void sendRichMessage(@NotNull String message) {
         CraftPlayer player = (CraftPlayer) (Object) this;
-        Component component = net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(message);
+        Component component =
+            net.kyori.adventure.text.minimessage.MiniMessage.miniMessage().deserialize(
+                message
+            );
         if (player instanceof net.kyori.adventure.audience.Audience audience) {
             audience.sendMessage(component);
         }

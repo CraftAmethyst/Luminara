@@ -20,29 +20,90 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(EndCrystal.class)
 public abstract class EnderCrystalMixin extends EntityMixin {
 
-    @Inject(method = "tick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+    @Inject(
+        method = "tick",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+        )
+    )
     private void arclight$blockIgnite(CallbackInfo ci) {
-        if (CraftEventFactory.callBlockIgniteEvent(this.level(), this.blockPosition(), (EndCrystal) (Object) this).isCancelled()) {
+        if (
+            CraftEventFactory.callBlockIgniteEvent(
+                this.level(),
+                this.blockPosition(),
+                (EndCrystal) (Object) this
+            ).isCancelled()
+        ) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "hurt", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;remove(Lnet/minecraft/world/entity/Entity$RemovalReason;)V"))
-    private void arclight$entityDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (CraftEventFactory.handleNonLivingEntityDamageEvent((EndCrystal) (Object) this, source, amount)) {
+    @Inject(
+        method = "hurt",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;remove(Lnet/minecraft/world/entity/Entity$RemovalReason;)V"
+        )
+    )
+    private void arclight$entityDamage(
+        DamageSource source,
+        float amount,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (
+            CraftEventFactory.handleNonLivingEntityDamageEvent(
+                (EndCrystal) (Object) this,
+                source,
+                amount
+            )
+        ) {
             cir.setReturnValue(false);
         }
     }
 
-    @Redirect(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"))
-    private Explosion arclight$blockPrime(Level world, Entity entityIn, DamageSource damageSource, ExplosionDamageCalculator calculator, double xIn, double yIn, double zIn, float explosionRadius, boolean fire, Level.ExplosionInteraction interaction) {
-        ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), explosionRadius, fire);
+    @Redirect(
+        method = "hurt",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"
+        )
+    )
+    private Explosion arclight$blockPrime(
+        Level world,
+        Entity entityIn,
+        DamageSource damageSource,
+        ExplosionDamageCalculator calculator,
+        double xIn,
+        double yIn,
+        double zIn,
+        float explosionRadius,
+        boolean fire,
+        Level.ExplosionInteraction interaction
+    ) {
+        ExplosionPrimeEvent event = new ExplosionPrimeEvent(
+            this.getBukkitEntity(),
+            explosionRadius,
+            fire
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             this.unsetRemoved();
             return null;
         } else {
-            return world.explode(entityIn, damageSource, calculator, xIn, yIn, zIn, event.getRadius(), event.getFire(), interaction);
+            return world.explode(
+                entityIn,
+                damageSource,
+                calculator,
+                xIn,
+                yIn,
+                zIn,
+                event.getRadius(),
+                event.getFire(),
+                interaction
+            );
         }
     }
 }

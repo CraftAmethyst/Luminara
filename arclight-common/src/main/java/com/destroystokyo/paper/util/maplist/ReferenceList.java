@@ -1,7 +1,6 @@
 package com.destroystokyo.paper.util.maplist;
 
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -12,7 +11,8 @@ import java.util.NoSuchElementException;
 public final class ReferenceList<E> implements Iterable<E> {
 
     private static final Object[] EMPTY_LIST = new Object[0];
-    private final Reference2IntOpenHashMap<E> referenceToIndex = new Reference2IntOpenHashMap<>(2, 0.8f);
+    private final Reference2IntOpenHashMap<E> referenceToIndex =
+        new Reference2IntOpenHashMap<>(2, 0.8f);
     private Object[] references = EMPTY_LIST;
     private int count;
 
@@ -59,7 +59,10 @@ public final class ReferenceList<E> implements Iterable<E> {
 
         if (list.length == count) {
             // resize required
-            list = this.references = Arrays.copyOf(list, (int) Math.max(4L, count * 2L)); // overflow results in negative
+            list = this.references = Arrays.copyOf(
+                list,
+                (int) Math.max(4L, count * 2L)
+            ); // overflow results in negative
         }
 
         list[count] = obj;
@@ -70,7 +73,9 @@ public final class ReferenceList<E> implements Iterable<E> {
 
     public E getChecked(final int index) {
         if (index < 0 || index >= this.count) {
-            throw new IndexOutOfBoundsException("Index: " + index + " is out of bounds, size: " + this.count);
+            throw new IndexOutOfBoundsException(
+                "Index: " + index + " is out of bounds, size: " + this.count
+            );
         }
         return (E) this.references[index];
     }
@@ -105,7 +110,8 @@ public final class ReferenceList<E> implements Iterable<E> {
                 if (this.current >= ReferenceList.this.count) {
                     throw new NoSuchElementException();
                 }
-                return this.lastRet = (E) ReferenceList.this.references[this.current++];
+                return this.lastRet =
+                    (E) ReferenceList.this.references[this.current++];
             }
 
             @Override

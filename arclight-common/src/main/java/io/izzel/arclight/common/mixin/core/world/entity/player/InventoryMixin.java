@@ -3,6 +3,8 @@ package io.izzel.arclight.common.mixin.core.world.entity.player;
 import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.PlayerInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,24 +19,31 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(Inventory.class)
-public abstract class InventoryMixin implements Container, IInventoryBridge, PlayerInventoryBridge {
+public abstract class InventoryMixin
+    implements Container, IInventoryBridge, PlayerInventoryBridge {
 
     // @formatter:off
     @Shadow @Final public NonNullList<ItemStack> items;
+
     @Shadow @Final public NonNullList<ItemStack> offhand;
+
     @Shadow @Final public NonNullList<ItemStack> armor;
+
     @Shadow @Final public Player player;
+
     public List<HumanEntity> transaction = new ArrayList<>();
+
     @Shadow @Final private List<NonNullList<ItemStack>> compartments;
+
     // @formatter:on
     private int maxStack = -1;
 
     @Shadow
-    protected abstract boolean hasRemainingSpaceForItem(ItemStack stack1, ItemStack stack2);
+    protected abstract boolean hasRemainingSpaceForItem(
+        ItemStack stack1,
+        ItemStack stack2
+    );
 
     public int canHold(ItemStack stack) {
         int remains = stack.getCount();
@@ -43,13 +52,23 @@ public abstract class InventoryMixin implements Container, IInventoryBridge, Pla
             if (slot.isEmpty()) return stack.getCount();
 
             if (this.hasRemainingSpaceForItem(slot, stack)) {
-                remains -= (slot.getMaxStackSize() < this.getMaxStackSize() ? slot.getMaxStackSize() : this.getMaxStackSize()) - slot.getCount();
+                remains -=
+                    (slot.getMaxStackSize() < this.getMaxStackSize()
+                        ? slot.getMaxStackSize()
+                        : this.getMaxStackSize()) -
+                    slot.getCount();
             }
             if (remains <= 0) return stack.getCount();
         }
-        ItemStack offhandItemStack = this.getItem(this.items.size() + this.armor.size());
+        ItemStack offhandItemStack = this.getItem(
+            this.items.size() + this.armor.size()
+        );
         if (this.hasRemainingSpaceForItem(offhandItemStack, stack)) {
-            remains -= (offhandItemStack.getMaxStackSize() < this.getMaxStackSize() ? offhandItemStack.getMaxStackSize() : this.getMaxStackSize()) - offhandItemStack.getCount();
+            remains -=
+                (offhandItemStack.getMaxStackSize() < this.getMaxStackSize()
+                    ? offhandItemStack.getMaxStackSize()
+                    : this.getMaxStackSize()) -
+                offhandItemStack.getCount();
         }
         if (remains <= 0) return stack.getCount();
 
@@ -67,7 +86,9 @@ public abstract class InventoryMixin implements Container, IInventoryBridge, Pla
 
     @Override
     public List<ItemStack> getContents() {
-        List<ItemStack> combined = new ArrayList<>(items.size() + offhand.size() + armor.size());
+        List<ItemStack> combined = new ArrayList<>(
+            items.size() + offhand.size() + armor.size()
+        );
         for (List<ItemStack> sub : this.compartments) {
             combined.addAll(sub);
         }
@@ -95,8 +116,7 @@ public abstract class InventoryMixin implements Container, IInventoryBridge, Pla
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {
@@ -113,7 +133,9 @@ public abstract class InventoryMixin implements Container, IInventoryBridge, Pla
 
     @Override
     public Location getLocation() {
-        return ((PlayerEntityBridge) this.player).bridge$getBukkitEntity().getLocation();
+        return (
+            (PlayerEntityBridge) this.player
+        ).bridge$getBukkitEntity().getLocation();
     }
 
     @Override
@@ -122,6 +144,5 @@ public abstract class InventoryMixin implements Container, IInventoryBridge, Pla
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-    }
+    public void setCurrentRecipe(Recipe<?> recipe) {}
 }

@@ -21,16 +21,30 @@ public class CommandBlockLogicMixin {
 
     // @formatter:off
     @Shadow private Component name;
+
     // @formatter:on
 
-    @Redirect(method = "performCommand", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;performPrefixedCommand(Lnet/minecraft/commands/CommandSourceStack;Ljava/lang/String;)I"))
-    private int arclight$serverCommand(Commands commands, CommandSourceStack sender, String command) {
+    @Redirect(
+        method = "performCommand",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/commands/Commands;performPrefixedCommand(Lnet/minecraft/commands/CommandSourceStack;Ljava/lang/String;)I"
+        )
+    )
+    private int arclight$serverCommand(
+        Commands commands,
+        CommandSourceStack sender,
+        String command
+    ) {
         Joiner joiner = Joiner.on(" ");
         if (command.startsWith("/")) {
             command = command.substring(1);
         }
 
-        ServerCommandEvent event = new ServerCommandEvent(((CommandSourceBridge) sender).bridge$getBukkitSender(), command);
+        ServerCommandEvent event = new ServerCommandEvent(
+            ((CommandSourceBridge) sender).bridge$getBukkitSender(),
+            command
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return 0;
@@ -40,16 +54,28 @@ public class CommandBlockLogicMixin {
         String[] args = command.split(" ");
 
         String cmd = args[0];
-        if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
+        if (cmd.startsWith("minecraft:")) cmd = cmd.substring(
+            "minecraft:".length()
+        );
         if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
 
-        if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
-                || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
-                || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
+        if (
+            cmd.equalsIgnoreCase("stop") ||
+            cmd.equalsIgnoreCase("kick") ||
+            cmd.equalsIgnoreCase("op") ||
+            cmd.equalsIgnoreCase("deop") ||
+            cmd.equalsIgnoreCase("ban") ||
+            cmd.equalsIgnoreCase("ban-ip") ||
+            cmd.equalsIgnoreCase("pardon") ||
+            cmd.equalsIgnoreCase("pardon-ip") ||
+            cmd.equalsIgnoreCase("reload")
+        ) {
             return 0;
         }
 
-        if (((CraftServer) Bukkit.getServer()).getCommandBlockOverride(args[0])) {
+        if (
+            ((CraftServer) Bukkit.getServer()).getCommandBlockOverride(args[0])
+        ) {
             args[0] = "minecraft:" + args[0];
         }
 

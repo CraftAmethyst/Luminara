@@ -16,11 +16,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HorseInventoryMenu.class)
-public abstract class HorseInventoryContainerMixin extends AbstractContainerMenuMixin {
+public abstract class HorseInventoryContainerMixin
+    extends AbstractContainerMenuMixin {
 
     CraftInventoryView bukkitEntity;
     // @formatter:on
     Inventory playerInventory;
+
     // @formatter:off
     @Shadow @Final private Container horseContainer;
 

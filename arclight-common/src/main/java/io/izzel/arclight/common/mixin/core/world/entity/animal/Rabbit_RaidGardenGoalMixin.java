@@ -23,19 +23,41 @@ public class Rabbit_RaidGardenGoalMixin {
     @Final
     private Rabbit rabbit;
 
-    @Inject(method = "tick", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private void arclight$entityChangeBlock(CallbackInfo ci, Level world, BlockPos blockPos, BlockState blockState, Block block, int i) {
+    @Inject(
+        method = "tick",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    private void arclight$entityChangeBlock(
+        CallbackInfo ci,
+        Level world,
+        BlockPos blockPos,
+        BlockState blockState,
+        Block block,
+        int i
+    ) {
         if (i == 0) {
-            if (!CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockPos, Blocks.AIR.defaultBlockState())) {
+            if (
+                !CraftEventFactory.callEntityChangeBlockEvent(
+                    this.rabbit,
+                    blockPos,
+                    Blocks.AIR.defaultBlockState()
+                )
+            ) {
                 ci.cancel();
             }
         } else {
-            if (!CraftEventFactory.callEntityChangeBlockEvent(
+            if (
+                !CraftEventFactory.callEntityChangeBlockEvent(
                     this.rabbit,
                     blockPos,
                     blockState.setValue(CarrotBlock.AGE, i - 1)
-            )) {
+                )
+            ) {
                 ci.cancel();
             }
         }

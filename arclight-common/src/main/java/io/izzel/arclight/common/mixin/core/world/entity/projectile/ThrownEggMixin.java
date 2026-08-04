@@ -37,10 +37,17 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
             if (!hatching) {
                 b0 = 0;
             }
-            org.bukkit.entity.EntityType hatchingType = org.bukkit.entity.EntityType.CHICKEN;
+            org.bukkit.entity.EntityType hatchingType =
+                org.bukkit.entity.EntityType.CHICKEN;
             Entity shooter = this.getOwner();
             if (shooter instanceof ServerPlayer) {
-                PlayerEggThrowEvent event = new PlayerEggThrowEvent(((ServerPlayerEntityBridge) shooter).bridge$getBukkitEntity(), (Egg) this.getBukkitEntity(), hatching, b0, hatchingType);
+                PlayerEggThrowEvent event = new PlayerEggThrowEvent(
+                    ((ServerPlayerEntityBridge) shooter).bridge$getBukkitEntity(),
+                    (Egg) this.getBukkitEntity(),
+                    hatching,
+                    b0,
+                    hatchingType
+                );
                 Bukkit.getPluginManager().callEvent(event);
                 b0 = event.getNumHatches();
                 hatching = event.isHatching();
@@ -50,7 +57,8 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
                 for (int i = 0; i < b0; ++i) {
                     // TrickOrTreatMod compat https://github.com/IzzelAliz/Arclight/issues/1178
                     // https://github.com/MehVahdJukaar/TrickOrTreatMod/blob/020bc478b8f8de6bfec2191a9e667f423f45d7db/common/src/main/java/net/mehvahdjukaar/hauntedharvest/mixins/ThrownEggEntityMixin.java
-                    var entityType = ((EntityTypeBridge) (Object) hatchingType).bridge$getHandle();
+                    var entityType =
+                        ((EntityTypeBridge) (Object) hatchingType).bridge$getHandle();
                     var entity = entityType.create(this.level());
                     // Let's do: Meadow mixin compatibility https://github.com/IzzelAliz/Arclight/issues/1149
                     if (entity instanceof Chicken) {
@@ -58,16 +66,30 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
                         Blackhole.consume(chicken);
                     }
                     if (entity != null) {
-                        if (((EntityBridge) entity).bridge$getBukkitEntity() instanceof Ageable) {
+                        if (
+                            ((EntityBridge) entity).bridge$getBukkitEntity() instanceof
+                                Ageable
+                        ) {
                             ((Ageable) ((EntityBridge) entity).bridge$getBukkitEntity()).setBaby();
                         }
-                        entity.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-                        ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.EGG);
+                        entity.moveTo(
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            this.getYRot(),
+                            0.0F
+                        );
+                        ((WorldBridge) this.level()).bridge$pushAddEntityReason(
+                            CreatureSpawnEvent.SpawnReason.EGG
+                        );
                         this.level().addFreshEntity(entity);
                     }
                 }
             }
-            this.level().broadcastEntityEvent((ThrownEgg) (Object) this, (byte) 3);
+            this.level().broadcastEntityEvent(
+                (ThrownEgg) (Object) this,
+                (byte) 3
+            );
             this.discard();
         }
     }

@@ -2,14 +2,13 @@ package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.common.mod.ArclightMod;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.entity.monster.SpellcasterIllager;
 import org.bukkit.craftbukkit.v.entity.CraftSpellcaster;
 import org.bukkit.entity.Spellcaster;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mixin(value = CraftSpellcaster.class, remap = false)
 public class CraftSpellcasterMixin {
@@ -19,17 +18,33 @@ public class CraftSpellcasterMixin {
      * @reason
      */
     @Overwrite
-    public static Spellcaster.Spell toBukkitSpell(SpellcasterIllager.IllagerSpell spell) {
+    public static Spellcaster.Spell toBukkitSpell(
+        SpellcasterIllager.IllagerSpell spell
+    ) {
         try {
             return Spellcaster.Spell.valueOf(spell.name());
         } catch (IllegalArgumentException e) {
             var newTypes = new ArrayList<Spellcaster.Spell>();
             var forgeCount = SpellcasterIllager.IllagerSpell.values().length;
-            for (var id = Spellcaster.Spell.values().length; id < forgeCount; id++) {
+            for (
+                var id = Spellcaster.Spell.values().length;
+                id < forgeCount;
+                id++
+            ) {
                 var name = SpellcasterIllager.IllagerSpell.values()[id].name();
-                var newPhase = EnumHelper.makeEnum(Spellcaster.Spell.class, name, id, List.of(), List.of());
+                var newPhase = EnumHelper.makeEnum(
+                    Spellcaster.Spell.class,
+                    name,
+                    id,
+                    List.of(),
+                    List.of()
+                );
                 newTypes.add(newPhase);
-                ArclightMod.LOGGER.debug("Registered {} as illager spell {}", name, newPhase);
+                ArclightMod.LOGGER.debug(
+                    "Registered {} as illager spell {}",
+                    name,
+                    newPhase
+                );
             }
             EnumHelper.addEnums(Spellcaster.Spell.class, newTypes);
             return toBukkitSpell(spell);

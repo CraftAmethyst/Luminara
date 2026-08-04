@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mixin.core.server.level;
 
 import io.izzel.arclight.common.bridge.core.world.ServerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ChunkMap_TrackedEntityBridge;
+import java.util.Set;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerEntity;
@@ -14,23 +15,35 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Set;
-
 @Mixin(ChunkMap.TrackedEntity.class)
-public abstract class ChunkMap_TrackedEntityMixin implements ChunkMap_TrackedEntityBridge {
+public abstract class ChunkMap_TrackedEntityMixin
+    implements ChunkMap_TrackedEntityBridge {
 
     @Shadow
     @Final
     public Set<ServerPlayerConnection> seenBy;
+
     // @formatter:off
     @Shadow @Final ServerEntity serverEntity;
+
     @Shadow @Final Entity entity;
+
     @Shadow SectionPos lastSectionPos;
+
     // @formatter:on
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$setTrackedPlayers(ChunkMap outer, Entity entity, int range, int updateFrequency, boolean sendVelocityUpdates, CallbackInfo ci) {
-        ((ServerEntityBridge) this.serverEntity).bridge$setTrackedPlayers(this.seenBy);
+    private void arclight$setTrackedPlayers(
+        ChunkMap outer,
+        Entity entity,
+        int range,
+        int updateFrequency,
+        boolean sendVelocityUpdates,
+        CallbackInfo ci
+    ) {
+        ((ServerEntityBridge) this.serverEntity).bridge$setTrackedPlayers(
+            this.seenBy
+        );
     }
 
     @Override

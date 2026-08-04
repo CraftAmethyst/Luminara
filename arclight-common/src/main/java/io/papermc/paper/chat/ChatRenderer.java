@@ -12,7 +12,14 @@ public interface ChatRenderer {
     // Create default chat renderer
     @NotNull
     static ChatRenderer defaultRenderer() {
-        return new ViewerUnawareImpl.Default((source, sourceDisplayName, message) -> Component.translatable("chat.type.text", sourceDisplayName, message));
+        return new ViewerUnawareImpl.Default(
+            (source, sourceDisplayName, message) ->
+                Component.translatable(
+                    "chat.type.text",
+                    sourceDisplayName,
+                    message
+                )
+        );
     }
 
     // Create viewer-unaware renderer
@@ -24,17 +31,27 @@ public interface ChatRenderer {
     // Render chat message for each audience
     @ApiStatus.OverrideOnly
     @NotNull
-    Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer);
+    Component render(
+        @NotNull Player source,
+        @NotNull Component sourceDisplayName,
+        @NotNull Component message,
+        @NotNull Audience viewer
+    );
 
     @ApiStatus.Internal
-    sealed interface Default extends ChatRenderer, ViewerUnaware permits ViewerUnawareImpl.Default {
-    }
+    sealed interface Default
+        extends ChatRenderer, ViewerUnaware
+        permits ViewerUnawareImpl.Default {}
 
     // Chat renderer without viewer context
     interface ViewerUnaware {
         // Render chat message
         @ApiStatus.OverrideOnly
         @NotNull
-        Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message);
+        Component render(
+            @NotNull Player source,
+            @NotNull Component sourceDisplayName,
+            @NotNull Component message
+        );
     }
 }

@@ -14,12 +14,38 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(BushBlock.class)
 public abstract class BushBlockMixin extends BlockMixin {
 
-    @Redirect(method = "updateShape", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
-    public BlockState arclight$blockFade(Block block, BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
-        if (!CraftEventFactory.callBlockPhysicsEvent(worldIn, currentPos).isCancelled()) {
+    @Redirect(
+        method = "updateShape",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"
+        )
+    )
+    public BlockState arclight$blockFade(
+        Block block,
+        BlockState stateIn,
+        Direction facing,
+        BlockState facingState,
+        LevelAccessor worldIn,
+        BlockPos currentPos,
+        BlockPos facingPos
+    ) {
+        if (
+            !CraftEventFactory.callBlockPhysicsEvent(
+                worldIn,
+                currentPos
+            ).isCancelled()
+        ) {
             return block.defaultBlockState();
         } else {
-            return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+            return super.updateShape(
+                stateIn,
+                facing,
+                facingState,
+                worldIn,
+                currentPos,
+                facingPos
+            );
         }
     }
 }

@@ -17,11 +17,23 @@ public abstract class BeeMixin extends AnimalMixin {
 
     // @formatter:off
     @Shadow Bee.BeePollinateGoal beePollinateGoal;
+
     // @formatter:on
 
-    @Inject(method = "doHurtTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$sting(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
-        ((LivingEntityBridge) entityIn).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
+    @Inject(
+        method = "doHurtTarget",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
+    private void arclight$sting(
+        Entity entityIn,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        ((LivingEntityBridge) entityIn).bridge$pushEffectCause(
+            EntityPotionEffectEvent.Cause.ATTACK
+        );
     }
 
     /**

@@ -19,27 +19,65 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LightningBoltMixin extends EntityMixin {
 
     public boolean isSilent = false;
+
     @Shadow
     private int life;
 
-    @Redirect(method = "tick", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, ordinal = 0, target = "Lnet/minecraft/world/entity/LightningBolt;life:I"))
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "FIELD",
+            opcode = Opcodes.GETFIELD,
+            ordinal = 0,
+            target = "Lnet/minecraft/world/entity/LightningBolt;life:I"
+        )
+    )
     private int arclight$silent(LightningBolt lightningBolt) {
         return isSilent ? 0 : this.life;
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V"))
+    @Inject(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V"
+        )
+    )
     private void arclight$captureEntity(CallbackInfo ci) {
         ArclightCaptures.captureDamageEventEntity((Entity) (Object) this);
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V"))
+    @Inject(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/Entity;thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V"
+        )
+    )
     private void arclight$resetEntity(CallbackInfo ci) {
         ArclightCaptures.captureDamageEventEntity(null);
     }
 
-    @Redirect(method = "spawnFire", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private boolean arclight$blockIgnite(Level world, BlockPos pos, BlockState state) {
-        if (!CraftEventFactory.callBlockIgniteEvent(world, pos, (LightningBolt) (Object) this).isCancelled()) {
+    @Redirect(
+        method = "spawnFire",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+        )
+    )
+    private boolean arclight$blockIgnite(
+        Level world,
+        BlockPos pos,
+        BlockState state
+    ) {
+        if (
+            !CraftEventFactory.callBlockIgniteEvent(
+                world,
+                pos,
+                (LightningBolt) (Object) this
+            ).isCancelled()
+        ) {
             return world.setBlockAndUpdate(pos, state);
         } else {
             return false;

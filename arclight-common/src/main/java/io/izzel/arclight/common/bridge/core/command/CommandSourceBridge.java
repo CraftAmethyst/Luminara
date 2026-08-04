@@ -5,7 +5,6 @@ import net.minecraft.commands.CommandSource;
 import org.bukkit.command.CommandSender;
 
 public interface CommandSourceBridge {
-
     void bridge$setSource(CommandSource source);
 
     CommandNode<?> bridge$getCurrentCommand();

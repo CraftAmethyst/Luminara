@@ -22,8 +22,14 @@ public class BlockBreakEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void onBreakBlock(BlockEvent.BreakEvent event) {
         if (DistValidate.isValid(event.getLevel())) {
-            CraftBlock craftBlock = CraftBlock.at(event.getLevel(), event.getPos());
-            BlockBreakEvent breakEvent = new BlockBreakEvent(craftBlock, ((ServerPlayerEntityBridge) event.getPlayer()).bridge$getBukkitEntity());
+            CraftBlock craftBlock = CraftBlock.at(
+                event.getLevel(),
+                event.getPos()
+            );
+            BlockBreakEvent breakEvent = new BlockBreakEvent(
+                craftBlock,
+                ((ServerPlayerEntityBridge) event.getPlayer()).bridge$getBukkitEntity()
+            );
             ArclightCaptures.captureBlockBreakPlayer(breakEvent);
             breakEvent.setCancelled(event.isCanceled());
             breakEvent.setExpToDrop(event.getExpToDrop());
@@ -39,10 +45,22 @@ public class BlockBreakEventDispatcher {
         Entity entity = event.getEntity();
         Cancellable cancellable;
         if (entity instanceof Player) {
-            cancellable = CraftEventFactory.callPlayerInteractEvent((Player) entity, Action.PHYSICAL, event.getPos(), null, null, null);
+            cancellable = CraftEventFactory.callPlayerInteractEvent(
+                (Player) entity,
+                Action.PHYSICAL,
+                event.getPos(),
+                null,
+                null,
+                null
+            );
         } else {
-            cancellable = new EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), CraftBlock.at(event.getLevel(), event.getPos()));
-            Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
+            cancellable = new EntityInteractEvent(
+                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                CraftBlock.at(event.getLevel(), event.getPos())
+            );
+            Bukkit.getPluginManager().callEvent(
+                (EntityInteractEvent) cancellable
+            );
         }
 
         if (cancellable.isCancelled()) {
@@ -50,7 +68,13 @@ public class BlockBreakEventDispatcher {
             return;
         }
 
-        if (!CraftEventFactory.callEntityChangeBlockEvent(entity, event.getPos(), Blocks.DIRT.defaultBlockState())) {
+        if (
+            !CraftEventFactory.callEntityChangeBlockEvent(
+                entity,
+                event.getPos(),
+                Blocks.DIRT.defaultBlockState()
+            )
+        ) {
             event.setCanceled(true);
         }
     }

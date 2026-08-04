@@ -2,6 +2,9 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster.piglin;
 
 import io.izzel.arclight.common.bridge.core.entity.monster.piglin.PiglinBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.PathfinderMobMixin;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -18,12 +21,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Mixin(Piglin.class)
-public abstract class PiglinMixin extends PathfinderMobMixin implements PiglinBridge {
+public abstract class PiglinMixin
+    extends PathfinderMobMixin
+    implements PiglinBridge {
 
     public Set<Item> allowedBarterItems = new HashSet<>();
     public Set<Item> interestItems = new HashSet<>();
@@ -39,29 +40,76 @@ public abstract class PiglinMixin extends PathfinderMobMixin implements PiglinBr
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
-    private void arclight$writeAdditional(CompoundTag compound, CallbackInfo ci) {
+    private void arclight$writeAdditional(
+        CompoundTag compound,
+        CallbackInfo ci
+    ) {
         ListTag barterList = new ListTag();
-        allowedBarterItems.stream().map(BuiltInRegistries.ITEM::getKey).map(ResourceLocation::toString).map(StringTag::valueOf).forEach(barterList::add);
+        allowedBarterItems
+            .stream()
+            .map(BuiltInRegistries.ITEM::getKey)
+            .map(ResourceLocation::toString)
+            .map(StringTag::valueOf)
+            .forEach(barterList::add);
         compound.put("Bukkit.BarterList", barterList);
         ListTag interestList = new ListTag();
-        interestItems.stream().map(BuiltInRegistries.ITEM::getKey).map(ResourceLocation::toString).map(StringTag::valueOf).forEach(interestList::add);
+        interestItems
+            .stream()
+            .map(BuiltInRegistries.ITEM::getKey)
+            .map(ResourceLocation::toString)
+            .map(StringTag::valueOf)
+            .forEach(interestList::add);
         compound.put("Bukkit.InterestList", interestList);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
-    private void arclight$readAdditional(CompoundTag compound, CallbackInfo ci) {
-        this.allowedBarterItems = compound.getList("Bukkit.BarterList", 8).stream().map(Tag::getAsString).map(ResourceLocation::tryParse).map(BuiltInRegistries.ITEM::get).collect(Collectors.toCollection(HashSet::new));
-        this.interestItems = compound.getList("Bukkit.InterestList", 8).stream().map(Tag::getAsString).map(ResourceLocation::tryParse).map(BuiltInRegistries.ITEM::get).collect(Collectors.toCollection(HashSet::new));
+    private void arclight$readAdditional(
+        CompoundTag compound,
+        CallbackInfo ci
+    ) {
+        this.allowedBarterItems = compound
+            .getList("Bukkit.BarterList", 8)
+            .stream()
+            .map(Tag::getAsString)
+            .map(ResourceLocation::tryParse)
+            .map(BuiltInRegistries.ITEM::get)
+            .collect(Collectors.toCollection(HashSet::new));
+        this.interestItems = compound
+            .getList("Bukkit.InterestList", 8)
+            .stream()
+            .map(Tag::getAsString)
+            .map(ResourceLocation::tryParse)
+            .map(BuiltInRegistries.ITEM::get)
+            .collect(Collectors.toCollection(HashSet::new));
     }
 
-    @Redirect(method = "holdInOffHand", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
+    @Redirect(
+        method = "holdInOffHand",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"
+        )
+    )
     private boolean arclight$customBarter(ItemStack itemStack) {
-        return itemStack.isPiglinCurrency() || allowedBarterItems.contains(itemStack.getItem());
+        return (
+            itemStack.isPiglinCurrency() ||
+            allowedBarterItems.contains(itemStack.getItem())
+        );
     }
 
-    @Redirect(method = "canReplaceCurrentItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/piglin/PiglinAi;isLovedItem(Lnet/minecraft/world/item/ItemStack;)Z"))
+    @Redirect(
+        method = "canReplaceCurrentItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/monster/piglin/PiglinAi;isLovedItem(Lnet/minecraft/world/item/ItemStack;)Z"
+        )
+    )
     private boolean arclight$customLoved(ItemStack stack) {
-        return PiglinAi.isLovedItem(stack) || interestItems.contains(stack.getItem()) || allowedBarterItems.contains(stack.getItem());
+        return (
+            PiglinAi.isLovedItem(stack) ||
+            interestItems.contains(stack.getItem()) ||
+            allowedBarterItems.contains(stack.getItem())
+        );
     }
 }

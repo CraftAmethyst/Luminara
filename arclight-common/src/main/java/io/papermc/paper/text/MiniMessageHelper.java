@@ -10,17 +10,22 @@ import org.jetbrains.annotations.Nullable;
 // Helper class for MiniMessage operations
 public final class MiniMessageHelper {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final MiniMessage MINI_MESSAGE =
+        MiniMessage.builder().build();
     private static final MiniMessage STRICT_MINI_MESSAGE = MiniMessage.builder()
-            .tags(TagResolver.resolver(
-                    StandardTags.color(),
-                    StandardTags.decorations(),
-                    StandardTags.reset()
-            ))
-            .build();
+        .tags(
+            TagResolver.resolver(
+                StandardTags.color(),
+                StandardTags.decorations(),
+                StandardTags.reset()
+            )
+        )
+        .build();
 
     private MiniMessageHelper() {
-        throw new RuntimeException("MiniMessageHelper is not to be instantiated!");
+        throw new RuntimeException(
+            "MiniMessageHelper is not to be instantiated!"
+        );
     }
 
     // Parse MiniMessage string to Component
@@ -29,7 +34,10 @@ public final class MiniMessageHelper {
     }
 
     // Parse MiniMessage string to Component with custom tag resolvers
-    public static @NotNull Component parse(@NotNull String miniMessage, @NotNull TagResolver... resolvers) {
+    public static @NotNull Component parse(
+        @NotNull String miniMessage,
+        @NotNull TagResolver... resolvers
+    ) {
         return MINI_MESSAGE.deserialize(miniMessage, resolvers);
     }
 

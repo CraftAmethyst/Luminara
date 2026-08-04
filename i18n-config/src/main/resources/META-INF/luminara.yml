@@ -11,8 +11,8 @@ optimization:
   goal-selector-update-interval: 1
   use-activation-and-tracking-range: false
 compatibility:
-  material-property-overrides: { }
-  entity-property-overrides: { }
+  material-property-overrides: {}
+  entity-property-overrides: {}
   symlink-world: false
   extra-logic-worlds:
     - "com.example.mod.ExtraLogicWorld"
@@ -27,8 +27,7 @@ async-catcher:
   dump: true
   warn: true
   defaultOperation: block
-  overrides: { }
-
+  overrides: {}
 
 velocity:
   enabled: false

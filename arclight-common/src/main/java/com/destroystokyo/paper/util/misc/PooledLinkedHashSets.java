@@ -2,7 +2,6 @@ package com.destroystokyo.paper.util.misc;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import java.lang.ref.WeakReference;
 
 /**
@@ -13,11 +12,18 @@ public class PooledLinkedHashSets<E> {
     /* Tested via https://gist.github.com/Spottedleaf/a93bb7a8993d6ce142d3efc5932bf573 */
 
     // we really want to avoid that equals() check as much as possible...
-    protected final Object2ObjectOpenHashMap<PooledObjectLinkedOpenHashSet<E>, PooledObjectLinkedOpenHashSet<E>> mapPool = new Object2ObjectOpenHashMap<>(128, 0.25f);
+    protected final Object2ObjectOpenHashMap<
+        PooledObjectLinkedOpenHashSet<E>,
+        PooledObjectLinkedOpenHashSet<E>
+    > mapPool = new Object2ObjectOpenHashMap<>(128, 0.25f);
 
-    protected void decrementReferenceCount(final PooledObjectLinkedOpenHashSet<E> current) {
+    protected void decrementReferenceCount(
+        final PooledObjectLinkedOpenHashSet<E> current
+    ) {
         if (current.referenceCount == 0) {
-            throw new IllegalStateException("Cannot decrement reference count for " + current);
+            throw new IllegalStateException(
+                "Cannot decrement reference count for " + current
+            );
         }
         if (current.referenceCount == -1 || --current.referenceCount > 0) {
             return;
@@ -26,15 +32,21 @@ public class PooledLinkedHashSets<E> {
         this.mapPool.remove(current);
     }
 
-    public PooledObjectLinkedOpenHashSet<E> findMapWith(final PooledObjectLinkedOpenHashSet<E> current, final E object) {
-        final PooledObjectLinkedOpenHashSet<E> cached = current.getAddCache(object);
+    public PooledObjectLinkedOpenHashSet<E> findMapWith(
+        final PooledObjectLinkedOpenHashSet<E> current,
+        final E object
+    ) {
+        final PooledObjectLinkedOpenHashSet<E> cached = current.getAddCache(
+            object
+        );
 
         if (cached != null) {
             decrementReferenceCount(current);
 
             if (cached.referenceCount == 0) {
                 // bring the map back from the dead
-                PooledObjectLinkedOpenHashSet<E> contending = this.mapPool.putIfAbsent(cached, cached);
+                PooledObjectLinkedOpenHashSet<E> contending =
+                    this.mapPool.putIfAbsent(cached, cached);
                 if (contending != null) {
                     // a map already exists with the elements we want
                     if (contending.referenceCount != -1) {
@@ -78,20 +90,26 @@ public class PooledLinkedHashSets<E> {
     }
 
     // rets null if current.size() == 1
-    public PooledObjectLinkedOpenHashSet<E> findMapWithout(final PooledObjectLinkedOpenHashSet<E> current, final E object) {
+    public PooledObjectLinkedOpenHashSet<E> findMapWithout(
+        final PooledObjectLinkedOpenHashSet<E> current,
+        final E object
+    ) {
         if (current.set.size() == 1) {
             decrementReferenceCount(current);
             return null;
         }
 
-        final PooledObjectLinkedOpenHashSet<E> cached = current.getRemoveCache(object);
+        final PooledObjectLinkedOpenHashSet<E> cached = current.getRemoveCache(
+            object
+        );
 
         if (cached != null) {
             decrementReferenceCount(current);
 
             if (cached.referenceCount == 0) {
                 // bring the map back from the dead
-                PooledObjectLinkedOpenHashSet<E> contending = this.mapPool.putIfAbsent(cached, cached);
+                PooledObjectLinkedOpenHashSet<E> contending =
+                    this.mapPool.putIfAbsent(cached, cached);
                 if (contending != null) {
                     // a map already exists with the elements we want
                     if (contending.referenceCount != -1) {
@@ -134,7 +152,8 @@ public class PooledLinkedHashSets<E> {
         return ret;
     }
 
-    static final class RawSetObjectLinkedOpenHashSet<E> extends ObjectOpenHashSet<E> {
+    static final class RawSetObjectLinkedOpenHashSet<E>
+        extends ObjectOpenHashSet<E> {
 
         public RawSetObjectLinkedOpenHashSet() {
             super();
@@ -144,7 +163,10 @@ public class PooledLinkedHashSets<E> {
             super(capacity);
         }
 
-        public RawSetObjectLinkedOpenHashSet(final int capacity, final float loadFactor) {
+        public RawSetObjectLinkedOpenHashSet(
+            final int capacity,
+            final float loadFactor
+        ) {
             super(capacity, loadFactor);
         }
 
@@ -160,7 +182,9 @@ public class PooledLinkedHashSets<E> {
 
     public static final class PooledObjectLinkedOpenHashSet<E> {
 
-        private static final WeakReference NULL_REFERENCE = new WeakReference<>(null);
+        private static final WeakReference NULL_REFERENCE = new WeakReference<>(
+            null
+        );
 
         final RawSetObjectLinkedOpenHashSet<E> set;
         int referenceCount; // -1 if special
@@ -168,13 +192,17 @@ public class PooledLinkedHashSets<E> {
 
         // add cache
         WeakReference<E> lastAddObject = NULL_REFERENCE;
-        WeakReference<PooledObjectLinkedOpenHashSet<E>> lastAddMap = NULL_REFERENCE;
+        WeakReference<PooledObjectLinkedOpenHashSet<E>> lastAddMap =
+            NULL_REFERENCE;
 
         // remove cache
         WeakReference<E> lastRemoveObject = NULL_REFERENCE;
-        WeakReference<PooledObjectLinkedOpenHashSet<E>> lastRemoveMap = NULL_REFERENCE;
+        WeakReference<PooledObjectLinkedOpenHashSet<E>> lastRemoveMap =
+            NULL_REFERENCE;
 
-        public PooledObjectLinkedOpenHashSet(final PooledLinkedHashSets<E> pooledSets) {
+        public PooledObjectLinkedOpenHashSet(
+            final PooledLinkedHashSets<E> pooledSets
+        ) {
             this.set = new RawSetObjectLinkedOpenHashSet<>(2, 0.8f);
         }
 
@@ -184,7 +212,9 @@ public class PooledLinkedHashSets<E> {
             this.add(single);
         }
 
-        public PooledObjectLinkedOpenHashSet(final PooledObjectLinkedOpenHashSet<E> other) {
+        public PooledObjectLinkedOpenHashSet(
+            final PooledObjectLinkedOpenHashSet<E> other
+        ) {
             this.set = other.set.clone();
             this.hash = other.hash;
         }
@@ -200,7 +230,10 @@ public class PooledLinkedHashSets<E> {
         PooledObjectLinkedOpenHashSet<E> getAddCache(final E element) {
             final E currentAdd = this.lastAddObject.get();
 
-            if (currentAdd == null || !(currentAdd == element || currentAdd.equals(element))) {
+            if (
+                currentAdd == null ||
+                !(currentAdd == element || currentAdd.equals(element))
+            ) {
                 return null;
             }
 
@@ -210,19 +243,28 @@ public class PooledLinkedHashSets<E> {
         PooledObjectLinkedOpenHashSet<E> getRemoveCache(final E element) {
             final E currentRemove = this.lastRemoveObject.get();
 
-            if (currentRemove == null || !(currentRemove == element || currentRemove.equals(element))) {
+            if (
+                currentRemove == null ||
+                !(currentRemove == element || currentRemove.equals(element))
+            ) {
                 return null;
             }
 
             return this.lastRemoveMap.get();
         }
 
-        void updateAddCache(final E element, final PooledObjectLinkedOpenHashSet<E> map) {
+        void updateAddCache(
+            final E element,
+            final PooledObjectLinkedOpenHashSet<E> map
+        ) {
             this.lastAddObject = new WeakReference<>(element);
             this.lastAddMap = new WeakReference<>(map);
         }
 
-        void updateRemoveCache(final E element, final PooledObjectLinkedOpenHashSet<E> map) {
+        void updateRemoveCache(
+            final E element,
+            final PooledObjectLinkedOpenHashSet<E> map
+        ) {
             this.lastRemoveObject = new WeakReference<>(element);
             this.lastRemoveMap = new WeakReference<>(map);
         }
@@ -276,14 +318,27 @@ public class PooledLinkedHashSets<E> {
                     // Unfortunately we are never equal to our own instance while in use!
                     return false;
                 }
-                return this.hash == ((PooledObjectLinkedOpenHashSet) other).hash && this.set.equals(((PooledObjectLinkedOpenHashSet) other).set);
+                return (
+                    this.hash == ((PooledObjectLinkedOpenHashSet) other).hash &&
+                    this.set.equals(((PooledObjectLinkedOpenHashSet) other).set)
+                );
             }
         }
 
         @Override
         public String toString() {
-            return "PooledHashSet: size: " + this.set.size() + ", reference count: " + this.referenceCount + ", hash: " +
-                    this.hashCode() + ", identity: " + System.identityHashCode(this) + " map: " + this.set;
+            return (
+                "PooledHashSet: size: " +
+                this.set.size() +
+                ", reference count: " +
+                this.referenceCount +
+                ", hash: " +
+                this.hashCode() +
+                ", identity: " +
+                System.identityHashCode(this) +
+                " map: " +
+                this.set
+            );
         }
     }
 }

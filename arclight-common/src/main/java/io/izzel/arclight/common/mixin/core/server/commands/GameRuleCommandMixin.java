@@ -12,13 +12,31 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(GameRuleCommand.class)
 public class GameRuleCommandMixin {
 
-    @Redirect(method = "setRule", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getGameRules()Lnet/minecraft/world/level/GameRules;"))
-    private static GameRules arclight$perWorldGameRule(MinecraftServer minecraftServer, CommandContext<CommandSourceStack> context) {
+    @Redirect(
+        method = "setRule",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/MinecraftServer;getGameRules()Lnet/minecraft/world/level/GameRules;"
+        )
+    )
+    private static GameRules arclight$perWorldGameRule(
+        MinecraftServer minecraftServer,
+        CommandContext<CommandSourceStack> context
+    ) {
         return context.getSource().getLevel().getGameRules();
     }
 
-    @Redirect(method = "queryRule", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getGameRules()Lnet/minecraft/world/level/GameRules;"))
-    private static GameRules arclight$perWorldGameRule2(MinecraftServer minecraftServer, CommandSourceStack source) {
+    @Redirect(
+        method = "queryRule",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/MinecraftServer;getGameRules()Lnet/minecraft/world/level/GameRules;"
+        )
+    )
+    private static GameRules arclight$perWorldGameRule2(
+        MinecraftServer minecraftServer,
+        CommandSourceStack source
+    ) {
         return source.getLevel().getGameRules();
     }
 }

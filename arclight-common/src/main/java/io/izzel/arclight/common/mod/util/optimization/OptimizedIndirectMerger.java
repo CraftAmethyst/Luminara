@@ -16,7 +16,12 @@ public class OptimizedIndirectMerger implements IndexMerger {
 
     private final DoubleArrayList pairs;
 
-    public OptimizedIndirectMerger(DoubleList aPoints, DoubleList bPoints, boolean flag1, boolean flag2) {
+    public OptimizedIndirectMerger(
+        DoubleList aPoints,
+        DoubleList bPoints,
+        boolean flag1,
+        boolean flag2
+    ) {
         double[] araw;
 
         if (aPoints instanceof DoubleArrayList) {
@@ -52,13 +57,21 @@ public class OptimizedIndirectMerger implements IndexMerger {
         this.merge(araw, braw, araw.length, braw.length, flag1, flag2);
     }
 
-    private void merge(double[] aPoints, double[] bPoints, int aSize, int bSize, boolean flag1, boolean flag2) {
+    private void merge(
+        double[] aPoints,
+        double[] bPoints,
+        int aSize,
+        int bSize,
+        boolean flag1,
+        boolean flag2
+    ) {
         int aIdx = 0;
         int bIdx = 0;
 
         double prev = 0.0D;
 
-        int a1 = 0, a2 = 0;
+        int a1 = 0,
+            a2 = 0;
 
         while (true) {
             boolean aWithinBounds = aIdx < aSize;
@@ -68,7 +81,9 @@ public class OptimizedIndirectMerger implements IndexMerger {
                 break;
             }
 
-            boolean flip = aWithinBounds && (!bWithinBounds || aPoints[aIdx] < bPoints[bIdx] + 1.0E-7D);
+            boolean flip =
+                aWithinBounds &&
+                (!bWithinBounds || aPoints[aIdx] < bPoints[bIdx] + 1.0E-7D);
 
             double value;
 
@@ -101,7 +116,10 @@ public class OptimizedIndirectMerger implements IndexMerger {
         }
 
         if (a2 == 0) {
-            this.merged[a2++] = Math.min(aPoints[aSize - 1], bPoints[bSize - 1]);
+            this.merged[a2++] = Math.min(
+                aPoints[aSize - 1],
+                bPoints[bSize - 1]
+            );
         }
 
         this.pairs.size(a2);
@@ -117,7 +135,9 @@ public class OptimizedIndirectMerger implements IndexMerger {
         int l = this.pairs.size() - 1;
 
         for (int i = 0; i < l; i++) {
-            if (!consumer.merge(this.indicesFirst[i], this.indicesSecond[i], i)) {
+            if (
+                !consumer.merge(this.indicesFirst[i], this.indicesSecond[i], i)
+            ) {
                 return false;
             }
         }

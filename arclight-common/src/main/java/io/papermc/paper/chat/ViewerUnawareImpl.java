@@ -6,7 +6,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-sealed class ViewerUnawareImpl implements ChatRenderer, ChatRenderer.ViewerUnaware permits ViewerUnawareImpl.Default {
+sealed class ViewerUnawareImpl
+    implements ChatRenderer, ChatRenderer.ViewerUnaware
+    permits ViewerUnawareImpl.Default {
+
     private final ViewerUnaware unaware;
     private @Nullable Component message;
 
@@ -15,19 +18,35 @@ sealed class ViewerUnawareImpl implements ChatRenderer, ChatRenderer.ViewerUnawa
     }
 
     @Override
-    public @NotNull Component render(final @NotNull Player source, final @NotNull Component sourceDisplayName, final @NotNull Component message, final @NotNull Audience viewer) {
+    public @NotNull Component render(
+        final @NotNull Player source,
+        final @NotNull Component sourceDisplayName,
+        final @NotNull Component message,
+        final @NotNull Audience viewer
+    ) {
         return this.render(source, sourceDisplayName, message);
     }
 
     @Override
-    public @NotNull Component render(final @NotNull Player source, final @NotNull Component sourceDisplayName, final @NotNull Component message) {
+    public @NotNull Component render(
+        final @NotNull Player source,
+        final @NotNull Component sourceDisplayName,
+        final @NotNull Component message
+    ) {
         if (this.message == null) {
-            this.message = this.unaware.render(source, sourceDisplayName, message);
+            this.message = this.unaware.render(
+                source,
+                sourceDisplayName,
+                message
+            );
         }
         return this.message;
     }
 
-    static final class Default extends ViewerUnawareImpl implements ChatRenderer.Default {
+    static final class Default
+        extends ViewerUnawareImpl
+        implements ChatRenderer.Default {
+
         Default(final ViewerUnaware unaware) {
             super(unaware);
         }

@@ -15,9 +15,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(MinecartItem.class)
 public class MinecartItemMixin {
 
-    @Eject(method = "m_6225_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z", remap = false))
-    private boolean arclight$entityPlace(Level world, Entity entityIn, CallbackInfoReturnable<InteractionResult> cir, UseOnContext context) {
-        if (DistValidate.isValid(world) && CraftEventFactory.callEntityPlaceEvent(context, entityIn).isCancelled()) {
+    @Eject(
+        method = "m_6225_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z",
+            remap = false
+        )
+    )
+    private boolean arclight$entityPlace(
+        Level world,
+        Entity entityIn,
+        CallbackInfoReturnable<InteractionResult> cir,
+        UseOnContext context
+    ) {
+        if (
+            DistValidate.isValid(world) &&
+            CraftEventFactory.callEntityPlaceEvent(
+                context,
+                entityIn
+            ).isCancelled()
+        ) {
             cir.setReturnValue(InteractionResult.FAIL);
             return false;
         } else if (!world.addFreshEntity(entityIn)) {

@@ -6,13 +6,15 @@ import io.izzel.arclight.common.mod.util.BungeeComponentPreloader;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.LuminaraVersion;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkConstants;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -20,34 +22,43 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 @Mod("luminara")
 public class ArclightMod {
 
-    public static final Logger LOGGER = ArclightI18nLogger.getLogger("Luminara");
+    public static final Logger LOGGER = ArclightI18nLogger.getLogger(
+        "Luminara"
+    );
 
     public ArclightMod(FMLJavaModLoadingContext context) {
         LOGGER.info("mod-load");
         LOGGER.info(LuminaraVersion.compatibilityLine());
         System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
-        System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
+        System.setErr(
+            new LoggingPrintStream("STDERR", System.err, Level.ERROR)
+        );
 
         if (ArclightConfig.spec().getCompat().isPreloadBungeeChatClasses()) {
             BungeeComponentPreloader.preloadBungeeClasses();
         }
 
         ArclightEventDispatcherRegistry.registerAllEventDispatchers();
-        MinecraftForge.EVENT_BUS.addListener(LuminaraCommand::onRegisterCommands);
-        context.registerExtensionPoint(IExtensionPoint.DisplayTest.class,
-                () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        MinecraftForge.EVENT_BUS.addListener(
+            LuminaraCommand::onRegisterCommands
+        );
+        context.registerExtensionPoint(IExtensionPoint.DisplayTest.class, () ->
+            new IExtensionPoint.DisplayTest(
+                () -> NetworkConstants.IGNORESERVERONLY,
+                (a, b) -> true
+            )
+        );
 
         context.getModEventBus().addListener(this::onCommonSetup);
     }
 
     public static boolean isModLoaded(String modid) {
-        return ModList.get() != null ? ModList.get().isLoaded(modid) : FMLLoader.getLoadingModList().getModFileById(modid) != null;
+        return ModList.get() != null
+            ? ModList.get().isLoaded(modid)
+            : FMLLoader.getLoadingModList().getModFileById(modid) != null;
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {
@@ -59,7 +70,11 @@ public class ArclightMod {
         private final Logger logger;
         private final Level level;
 
-        public LoggingPrintStream(String name, @NotNull OutputStream out, Level level) {
+        public LoggingPrintStream(
+            String name,
+            @NotNull OutputStream out,
+            Level level
+        ) {
             super(out);
             this.logger = LogManager.getLogger(name);
             this.level = level;

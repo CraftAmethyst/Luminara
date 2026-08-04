@@ -6,7 +6,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin_Optimize implements ServerPlayerEntityBridge {
+public abstract class ServerPlayerMixin_Optimize
+    implements ServerPlayerEntityBridge {
 
     @Unique
     private boolean trackerDirty;

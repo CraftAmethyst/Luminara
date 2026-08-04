@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(targets = "net/minecraft/world/inventory/LoomMenu$2")
 public abstract class LoomContainer2Mixin extends SimpleContainerMixin {
 
-    @Shadow(aliases = {"this$0", "f_39905_"}, remap = false)
+    @Shadow(aliases = { "this$0", "f_39905_" }, remap = false)
     private LoomMenu outerThis;
 
     @Override

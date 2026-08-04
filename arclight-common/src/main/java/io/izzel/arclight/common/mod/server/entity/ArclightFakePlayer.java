@@ -18,6 +18,5 @@ public class ArclightFakePlayer extends CraftPlayer {
     }
 
     @Override
-    public void setOp(boolean value) {
-    }
+    public void setOp(boolean value) {}
 }

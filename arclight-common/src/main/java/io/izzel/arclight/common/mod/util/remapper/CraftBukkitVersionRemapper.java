@@ -2,28 +2,35 @@ package io.izzel.arclight.common.mod.util.remapper;
 
 import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.common.mod.ArclightMod;
+import java.util.regex.Pattern;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.tree.*;
 
-import java.util.regex.Pattern;
-
 public class CraftBukkitVersionRemapper implements PluginTransformer {
 
-    public static final CraftBukkitVersionRemapper INSTANCE = new CraftBukkitVersionRemapper();
+    public static final CraftBukkitVersionRemapper INSTANCE =
+        new CraftBukkitVersionRemapper();
     private static final Marker MARKER = MarkerManager.getMarker("CBREMAPPER");
 
-    private static final Pattern VERSION_PATTERN = Pattern.compile("v\\d+_\\d+_R\\d+");
+    private static final Pattern VERSION_PATTERN = Pattern.compile(
+        "v\\d+_\\d+_R\\d+"
+    );
     private static final String CRAFTBUKKIT_PREFIX = "org/bukkit/craftbukkit/";
-    private static final String CRAFTBUKKIT_DOT_PREFIX = "org.bukkit.craftbukkit.";
+    private static final String CRAFTBUKKIT_DOT_PREFIX =
+        "org.bukkit.craftbukkit.";
     private static final String GENERIC_VERSION = "v";
 
     public static String remapInternalName(String internalName) {
-        if (internalName == null || !internalName.startsWith(CRAFTBUKKIT_PREFIX)) {
+        if (
+            internalName == null || !internalName.startsWith(CRAFTBUKKIT_PREFIX)
+        ) {
             return internalName;
         }
 
-        String afterPrefix = internalName.substring(CRAFTBUKKIT_PREFIX.length());
+        String afterPrefix = internalName.substring(
+            CRAFTBUKKIT_PREFIX.length()
+        );
         int slashIndex = afterPrefix.indexOf('/');
 
         if (slashIndex == -1) {
@@ -36,7 +43,11 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
 
         String versionPart = afterPrefix.substring(0, slashIndex);
         if (VERSION_PATTERN.matcher(versionPart).matches()) {
-            return CRAFTBUKKIT_PREFIX + GENERIC_VERSION + afterPrefix.substring(slashIndex);
+            return (
+                CRAFTBUKKIT_PREFIX +
+                GENERIC_VERSION +
+                afterPrefix.substring(slashIndex)
+            );
         }
 
         return internalName;
@@ -79,7 +90,9 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
             return binaryName;
         }
 
-        String afterPrefix = binaryName.substring(CRAFTBUKKIT_DOT_PREFIX.length());
+        String afterPrefix = binaryName.substring(
+            CRAFTBUKKIT_DOT_PREFIX.length()
+        );
         int dotIndex = afterPrefix.indexOf('.');
 
         if (dotIndex == -1) {
@@ -91,20 +104,30 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
 
         String versionPart = afterPrefix.substring(0, dotIndex);
         if (VERSION_PATTERN.matcher(versionPart).matches()) {
-            return CRAFTBUKKIT_DOT_PREFIX + GENERIC_VERSION + afterPrefix.substring(dotIndex);
+            return (
+                CRAFTBUKKIT_DOT_PREFIX +
+                GENERIC_VERSION +
+                afterPrefix.substring(dotIndex)
+            );
         }
 
         return binaryName;
     }
 
     public static String toVersionedInternalName(String internalName) {
-        if (internalName == null || !internalName.startsWith(CRAFTBUKKIT_PREFIX)) {
+        if (
+            internalName == null || !internalName.startsWith(CRAFTBUKKIT_PREFIX)
+        ) {
             return internalName;
         }
 
-        String afterPrefix = internalName.substring(CRAFTBUKKIT_PREFIX.length());
+        String afterPrefix = internalName.substring(
+            CRAFTBUKKIT_PREFIX.length()
+        );
         int slashIndex = afterPrefix.indexOf('/');
-        String versionPart = slashIndex == -1 ? afterPrefix : afterPrefix.substring(0, slashIndex);
+        String versionPart = slashIndex == -1
+            ? afterPrefix
+            : afterPrefix.substring(0, slashIndex);
         if (!GENERIC_VERSION.equals(versionPart)) {
             return internalName;
         }
@@ -126,9 +149,13 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
             return binaryName;
         }
 
-        String afterPrefix = binaryName.substring(CRAFTBUKKIT_DOT_PREFIX.length());
+        String afterPrefix = binaryName.substring(
+            CRAFTBUKKIT_DOT_PREFIX.length()
+        );
         int dotIndex = afterPrefix.indexOf('.');
-        String versionPart = dotIndex == -1 ? afterPrefix : afterPrefix.substring(0, dotIndex);
+        String versionPart = dotIndex == -1
+            ? afterPrefix
+            : afterPrefix.substring(0, dotIndex);
         if (!GENERIC_VERSION.equals(versionPart)) {
             return binaryName;
         }
@@ -137,7 +164,9 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
         if (dotIndex == -1) {
             return CRAFTBUKKIT_DOT_PREFIX + version;
         }
-        return CRAFTBUKKIT_DOT_PREFIX + version + afterPrefix.substring(dotIndex);
+        return (
+            CRAFTBUKKIT_DOT_PREFIX + version + afterPrefix.substring(dotIndex)
+        );
     }
 
     private static String currentVersion() {
@@ -146,17 +175,25 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
             if (current != null && !current.isBlank()) {
                 return current;
             }
-        } catch (Throwable ignored) {
-        }
+        } catch (Throwable ignored) {}
         return GENERIC_VERSION;
     }
 
     @Override
-    public void handleClass(ClassNode node, ClassLoaderRemapper remapper, ArclightRemapConfig config) {
+    public void handleClass(
+        ClassNode node,
+        ClassLoaderRemapper remapper,
+        ArclightRemapConfig config
+    ) {
         if (node.name.startsWith(CRAFTBUKKIT_PREFIX)) {
             String remapped = remapInternalName(node.name);
             if (!remapped.equals(node.name)) {
-                ArclightMod.LOGGER.debug(MARKER, "Remapping class {} to {}", node.name, remapped);
+                ArclightMod.LOGGER.debug(
+                    MARKER,
+                    "Remapping class {} to {}",
+                    node.name,
+                    remapped
+                );
                 node.name = remapped;
             }
         }
@@ -167,7 +204,10 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
 
         if (node.interfaces != null) {
             for (int i = 0; i < node.interfaces.size(); i++) {
-                node.interfaces.set(i, remapInternalName(node.interfaces.get(i)));
+                node.interfaces.set(
+                    i,
+                    remapInternalName(node.interfaces.get(i))
+                );
             }
         }
 
@@ -193,36 +233,53 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
                 } else if (insn instanceof MethodInsnNode methodInsn) {
                     methodInsn.owner = remapInternalName(methodInsn.owner);
                     methodInsn.desc = remapDescriptor(methodInsn.desc);
-                } else if (insn instanceof InvokeDynamicInsnNode invokeDynamicInsn) {
+                } else if (
+                    insn instanceof InvokeDynamicInsnNode invokeDynamicInsn
+                ) {
                     invokeDynamicInsn.bsm = new org.objectweb.asm.Handle(
-                            invokeDynamicInsn.bsm.getTag(),
-                            remapInternalName(invokeDynamicInsn.bsm.getOwner()),
-                            invokeDynamicInsn.bsm.getName(),
-                            remapDescriptor(invokeDynamicInsn.bsm.getDesc()),
-                            invokeDynamicInsn.bsm.isInterface()
+                        invokeDynamicInsn.bsm.getTag(),
+                        remapInternalName(invokeDynamicInsn.bsm.getOwner()),
+                        invokeDynamicInsn.bsm.getName(),
+                        remapDescriptor(invokeDynamicInsn.bsm.getDesc()),
+                        invokeDynamicInsn.bsm.isInterface()
                     );
-                    invokeDynamicInsn.desc = remapDescriptor(invokeDynamicInsn.desc);
+                    invokeDynamicInsn.desc = remapDescriptor(
+                        invokeDynamicInsn.desc
+                    );
                     Object[] bsmArgs = invokeDynamicInsn.bsmArgs;
                     for (int i = 0; i < bsmArgs.length; i++) {
                         if (bsmArgs[i] instanceof org.objectweb.asm.Type) {
-                            bsmArgs[i] = org.objectweb.asm.Type.getType(remapDescriptor(((org.objectweb.asm.Type) bsmArgs[i]).getDescriptor()));
-                        } else if (bsmArgs[i] instanceof org.objectweb.asm.Handle handle) {
+                            bsmArgs[i] = org.objectweb.asm.Type.getType(
+                                remapDescriptor(
+                                    ((org.objectweb.asm.Type) bsmArgs[i]).getDescriptor()
+                                )
+                            );
+                        } else if (
+                            bsmArgs[i] instanceof
+                                org.objectweb.asm.Handle handle
+                        ) {
                             bsmArgs[i] = new org.objectweb.asm.Handle(
-                                    handle.getTag(),
-                                    remapInternalName(handle.getOwner()),
-                                    handle.getName(),
-                                    remapDescriptor(handle.getDesc()),
-                                    handle.isInterface()
+                                handle.getTag(),
+                                remapInternalName(handle.getOwner()),
+                                handle.getName(),
+                                remapDescriptor(handle.getDesc()),
+                                handle.isInterface()
                             );
                         }
                     }
                 } else if (insn instanceof LdcInsnNode ldcInsn) {
                     if (ldcInsn.cst instanceof String stringConstant) {
                         ldcInsn.cst = remapStringConstant(stringConstant);
-                    } else if (ldcInsn.cst instanceof org.objectweb.asm.Type type) {
-                        ldcInsn.cst = org.objectweb.asm.Type.getType(remapDescriptor(type.getDescriptor()));
+                    } else if (
+                        ldcInsn.cst instanceof org.objectweb.asm.Type type
+                    ) {
+                        ldcInsn.cst = org.objectweb.asm.Type.getType(
+                            remapDescriptor(type.getDescriptor())
+                        );
                     }
-                } else if (insn instanceof MultiANewArrayInsnNode multiArrayInsn) {
+                } else if (
+                    insn instanceof MultiANewArrayInsnNode multiArrayInsn
+                ) {
                     multiArrayInsn.desc = remapDescriptor(multiArrayInsn.desc);
                 } else if (insn instanceof FrameNode frameNode) {
                     remapFrameTypes(frameNode.local);
@@ -279,7 +336,10 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
                     break;
                 }
                 String className = descriptor.substring(i + 1, semicolon);
-                result.append('L').append(remapInternalName(className)).append(';');
+                result
+                    .append('L')
+                    .append(remapInternalName(className))
+                    .append(';');
                 i = semicolon + 1;
             } else {
                 result.append(c);
@@ -299,7 +359,10 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
         if (constant.startsWith(CRAFTBUKKIT_DOT_PREFIX)) {
             return remapBinaryName(constant);
         }
-        if ((constant.startsWith("L") || constant.startsWith("[")) && constant.contains(CRAFTBUKKIT_PREFIX)) {
+        if (
+            (constant.startsWith("L") || constant.startsWith("[")) &&
+            constant.contains(CRAFTBUKKIT_PREFIX)
+        ) {
             return remapDescriptor(constant);
         }
         return constant;

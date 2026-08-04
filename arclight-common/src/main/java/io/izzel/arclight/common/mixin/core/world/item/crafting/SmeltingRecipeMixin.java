@@ -13,10 +13,30 @@ import org.bukkit.inventory.Recipe;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(SmeltingRecipe.class)
-public abstract class SmeltingRecipeMixin extends AbstractCookingRecipe implements IRecipeBridge {
+public abstract class SmeltingRecipeMixin
+    extends AbstractCookingRecipe
+    implements IRecipeBridge {
 
-    public SmeltingRecipeMixin(RecipeType<?> p_250197_, ResourceLocation p_249379_, String p_249518_, CookingBookCategory p_250891_, Ingredient p_251354_, ItemStack p_252185_, float p_252165_, int p_250256_) {
-        super(p_250197_, p_249379_, p_249518_, p_250891_, p_251354_, p_252185_, p_252165_, p_250256_);
+    public SmeltingRecipeMixin(
+        RecipeType<?> p_250197_,
+        ResourceLocation p_249379_,
+        String p_249518_,
+        CookingBookCategory p_250891_,
+        Ingredient p_251354_,
+        ItemStack p_252185_,
+        float p_252165_,
+        int p_250256_
+    ) {
+        super(
+            p_250197_,
+            p_249379_,
+            p_249518_,
+            p_250891_,
+            p_251354_,
+            p_252185_,
+            p_252165_,
+            p_250256_
+        );
     }
 
     @Override
@@ -26,7 +46,13 @@ public abstract class SmeltingRecipeMixin extends AbstractCookingRecipe implemen
         }
         CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 
-        CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(CraftNamespacedKey.fromMinecraft(this.id), result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
+        CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(
+            CraftNamespacedKey.fromMinecraft(this.id),
+            result,
+            CraftRecipe.toBukkit(this.ingredient),
+            this.experience,
+            this.cookingTime
+        );
         recipe.setGroup(this.group == null ? "" : this.group);
         recipe.setCategory(CraftRecipe.getCategory(this.category()));
 

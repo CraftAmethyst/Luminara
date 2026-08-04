@@ -2,6 +2,8 @@ package io.izzel.arclight.common.mixin.core.world.inventory;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -18,15 +20,15 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(MerchantContainer.class)
-public abstract class MerchantInventoryMixin implements IInventoryBridge, Container {
+public abstract class MerchantInventoryMixin
+    implements IInventoryBridge, Container {
 
     // @formatter:off
     @Shadow @Final private NonNullList<ItemStack> itemStacks;
+
     @Shadow @Final private Merchant merchant;
+
     // @formatter:on
 
     private List<HumanEntity> transactions = new ArrayList<>();
@@ -55,12 +57,13 @@ public abstract class MerchantInventoryMixin implements IInventoryBridge, Contai
 
     @Override
     public InventoryHolder getOwner() {
-        return this.merchant instanceof AbstractVillager ? ((CraftAbstractVillager) ((EntityBridge) this.merchant).bridge$getBukkitEntity()) : null;
+        return this.merchant instanceof AbstractVillager
+            ? ((CraftAbstractVillager) ((EntityBridge) this.merchant).bridge$getBukkitEntity())
+            : null;
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {
@@ -75,7 +78,9 @@ public abstract class MerchantInventoryMixin implements IInventoryBridge, Contai
 
     @Override
     public Location getLocation() {
-        return this.merchant instanceof AbstractVillager ? ((EntityBridge) this.merchant).bridge$getBukkitEntity().getLocation() : null;
+        return this.merchant instanceof AbstractVillager
+            ? ((EntityBridge) this.merchant).bridge$getBukkitEntity().getLocation()
+            : null;
     }
 
     @Override
@@ -84,6 +89,5 @@ public abstract class MerchantInventoryMixin implements IInventoryBridge, Contai
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-    }
+    public void setCurrentRecipe(Recipe<?> recipe) {}
 }

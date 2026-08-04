@@ -6,11 +6,10 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import java.util.Iterator;
+import javax.annotation.Nullable;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.ChunkPos;
-
-import javax.annotation.Nullable;
-import java.util.Iterator;
 
 /**
  * @author Spottedleaf
@@ -19,11 +18,15 @@ public abstract class AreaMap<E> {
 
     /* Tested via https://gist.github.com/Spottedleaf/520419c6f41ef348fe9926ce674b7217 */
 
-    protected final Object2LongOpenHashMap<E> objectToLastCoordinate = new Object2LongOpenHashMap<>();
-    protected final Object2IntOpenHashMap<E> objectToViewDistance = new Object2IntOpenHashMap<>();
+    protected final Object2LongOpenHashMap<E> objectToLastCoordinate =
+        new Object2LongOpenHashMap<>();
+    protected final Object2IntOpenHashMap<E> objectToViewDistance =
+        new Object2IntOpenHashMap<>();
     // we use linked for better iteration.
     // map of: coordinate to set of objects in coordinate
-    protected final Long2ObjectOpenHashMap<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>> areaMap = new Long2ObjectOpenHashMap<>(1024, 0.7f);
+    protected final Long2ObjectOpenHashMap<
+        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>
+    > areaMap = new Long2ObjectOpenHashMap<>(1024, 0.7f);
     protected final PooledLinkedHashSets<E> pooledHashSets;
     protected final ChangeCallback<E> addCallback;
     protected final ChangeCallback<E> removeCallback;
@@ -43,11 +46,20 @@ public abstract class AreaMap<E> {
         this(pooledHashSets, null, null);
     }
 
-    public AreaMap(final PooledLinkedHashSets<E> pooledHashSets, final ChangeCallback<E> addCallback, final ChangeCallback<E> removeCallback) {
+    public AreaMap(
+        final PooledLinkedHashSets<E> pooledHashSets,
+        final ChangeCallback<E> addCallback,
+        final ChangeCallback<E> removeCallback
+    ) {
         this(pooledHashSets, addCallback, removeCallback, null);
     }
 
-    public AreaMap(final PooledLinkedHashSets<E> pooledHashSets, final ChangeCallback<E> addCallback, final ChangeCallback<E> removeCallback, final ChangeSourceCallback<E> changeSourceCallback) {
+    public AreaMap(
+        final PooledLinkedHashSets<E> pooledHashSets,
+        final ChangeCallback<E> addCallback,
+        final ChangeCallback<E> removeCallback,
+        final ChangeSourceCallback<E> changeSourceCallback
+    ) {
         this.pooledHashSets = pooledHashSets;
         this.addCallback = addCallback;
         this.removeCallback = removeCallback;
@@ -60,17 +72,23 @@ public abstract class AreaMap<E> {
     }
 
     @Nullable
-    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getObjectsInRange(final long key) {
+    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
+        E
+    > getObjectsInRange(final long key) {
         return this.areaMap.get(key);
     }
 
     @Nullable
-    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getObjectsInRange(final ChunkPos chunkPos) {
+    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
+        E
+    > getObjectsInRange(final ChunkPos chunkPos) {
         return this.areaMap.get(MCUtil.getCoordinateKey(chunkPos));
     }
 
     @Nullable
-    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getObjectsInRange(final int chunkX, final int chunkZ) {
+    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
+        E
+    > getObjectsInRange(final int chunkX, final int chunkZ) {
         return this.areaMap.get(MCUtil.getCoordinateKey(chunkX, chunkZ));
     }
 
@@ -89,51 +107,119 @@ public abstract class AreaMap<E> {
         return this.areaMap.size();
     }
 
-    public final void addOrUpdate(final E object, final int chunkX, final int chunkZ, final int viewDistance) {
-        final int oldViewDistance = this.objectToViewDistance.put(object, viewDistance);
+    public final void addOrUpdate(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int viewDistance
+    ) {
+        final int oldViewDistance = this.objectToViewDistance.put(
+            object,
+            viewDistance
+        );
         final long newPos = MCUtil.getCoordinateKey(chunkX, chunkZ);
         final long oldPos = this.objectToLastCoordinate.put(object, newPos);
 
         if (oldViewDistance == -1) {
-            this.addObject(object, chunkX, chunkZ, Integer.MIN_VALUE, Integer.MIN_VALUE, viewDistance);
+            this.addObject(
+                object,
+                chunkX,
+                chunkZ,
+                Integer.MIN_VALUE,
+                Integer.MIN_VALUE,
+                viewDistance
+            );
             this.addObjectCallback(object, chunkX, chunkZ, viewDistance);
         } else {
-            this.updateObject(object, oldPos, newPos, oldViewDistance, viewDistance);
-            this.updateObjectCallback(object, oldPos, newPos, oldViewDistance, viewDistance);
+            this.updateObject(
+                object,
+                oldPos,
+                newPos,
+                oldViewDistance,
+                viewDistance
+            );
+            this.updateObjectCallback(
+                object,
+                oldPos,
+                newPos,
+                oldViewDistance,
+                viewDistance
+            );
         }
         //this.validate(object, viewDistance);
     }
 
-    public final boolean update(final E object, final int chunkX, final int chunkZ, final int viewDistance) {
-        final int oldViewDistance = this.objectToViewDistance.replace(object, viewDistance);
+    public final boolean update(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int viewDistance
+    ) {
+        final int oldViewDistance = this.objectToViewDistance.replace(
+            object,
+            viewDistance
+        );
         if (oldViewDistance == -1) {
             return false;
         } else {
             final long newPos = MCUtil.getCoordinateKey(chunkX, chunkZ);
             final long oldPos = this.objectToLastCoordinate.put(object, newPos);
-            this.updateObject(object, oldPos, newPos, oldViewDistance, viewDistance);
-            this.updateObjectCallback(object, oldPos, newPos, oldViewDistance, viewDistance);
+            this.updateObject(
+                object,
+                oldPos,
+                newPos,
+                oldViewDistance,
+                viewDistance
+            );
+            this.updateObjectCallback(
+                object,
+                oldPos,
+                newPos,
+                oldViewDistance,
+                viewDistance
+            );
         }
         //this.validate(object, viewDistance);
         return true;
     }
 
     // called after the distance map updates
-    protected void updateObjectCallback(final E Object, final long oldPosition, final long newPosition, final int oldViewDistance, final int newViewDistance) {
+    protected void updateObjectCallback(
+        final E Object,
+        final long oldPosition,
+        final long newPosition,
+        final int oldViewDistance,
+        final int newViewDistance
+    ) {
         if (newPosition != oldPosition && this.changeSourceCallback != null) {
             this.changeSourceCallback.accept(Object, oldPosition, newPosition);
         }
     }
 
-    public final boolean add(final E object, final int chunkX, final int chunkZ, final int viewDistance) {
-        final int oldViewDistance = this.objectToViewDistance.putIfAbsent(object, viewDistance);
+    public final boolean add(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int viewDistance
+    ) {
+        final int oldViewDistance = this.objectToViewDistance.putIfAbsent(
+            object,
+            viewDistance
+        );
         if (oldViewDistance != -1) {
             return false;
         }
 
         final long newPos = MCUtil.getCoordinateKey(chunkX, chunkZ);
         this.objectToLastCoordinate.put(object, newPos);
-        this.addObject(object, chunkX, chunkZ, Integer.MIN_VALUE, Integer.MIN_VALUE, viewDistance);
+        this.addObject(
+            object,
+            chunkX,
+            chunkZ,
+            Integer.MIN_VALUE,
+            Integer.MIN_VALUE,
+            viewDistance
+        );
         this.addObjectCallback(object, chunkX, chunkZ, viewDistance);
 
         //this.validate(object, viewDistance);
@@ -142,8 +228,12 @@ public abstract class AreaMap<E> {
     }
 
     // called after the distance map updates
-    protected void addObjectCallback(final E object, final int chunkX, final int chunkZ, final int viewDistance) {
-    }
+    protected void addObjectCallback(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int viewDistance
+    ) {}
 
     public final boolean remove(final E object) {
         final long position = this.objectToLastCoordinate.removeLong(object);
@@ -156,17 +246,30 @@ public abstract class AreaMap<E> {
         final int currentX = MCUtil.getCoordinateX(position);
         final int currentZ = MCUtil.getCoordinateZ(position);
 
-        this.removeObject(object, currentX, currentZ, currentX, currentZ, viewDistance);
+        this.removeObject(
+            object,
+            currentX,
+            currentZ,
+            currentX,
+            currentZ,
+            viewDistance
+        );
         this.removeObjectCallback(object, currentX, currentZ, viewDistance);
         //this.validate(object, -1);
         return true;
     }
 
     // called after the distance map updates
-    protected void removeObjectCallback(final E object, final int chunkX, final int chunkZ, final int viewDistance) {
-    }
+    protected void removeObjectCallback(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int viewDistance
+    ) {}
 
-    protected abstract PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getEmptySetFor(final E object);
+    protected abstract PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
+        E
+    > getEmptySetFor(final E object);
 
     // expensive op, only for debug
     protected void validate(final E object, final int viewDistance) {
@@ -182,12 +285,21 @@ public abstract class AreaMap<E> {
         final int centerX = MCUtil.getCoordinateX(currPosition);
         final int centerZ = MCUtil.getCoordinateZ(currPosition);
 
-        for (Iterator<Long2ObjectLinkedOpenHashMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>>> iterator = this.areaMap.long2ObjectEntrySet().fastIterator();
-             iterator.hasNext(); ) {
+        for (
+            Iterator<
+                Long2ObjectLinkedOpenHashMap.Entry<
+                    PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>
+                >
+            > iterator = this.areaMap.long2ObjectEntrySet().fastIterator();
+            iterator.hasNext();
 
-            final Long2ObjectLinkedOpenHashMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>> entry = iterator.next();
+        ) {
+            final Long2ObjectLinkedOpenHashMap.Entry<
+                PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>
+            > entry = iterator.next();
             final long key = entry.getLongKey();
-            final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> map = entry.getValue();
+            final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> map =
+                entry.getValue();
 
             if (map.referenceCount == 0) {
                 throw new IllegalStateException("Invalid map");
@@ -199,30 +311,52 @@ public abstract class AreaMap<E> {
                 final int chunkX = MCUtil.getCoordinateX(key);
                 final int chunkZ = MCUtil.getCoordinateZ(key);
 
-                final int dist = Math.max(IntegerUtil.branchlessAbs(chunkX - centerX), IntegerUtil.branchlessAbs(chunkZ - centerZ));
+                final int dist = Math.max(
+                    IntegerUtil.branchlessAbs(chunkX - centerX),
+                    IntegerUtil.branchlessAbs(chunkZ - centerZ)
+                );
 
                 if (dist > viewDistance) {
-                    throw new IllegalStateException("Expected view distance " + viewDistance + ", got " + dist);
+                    throw new IllegalStateException(
+                        "Expected view distance " +
+                            viewDistance +
+                            ", got " +
+                            dist
+                    );
                 }
             }
         }
 
         if (entiesGot != expectedEntries) {
-            throw new IllegalStateException("Expected " + expectedEntries + ", got " + entiesGot);
+            throw new IllegalStateException(
+                "Expected " + expectedEntries + ", got " + entiesGot
+            );
         }
     }
 
-    private void addObjectTo(final E object, final int chunkX, final int chunkZ, final int currChunkX,
-                             final int currChunkZ, final int prevChunkX, final int prevChunkZ) {
+    private void addObjectTo(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int currChunkX,
+        final int currChunkZ,
+        final int prevChunkX,
+        final int prevChunkZ
+    ) {
         final long key = MCUtil.getCoordinateKey(chunkX, chunkZ);
 
-        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> empty = this.getEmptySetFor(object);
-        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> current = this.areaMap.putIfAbsent(key, empty);
+        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> empty =
+            this.getEmptySetFor(object);
+        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> current =
+            this.areaMap.putIfAbsent(key, empty);
 
         if (current != null) {
-            PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> next = this.pooledHashSets.findMapWith(current, object);
+            PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> next =
+                this.pooledHashSets.findMapWith(current, object);
             if (next == current) {
-                throw new IllegalStateException("Expected different map: got " + next);
+                throw new IllegalStateException(
+                    "Expected different map: got " + next
+                );
             }
             this.areaMap.put(key, next);
 
@@ -234,30 +368,69 @@ public abstract class AreaMap<E> {
 
         if (this.addCallback != null) {
             try {
-                this.addCallback.accept(object, chunkX, chunkZ, currChunkX, currChunkZ, prevChunkX, prevChunkZ, current);
+                this.addCallback.accept(
+                    object,
+                    chunkX,
+                    chunkZ,
+                    currChunkX,
+                    currChunkZ,
+                    prevChunkX,
+                    prevChunkZ,
+                    current
+                );
             } catch (final Throwable ex) {
                 if (ex instanceof ThreadDeath) {
                     throw (ThreadDeath) ex;
                 }
-                MinecraftServer.LOGGER.error("Add callback for map threw exception ", ex);
+                MinecraftServer.LOGGER.error(
+                    "Add callback for map threw exception ",
+                    ex
+                );
             }
         }
     }
 
-    private void removeObjectFrom(final E object, final int chunkX, final int chunkZ, final int currChunkX,
-                                  final int currChunkZ, final int prevChunkX, final int prevChunkZ) {
+    private void removeObjectFrom(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int currChunkX,
+        final int currChunkZ,
+        final int prevChunkX,
+        final int prevChunkZ
+    ) {
         final long key = MCUtil.getCoordinateKey(chunkX, chunkZ);
 
-        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> current = this.areaMap.get(key);
+        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> current =
+            this.areaMap.get(key);
 
         if (current == null) {
-            throw new IllegalStateException("Current map may not be null for " + object + ", (" + chunkX + "," + chunkZ + ")");
+            throw new IllegalStateException(
+                "Current map may not be null for " +
+                    object +
+                    ", (" +
+                    chunkX +
+                    "," +
+                    chunkZ +
+                    ")"
+            );
         }
 
-        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> next = this.pooledHashSets.findMapWithout(current, object);
+        PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> next =
+            this.pooledHashSets.findMapWithout(current, object);
 
         if (next == current) {
-            throw new IllegalStateException("Current map [" + next + "] should have contained " + object + ", (" + chunkX + "," + chunkZ + ")");
+            throw new IllegalStateException(
+                "Current map [" +
+                    next +
+                    "] should have contained " +
+                    object +
+                    ", (" +
+                    chunkX +
+                    "," +
+                    chunkZ +
+                    ")"
+            );
         }
 
         if (next != null) {
@@ -268,41 +441,89 @@ public abstract class AreaMap<E> {
 
         if (this.removeCallback != null) {
             try {
-                this.removeCallback.accept(object, chunkX, chunkZ, currChunkX, currChunkZ, prevChunkX, prevChunkZ, next);
+                this.removeCallback.accept(
+                    object,
+                    chunkX,
+                    chunkZ,
+                    currChunkX,
+                    currChunkZ,
+                    prevChunkX,
+                    prevChunkZ,
+                    next
+                );
             } catch (final Throwable ex) {
                 if (ex instanceof ThreadDeath) {
                     throw (ThreadDeath) ex;
                 }
-                MinecraftServer.LOGGER.error("Remove callback for map threw exception ", ex);
+                MinecraftServer.LOGGER.error(
+                    "Remove callback for map threw exception ",
+                    ex
+                );
             }
         }
     }
 
-    private void addObject(final E object, final int chunkX, final int chunkZ, final int prevChunkX, final int prevChunkZ, final int viewDistance) {
+    private void addObject(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int prevChunkX,
+        final int prevChunkZ,
+        final int viewDistance
+    ) {
         final int maxX = chunkX + viewDistance;
         final int maxZ = chunkZ + viewDistance;
         final int minX = chunkX - viewDistance;
         final int minZ = chunkZ - viewDistance;
         for (int x = minX; x <= maxX; ++x) {
             for (int z = minZ; z <= maxZ; ++z) {
-                this.addObjectTo(object, x, z, chunkX, chunkZ, prevChunkX, prevChunkZ);
+                this.addObjectTo(
+                    object,
+                    x,
+                    z,
+                    chunkX,
+                    chunkZ,
+                    prevChunkX,
+                    prevChunkZ
+                );
             }
         }
     }
 
-    private void removeObject(final E object, final int chunkX, final int chunkZ, final int currentChunkX, final int currentChunkZ, final int viewDistance) {
+    private void removeObject(
+        final E object,
+        final int chunkX,
+        final int chunkZ,
+        final int currentChunkX,
+        final int currentChunkZ,
+        final int viewDistance
+    ) {
         final int maxX = chunkX + viewDistance;
         final int maxZ = chunkZ + viewDistance;
         final int minX = chunkX - viewDistance;
         final int minZ = chunkZ - viewDistance;
         for (int x = minX; x <= maxX; ++x) {
             for (int z = minZ; z <= maxZ; ++z) {
-                this.removeObjectFrom(object, x, z, currentChunkX, currentChunkZ, chunkX, chunkZ);
+                this.removeObjectFrom(
+                    object,
+                    x,
+                    z,
+                    currentChunkX,
+                    currentChunkZ,
+                    chunkX,
+                    chunkZ
+                );
             }
         }
     }
 
-    private void updateObject(final E object, final long oldPosition, final long newPosition, final int oldViewDistance, final int newViewDistance) {
+    private void updateObject(
+        final E object,
+        final long oldPosition,
+        final long newPosition,
+        final int oldViewDistance,
+        final int newViewDistance
+    ) {
         final int toX = MCUtil.getCoordinateX(newPosition);
         final int toZ = MCUtil.getCoordinateZ(newPosition);
         final int fromX = MCUtil.getCoordinateX(oldPosition);
@@ -314,9 +535,19 @@ public abstract class AreaMap<E> {
         final int totalX = IntegerUtil.branchlessAbs(fromX - toX);
         final int totalZ = IntegerUtil.branchlessAbs(fromZ - toZ);
 
-        if (Math.max(totalX, totalZ) > (2 * Math.max(newViewDistance, oldViewDistance))) {
+        if (
+            Math.max(totalX, totalZ) >
+            (2 * Math.max(newViewDistance, oldViewDistance))
+        ) {
             // teleported?
-            this.removeObject(object, fromX, fromZ, fromX, fromZ, oldViewDistance);
+            this.removeObject(
+                object,
+                fromX,
+                fromZ,
+                fromX,
+                fromZ,
+                oldViewDistance
+            );
             this.addObject(object, toX, toZ, fromX, fromZ, newViewDistance);
             return;
         }
@@ -330,10 +561,23 @@ public abstract class AreaMap<E> {
             final int oldMaxZ = fromZ + oldViewDistance;
             for (int currX = oldMinX; currX <= oldMaxX; ++currX) {
                 for (int currZ = oldMinZ; currZ <= oldMaxZ; ++currZ) {
-
                     // only remove if we're outside the new view distance...
-                    if (Math.max(IntegerUtil.branchlessAbs(currX - toX), IntegerUtil.branchlessAbs(currZ - toZ)) > newViewDistance) {
-                        this.removeObjectFrom(object, currX, currZ, toX, toZ, fromX, fromZ);
+                    if (
+                        Math.max(
+                            IntegerUtil.branchlessAbs(currX - toX),
+                            IntegerUtil.branchlessAbs(currZ - toZ)
+                        ) >
+                        newViewDistance
+                    ) {
+                        this.removeObjectFrom(
+                            object,
+                            currX,
+                            currZ,
+                            toX,
+                            toZ,
+                            fromX,
+                            fromZ
+                        );
                     }
                 }
             }
@@ -346,10 +590,23 @@ public abstract class AreaMap<E> {
             final int newMaxZ = toZ + newViewDistance;
             for (int currX = newMinX; currX <= newMaxX; ++currX) {
                 for (int currZ = newMinZ; currZ <= newMaxZ; ++currZ) {
-
                     // only add if we're outside the old view distance...
-                    if (Math.max(IntegerUtil.branchlessAbs(currX - fromX), IntegerUtil.branchlessAbs(currZ - fromZ)) > oldViewDistance) {
-                        this.addObjectTo(object, currX, currZ, toX, toZ, fromX, fromZ);
+                    if (
+                        Math.max(
+                            IntegerUtil.branchlessAbs(currX - fromX),
+                            IntegerUtil.branchlessAbs(currZ - fromZ)
+                        ) >
+                        oldViewDistance
+                    ) {
+                        this.addObjectTo(
+                            object,
+                            currX,
+                            currZ,
+                            toX,
+                            toZ,
+                            fromX,
+                            fromZ
+                        );
                     }
                 }
             }
@@ -390,7 +647,15 @@ public abstract class AreaMap<E> {
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {
-                    this.addObjectTo(object, currX, currZ, toX, toZ, fromX, fromZ);
+                    this.addObjectTo(
+                        object,
+                        currX,
+                        currZ,
+                        toX,
+                        toZ,
+                        fromX,
+                        fromZ
+                    );
                 }
             }
         }
@@ -405,7 +670,15 @@ public abstract class AreaMap<E> {
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {
-                    this.addObjectTo(object, currX, currZ, toX, toZ, fromX, fromZ);
+                    this.addObjectTo(
+                        object,
+                        currX,
+                        currZ,
+                        toX,
+                        toZ,
+                        fromX,
+                        fromZ
+                    );
                 }
             }
         }
@@ -420,7 +693,15 @@ public abstract class AreaMap<E> {
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {
-                    this.removeObjectFrom(object, currX, currZ, toX, toZ, fromX, fromZ);
+                    this.removeObjectFrom(
+                        object,
+                        currX,
+                        currZ,
+                        toX,
+                        toZ,
+                        fromX,
+                        fromZ
+                    );
                 }
             }
         }
@@ -435,7 +716,15 @@ public abstract class AreaMap<E> {
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {
-                    this.removeObjectFrom(object, currX, currZ, toX, toZ, fromX, fromZ);
+                    this.removeObjectFrom(
+                        object,
+                        currX,
+                        currZ,
+                        toX,
+                        toZ,
+                        fromX,
+                        fromZ
+                    );
                 }
             }
         }
@@ -443,11 +732,17 @@ public abstract class AreaMap<E> {
 
     @FunctionalInterface
     public interface ChangeCallback<E> {
-
         // if there is no previous position, then prevPos = Integer.MIN_VALUE
-        void accept(final E object, final int rangeX, final int rangeZ, final int currPosX, final int currPosZ, final int prevPosX, final int prevPosZ,
-                    final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> newState);
-
+        void accept(
+            final E object,
+            final int rangeX,
+            final int rangeZ,
+            final int currPosX,
+            final int currPosZ,
+            final int prevPosX,
+            final int prevPosZ,
+            final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> newState
+        );
     }
 
     @FunctionalInterface

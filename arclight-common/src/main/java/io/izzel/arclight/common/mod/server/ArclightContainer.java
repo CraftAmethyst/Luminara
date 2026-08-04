@@ -4,6 +4,8 @@ import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.PosContainerBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -21,9 +23,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ArclightContainer {
 
     /*
@@ -32,11 +31,20 @@ public class ArclightContainer {
     public static InventoryView createInvView(AbstractContainerMenu container) {
         var containerOwner = ArclightCaptures.getContainerOwner();
         Inventory viewing = createInv(containerOwner, container);
-        return new CraftInventoryView(((PlayerEntityBridge) containerOwner).bridge$getBukkitEntity(), viewing, container);
+        return new CraftInventoryView(
+            ((PlayerEntityBridge) containerOwner).bridge$getBukkitEntity(),
+            viewing,
+            container
+        );
     }
 
-    public static CraftInventory createInv(Player containerOwner, AbstractContainerMenu container) {
-        return new CraftInventory(new ContainerInvWrapper(container, containerOwner));
+    public static CraftInventory createInv(
+        Player containerOwner,
+        AbstractContainerMenu container
+    ) {
+        return new CraftInventory(
+            new ContainerInvWrapper(container, containerOwner)
+        );
     }
 
     public static SimpleContainer copyOf(SimpleContainer container) {
@@ -47,13 +55,17 @@ public class ArclightContainer {
         return copy;
     }
 
-    private static class ContainerInvWrapper implements Container, IInventoryBridge {
+    private static class ContainerInvWrapper
+        implements Container, IInventoryBridge {
 
         private final AbstractContainerMenu container;
         private final List<HumanEntity> viewers = new ArrayList<>();
         private InventoryHolder owner;
 
-        public ContainerInvWrapper(AbstractContainerMenu container, Player owner) {
+        public ContainerInvWrapper(
+            AbstractContainerMenu container,
+            Player owner
+        ) {
             this.container = container;
             this.owner = ((PlayerEntityBridge) owner).bridge$getBukkitEntity();
         }
@@ -102,12 +114,10 @@ public class ArclightContainer {
         }
 
         @Override
-        public void setMaxStackSize(int size) {
-        }
+        public void setMaxStackSize(int size) {}
 
         @Override
-        public void setChanged() {
-        }
+        public void setChanged() {}
 
         @Override
         public boolean stillValid(@NotNull Player player) {
@@ -155,7 +165,9 @@ public class ArclightContainer {
         @Override
         public Location getLocation() {
             if (container instanceof PosContainerBridge) {
-                return ((PosContainerBridge) container).bridge$getWorldLocation();
+                return (
+                    (PosContainerBridge) container
+                ).bridge$getWorldLocation();
             }
             return null;
         }
@@ -166,7 +178,6 @@ public class ArclightContainer {
         }
 
         @Override
-        public void setCurrentRecipe(Recipe<?> recipe) {
-        }
+        public void setCurrentRecipe(Recipe<?> recipe) {}
     }
 }

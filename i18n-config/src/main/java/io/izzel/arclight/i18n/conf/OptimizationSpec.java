@@ -15,7 +15,6 @@ public class OptimizationSpec {
     @Setting("use-activation-and-tracking-range")
     private boolean useActivationAndTrackingRange;
 
-
     public boolean isCachePluginClass() {
         return cachePluginClass;
     }
@@ -27,5 +26,4 @@ public class OptimizationSpec {
     public boolean useActivationAndTrackingRange() {
         return useActivationAndTrackingRange;
     }
-
 }

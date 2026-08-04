@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mixin.bukkit;
 import io.izzel.arclight.common.bridge.bukkit.CraftItemStackBridge;
 import io.izzel.arclight.common.bridge.bukkit.ItemMetaBridge;
 import io.izzel.arclight.common.bridge.core.item.ItemStackBridge;
+import java.util.Objects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.Material;
@@ -16,8 +17,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Objects;
 
 @Mixin(value = CraftItemStack.class, remap = false)
 public abstract class CraftItemStackMixin implements CraftItemStackBridge {
@@ -54,12 +53,21 @@ public abstract class CraftItemStackMixin implements CraftItemStackBridge {
             ((ItemStackBridge) (Object) item).bridge$setForgeCaps(forgeCaps.copy());
         }
     }
+
     // @formatter:on
 
-    @Inject(method = "hasItemMeta(Lnet/minecraft/world/item/ItemStack;)Z", cancellable = true, at = @At("HEAD"))
-    private static void arclight$hasMeta(ItemStack item, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(
+        method = "hasItemMeta(Lnet/minecraft/world/item/ItemStack;)Z",
+        cancellable = true,
+        at = @At("HEAD")
+    )
+    private static void arclight$hasMeta(
+        ItemStack item,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (item != null) {
-            CompoundTag forgeCaps = ((ItemStackBridge) (Object) item).bridge$getForgeCaps();
+            CompoundTag forgeCaps =
+                ((ItemStackBridge) (Object) item).bridge$getForgeCaps();
             if (forgeCaps != null && !forgeCaps.isEmpty()) {
                 cir.setReturnValue(true);
             }
@@ -88,24 +96,41 @@ public abstract class CraftItemStackMixin implements CraftItemStackBridge {
             return true;
         }
         if (!(stack instanceof CraftItemStack that)) {
-            return stack.getClass() == org.bukkit.inventory.ItemStack.class && stack.isSimilar((org.bukkit.inventory.ItemStack) (Object) this);
+            return (
+                stack.getClass() == org.bukkit.inventory.ItemStack.class &&
+                stack.isSimilar((org.bukkit.inventory.ItemStack) (Object) this)
+            );
         }
 
-        if (handle == ((CraftItemStackBridge) (Object) that).bridge$getHandle()) {
+        if (
+            handle == ((CraftItemStackBridge) (Object) that).bridge$getHandle()
+        ) {
             return true;
         }
-        if (handle == null || ((CraftItemStackBridge) (Object) that).bridge$getHandle() == null) {
+        if (
+            handle == null ||
+            ((CraftItemStackBridge) (Object) that).bridge$getHandle() == null
+        ) {
             return false;
         }
         Material comparisonType = CraftLegacy.fromLegacy(that.getType()); // This may be called from legacy item stacks, try to get the right material
-        if (!(comparisonType == this.getType() && getDurability() == that.getDurability())) {
+        if (
+            !(comparisonType == this.getType() &&
+                getDurability() == that.getDurability())
+        ) {
             return false;
         }
         return hasItemMeta()
-                ? (that.hasItemMeta()
-                && Objects.equals(handle.getTag(), ((CraftItemStackBridge) (Object) that).bridge$getHandle().getTag())
-                && Objects.equals(((ItemStackBridge) (Object) handle).bridge$getForgeCaps(), ((ItemStackBridge) (Object) ((CraftItemStackBridge) (Object) that).bridge$getHandle()).bridge$getForgeCaps()))
-                : !that.hasItemMeta();
+            ? (that.hasItemMeta() &&
+                  Objects.equals(
+                      handle.getTag(),
+                      ((CraftItemStackBridge) (Object) that).bridge$getHandle().getTag()
+                  ) &&
+                  Objects.equals(
+                      ((ItemStackBridge) (Object) handle).bridge$getForgeCaps(),
+                      ((ItemStackBridge) (Object) ((CraftItemStackBridge) (Object) that).bridge$getHandle()).bridge$getForgeCaps()
+                  ))
+            : !that.hasItemMeta();
     }
 
     @Override

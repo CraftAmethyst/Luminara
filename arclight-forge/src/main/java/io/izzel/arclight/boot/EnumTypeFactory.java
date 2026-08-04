@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,7 @@ import java.util.Map;
 public class EnumTypeFactory implements TypeAdapterFactory {
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         Class<? super T> rawType = type.getRawType();
         if (!Enum.class.isAssignableFrom(rawType) || rawType == Enum.class) {
@@ -30,7 +29,8 @@ public class EnumTypeFactory implements TypeAdapterFactory {
         return (TypeAdapter<T>) new EnumTypeAdapter(rawType);
     }
 
-    private static final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
+    private static final class EnumTypeAdapter<T extends Enum<T>>
+        extends TypeAdapter<T> {
 
         private final Map<String, T> nameToConstant = new HashMap<String, T>();
         private final Map<T, String> constantToName = new HashMap<T, String>();
@@ -40,7 +40,9 @@ public class EnumTypeFactory implements TypeAdapterFactory {
                 String name = constant.name();
                 SerializedName annotation;
                 try {
-                    annotation = classOfT.getField(name).getAnnotation(SerializedName.class);
+                    annotation = classOfT
+                        .getField(name)
+                        .getAnnotation(SerializedName.class);
                 } catch (NoSuchFieldException e) {
                     annotation = null;
                 }

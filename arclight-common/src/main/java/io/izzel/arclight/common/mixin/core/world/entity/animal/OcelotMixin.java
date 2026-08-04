@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class OcelotMixin extends AnimalMixin {
 
     public boolean spawnBonus = true;
+
     // @formatter:on
 
     // @formatter:off

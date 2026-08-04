@@ -1,9 +1,15 @@
 package io.izzel.arclight.common.mixin.core.world.inventory;
 
+import static net.minecraft.world.inventory.AbstractContainerMenu.getQuickCraftPlaceCount;
+
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.ContainerBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.SlotBridge;
 import io.izzel.arclight.common.mod.server.ArclightContainer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -29,38 +35,40 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import static net.minecraft.world.inventory.AbstractContainerMenu.getQuickCraftPlaceCount;
-
 @Mixin(AbstractContainerMenu.class)
 public abstract class AbstractContainerMenuMixin implements ContainerBridge {
 
     @Shadow
     @Final
     public int containerId;
+
     @Shadow
     public NonNullList<Slot> slots;
+
     public boolean checkReachable = true;
+
     @Shadow
     private int quickcraftStatus;
+
     @Shadow
     private int quickcraftType;
+
     @Shadow
     @Final
     private Set<Slot> quickcraftSlots;
+
     @Shadow
     @Final
     @javax.annotation.Nullable
     private MenuType<?> menuType;
+
     @Shadow
     private ItemStack remoteCarried;
+
     @Shadow
     @javax.annotation.Nullable
     private ContainerSynchronizer synchronizer;
+
     private InventoryView bukkitView;
     private Component title;
 
@@ -80,7 +88,11 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
     }
 
     @Shadow
-    public static boolean canItemQuickReplace(@Nullable Slot slotIn, ItemStack stack, boolean stackSizeMatters) {
+    public static boolean canItemQuickReplace(
+        @Nullable Slot slotIn,
+        ItemStack stack,
+        boolean stackSizeMatters
+    ) {
         return false;
     }
 
@@ -104,6 +116,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
     @Shadow public abstract void setCarried(ItemStack p_150439_);
 
     @Shadow protected abstract SlotAccess createCarriedSlotAccess();
+
     // @formatter:on
 
     @Shadow
@@ -113,29 +126,53 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
     public abstract int incrementStateId();
 
     @Shadow
-    protected abstract boolean tryItemClickBehaviourOverride(Player p_249615_, ClickAction p_250300_, Slot p_249384_, ItemStack p_251073_, ItemStack p_252026_);
+    protected abstract boolean tryItemClickBehaviourOverride(
+        Player p_249615_,
+        ClickAction p_250300_,
+        Slot p_249384_,
+        ItemStack p_251073_,
+        ItemStack p_252026_
+    );
 
     public InventoryView getBukkitView() {
         if (bukkitView == null) {
-            bukkitView = ArclightContainer.createInvView((AbstractContainerMenu) (Object) this);
+            bukkitView = ArclightContainer.createInvView(
+                (AbstractContainerMenu) (Object) this
+            );
         }
         return bukkitView;
     }
 
-    public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
+    public void transferTo(
+        AbstractContainerMenu other,
+        CraftHumanEntity player
+    ) {
         InventoryView source = this.getBukkitView();
-        InventoryView destination = ((ContainerBridge) other).bridge$getBukkitView();
-        ((IInventoryBridge) ((CraftInventory) source.getTopInventory()).getInventory()).onClose(player);
-        ((IInventoryBridge) ((CraftInventory) source.getBottomInventory()).getInventory()).onClose(player);
-        ((IInventoryBridge) ((CraftInventory) destination.getTopInventory()).getInventory()).onOpen(player);
-        ((IInventoryBridge) ((CraftInventory) destination.getBottomInventory()).getInventory()).onOpen(player);
+        InventoryView destination =
+            ((ContainerBridge) other).bridge$getBukkitView();
+        ((IInventoryBridge) ((CraftInventory) source.getTopInventory()).getInventory()).onClose(
+            player
+        );
+        ((IInventoryBridge) ((CraftInventory) source.getBottomInventory()).getInventory()).onClose(
+            player
+        );
+        ((IInventoryBridge) ((CraftInventory) destination.getTopInventory()).getInventory()).onOpen(
+            player
+        );
+        ((IInventoryBridge) ((CraftInventory) destination.getBottomInventory()).getInventory()).onOpen(
+            player
+        );
     }
 
     public Component getTitle() {
         if (this.title == null) {
             if (this.menuType != null) {
                 var key = ForgeRegistries.MENU_TYPES.getKey(this.menuType);
-                return Component.translatable(Optional.ofNullable(key).map(Object::toString).orElseGet(this::toString));
+                return Component.translatable(
+                    Optional.ofNullable(key)
+                        .map(Object::toString)
+                        .orElseGet(this::toString)
+                );
             } else {
                 return Component.translatable(this.toString());
             }
@@ -156,7 +193,10 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
     public void broadcastCarriedItem() {
         this.remoteCarried = this.getCarried().copy();
         if (this.synchronizer != null) {
-            this.synchronizer.sendCarriedChange((AbstractContainerMenu) (Object) this, this.remoteCarried);
+            this.synchronizer.sendCarriedChange(
+                (AbstractContainerMenu) (Object) this,
+                this.remoteCarried
+            );
         }
     }
 
@@ -165,12 +205,20 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
      * @reason
      */
     @Overwrite
-    private void doClick(int slotId, int dragType, ClickType clickType, Player player) {
+    private void doClick(
+        int slotId,
+        int dragType,
+        ClickType clickType,
+        Player player
+    ) {
         Inventory inventory = player.getInventory();
         if (clickType == ClickType.QUICK_CRAFT) {
             int j1 = this.quickcraftStatus;
             this.quickcraftStatus = getQuickcraftHeader(dragType);
-            if ((j1 != 1 || this.quickcraftStatus != 2) && j1 != this.quickcraftStatus) {
+            if (
+                (j1 != 1 || this.quickcraftStatus != 2) &&
+                j1 != this.quickcraftStatus
+            ) {
                 this.resetQuickCraft();
             } else if (this.getCarried().isEmpty()) {
                 this.resetQuickCraft();
@@ -185,7 +233,13 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
             } else if (this.quickcraftStatus == 1) {
                 Slot slot7 = this.slots.get(slotId);
                 ItemStack itemstack12 = this.getCarried();
-                if (canItemQuickReplace(slot7, itemstack12, true) && slot7.mayPlace(itemstack12) && (this.quickcraftType == 2 || itemstack12.getCount() > this.quickcraftSlots.size()) && this.canDragTo(slot7)) {
+                if (
+                    canItemQuickReplace(slot7, itemstack12, true) &&
+                    slot7.mayPlace(itemstack12) &&
+                    (this.quickcraftType == 2 ||
+                        itemstack12.getCount() > this.quickcraftSlots.size()) &&
+                    this.canDragTo(slot7)
+                ) {
                     this.quickcraftSlots.add(slot7);
                 }
             } else if (this.quickcraftStatus == 2) {
@@ -193,7 +247,12 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                     if (false && this.quickcraftSlots.size() == 1) {
                         int l = (this.quickcraftSlots.iterator().next()).index;
                         this.resetQuickCraft();
-                        this.doClick(l, this.quickcraftType, ClickType.PICKUP, player);
+                        this.doClick(
+                            l,
+                            this.quickcraftType,
+                            ClickType.PICKUP,
+                            player
+                        );
                         return;
                     }
                     ItemStack itemstack9 = this.getCarried().copy();
@@ -208,35 +267,84 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
 
                     for (Slot slot8 : this.quickcraftSlots) {
                         ItemStack itemstack13 = this.getCarried();
-                        if (slot8 != null && canItemQuickReplace(slot8, itemstack13, true) && slot8.mayPlace(itemstack13) && (this.quickcraftType == 2 || itemstack13.getCount() >= this.quickcraftSlots.size()) && this.canDragTo(slot8)) {
-                            int j3 = slot8.hasItem() ? slot8.getItem().getCount() : 0;
-                            int k3 = Math.min(itemstack9.getMaxStackSize(), slot8.getMaxStackSize(itemstack9));
-                            int l3 = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemstack9) + j3, k3);
+                        if (
+                            slot8 != null &&
+                            canItemQuickReplace(slot8, itemstack13, true) &&
+                            slot8.mayPlace(itemstack13) &&
+                            (this.quickcraftType == 2 ||
+                                itemstack13.getCount() >=
+                                this.quickcraftSlots.size()) &&
+                            this.canDragTo(slot8)
+                        ) {
+                            int j3 = slot8.hasItem()
+                                ? slot8.getItem().getCount()
+                                : 0;
+                            int k3 = Math.min(
+                                itemstack9.getMaxStackSize(),
+                                slot8.getMaxStackSize(itemstack9)
+                            );
+                            int l3 = Math.min(
+                                getQuickCraftPlaceCount(
+                                        this.quickcraftSlots,
+                                        this.quickcraftType,
+                                        itemstack9
+                                    ) +
+                                    j3,
+                                k3
+                            );
 
                             k1 -= l3 - j3;
                             // slot8.set(itemstack14);
-                            draggedSlots.put(slot8.index, itemstack9.copyWithCount(l3));
+                            draggedSlots.put(
+                                slot8.index,
+                                itemstack9.copyWithCount(l3)
+                            );
                         }
                     }
 
                     InventoryView view = this.getBukkitView();
-                    org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack9);
+                    org.bukkit.inventory.ItemStack newcursor =
+                        CraftItemStack.asCraftMirror(itemstack9);
                     newcursor.setAmount(k1);
-                    Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<>();
-                    for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet()) {
-                        eventmap.put(ditem.getKey(), CraftItemStack.asBukkitCopy(ditem.getValue()));
+                    Map<Integer, org.bukkit.inventory.ItemStack> eventmap =
+                        new HashMap<>();
+                    for (Map.Entry<
+                        Integer,
+                        ItemStack
+                    > ditem : draggedSlots.entrySet()) {
+                        eventmap.put(
+                            ditem.getKey(),
+                            CraftItemStack.asBukkitCopy(ditem.getValue())
+                        );
                     }
                     ItemStack oldCursor = this.getCarried();
                     this.setCarried(CraftItemStack.asNMSCopy(newcursor));
-                    InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != org.bukkit.Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.quickcraftType == 1, eventmap);
+                    InventoryDragEvent event = new InventoryDragEvent(
+                        view,
+                        (newcursor.getType() != org.bukkit.Material.AIR
+                            ? newcursor
+                            : null),
+                        CraftItemStack.asBukkitCopy(oldCursor),
+                        this.quickcraftType == 1,
+                        eventmap
+                    );
                     Bukkit.getPluginManager().callEvent(event);
-                    boolean needsUpdate = event.getResult() != Event.Result.DEFAULT;
+                    boolean needsUpdate =
+                        event.getResult() != Event.Result.DEFAULT;
                     if (event.getResult() != Event.Result.DENY) {
-                        for (Map.Entry<Integer, ItemStack> dslot : draggedSlots.entrySet()) {
-                            view.setItem(dslot.getKey(), CraftItemStack.asBukkitCopy(dslot.getValue()));
+                        for (Map.Entry<
+                            Integer,
+                            ItemStack
+                        > dslot : draggedSlots.entrySet()) {
+                            view.setItem(
+                                dslot.getKey(),
+                                CraftItemStack.asBukkitCopy(dslot.getValue())
+                            );
                         }
                         if (this.getCarried() != null) {
-                            this.setCarried(CraftItemStack.asNMSCopy(event.getCursor()));
+                            this.setCarried(
+                                CraftItemStack.asNMSCopy(event.getCursor())
+                            );
                             needsUpdate = true;
                         }
                     } else {
@@ -252,8 +360,14 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
             }
         } else if (this.quickcraftStatus != 0) {
             this.resetQuickCraft();
-        } else if ((clickType == ClickType.PICKUP || clickType == ClickType.QUICK_MOVE) && (dragType == 0 || dragType == 1)) {
-            ClickAction clickaction = dragType == 0 ? ClickAction.PRIMARY : ClickAction.SECONDARY;
+        } else if (
+            (clickType == ClickType.PICKUP ||
+                clickType == ClickType.QUICK_MOVE) &&
+            (dragType == 0 || dragType == 1)
+        ) {
+            ClickAction clickaction = dragType == 0
+                ? ClickAction.PRIMARY
+                : ClickAction.SECONDARY;
             if (slotId == -999) {
                 if (!this.getCarried().isEmpty()) {
                     if (clickaction == ClickAction.PRIMARY) {
@@ -274,8 +388,12 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                     return;
                 }
 
-                for (ItemStack itemstack9 = this.quickMoveStack(player, slotId); !itemstack9.isEmpty() && ItemStack.isSameItem(slot6.getItem(), itemstack9); itemstack9 = this.quickMoveStack(player, slotId)) {
-                }
+                for (
+                    ItemStack itemstack9 = this.quickMoveStack(player, slotId);
+                    !itemstack9.isEmpty() &&
+                    ItemStack.isSameItem(slot6.getItem(), itemstack9);
+                    itemstack9 = this.quickMoveStack(player, slotId)
+                ) {}
             } else {
                 if (slotId < 0) {
                     return;
@@ -284,32 +402,82 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 Slot slot7 = this.slots.get(slotId);
                 ItemStack itemstack10 = slot7.getItem();
                 ItemStack itemstack11 = this.getCarried();
-                player.updateTutorialInventoryAction(itemstack11, slot7.getItem(), clickaction);
-                if (!this.tryItemClickBehaviourOverride(player, clickaction, slot7, itemstack10, itemstack11) && !ForgeHooks.onItemStackedOn(itemstack10, itemstack11, slot7, clickaction, player, this.createCarriedSlotAccess())) {
+                player.updateTutorialInventoryAction(
+                    itemstack11,
+                    slot7.getItem(),
+                    clickaction
+                );
+                if (
+                    !this.tryItemClickBehaviourOverride(
+                        player,
+                        clickaction,
+                        slot7,
+                        itemstack10,
+                        itemstack11
+                    ) &&
+                    !ForgeHooks.onItemStackedOn(
+                        itemstack10,
+                        itemstack11,
+                        slot7,
+                        clickaction,
+                        player,
+                        this.createCarriedSlotAccess()
+                    )
+                ) {
                     if (itemstack10.isEmpty()) {
                         if (!itemstack11.isEmpty()) {
-                            int l2 = clickaction == ClickAction.PRIMARY ? itemstack11.getCount() : 1;
+                            int l2 = clickaction == ClickAction.PRIMARY
+                                ? itemstack11.getCount()
+                                : 1;
                             this.setCarried(slot7.safeInsert(itemstack11, l2));
                         }
                     } else if (slot7.mayPickup(player)) {
                         if (itemstack11.isEmpty()) {
-                            int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : (itemstack10.getCount() + 1) / 2;
-                            Optional<ItemStack> optional1 = slot7.tryRemove(i3, Integer.MAX_VALUE, player);
-                            optional1.ifPresent((p_150421_) -> {
+                            int i3 = clickaction == ClickAction.PRIMARY
+                                ? itemstack10.getCount()
+                                : (itemstack10.getCount() + 1) / 2;
+                            Optional<ItemStack> optional1 = slot7.tryRemove(
+                                i3,
+                                Integer.MAX_VALUE,
+                                player
+                            );
+                            optional1.ifPresent(p_150421_ -> {
                                 this.setCarried(p_150421_);
                                 slot7.onTake(player, p_150421_);
                             });
                         } else if (slot7.mayPlace(itemstack11)) {
-                            if (ItemStack.isSameItemSameTags(itemstack10, itemstack11)) {
-                                int j3 = clickaction == ClickAction.PRIMARY ? itemstack11.getCount() : 1;
-                                this.setCarried(slot7.safeInsert(itemstack11, j3));
-                            } else if (itemstack11.getCount() <= slot7.getMaxStackSize(itemstack11)) {
+                            if (
+                                ItemStack.isSameItemSameTags(
+                                    itemstack10,
+                                    itemstack11
+                                )
+                            ) {
+                                int j3 = clickaction == ClickAction.PRIMARY
+                                    ? itemstack11.getCount()
+                                    : 1;
+                                this.setCarried(
+                                    slot7.safeInsert(itemstack11, j3)
+                                );
+                            } else if (
+                                itemstack11.getCount() <=
+                                slot7.getMaxStackSize(itemstack11)
+                            ) {
                                 this.setCarried(itemstack10);
                                 slot7.setByPlayer(itemstack11);
                             }
-                        } else if (ItemStack.isSameItemSameTags(itemstack10, itemstack11)) {
-                            Optional<ItemStack> optional = slot7.tryRemove(itemstack10.getCount(), itemstack11.getMaxStackSize() - itemstack11.getCount(), player);
-                            optional.ifPresent((p_150428_) -> {
+                        } else if (
+                            ItemStack.isSameItemSameTags(
+                                itemstack10,
+                                itemstack11
+                            )
+                        ) {
+                            Optional<ItemStack> optional = slot7.tryRemove(
+                                itemstack10.getCount(),
+                                itemstack11.getMaxStackSize() -
+                                    itemstack11.getCount(),
+                                player
+                            );
+                            optional.ifPresent(p_150428_ -> {
                                 itemstack11.grow(p_150428_.getCount());
                                 slot7.onTake(player, p_150428_);
                             });
@@ -319,11 +487,32 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
 
                 slot7.setChanged();
 
-                if (player instanceof ServerPlayer && slot7.getMaxStackSize() != 64) {
-                    ((ServerPlayer) player).connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), slot7.index, slot7.getItem()));
+                if (
+                    player instanceof ServerPlayer &&
+                    slot7.getMaxStackSize() != 64
+                ) {
+                    ((ServerPlayer) player).connection.send(
+                        new ClientboundContainerSetSlotPacket(
+                            this.containerId,
+                            this.incrementStateId(),
+                            slot7.index,
+                            slot7.getItem()
+                        )
+                    );
                     // Updating a crafting inventory makes the client reset the result slot, have to send it again
-                    if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
-                        ((ServerPlayer) player).connection.send(new ClientboundContainerSetSlotPacket(this.containerId, this.incrementStateId(), 0, this.getSlot(0).getItem()));
+                    if (
+                        this.getBukkitView().getType() ==
+                            InventoryType.WORKBENCH ||
+                        this.getBukkitView().getType() == InventoryType.CRAFTING
+                    ) {
+                        ((ServerPlayer) player).connection.send(
+                            new ClientboundContainerSetSlotPacket(
+                                this.containerId,
+                                this.incrementStateId(),
+                                0,
+                                this.getSlot(0).getItem()
+                            )
+                        );
                     }
                 }
             }
@@ -335,7 +524,9 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 if (itemstack4.isEmpty()) {
                     if (slot2.mayPickup(player)) {
                         inventory.setItem(dragType, itemstack7);
-                        ((SlotBridge) slot2).bridge$onSwapCraft(itemstack7.getCount());
+                        ((SlotBridge) slot2).bridge$onSwapCraft(
+                            itemstack7.getCount()
+                        );
                         slot2.setByPlayer(ItemStack.EMPTY);
                         slot2.onTake(player, itemstack7);
                     }
@@ -349,7 +540,9 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                             slot2.setByPlayer(itemstack4);
                         }
                     }
-                } else if (slot2.mayPickup(player) && slot2.mayPlace(itemstack4)) {
+                } else if (
+                    slot2.mayPickup(player) && slot2.mayPlace(itemstack4)
+                ) {
                     int i2 = slot2.getMaxStackSize(itemstack4);
                     if (itemstack4.getCount() > i2) {
                         slot2.setByPlayer(itemstack4.split(i2));
@@ -364,31 +557,69 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                     }
                 }
             }
-        } else if (clickType == ClickType.CLONE && player.getAbilities().instabuild && this.getCarried().isEmpty() && slotId >= 0) {
+        } else if (
+            clickType == ClickType.CLONE &&
+            player.getAbilities().instabuild &&
+            this.getCarried().isEmpty() &&
+            slotId >= 0
+        ) {
             Slot slot5 = this.slots.get(slotId);
             if (slot5.hasItem()) {
                 ItemStack itemstack6 = slot5.getItem();
-                this.setCarried(itemstack6.copyWithCount(itemstack6.getMaxStackSize()));
+                this.setCarried(
+                    itemstack6.copyWithCount(itemstack6.getMaxStackSize())
+                );
             }
-        } else if (clickType == ClickType.THROW && this.getCarried().isEmpty() && slotId >= 0) {
+        } else if (
+            clickType == ClickType.THROW &&
+            this.getCarried().isEmpty() &&
+            slotId >= 0
+        ) {
             Slot slot4 = this.slots.get(slotId);
             int i1 = dragType == 0 ? 1 : slot4.getItem().getCount();
-            ItemStack itemstack8 = slot4.safeTake(i1, Integer.MAX_VALUE, player);
+            ItemStack itemstack8 = slot4.safeTake(
+                i1,
+                Integer.MAX_VALUE,
+                player
+            );
             player.drop(itemstack8, true);
         } else if (clickType == ClickType.PICKUP_ALL && slotId >= 0) {
             Slot slot3 = this.slots.get(slotId);
             ItemStack itemstack5 = this.getCarried();
-            if (!itemstack5.isEmpty() && (!slot3.hasItem() || !slot3.mayPickup(player))) {
+            if (
+                !itemstack5.isEmpty() &&
+                (!slot3.hasItem() || !slot3.mayPickup(player))
+            ) {
                 int k1 = dragType == 0 ? 0 : this.slots.size() - 1;
                 int j2 = dragType == 0 ? 1 : -1;
 
                 for (int k2 = 0; k2 < 2; ++k2) {
-                    for (int k3 = k1; k3 >= 0 && k3 < this.slots.size() && itemstack5.getCount() < itemstack5.getMaxStackSize(); k3 += j2) {
+                    for (
+                        int k3 = k1;
+                        k3 >= 0 &&
+                        k3 < this.slots.size() &&
+                        itemstack5.getCount() < itemstack5.getMaxStackSize();
+                        k3 += j2
+                    ) {
                         Slot slot8 = this.slots.get(k3);
-                        if (slot8.hasItem() && canItemQuickReplace(slot8, itemstack5, true) && slot8.mayPickup(player) && this.canTakeItemForPickAll(itemstack5, slot8)) {
+                        if (
+                            slot8.hasItem() &&
+                            canItemQuickReplace(slot8, itemstack5, true) &&
+                            slot8.mayPickup(player) &&
+                            this.canTakeItemForPickAll(itemstack5, slot8)
+                        ) {
                             ItemStack itemstack12 = slot8.getItem();
-                            if (k2 != 0 || itemstack12.getCount() != itemstack12.getMaxStackSize()) {
-                                ItemStack itemstack13 = slot8.safeTake(itemstack12.getCount(), itemstack5.getMaxStackSize() - itemstack5.getCount(), player);
+                            if (
+                                k2 != 0 ||
+                                itemstack12.getCount() !=
+                                itemstack12.getMaxStackSize()
+                            ) {
+                                ItemStack itemstack13 = slot8.safeTake(
+                                    itemstack12.getCount(),
+                                    itemstack5.getMaxStackSize() -
+                                        itemstack5.getCount(),
+                                    player
+                                );
                                 itemstack5.grow(itemstack13.getCount());
                             }
                         }
@@ -396,7 +627,6 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 }
             }
         }
-
     }
 
     /**
@@ -410,7 +640,10 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
 
             if (!itemstack.isEmpty()) {
                 this.setCarried(ItemStack.EMPTY); // CraftBukkit - SPIGOT-4556 - from below
-                if (player.isAlive() && !((ServerPlayer) player).hasDisconnected()) {
+                if (
+                    player.isAlive() &&
+                    !((ServerPlayer) player).hasDisconnected()
+                ) {
                     player.getInventory().placeItemBackInInventory(itemstack);
                 } else {
                     player.drop(itemstack, false);
@@ -431,7 +664,10 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
     }
 
     @Override
-    public void bridge$transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
+    public void bridge$transferTo(
+        AbstractContainerMenu other,
+        CraftHumanEntity player
+    ) {
         transferTo(other, player);
     }
 

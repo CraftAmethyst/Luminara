@@ -1,9 +1,8 @@
 package io.izzel.arclight.i18n.conf;
 
+import java.util.Map;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-
-import java.util.Map;
 
 @ConfigSerializable
 public class AsyncCatcherSpec {
@@ -37,6 +36,9 @@ public class AsyncCatcherSpec {
     }
 
     public enum Operation {
-        NONE, DISPATCH, BLOCK, EXCEPTION
+        NONE,
+        DISPATCH,
+        BLOCK,
+        EXCEPTION,
     }
 }

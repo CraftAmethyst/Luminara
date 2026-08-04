@@ -15,7 +15,9 @@ public final class OptimizedSmallEnumSet<E extends Enum<E>> {
             throw new IllegalArgumentException("Null class");
         }
         if (!clazz.isEnum()) {
-            throw new IllegalArgumentException("Class must be enum, not " + clazz.getCanonicalName());
+            throw new IllegalArgumentException(
+                "Class must be enum, not " + clazz.getCanonicalName()
+            );
         }
         this.enumClass = clazz;
     }

@@ -6,10 +6,14 @@ import org.bukkit.Chunk;
 import org.bukkit.craftbukkit.v.persistence.CraftPersistentDataContainer;
 
 public interface ChunkBridge {
-
     Chunk bridge$getBukkitChunk();
 
-    BlockState bridge$setType(BlockPos pos, BlockState state, boolean isMoving, boolean doPlace);
+    BlockState bridge$setType(
+        BlockPos pos,
+        BlockState state,
+        boolean isMoving,
+        boolean doPlace
+    );
 
     boolean bridge$isMustNotSave();
 

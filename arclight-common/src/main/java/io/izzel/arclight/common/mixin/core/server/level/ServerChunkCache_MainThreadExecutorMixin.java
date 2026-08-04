@@ -11,11 +11,15 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(targets = "net.minecraft.server.level.ServerChunkCache$MainThreadExecutor")
-public abstract class ServerChunkCache_MainThreadExecutorMixin extends BlockableEventLoop<Runnable> {
+@Mixin(
+    targets = "net.minecraft.server.level.ServerChunkCache$MainThreadExecutor"
+)
+public abstract class ServerChunkCache_MainThreadExecutorMixin
+    extends BlockableEventLoop<Runnable> {
 
     // @formatter:off
     @Shadow(aliases = {"this$0", "f_8491_"}, remap = false) @Final private ServerChunkCache outer;
+
     // @formatter:on
 
     protected ServerChunkCache_MainThreadExecutorMixin(String nameIn) {
@@ -29,7 +33,9 @@ public abstract class ServerChunkCache_MainThreadExecutorMixin extends Blockable
     @Overwrite
     public boolean pollTask() {
         try {
-            if (((ServerChunkProviderBridge) outer).bridge$tickDistanceManager()) {
+            if (
+                ((ServerChunkProviderBridge) outer).bridge$tickDistanceManager()
+            ) {
                 return true;
             } else {
                 ((ServerChunkProviderBridge) outer).bridge$getLightManager().tryScheduleUpdate();

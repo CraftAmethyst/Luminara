@@ -8,7 +8,9 @@ public class AstralSorceryHooks {
 
     static {
         try {
-            interactClass = Class.forName("hellfirepvp.astralsorcery.common.entity.InteractableEntity");
+            interactClass = Class.forName(
+                "hellfirepvp.astralsorcery.common.entity.InteractableEntity"
+            );
         } catch (ClassNotFoundException e) {
             interactClass = null;
         }

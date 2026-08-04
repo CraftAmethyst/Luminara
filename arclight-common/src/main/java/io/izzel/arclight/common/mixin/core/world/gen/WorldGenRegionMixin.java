@@ -19,20 +19,28 @@ public abstract class WorldGenRegionMixin implements WorldBridge {
 
     // @formatter:off
     @Shadow public abstract boolean addFreshEntity(Entity entityIn);
+
     // @formatter:on
 
-    public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    public boolean addFreshEntity(
+        Entity entity,
+        CreatureSpawnEvent.SpawnReason reason
+    ) {
         return this.addFreshEntity(entity);
     }
 
     @Override
-    public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    public boolean bridge$addEntity(
+        Entity entity,
+        CreatureSpawnEvent.SpawnReason reason
+    ) {
         return addFreshEntity(entity, reason);
     }
 
     @Override
-    public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
-    }
+    public void bridge$pushAddEntityReason(
+        CreatureSpawnEvent.SpawnReason reason
+    ) {}
 
     @Override
     public CraftWorld bridge$getWorld() {

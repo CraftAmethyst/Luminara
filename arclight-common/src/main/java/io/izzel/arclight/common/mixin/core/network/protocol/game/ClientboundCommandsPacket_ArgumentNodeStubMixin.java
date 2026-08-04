@@ -14,25 +14,41 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.network.protocol.game.ClientboundCommandsPacket$ArgumentNodeStub")
+@Mixin(
+    targets = "net.minecraft.network.protocol.game.ClientboundCommandsPacket$ArgumentNodeStub"
+)
 public class ClientboundCommandsPacket_ArgumentNodeStubMixin {
 
     private static final int ARCLIGHT_WRAP_INDEX = -256;
 
-    @Inject(method = "serializeCap(Lnet/minecraft/network/FriendlyByteBuf;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo$Template;)V",
-            cancellable = true, at = @At("HEAD"))
-    private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void arclight$wrapArgument(FriendlyByteBuf buf, ArgumentTypeInfo<A, T> type, ArgumentTypeInfo.Template<A> node, CallbackInfo ci) {
+    @Inject(
+        method = "serializeCap(Lnet/minecraft/network/FriendlyByteBuf;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo$Template;)V",
+        cancellable = true,
+        at = @At("HEAD")
+    )
+    private static <
+        A extends ArgumentType<?>,
+        T extends ArgumentTypeInfo.Template<A>
+    > void arclight$wrapArgument(
+        FriendlyByteBuf buf,
+        ArgumentTypeInfo<A, T> type,
+        ArgumentTypeInfo.Template<A> node,
+        CallbackInfo ci
+    ) {
         boolean velocityEnabled = false;
         try {
             var spec = ArclightConfig.spec().getVelocity();
             velocityEnabled = spec != null && spec.isEnabled();
-        } catch (Throwable ignored) {
-        }
+        } catch (Throwable ignored) {}
         if (!(SpigotConfig.bungee || velocityEnabled)) {
             return;
         }
         var key = ForgeRegistries.COMMAND_ARGUMENT_TYPES.getKey(type);
-        if ((key != null) && (key.getNamespace().equals("minecraft") || key.getNamespace().equals("brigadier"))) {
+        if (
+            (key != null) &&
+            (key.getNamespace().equals("minecraft") ||
+                key.getNamespace().equals("brigadier"))
+        ) {
             return;
         }
         ci.cancel();
@@ -40,7 +56,10 @@ public class ClientboundCommandsPacket_ArgumentNodeStubMixin {
         //noinspection deprecation
         var id = BuiltInRegistries.COMMAND_ARGUMENT_TYPE.getId(type);
         if (id == -1) {
-            ArclightMod.LOGGER.debug("Command argument type {} is not registered", type);
+            ArclightMod.LOGGER.debug(
+                "Command argument type {} is not registered",
+                type
+            );
         }
         buf.writeVarInt(id);
         var payload = new FriendlyByteBuf(Unpooled.buffer());

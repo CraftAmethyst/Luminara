@@ -27,13 +27,20 @@ public abstract class HangingEntityMixin extends EntityMixin {
 
     // @formatter:off
     @Shadow public BlockPos pos;
+
     // @formatter:on
 
     private static double a(int i) {
         return i % 32 == 0 ? 0.5D : 0.0D;
     }
 
-    private static AABB calculateBoundingBox(Entity entity, BlockPos blockPosition, Direction direction, int width, int height) {
+    private static AABB calculateBoundingBox(
+        Entity entity,
+        BlockPos blockPosition,
+        Direction direction,
+        int width,
+        int height
+    ) {
         double d0 = blockPosition.getX() + 0.5;
         double d2 = blockPosition.getY() + 0.5;
         double d3 = blockPosition.getZ() + 0.5;
@@ -63,30 +70,66 @@ public abstract class HangingEntityMixin extends EntityMixin {
         return new AABB(d0 - d7, d2 - d8, d3 - d9, d0 + d7, d2 + d8, d3 + d9);
     }
 
-    @Inject(method = "tick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/HangingEntity;discard()V"))
+    @Inject(
+        method = "tick",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/decoration/HangingEntity;discard()V"
+        )
+    )
     private void arclight$hangingBreak(CallbackInfo ci) {
-        var state = this.level().getBlockState(new BlockPos(this.blockPosition()));
+        var state = this.level().getBlockState(
+            new BlockPos(this.blockPosition())
+        );
         HangingBreakEvent.RemoveCause cause;
         if (!state.isAir()) {
             cause = HangingBreakEvent.RemoveCause.OBSTRUCTION;
         } else {
             cause = HangingBreakEvent.RemoveCause.PHYSICS;
         }
-        HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), cause);
+        HangingBreakEvent event = new HangingBreakEvent(
+            (Hanging) this.getBukkitEntity(),
+            cause
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (this.isRemoved() || event.isCancelled()) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "hurt", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/HangingEntity;kill()V"))
-    private void arclight$hangingBreakByAttack(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        Entity damager = (source.isIndirect()) ? source.getEntity() : source.getDirectEntity();
+    @Inject(
+        method = "hurt",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/decoration/HangingEntity;kill()V"
+        )
+    )
+    private void arclight$hangingBreakByAttack(
+        DamageSource source,
+        float amount,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        Entity damager = (source.isIndirect())
+            ? source.getEntity()
+            : source.getDirectEntity();
         HangingBreakEvent event;
         if (damager != null) {
-            event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), ((EntityBridge) damager).bridge$getBukkitEntity(), source.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
+            event = new HangingBreakByEntityEvent(
+                (Hanging) this.getBukkitEntity(),
+                ((EntityBridge) damager).bridge$getBukkitEntity(),
+                source.is(DamageTypeTags.IS_EXPLOSION)
+                    ? HangingBreakEvent.RemoveCause.EXPLOSION
+                    : HangingBreakEvent.RemoveCause.ENTITY
+            );
         } else {
-            event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), source.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.DEFAULT);
+            event = new HangingBreakEvent(
+                (Hanging) this.getBukkitEntity(),
+                source.is(DamageTypeTags.IS_EXPLOSION)
+                    ? HangingBreakEvent.RemoveCause.EXPLOSION
+                    : HangingBreakEvent.RemoveCause.DEFAULT
+            );
         }
         Bukkit.getPluginManager().callEvent(event);
         if (this.isRemoved() || event.isCancelled()) {
@@ -94,13 +137,27 @@ public abstract class HangingEntityMixin extends EntityMixin {
         }
     }
 
-    @Inject(method = "move", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/HangingEntity;kill()V"))
-    private void arclight$hangingBreakByMove(MoverType typeIn, Vec3 pos, CallbackInfo ci) {
+    @Inject(
+        method = "move",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/decoration/HangingEntity;kill()V"
+        )
+    )
+    private void arclight$hangingBreakByMove(
+        MoverType typeIn,
+        Vec3 pos,
+        CallbackInfo ci
+    ) {
         if (this.isRemoved()) {
             ci.cancel();
             return;
         }
-        HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.PHYSICS);
+        HangingBreakEvent event = new HangingBreakEvent(
+            (Hanging) this.getBukkitEntity(),
+            HangingBreakEvent.RemoveCause.PHYSICS
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (this.isRemoved() || event.isCancelled()) {
             ci.cancel();
@@ -108,7 +165,12 @@ public abstract class HangingEntityMixin extends EntityMixin {
     }
 
     @Inject(method = "push", cancellable = true, at = @At("HEAD"))
-    private void arclight$noVelocity(double x, double y, double z, CallbackInfo ci) {
+    private void arclight$noVelocity(
+        double x,
+        double y,
+        double z,
+        CallbackInfo ci
+    ) {
         ci.cancel();
     }
 }

@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.entity.vehicle;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.vehicle.ChestBoat;
@@ -12,15 +14,16 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(ChestBoat.class)
-public abstract class ChestBoatMixin extends BoatMixin implements IInventoryBridge, Container {
+public abstract class ChestBoatMixin
+    extends BoatMixin
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction = new ArrayList<>();
+
     @Shadow
     private NonNullList<ItemStack> itemStacks;
+
     private int maxStack = MAX_STACK;
 
     @Override

@@ -12,8 +12,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ElderGuardian.class)
 public abstract class ElderGuardianMixin extends PathfinderMobMixin {
 
-    @Inject(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffectUtil;addEffectToPlayersAround(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;DLnet/minecraft/world/effect/MobEffectInstance;I)Ljava/util/List;"))
+    @Inject(
+        method = "customServerAiStep",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/effect/MobEffectUtil;addEffectToPlayersAround(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;DLnet/minecraft/world/effect/MobEffectInstance;I)Ljava/util/List;"
+        )
+    )
     private void arclight$potionReason(CallbackInfo ci) {
-        ArclightCaptures.captureEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
+        ArclightCaptures.captureEffectCause(
+            EntityPotionEffectEvent.Cause.ATTACK
+        );
     }
 }

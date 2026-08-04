@@ -25,9 +25,17 @@ public abstract class CraftInventoryViewMixin extends InventoryView {
     private CraftInventory viewing;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$validate(HumanEntity player, Inventory viewing, AbstractContainerMenu container, CallbackInfo ci) {
+    private void arclight$validate(
+        HumanEntity player,
+        Inventory viewing,
+        AbstractContainerMenu container,
+        CallbackInfo ci
+    ) {
         if (container.slots.size() > this.countSlots()) {
-            this.viewing = ArclightContainer.createInv(((CraftHumanEntity) player).getHandle(), container);
+            this.viewing = ArclightContainer.createInv(
+                ((CraftHumanEntity) player).getHandle(),
+                container
+            );
         }
     }
 }

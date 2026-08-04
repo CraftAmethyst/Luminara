@@ -5,6 +5,8 @@ import io.izzel.arclight.common.bridge.core.world.storage.loot.LootTableBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.mixin.Eject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
@@ -23,54 +25,111 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 @Mixin(LootTable.class)
 public abstract class LootTableMixin implements LootTableBridge {
-    private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER = io.izzel.arclight.common.mod.util.log.ArclightI18nLogger.getLogger("LootTable");
 
+    private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER =
+        io.izzel.arclight.common.mod.util.log.ArclightI18nLogger.getLogger(
+            "LootTable"
+        );
 
     @Shadow
     @Final
     static Logger LOGGER;
+
     // @formatter:off
     @Shadow @Final @Nullable private ResourceLocation randomSequence;
 
     @Shadow protected abstract ObjectArrayList<ItemStack> getRandomItems(LootContext p_230923_);
+
     @Shadow protected abstract List<Integer> getAvailableSlots(Container p_230920_, RandomSource p_230921_);
+
     @Shadow protected abstract void shuffleAndSplitItems(ObjectArrayList<ItemStack> p_230925_, int p_230926_, RandomSource p_230927_);
+
     // @formatter:on
 
-    @Eject(method = "m_287188_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;m_230922_(Lnet/minecraft/world/level/storage/loot/LootContext;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;", remap = false))
-    private ObjectArrayList<ItemStack> arclight$nonPluginEvent(LootTable lootTable, LootContext context, CallbackInfo ci, Container inv) {
+    @Eject(
+        method = "m_287188_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/storage/loot/LootTable;m_230922_(Lnet/minecraft/world/level/storage/loot/LootContext;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;",
+            remap = false
+        )
+    )
+    private ObjectArrayList<ItemStack> arclight$nonPluginEvent(
+        LootTable lootTable,
+        LootContext context,
+        CallbackInfo ci,
+        Container inv
+    ) {
         ObjectArrayList<ItemStack> list = this.getRandomItems(context);
-        if (!context.hasParam(LootContextParams.ORIGIN) && !context.hasParam(LootContextParams.THIS_ENTITY)) {
+        if (
+            !context.hasParam(LootContextParams.ORIGIN) &&
+            !context.hasParam(LootContextParams.THIS_ENTITY)
+        ) {
             return list;
         }
-        if (!((LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()).bridge$isRegistered((LootTable) (Object) this)) {
+        if (
+            !((LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()).bridge$isRegistered(
+                (LootTable) (Object) this
+            )
+        ) {
             return list;
         }
-        LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(inv, (LootTable) (Object) this, context, list, false);
+        LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(
+            inv,
+            (LootTable) (Object) this,
+            context,
+            list,
+            false
+        );
         if (event.isCancelled()) {
             ci.cancel();
             return null;
         } else {
-            return event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
+            return event
+                .getLoot()
+                .stream()
+                .map(CraftItemStack::asNMSCopy)
+                .collect(ObjectArrayList.toList());
         }
     }
 
-    public void fillInventory(Container inv, LootParams lootparams, long i, boolean plugin) {
-        LootContext context = (new LootContext.Builder(lootparams)).withOptionalRandomSeed(i).create(this.randomSequence);
-        ObjectArrayList<ItemStack> objectarraylist = this.getRandomItems(context);
+    public void fillInventory(
+        Container inv,
+        LootParams lootparams,
+        long i,
+        boolean plugin
+    ) {
+        LootContext context = (new LootContext.Builder(
+                lootparams
+            )).withOptionalRandomSeed(i).create(this.randomSequence);
+        ObjectArrayList<ItemStack> objectarraylist = this.getRandomItems(
+            context
+        );
         RandomSource randomsource = context.getRandom();
 
-        if (((LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()).bridge$isRegistered((LootTable) (Object) this)) {
-            LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(inv, (LootTable) (Object) this, context, objectarraylist, plugin);
+        if (
+            ((LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()).bridge$isRegistered(
+                (LootTable) (Object) this
+            )
+        ) {
+            LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(
+                inv,
+                (LootTable) (Object) this,
+                context,
+                objectarraylist,
+                plugin
+            );
             if (event.isCancelled()) {
                 return;
             }
-            objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
+            objectarraylist = event
+                .getLoot()
+                .stream()
+                .map(CraftItemStack::asNMSCopy)
+                .collect(ObjectArrayList.toList());
         }
 
         List<Integer> list = this.getAvailableSlots(inv, randomsource);

@@ -13,7 +13,10 @@ public class CPlayerTryUseItemPacketMixin implements TimestampedPacket {
 
     public long timestamp;
 
-    @Inject(method = "<init>(Lnet/minecraft/network/FriendlyByteBuf;)V", at = @At("RETURN"))
+    @Inject(
+        method = "<init>(Lnet/minecraft/network/FriendlyByteBuf;)V",
+        at = @At("RETURN")
+    )
     private void arclight$read(FriendlyByteBuf buf, CallbackInfo ci) {
         this.timestamp = System.currentTimeMillis();
     }

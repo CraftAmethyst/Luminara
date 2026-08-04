@@ -75,6 +75,7 @@ public class MaterialPropertySpec implements Cloneable {
     }
 
     public enum MaterialType {
-        VANILLA, FORGE
+        VANILLA,
+        FORGE,
     }
 }

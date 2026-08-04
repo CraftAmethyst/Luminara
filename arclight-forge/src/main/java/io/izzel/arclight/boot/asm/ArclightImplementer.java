@@ -4,6 +4,9 @@ import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import io.izzel.arclight.boot.log.ArclightI18nLogger;
 import io.izzel.arclight.boot.mod.ModBootstrap;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.function.Consumer;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -11,10 +14,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.function.Consumer;
 
 public class ArclightImplementer implements ILaunchPluginService {
 
@@ -37,14 +36,27 @@ public class ArclightImplementer implements ILaunchPluginService {
     }
 
     private static boolean detectTransformLogger() {
-        var transformLogger = !(java.util.logging.LogManager.getLogManager() instanceof org.apache.logging.log4j.jul.LogManager);
-        if (transformLogger && !System.getProperties().contains("log4j.jul.LoggerAdapter")) {
-            System.setProperty("log4j.jul.LoggerAdapter", "io.izzel.arclight.boot.log.ArclightLoggerAdapter");
+        var transformLogger =
+            !(java.util.logging.LogManager.getLogManager() instanceof
+                    org.apache.logging.log4j.jul.LogManager);
+        if (
+            transformLogger &&
+            !System.getProperties().contains("log4j.jul.LoggerAdapter")
+        ) {
+            System.setProperty(
+                "log4j.jul.LoggerAdapter",
+                "io.izzel.arclight.boot.log.ArclightLoggerAdapter"
+            );
         }
         return transformLogger;
     }
 
-    public static void loadArgs(InsnList list, MethodNode methodNode, Type[] types, int i) {
+    public static void loadArgs(
+        InsnList list,
+        MethodNode methodNode,
+        Type[] types,
+        int i
+    ) {
         if (!Modifier.isStatic(methodNode.access)) {
             list.add(new VarInsnNode(Opcodes.ALOAD, i));
             i += 1;
@@ -61,7 +73,10 @@ public class ArclightImplementer implements ILaunchPluginService {
     }
 
     @Override
-    public void initializeLaunch(ITransformerLoader transformerLoader, NamedPath[] specialPaths) {
+    public void initializeLaunch(
+        ITransformerLoader transformerLoader,
+        NamedPath[] specialPaths
+    ) {
         // runs after TX CL built
         ModBootstrap.postRun();
         this.transformerLoader = transformerLoader;
@@ -77,7 +92,11 @@ public class ArclightImplementer implements ILaunchPluginService {
     }
 
     @Override
-    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty, String reason) {
+    public EnumSet<Phase> handlesClass(
+        Type classType,
+        boolean isEmpty,
+        String reason
+    ) {
         if ("mixin".equals(reason)) {
             return NOT_TODAY;
         }
@@ -90,12 +109,20 @@ public class ArclightImplementer implements ILaunchPluginService {
     }
 
     @Override
-    public void customAuditConsumer(String className, Consumer<String[]> auditDataAcceptor) {
+    public void customAuditConsumer(
+        String className,
+        Consumer<String[]> auditDataAcceptor
+    ) {
         auditAcceptor = auditDataAcceptor;
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType, String reason) {
+    public boolean processClass(
+        Phase phase,
+        ClassNode classNode,
+        Type classType,
+        String reason
+    ) {
         if ("mixin".equals(reason)) {
             return false;
         }
@@ -108,13 +135,19 @@ public class ArclightImplementer implements ILaunchPluginService {
             }
         }
         if (this.auditAcceptor != null && !trails.isEmpty()) {
-            this.auditAcceptor.accept(new String[]{String.join(",", trails)});
+            this.auditAcceptor.accept(
+                new String[] { String.join(",", trails) }
+            );
         }
         return !trails.isEmpty();
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType) {
+    public boolean processClass(
+        Phase phase,
+        ClassNode classNode,
+        Type classType
+    ) {
         throw new IllegalStateException("Outdated ModLauncher");
     }
 }

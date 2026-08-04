@@ -5,6 +5,8 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
+import java.util.Set;
+import javax.annotation.Nullable;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.commands.TeleportCommand;
@@ -27,14 +29,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import javax.annotation.Nullable;
-import java.util.Set;
-
 @Mixin(TeleportCommand.class)
 public class TeleportCommandMixin {
 
     // @formatter:off
     @Shadow @Final private static SimpleCommandExceptionType INVALID_POSITION;
+
     // @formatter:on
 
     /**
@@ -42,8 +42,20 @@ public class TeleportCommandMixin {
      * @reason
      */
     @Overwrite
-    private static void performTeleport(CommandSourceStack source, Entity entity, ServerLevel level, double x, double y, double z, Set<RelativeMovement> set, float yaw, float pitch, @Nullable TeleportCommand.LookAt p_139024_) throws CommandSyntaxException {
-        EntityTeleportEvent.TeleportCommand event = ForgeEventFactory.onEntityTeleportCommand(entity, x, y, z);
+    private static void performTeleport(
+        CommandSourceStack source,
+        Entity entity,
+        ServerLevel level,
+        double x,
+        double y,
+        double z,
+        Set<RelativeMovement> set,
+        float yaw,
+        float pitch,
+        @Nullable TeleportCommand.LookAt p_139024_
+    ) throws CommandSyntaxException {
+        EntityTeleportEvent.TeleportCommand event =
+            ForgeEventFactory.onEntityTeleportCommand(entity, x, y, z);
         if (event.isCanceled()) return;
         x = event.getTargetX();
         y = event.getTargetY();
@@ -57,11 +69,24 @@ public class TeleportCommandMixin {
 
             boolean result;
             if (entity instanceof ServerPlayer player) {
-                ((ServerPlayerEntityBridge) player).bridge$pushChangeDimensionCause(PlayerTeleportEvent.TeleportCause.COMMAND);
+                ((ServerPlayerEntityBridge) player).bridge$pushChangeDimensionCause(
+                    PlayerTeleportEvent.TeleportCause.COMMAND
+                );
                 result = player.teleportTo(level, x, y, z, set, f, f1);
             } else {
-                Location to = new Location(((ServerWorldBridge) level).bridge$getWorld(), x, y, z, yaw, pitch);
-                var e = new org.bukkit.event.entity.EntityTeleportEvent(((EntityBridge) entity).bridge$getBukkitEntity(), ((EntityBridge) entity).bridge$getBukkitEntity().getLocation(), to);
+                Location to = new Location(
+                    ((ServerWorldBridge) level).bridge$getWorld(),
+                    x,
+                    y,
+                    z,
+                    yaw,
+                    pitch
+                );
+                var e = new org.bukkit.event.entity.EntityTeleportEvent(
+                    ((EntityBridge) entity).bridge$getBukkitEntity(),
+                    ((EntityBridge) entity).bridge$getBukkitEntity().getLocation(),
+                    to
+                );
                 Bukkit.getPluginManager().callEvent(e);
                 if (e.isCancelled()) {
                     return;
@@ -82,8 +107,7 @@ public class TeleportCommandMixin {
                     p_139024_.perform(source, entity);
                 }
 
-                label23:
-                {
+                label23: {
                     if (entity instanceof LivingEntity) {
                         LivingEntity livingentity = (LivingEntity) entity;
                         if (livingentity.isFallFlying()) {
@@ -91,7 +115,9 @@ public class TeleportCommandMixin {
                         }
                     }
 
-                    entity.setDeltaMovement(entity.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
+                    entity.setDeltaMovement(
+                        entity.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D)
+                    );
                     entity.setOnGround(true);
                 }
 
@@ -99,7 +125,6 @@ public class TeleportCommandMixin {
                     PathfinderMob pathfindermob = (PathfinderMob) entity;
                     pathfindermob.getNavigation().stop();
                 }
-
             }
         }
     }

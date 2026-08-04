@@ -3,6 +3,8 @@ package io.izzel.arclight.common.mixin.core.world.entity.animal;
 import io.izzel.arclight.common.bridge.core.entity.passive.AnimalEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.AgeableMobMixin;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,19 +27,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.Optional;
-
 @Mixin(Animal.class)
-public abstract class AnimalMixin extends AgeableMobMixin implements AnimalEntityBridge {
+public abstract class AnimalMixin
+    extends AgeableMobMixin
+    implements AnimalEntityBridge {
 
     @Shadow
     public int inLove;
+
     public ItemStack breedItem;
     private transient int arclight$loveTime;
 
     // @formatter:off
     @Shadow public InteractionResult mobInteract(Player playerIn, InteractionHand hand) { return null; }
+
     // @formatter:on
 
     @Shadow
@@ -47,9 +50,18 @@ public abstract class AnimalMixin extends AgeableMobMixin implements AnimalEntit
     @Nullable
     public abstract ServerPlayer getLoveCause();
 
-    @Inject(method = "setInLove(Lnet/minecraft/world/entity/player/Player;)V", cancellable = true, at = @At("HEAD"))
+    @Inject(
+        method = "setInLove(Lnet/minecraft/world/entity/player/Player;)V",
+        cancellable = true,
+        at = @At("HEAD")
+    )
     private void arclight$enterLove(Player player, CallbackInfo ci) {
-        EntityEnterLoveModeEvent event = CraftEventFactory.callEntityEnterLoveModeEvent(player, (Animal) (Object) this, 600);
+        EntityEnterLoveModeEvent event =
+            CraftEventFactory.callEntityEnterLoveModeEvent(
+                player,
+                (Animal) (Object) this,
+                600
+            );
         if (event.isCancelled()) {
             ci.cancel();
         } else {
@@ -57,7 +69,14 @@ public abstract class AnimalMixin extends AgeableMobMixin implements AnimalEntit
         }
     }
 
-    @Inject(method = "setInLove(Lnet/minecraft/world/entity/player/Player;)V", at = @At(value = "FIELD", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/Animal;inLove:I"))
+    @Inject(
+        method = "setInLove(Lnet/minecraft/world/entity/player/Player;)V",
+        at = @At(
+            value = "FIELD",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/animal/Animal;inLove:I"
+        )
+    )
     private void arclight$inLove(Player player, CallbackInfo ci) {
         this.inLove = arclight$loveTime;
         if (player != null) {
@@ -70,9 +89,21 @@ public abstract class AnimalMixin extends AgeableMobMixin implements AnimalEntit
         return breedItem;
     }
 
-    @Inject(method = "spawnChildFromBreeding", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
-    private void arclight$reason(ServerLevel level, Animal p_27565_, CallbackInfo ci) {
-        ((WorldBridge) level).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.BREEDING);
+    @Inject(
+        method = "spawnChildFromBreeding",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"
+        )
+    )
+    private void arclight$reason(
+        ServerLevel level,
+        Animal p_27565_,
+        CallbackInfo ci
+    ) {
+        ((WorldBridge) level).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.BREEDING
+        );
     }
 
     /**
@@ -80,23 +111,42 @@ public abstract class AnimalMixin extends AgeableMobMixin implements AnimalEntit
      * @reason
      */
     @Overwrite
-    public void finalizeSpawnChildFromBreeding(ServerLevel worldserver, Animal entityanimal, @Nullable AgeableMob entityageable) {
+    public void finalizeSpawnChildFromBreeding(
+        ServerLevel worldserver,
+        Animal entityanimal,
+        @Nullable AgeableMob entityageable
+    ) {
         // CraftBukkit start - call EntityBreedEvent
-        Optional<ServerPlayer> cause = Optional.ofNullable(this.getLoveCause()).or(() -> {
+        Optional<ServerPlayer> cause = Optional.ofNullable(
+            this.getLoveCause()
+        ).or(() -> {
             return Optional.ofNullable(entityanimal.getLoveCause());
         });
         int experience = this.getRandom().nextInt(7) + 1;
         if (entityageable != null) {
-            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = CraftEventFactory.callEntityBreedEvent(entityageable, (Animal) (Object) this, entityanimal, cause.orElse(null), this.breedItem, experience);
+            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent =
+                CraftEventFactory.callEntityBreedEvent(
+                    entityageable,
+                    (Animal) (Object) this,
+                    entityanimal,
+                    cause.orElse(null),
+                    this.breedItem,
+                    experience
+                );
             if (entityBreedEvent.isCancelled()) {
                 return;
             }
             experience = entityBreedEvent.getExperience();
         }
-        cause.ifPresent((entityplayer) -> {
+        cause.ifPresent(entityplayer -> {
             // CraftBukkit end
             entityplayer.awardStat(Stats.ANIMALS_BRED);
-            CriteriaTriggers.BRED_ANIMALS.trigger(entityplayer, (Animal) (Object) this, entityanimal, entityageable);
+            CriteriaTriggers.BRED_ANIMALS.trigger(
+                entityplayer,
+                (Animal) (Object) this,
+                entityanimal,
+                entityageable
+            );
         });
         this.setAge(6000);
         entityanimal.setAge(6000);
@@ -106,7 +156,15 @@ public abstract class AnimalMixin extends AgeableMobMixin implements AnimalEntit
         if (worldserver.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
             // CraftBukkit start - use event experience
             if (experience > 0) {
-                worldserver.addFreshEntity(new ExperienceOrb(worldserver, this.getX(), this.getY(), this.getZ(), experience));
+                worldserver.addFreshEntity(
+                    new ExperienceOrb(
+                        worldserver,
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        experience
+                    )
+                );
             }
             // CraftBukkit end
         }

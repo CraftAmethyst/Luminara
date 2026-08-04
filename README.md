@@ -4,13 +4,13 @@ Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://
 
 ## Supported platform
 
-| Component | Supported version |
-| --- | --- |
-| Minecraft | `1.20.1` |
-| Forge | latest Forge promotion for Minecraft `1.20.1` |
-| CraftBukkit package | `v1_20_R1` |
-| Java | `17` (64-bit) |
-| Luminara | `1.0.14` |
+| Component           | Supported version                             |
+| ------------------- | --------------------------------------------- |
+| Minecraft           | `1.20.1`                                      |
+| Forge               | latest Forge promotion for Minecraft `1.20.1` |
+| CraftBukkit package | `v1_20_R1`                                    |
+| Java                | `17` (64-bit)                                 |
+| Luminara            | `1.0.14`                                      |
 
 Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations are not supported by this repository.
 

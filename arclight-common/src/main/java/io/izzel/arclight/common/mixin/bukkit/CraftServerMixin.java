@@ -7,6 +7,14 @@ import io.izzel.arclight.common.bridge.bukkit.CraftServerBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jline.console.ConsoleReader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
@@ -41,40 +49,45 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 @Mixin(value = CraftServer.class, remap = false)
 public abstract class CraftServerMixin implements CraftServerBridge {
 
     @Shadow
     public int reloadCount;
+
     @Shadow
     public boolean ignoreVanillaPermissions;
+
     @Shadow
     @Final
     protected DedicatedServer console;
+
     @Shadow
     @Final
     @Mutable
     protected DedicatedPlayerList playerList;
+
     // @formatter:off
     @Shadow @Final private CraftCommandMap commandMap;
+
     @Shadow @Final private SimplePluginManager pluginManager;
+
     @Shadow @Final private SimpleHelpMap helpMap;
+
     @Shadow @Final @Mutable private String serverName;
+
     @Shadow @Final @Mutable private List<CraftPlayer> playerView;
+
     @Shadow @Final private Map<String, World> worlds;
+
     @Shadow private YamlConfiguration configuration;
+
     @Shadow private YamlConfiguration commandsConfiguration;
+
     @Shadow@Final private Logger logger;
+
     @Shadow private boolean overrideAllCommandBlockCommands;
+
     @Shadow@Final private String serverVersion;
 
     @Shadow protected abstract void enablePlugin(Plugin plugin);
@@ -98,10 +111,15 @@ public abstract class CraftServerMixin implements CraftServerBridge {
     @Shadow public abstract void enablePlugins(PluginLoadOrder type);
 
     @Shadow public abstract PluginManager getPluginManager();
+
     // @formatter:on
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void arclight$setBrand(DedicatedServer console, PlayerList playerList, CallbackInfo ci) {
+    public void arclight$setBrand(
+        DedicatedServer console,
+        PlayerList playerList,
+        CallbackInfo ci
+    ) {
         this.serverName = "Luminara";
     }
 
@@ -121,9 +139,11 @@ public abstract class CraftServerMixin implements CraftServerBridge {
     @Override
     public void bridge$setPlayerList(PlayerList playerList) {
         this.playerList = (DedicatedPlayerList) playerList;
-        this.playerView = Collections.unmodifiableList(Lists.transform(playerList.players, player ->
+        this.playerView = Collections.unmodifiableList(
+            Lists.transform(playerList.players, player ->
                 ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity()
-        ));
+            )
+        );
     }
 
     /**
@@ -135,13 +155,27 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         return null;
     }
 
-    @ModifyVariable(method = "dispatchCommand", remap = false, index = 2, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lorg/spigotmc/AsyncCatcher;catchOp(Ljava/lang/String;)V"))
-    private String arclight$forgeCommandEvent(String commandLine, CommandSender sender) {
+    @ModifyVariable(
+        method = "dispatchCommand",
+        remap = false,
+        index = 2,
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lorg/spigotmc/AsyncCatcher;catchOp(Ljava/lang/String;)V"
+        )
+    )
+    private String arclight$forgeCommandEvent(
+        String commandLine,
+        CommandSender sender
+    ) {
         CommandSourceStack commandSource;
         if (sender instanceof CraftEntity) {
-            commandSource = ((CraftEntity) sender).getHandle().createCommandSourceStack();
+            commandSource =
+                ((CraftEntity) sender).getHandle().createCommandSourceStack();
         } else if (sender == Bukkit.getConsoleSender()) {
-            commandSource = ArclightServer.getMinecraftServer().createCommandSourceStack();
+            commandSource =
+                ArclightServer.getMinecraftServer().createCommandSourceStack();
         } else if (sender instanceof CraftBlockCommandSender) {
             commandSource = ((CraftBlockCommandSender) sender).getWrapper();
         } else {
@@ -151,8 +185,11 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         if (stringreader.canRead() && stringreader.peek() == '/') {
             stringreader.skip();
         }
-        ParseResults<CommandSourceStack> parse = ArclightServer.getMinecraftServer().getCommands()
-                .getDispatcher().parse(stringreader, commandSource);
+        ParseResults<CommandSourceStack> parse =
+            ArclightServer.getMinecraftServer()
+                .getCommands()
+                .getDispatcher()
+                .parse(stringreader, commandSource);
         CommandEvent event = new CommandEvent(parse);
         if (MinecraftForge.EVENT_BUS.post(event)) {
             return null;
@@ -164,8 +201,21 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         }
     }
 
-    @Inject(method = "dispatchCommand", remap = false, cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lorg/spigotmc/AsyncCatcher;catchOp(Ljava/lang/String;)V"))
-    private void arclight$returnIfFail(CommandSender sender, String commandLine, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(
+        method = "dispatchCommand",
+        remap = false,
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lorg/spigotmc/AsyncCatcher;catchOp(Ljava/lang/String;)V"
+        )
+    )
+    private void arclight$returnIfFail(
+        CommandSender sender,
+        String commandLine,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (commandLine == null) {
             cir.setReturnValue(false);
         }
@@ -176,7 +226,11 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         if (world == null) {
             return;
         }
-        this.worlds.remove(((WorldBridge) world).bridge$getWorld().getName().toLowerCase(Locale.ROOT));
+        this.worlds.remove(
+            ((WorldBridge) world).bridge$getWorld()
+                .getName()
+                .toLowerCase(Locale.ROOT)
+        );
     }
 
     /**
@@ -186,45 +240,74 @@ public abstract class CraftServerMixin implements CraftServerBridge {
     @Overwrite(remap = false)
     public void reload() {
         ++this.reloadCount;
-        this.configuration = YamlConfiguration.loadConfiguration(this.getConfigFile());
-        this.commandsConfiguration = YamlConfiguration.loadConfiguration(this.getCommandsConfigFile());
+        this.configuration = YamlConfiguration.loadConfiguration(
+            this.getConfigFile()
+        );
+        this.commandsConfiguration = YamlConfiguration.loadConfiguration(
+            this.getCommandsConfigFile()
+        );
 
         try {
             this.playerList.getIpBans().load();
         } catch (IOException var12) {
-            this.logger.log(Level.WARNING, "Failed to load banned-ips.json, " + var12.getMessage());
+            this.logger.log(
+                Level.WARNING,
+                "Failed to load banned-ips.json, " + var12.getMessage()
+            );
         }
 
         try {
             this.playerList.getBans().load();
         } catch (IOException var11) {
-            this.logger.log(Level.WARNING, "Failed to load banned-players.json, " + var11.getMessage());
+            this.logger.log(
+                Level.WARNING,
+                "Failed to load banned-players.json, " + var11.getMessage()
+            );
         }
 
         this.pluginManager.clearPlugins();
         this.commandMap.clearCommands();
         this.reloadData();
         SpigotConfig.registerCommands();
-        this.overrideAllCommandBlockCommands = this.commandsConfiguration.getStringList("command-block-overrides").contains("*");
-        this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean("ignore-vanilla-permissions");
+        this.overrideAllCommandBlockCommands =
+            this.commandsConfiguration.getStringList(
+                "command-block-overrides"
+            ).contains("*");
+        this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean(
+            "ignore-vanilla-permissions"
+        );
 
-        for (int pollCount = 0; pollCount < 50 && this.getScheduler().getActiveWorkers().size() > 0; ++pollCount) {
+        for (
+            int pollCount = 0;
+            pollCount < 50 && this.getScheduler().getActiveWorkers().size() > 0;
+            ++pollCount
+        ) {
             try {
                 Thread.sleep(50L);
-            } catch (InterruptedException var10) {
-            }
+            } catch (InterruptedException var10) {}
         }
 
-        List<BukkitWorker> overdueWorkers = this.getScheduler().getActiveWorkers();
+        List<BukkitWorker> overdueWorkers =
+            this.getScheduler().getActiveWorkers();
 
         for (BukkitWorker worker : overdueWorkers) {
             Plugin plugin = worker.getOwner();
-            this.getLogger().log(Level.SEVERE, String.format("Nag author(s): '%s' of '%s' about the following: %s", plugin.getDescription().getAuthors(), plugin.getDescription().getFullName(), "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"));
+            this.getLogger().log(
+                Level.SEVERE,
+                String.format(
+                    "Nag author(s): '%s' of '%s' about the following: %s",
+                    plugin.getDescription().getAuthors(),
+                    plugin.getDescription().getFullName(),
+                    "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+                )
+            );
         }
 
         this.loadPlugins();
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
-        this.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
+        this.getPluginManager().callEvent(
+            new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD)
+        );
     }
 }

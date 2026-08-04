@@ -15,16 +15,38 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(TrapDoorBlock.class)
 public class TrapDoorBlockMixin {
 
-    @Redirect(method = "neighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;hasNeighborSignal(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean arclight$blockRedstone(Level world, BlockPos pos, BlockState state, Level worldIn, BlockPos blockPos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    @Redirect(
+        method = "neighborChanged",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;hasNeighborSignal(Lnet/minecraft/core/BlockPos;)Z"
+        )
+    )
+    public boolean arclight$blockRedstone(
+        Level world,
+        BlockPos pos,
+        BlockState state,
+        Level worldIn,
+        BlockPos blockPos,
+        Block blockIn,
+        BlockPos fromPos,
+        boolean isMoving
+    ) {
         boolean flag = world.hasNeighborSignal(pos);
         if (flag != state.getValue(TrapDoorBlock.POWERED)) {
             org.bukkit.block.Block craftBlock = CraftBlock.at(world, pos);
             int power = craftBlock.getBlockPower();
             int oldPower = state.getValue(TrapDoorBlock.OPEN) ? 15 : 0;
 
-            if (oldPower == 0 ^ power == 0 || blockIn.defaultBlockState().isSignalSource()) {
-                BlockRedstoneEvent event = new BlockRedstoneEvent(craftBlock, oldPower, power);
+            if (
+                (oldPower == 0) ^ (power == 0) ||
+                blockIn.defaultBlockState().isSignalSource()
+            ) {
+                BlockRedstoneEvent event = new BlockRedstoneEvent(
+                    craftBlock,
+                    oldPower,
+                    power
+                );
                 Bukkit.getPluginManager().callEvent(event);
                 return event.getNewCurrent() > 0;
             }

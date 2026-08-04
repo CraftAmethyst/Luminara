@@ -6,6 +6,10 @@ import io.izzel.arclight.common.bridge.core.block.FireBlockBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.i18n.LocalizedException;
 import io.izzel.arclight.i18n.conf.MaterialPropertySpec;
+import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,47 +36,97 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.lang.reflect.Constructor;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 @Mixin(value = Material.class, remap = false)
 public abstract class MaterialMixin implements MaterialBridge {
 
-    private static final Map<String, BiFunction<Material, CraftMetaItem, ItemMeta>> TYPES = ImmutableMap
-            .<String, BiFunction<Material, CraftMetaItem, ItemMeta>>builder()
-            .put("ARMOR_STAND", (a, b) -> b instanceof CraftMetaArmorStand ? b : new CraftMetaArmorStand(b))
-            .put("BANNER", (a, b) -> b instanceof CraftMetaBanner ? b : new CraftMetaBanner(b))
-            .put("TILE_ENTITY", (a, b) -> new CraftMetaBlockState(b, a))
-            .put("BOOK", (a, b) -> b != null && b.getClass().equals(CraftMetaBook.class) ? b : new CraftMetaBook(b))
-            .put("BOOK_SIGNED", (a, b) -> b instanceof CraftMetaBookSigned ? b : new CraftMetaBookSigned(b))
-            .put("SKULL", (a, b) -> b instanceof CraftMetaSkull ? b : new CraftMetaSkull(b))
-            .put("LEATHER_ARMOR", (a, b) -> b instanceof CraftMetaLeatherArmor ? b : new CraftMetaLeatherArmor(b))
-            .put("MAP", (a, b) -> b instanceof CraftMetaMap ? b : new CraftMetaMap(b))
-            .put("POTION", (a, b) -> b instanceof CraftMetaPotion ? b : new CraftMetaPotion(b))
-            .put("SPAWN_EGG", (a, b) -> b instanceof CraftMetaSpawnEgg ? b : new CraftMetaSpawnEgg(b))
-            .put("ENCHANTED", (a, b) -> b instanceof CraftMetaEnchantedBook ? b : new CraftMetaEnchantedBook(b))
-            .put("FIREWORK", (a, b) -> b instanceof CraftMetaFirework ? b : new CraftMetaFirework(b))
-            .put("FIREWORK_EFFECT", (a, b) -> b instanceof CraftMetaCharge ? b : new CraftMetaCharge(b))
-            .put("KNOWLEDGE_BOOK", (a, b) -> b instanceof CraftMetaKnowledgeBook ? b : new CraftMetaKnowledgeBook(b))
-            .put("TROPICAL_FISH_BUCKET", (a, b) -> b instanceof CraftMetaTropicalFishBucket ? b : new CraftMetaTropicalFishBucket(b))
-            .put("CROSSBOW", (a, b) -> b instanceof CraftMetaCrossbow ? b : new CraftMetaCrossbow(b))
-            .put("SUSPICIOUS_STEW", (a, b) -> b instanceof CraftMetaSuspiciousStew ? b : new CraftMetaSuspiciousStew(b))
-            .put("UNSPECIFIC", (a, b) -> new CraftMetaItem(b))
-            .put("NULL", (a, b) -> null)
-            .build();
+    private static final Map<
+        String,
+        BiFunction<Material, CraftMetaItem, ItemMeta>
+    > TYPES = ImmutableMap.<
+            String,
+            BiFunction<Material, CraftMetaItem, ItemMeta>
+        >builder()
+        .put("ARMOR_STAND", (a, b) ->
+            b instanceof CraftMetaArmorStand ? b : new CraftMetaArmorStand(b)
+        )
+        .put("BANNER", (a, b) ->
+            b instanceof CraftMetaBanner ? b : new CraftMetaBanner(b)
+        )
+        .put("TILE_ENTITY", (a, b) -> new CraftMetaBlockState(b, a))
+        .put("BOOK", (a, b) ->
+            b != null && b.getClass().equals(CraftMetaBook.class)
+                ? b
+                : new CraftMetaBook(b)
+        )
+        .put("BOOK_SIGNED", (a, b) ->
+            b instanceof CraftMetaBookSigned ? b : new CraftMetaBookSigned(b)
+        )
+        .put("SKULL", (a, b) ->
+            b instanceof CraftMetaSkull ? b : new CraftMetaSkull(b)
+        )
+        .put("LEATHER_ARMOR", (a, b) ->
+            b instanceof CraftMetaLeatherArmor
+                ? b
+                : new CraftMetaLeatherArmor(b)
+        )
+        .put("MAP", (a, b) ->
+            b instanceof CraftMetaMap ? b : new CraftMetaMap(b)
+        )
+        .put("POTION", (a, b) ->
+            b instanceof CraftMetaPotion ? b : new CraftMetaPotion(b)
+        )
+        .put("SPAWN_EGG", (a, b) ->
+            b instanceof CraftMetaSpawnEgg ? b : new CraftMetaSpawnEgg(b)
+        )
+        .put("ENCHANTED", (a, b) ->
+            b instanceof CraftMetaEnchantedBook
+                ? b
+                : new CraftMetaEnchantedBook(b)
+        )
+        .put("FIREWORK", (a, b) ->
+            b instanceof CraftMetaFirework ? b : new CraftMetaFirework(b)
+        )
+        .put("FIREWORK_EFFECT", (a, b) ->
+            b instanceof CraftMetaCharge ? b : new CraftMetaCharge(b)
+        )
+        .put("KNOWLEDGE_BOOK", (a, b) ->
+            b instanceof CraftMetaKnowledgeBook
+                ? b
+                : new CraftMetaKnowledgeBook(b)
+        )
+        .put("TROPICAL_FISH_BUCKET", (a, b) ->
+            b instanceof CraftMetaTropicalFishBucket
+                ? b
+                : new CraftMetaTropicalFishBucket(b)
+        )
+        .put("CROSSBOW", (a, b) ->
+            b instanceof CraftMetaCrossbow ? b : new CraftMetaCrossbow(b)
+        )
+        .put("SUSPICIOUS_STEW", (a, b) ->
+            b instanceof CraftMetaSuspiciousStew
+                ? b
+                : new CraftMetaSuspiciousStew(b)
+        )
+        .put("UNSPECIFIC", (a, b) -> new CraftMetaItem(b))
+        .put("NULL", (a, b) -> null)
+        .build();
+
     @Shadow
     @Mutable
     @Final
     public Class<?> data;
+
     // @formatter:off
     @Shadow @Mutable @Final private NamespacedKey key;
+
     @Shadow @Mutable @Final private Constructor<? extends MaterialData> ctor;
+
     // @formatter:on
-    private MaterialPropertySpec.MaterialType arclight$type = MaterialPropertySpec.MaterialType.VANILLA;
+    private MaterialPropertySpec.MaterialType arclight$type =
+        MaterialPropertySpec.MaterialType.VANILLA;
     private MaterialPropertySpec arclight$spec;
-    private boolean arclight$block = false, arclight$item = false;
+    private boolean arclight$block = false,
+        arclight$item = false;
     private Function<CraftMetaItem, ItemMeta> arclight$metaFunc;
     private Function<CraftBlock, BlockState> arclight$stateFunc;
 
@@ -212,16 +266,34 @@ public abstract class MaterialMixin implements MaterialBridge {
     }
 
     @Inject(method = "getBlastResistance", cancellable = true, at = @At("HEAD"))
-    private void arclight$getBlastResistance(CallbackInfoReturnable<Float> cir) {
+    private void arclight$getBlastResistance(
+        CallbackInfoReturnable<Float> cir
+    ) {
         if (arclight$spec != null) {
             cir.setReturnValue(arclight$spec.blastResistance);
         }
     }
 
-    @Inject(method = "getCraftingRemainingItem", cancellable = true, at = @At("HEAD"))
-    private void arclight$getCraftingRemainingItem(CallbackInfoReturnable<Material> cir) {
-        if (arclight$spec != null && arclight$spec.craftingRemainingItem != null) {
-            cir.setReturnValue(CraftMagicNumbers.getMaterial(ForgeRegistries.ITEMS.getValue(new ResourceLocation(arclight$spec.craftingRemainingItem))));
+    @Inject(
+        method = "getCraftingRemainingItem",
+        cancellable = true,
+        at = @At("HEAD")
+    )
+    private void arclight$getCraftingRemainingItem(
+        CallbackInfoReturnable<Material> cir
+    ) {
+        if (
+            arclight$spec != null && arclight$spec.craftingRemainingItem != null
+        ) {
+            cir.setReturnValue(
+                CraftMagicNumbers.getMaterial(
+                    ForgeRegistries.ITEMS.getValue(
+                        new ResourceLocation(
+                            arclight$spec.craftingRemainingItem
+                        )
+                    )
+                )
+            );
         }
     }
 
@@ -255,7 +327,9 @@ public abstract class MaterialMixin implements MaterialBridge {
     }
 
     @Override
-    public void bridge$setItemMetaFactory(Function<CraftMetaItem, ItemMeta> func) {
+    public void bridge$setItemMetaFactory(
+        Function<CraftMetaItem, ItemMeta> func
+    ) {
         this.arclight$metaFunc = func;
     }
 
@@ -265,12 +339,18 @@ public abstract class MaterialMixin implements MaterialBridge {
     }
 
     @Override
-    public void bridge$setBlockStateFactory(Function<CraftBlock, BlockState> func) {
+    public void bridge$setBlockStateFactory(
+        Function<CraftBlock, BlockState> func
+    ) {
         this.arclight$stateFunc = func;
     }
 
     @Override
-    public void bridge$setupBlock(ResourceLocation key, Block block, MaterialPropertySpec spec) {
+    public void bridge$setupBlock(
+        ResourceLocation key,
+        Block block,
+        MaterialPropertySpec spec
+    ) {
         this.arclight$spec = spec.clone();
         arclight$type = MaterialPropertySpec.MaterialType.FORGE;
         arclight$block = true;
@@ -286,7 +366,11 @@ public abstract class MaterialMixin implements MaterialBridge {
     }
 
     @Override
-    public void bridge$setupItem(ResourceLocation key, Item item, MaterialPropertySpec spec) {
+    public void bridge$setupItem(
+        ResourceLocation key,
+        Item item,
+        MaterialPropertySpec spec
+    ) {
         this.arclight$spec = spec.clone();
         arclight$type = MaterialPropertySpec.MaterialType.FORGE;
         arclight$item = true;
@@ -295,22 +379,35 @@ public abstract class MaterialMixin implements MaterialBridge {
 
     @Override
     public boolean bridge$shouldApplyStateFactory() {
-        return this.arclight$type != MaterialPropertySpec.MaterialType.VANILLA ||
-                (this.arclight$spec != null && this.arclight$spec.blockStateClass != null);
+        return (
+            this.arclight$type != MaterialPropertySpec.MaterialType.VANILLA ||
+            (this.arclight$spec != null &&
+                this.arclight$spec.blockStateClass != null)
+        );
     }
 
     @SuppressWarnings("unchecked")
-    private void arclight$setupCommon(ResourceLocation key, Block block, Item item) {
+    private void arclight$setupCommon(
+        ResourceLocation key,
+        Block block,
+        Item item
+    ) {
         this.key = CraftNamespacedKey.fromMinecraft(key);
         if (arclight$spec.materialDataClass != null) {
             try {
                 Class<?> data = Class.forName(arclight$spec.materialDataClass);
                 if (MaterialData.class.isAssignableFrom(data)) {
                     this.data = data;
-                    this.ctor = (Constructor<? extends MaterialData>) data.getConstructor(Material.class, byte.class);
+                    this.ctor = (Constructor<
+                        ? extends MaterialData
+                    >) data.getConstructor(Material.class, byte.class);
                 }
             } catch (Exception e) {
-                ArclightMod.LOGGER.warn("material.bad-data-class", arclight$spec.materialDataClass, this);
+                ArclightMod.LOGGER.warn(
+                    "material.bad-data-class",
+                    arclight$spec.materialDataClass,
+                    this
+                );
                 ArclightMod.LOGGER.warn(e);
             }
         }
@@ -327,22 +424,31 @@ public abstract class MaterialMixin implements MaterialBridge {
             arclight$spec.record = false;
         }
         if (arclight$spec.solid == null) {
-            arclight$spec.solid = block != null && block.defaultBlockState().canOcclude();
+            arclight$spec.solid =
+                block != null && block.defaultBlockState().canOcclude();
         }
         if (arclight$spec.air == null) {
-            arclight$spec.air = block != null && block.defaultBlockState().isAir();
+            arclight$spec.air =
+                block != null && block.defaultBlockState().isAir();
         }
         if (arclight$spec.transparent == null) {
-            arclight$spec.transparent = block != null && block.defaultBlockState().useShapeForLightOcclusion();
+            arclight$spec.transparent =
+                block != null &&
+                block.defaultBlockState().useShapeForLightOcclusion();
         }
         if (arclight$spec.flammable == null) {
-            arclight$spec.flammable = block != null && ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
+            arclight$spec.flammable =
+                block != null &&
+                ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
         }
         if (arclight$spec.burnable == null) {
-            arclight$spec.burnable = block != null && ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
+            arclight$spec.burnable =
+                block != null &&
+                ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
         }
         if (arclight$spec.fuel == null) {
-            arclight$spec.fuel = item != null && new ItemStack(item).getBurnTime(null) > 0;
+            arclight$spec.fuel =
+                item != null && new ItemStack(item).getBurnTime(null) > 0;
         }
         if (arclight$spec.occluding == null) {
             arclight$spec.occluding = arclight$spec.solid;
@@ -354,37 +460,65 @@ public abstract class MaterialMixin implements MaterialBridge {
             arclight$spec.interactable = true;
         }
         if (arclight$spec.hardness == null) {
-            arclight$spec.hardness = block != null ? block.defaultBlockState().destroySpeed : 0;
+            arclight$spec.hardness = block != null
+                ? block.defaultBlockState().destroySpeed
+                : 0;
         }
         if (arclight$spec.blastResistance == null) {
-            arclight$spec.blastResistance = block != null ? block.getExplosionResistance() : 0;
+            arclight$spec.blastResistance = block != null
+                ? block.getExplosionResistance()
+                : 0;
         }
         if (arclight$spec.craftingRemainingItem == null) {
             // noinspection deprecation
-            arclight$spec.craftingRemainingItem = item != null && item.hasCraftingRemainingItem() ? ForgeRegistries.ITEMS.getKey(item.getCraftingRemainingItem()).toString() : null;
+            arclight$spec.craftingRemainingItem = item != null &&
+                item.hasCraftingRemainingItem()
+                ? ForgeRegistries.ITEMS.getKey(
+                      item.getCraftingRemainingItem()
+                  ).toString()
+                : null;
         }
         if (arclight$spec.itemMetaType == null) {
             arclight$spec.itemMetaType = "UNSPECIFIC";
         }
-        BiFunction<Material, CraftMetaItem, ItemMeta> function = TYPES.get(arclight$spec.itemMetaType);
+        BiFunction<Material, CraftMetaItem, ItemMeta> function = TYPES.get(
+            arclight$spec.itemMetaType
+        );
         if (function != null) {
-            this.arclight$metaFunc = meta -> function.apply((Material) (Object) this, meta);
+            this.arclight$metaFunc = meta ->
+                function.apply((Material) (Object) this, meta);
         } else {
-            this.arclight$metaFunc = dynamicMetaCreator(arclight$spec.itemMetaType);
+            this.arclight$metaFunc = dynamicMetaCreator(
+                arclight$spec.itemMetaType
+            );
         }
         this.setupBlockStateFunc();
     }
 
     private void setupBlockStateFunc() {
-        if (arclight$spec.blockStateClass != null && !arclight$spec.blockStateClass.equalsIgnoreCase("auto")) {
+        if (
+            arclight$spec.blockStateClass != null &&
+            !arclight$spec.blockStateClass.equalsIgnoreCase("auto")
+        ) {
             try {
                 Class<?> cl = Class.forName(arclight$spec.blockStateClass);
                 if (!CraftBlockState.class.isAssignableFrom(cl)) {
-                    throw LocalizedException.checked("registry.block-state.not-subclass", cl, CraftBlockState.class);
+                    throw LocalizedException.checked(
+                        "registry.block-state.not-subclass",
+                        cl,
+                        CraftBlockState.class
+                    );
                 }
-                for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
-                    if (constructor.getParameterTypes().length == 1
-                            && org.bukkit.block.Block.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
+                for (Constructor<
+                    ?
+                > constructor : cl.getDeclaredConstructors()) {
+                    if (
+                        constructor.getParameterTypes().length == 1 &&
+                        org.bukkit.block
+                            .Block.class.isAssignableFrom(
+                            constructor.getParameterTypes()[0]
+                        )
+                    ) {
                         constructor.setAccessible(true);
                         this.arclight$stateFunc = b -> {
                             try {
@@ -397,13 +531,25 @@ public abstract class MaterialMixin implements MaterialBridge {
                 }
             } catch (Exception e) {
                 if (e instanceof LocalizedException) {
-                    ArclightMod.LOGGER.warn(((LocalizedException) e).node(), ((LocalizedException) e).args());
+                    ArclightMod.LOGGER.warn(
+                        ((LocalizedException) e).node(),
+                        ((LocalizedException) e).args()
+                    );
                 } else {
-                    ArclightMod.LOGGER.warn("registry.block-state.error", this, arclight$spec.blockStateClass, e);
+                    ArclightMod.LOGGER.warn(
+                        "registry.block-state.error",
+                        this,
+                        arclight$spec.blockStateClass,
+                        e
+                    );
                 }
             }
             if (this.arclight$stateFunc == null) {
-                ArclightMod.LOGGER.warn("registry.block-state.no-candidate", this, arclight$spec.blockStateClass);
+                ArclightMod.LOGGER.warn(
+                    "registry.block-state.no-candidate",
+                    this,
+                    arclight$spec.blockStateClass
+                );
             }
         }
         if (this.arclight$stateFunc == null) {
@@ -416,7 +562,11 @@ public abstract class MaterialMixin implements MaterialBridge {
         try {
             Class<?> cl = Class.forName(type);
             if (!CraftMetaItem.class.isAssignableFrom(cl)) {
-                throw LocalizedException.checked("registry.meta-type.not-subclass", cl, CraftMetaItem.class);
+                throw LocalizedException.checked(
+                    "registry.meta-type.not-subclass",
+                    cl,
+                    CraftMetaItem.class
+                );
             }
             for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
                 Class<?>[] parameterTypes = constructor.getParameterTypes();
@@ -431,7 +581,9 @@ public abstract class MaterialMixin implements MaterialBridge {
                             }
                         };
                         break;
-                    } else if (CraftMetaItem.class.isAssignableFrom(parameterTypes[0])) {
+                    } else if (
+                        CraftMetaItem.class.isAssignableFrom(parameterTypes[0])
+                    ) {
                         constructor.setAccessible(true);
                         candidate = meta -> {
                             try {
@@ -443,21 +595,33 @@ public abstract class MaterialMixin implements MaterialBridge {
                         break;
                     }
                 } else if (parameterTypes.length == 2) {
-                    if (parameterTypes[0] == Material.class && CraftMetaItem.class.isAssignableFrom(parameterTypes[1])) {
+                    if (
+                        parameterTypes[0] == Material.class &&
+                        CraftMetaItem.class.isAssignableFrom(parameterTypes[1])
+                    ) {
                         constructor.setAccessible(true);
                         candidate = meta -> {
                             try {
-                                return (ItemMeta) constructor.newInstance(this, meta);
+                                return (ItemMeta) constructor.newInstance(
+                                    this,
+                                    meta
+                                );
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
                         };
                         break;
-                    } else if (parameterTypes[1] == Material.class && CraftMetaItem.class.isAssignableFrom(parameterTypes[0])) {
+                    } else if (
+                        parameterTypes[1] == Material.class &&
+                        CraftMetaItem.class.isAssignableFrom(parameterTypes[0])
+                    ) {
                         constructor.setAccessible(true);
                         candidate = meta -> {
                             try {
-                                return (ItemMeta) constructor.newInstance(meta, this);
+                                return (ItemMeta) constructor.newInstance(
+                                    meta,
+                                    this
+                                );
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
@@ -468,13 +632,25 @@ public abstract class MaterialMixin implements MaterialBridge {
             }
         } catch (Exception e) {
             if (e instanceof LocalizedException) {
-                ArclightMod.LOGGER.warn(((LocalizedException) e).node(), ((LocalizedException) e).args());
+                ArclightMod.LOGGER.warn(
+                    ((LocalizedException) e).node(),
+                    ((LocalizedException) e).args()
+                );
             } else {
-                ArclightMod.LOGGER.warn("registry.meta-type.error", this, type, e);
+                ArclightMod.LOGGER.warn(
+                    "registry.meta-type.error",
+                    this,
+                    type,
+                    e
+                );
             }
         }
         if (candidate == null) {
-            ArclightMod.LOGGER.warn("registry.meta-type.no-candidate", this, type);
+            ArclightMod.LOGGER.warn(
+                "registry.meta-type.no-candidate",
+                this,
+                type
+            );
             candidate = CraftMetaItem::new;
         }
         return candidate;

@@ -11,6 +11,8 @@ import io.izzel.arclight.common.bridge.core.util.FoodStatsBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.LivingEntityMixin;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -74,40 +76,52 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.List;
-import java.util.Optional;
-
 @Mixin(net.minecraft.world.entity.player.Player.class)
-public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEntityBridge, IForgePlayer {
+public abstract class PlayerMixin
+    extends LivingEntityMixin
+    implements PlayerEntityBridge, IForgePlayer {
 
     @Shadow
     public int experienceLevel;
+
     @Shadow
     public AbstractContainerMenu containerMenu;
+
     @Shadow
     @Final
     public InventoryMenu inventoryMenu;
+
     @Shadow
     public float experienceProgress;
+
     @Shadow
     public int totalExperience;
+
     @Shadow
     public int sleepCounter;
+
     public boolean fauxSleeping;
     public int oldLevel;
+
     @Shadow
     protected FoodData foodData;
+
     @Shadow
     protected PlayerEnderChestContainer enderChestInventory;
+
     protected transient boolean arclight$forceSleep;
+
     @Shadow
     @Final
     private Abilities abilities;
+
     @Shadow
     private long timeEntitySatOnShoulder;
+
     @Shadow
     @Final
     private Inventory inventory;
+
     private EntityExhaustionEvent.ExhaustionReason arclight$exhaustReason;
 
     // @formatter:off
@@ -156,6 +170,7 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
     @Shadow public abstract GameProfile getGameProfile();
 
     @Shadow public abstract Inventory getInventory();
+
     // @formatter:on
 
     @Shadow
@@ -173,8 +188,12 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
     @Inject(method = "<init>", at = @At("RETURN"))
     private void arclight$init(CallbackInfo ci) {
         oldLevel = -1;
-        ((FoodStatsBridge) this.foodData).bridge$setEntityHuman((net.minecraft.world.entity.player.Player) (Object) this);
-        ((IInventoryBridge) this.enderChestInventory).setOwner(this.getBukkitEntity());
+        ((FoodStatsBridge) this.foodData).bridge$setEntityHuman(
+            (net.minecraft.world.entity.player.Player) (Object) this
+        );
+        ((IInventoryBridge) this.enderChestInventory).setOwner(
+            this.getBukkitEntity()
+        );
     }
 
     @Override
@@ -182,19 +201,42 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
         return fauxSleeping;
     }
 
-    @Inject(method = "turtleHelmetTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
+    @Inject(
+        method = "turtleHelmetTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"
+        )
+    )
     private void arclight$turtleHelmet(CallbackInfo ci) {
         bridge$pushEffectCause(EntityPotionEffectEvent.Cause.TURTLE_HELMET);
     }
 
-    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;heal(F)V"))
+    @Inject(
+        method = "aiStep",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;heal(F)V"
+        )
+    )
     private void arclight$healByRegen(CallbackInfo ci) {
         bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
     }
 
-    @Inject(method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
-            cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "RETURN", ordinal = 1))
-    private void arclight$playerDropItem(ItemStack droppedItem, boolean dropAround, boolean traceItem, CallbackInfoReturnable<ItemEntity> cir, double d0, ItemEntity itemEntity) {
+    @Inject(
+        method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(value = "RETURN", ordinal = 1)
+    )
+    private void arclight$playerDropItem(
+        ItemStack droppedItem,
+        boolean dropAround,
+        boolean traceItem,
+        CallbackInfoReturnable<ItemEntity> cir,
+        double d0,
+        ItemEntity itemEntity
+    ) {
         Player player = (Player) this.getBukkitEntity();
         Item drop = (Item) ((EntityBridge) itemEntity).bridge$getBukkitEntity();
 
@@ -202,11 +244,18 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
-            org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
+            org.bukkit.inventory.ItemStack cur = player
+                .getInventory()
+                .getItemInHand();
             if (traceItem && (cur == null || cur.getAmount() == 0)) {
                 // The complete stack was dropped
                 player.getInventory().setItemInHand(drop.getItemStack());
-            } else if (traceItem && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
+            } else if (
+                traceItem &&
+                cur.isSimilar(drop.getItemStack()) &&
+                cur.getAmount() < cur.getMaxStackSize() &&
+                drop.getItemStack().getAmount() == 1
+            ) {
                 // Only one item is dropped
                 cur.setAmount(cur.getAmount() + 1);
                 player.getInventory().setItemInHand(cur);
@@ -218,9 +267,27 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
         }
     }
 
-    @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;scalesWithDifficulty()Z", shift = At.Shift.BEFORE), cancellable = true)
-    private void arclight$playerHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (!ForgeHooks.onPlayerAttack((net.minecraft.world.entity.player.Player) (Object) this, source, amount)) {
+    @Inject(
+        method = "hurt",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/damagesource/DamageSource;scalesWithDifficulty()Z",
+            shift = At.Shift.BEFORE
+        ),
+        cancellable = true
+    )
+    private void arclight$playerHurt(
+        DamageSource source,
+        float amount,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (
+            !ForgeHooks.onPlayerAttack(
+                (net.minecraft.world.entity.player.Player) (Object) this,
+                source,
+                amount
+            )
+        ) {
             cir.setReturnValue(false);
             cir.cancel();
         }
@@ -231,28 +298,47 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
      * @reason
      */
     @Overwrite
-    public boolean canHarmPlayer(final net.minecraft.world.entity.player.Player entityhuman) {
+    public boolean canHarmPlayer(
+        final net.minecraft.world.entity.player.Player entityhuman
+    ) {
         Team team;
         if (entityhuman instanceof ServerPlayer thatPlayer) {
-            team = ((ServerPlayerEntityBridge) thatPlayer).bridge$getBukkitEntity().getScoreboard().getPlayerTeam(((ServerPlayerEntityBridge) thatPlayer).bridge$getBukkitEntity());
+            team =
+                ((ServerPlayerEntityBridge) thatPlayer).bridge$getBukkitEntity()
+                    .getScoreboard()
+                    .getPlayerTeam(
+                        ((ServerPlayerEntityBridge) thatPlayer).bridge$getBukkitEntity()
+                    );
             if (team == null || team.allowFriendlyFire()) {
                 return true;
             }
         } else {
-            final OfflinePlayer thisPlayer = Bukkit.getOfflinePlayer(entityhuman.getScoreboardName());
-            team = Bukkit.getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
+            final OfflinePlayer thisPlayer = Bukkit.getOfflinePlayer(
+                entityhuman.getScoreboardName()
+            );
+            team = Bukkit.getScoreboardManager()
+                .getMainScoreboard()
+                .getPlayerTeam(thisPlayer);
             if (team == null || team.allowFriendlyFire()) {
                 return true;
             }
         }
         if ((Object) this instanceof ServerPlayer) {
-            return !team.hasPlayer(((ServerPlayerEntityBridge) this).bridge$getBukkitEntity());
+            return !team.hasPlayer(
+                ((ServerPlayerEntityBridge) this).bridge$getBukkitEntity()
+            );
         }
-        return !team.hasPlayer(Bukkit.getOfflinePlayer(this.getScoreboardName()));
+        return !team.hasPlayer(
+            Bukkit.getOfflinePlayer(this.getScoreboardName())
+        );
     }
 
     @Inject(method = "actuallyHurt", cancellable = true, at = @At("HEAD"))
-    private void arclight$damageEntityCustom(DamageSource damageSrc, float damageAmount, CallbackInfo ci) {
+    private void arclight$damageEntityCustom(
+        DamageSource damageSrc,
+        float damageAmount,
+        CallbackInfo ci
+    ) {
         damageEntity0(damageSrc, damageAmount);
         ci.cancel();
     }
@@ -263,15 +349,30 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
      */
     @Overwrite
     public void attack(final Entity entity) {
-        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget((net.minecraft.world.entity.player.Player) (Object) this, entity))
-            return;
-        if (entity.isAttackable() && !entity.skipAttackInteraction((net.minecraft.world.entity.player.Player) (Object) this)) {
+        if (
+            !net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(
+                (net.minecraft.world.entity.player.Player) (Object) this,
+                entity
+            )
+        ) return;
+        if (
+            entity.isAttackable() &&
+            !entity.skipAttackInteraction(
+                (net.minecraft.world.entity.player.Player) (Object) this
+            )
+        ) {
             float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
             float f2;
             if (entity instanceof LivingEntity) {
-                f2 = EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity) entity).getMobType());
+                f2 = EnchantmentHelper.getDamageBonus(
+                    this.getMainHandItem(),
+                    ((LivingEntity) entity).getMobType()
+                );
             } else {
-                f2 = EnchantmentHelper.getDamageBonus(this.getMainHandItem(), MobType.UNDEFINED);
+                f2 = EnchantmentHelper.getDamageBonus(
+                    this.getMainHandItem(),
+                    MobType.UNDEFINED
+                );
             }
             final float f3 = this.getAttackStrengthScale(0.5f);
             f *= 0.2f + f3 * f3 * 0.8f;
@@ -280,16 +381,43 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
             if (f > 0.0f || f2 > 0.0f) {
                 final boolean flag = f3 > 0.9f;
                 boolean flag2 = false;
-                float i = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK); // Forge: Initialize this value to the attack knockback attribute of the player, which is by default 0
-                i += EnchantmentHelper.getKnockbackBonus((net.minecraft.world.entity.player.Player) (Object) this);
+                float i = (float) this.getAttributeValue(
+                    Attributes.ATTACK_KNOCKBACK
+                ); // Forge: Initialize this value to the attack knockback attribute of the player, which is by default 0
+                i += EnchantmentHelper.getKnockbackBonus(
+                    (net.minecraft.world.entity.player.Player) (Object) this
+                );
                 if (this.isSprinting() && flag) {
-                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, this.getSoundSource(), 1.0f, 1.0f);
+                    this.level().playSound(
+                        null,
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        SoundEvents.PLAYER_ATTACK_KNOCKBACK,
+                        this.getSoundSource(),
+                        1.0f,
+                        1.0f
+                    );
                     ++i;
                     flag2 = true;
                 }
-                boolean flag3 = flag && this.fallDistance > 0.0f && !this.onGround && !this.onClimbable() && !this.isInWater() && !this.hasEffect(MobEffects.BLINDNESS) && !this.isPassenger() && entity instanceof LivingEntity;
+                boolean flag3 =
+                    flag &&
+                    this.fallDistance > 0.0f &&
+                    !this.onGround &&
+                    !this.onClimbable() &&
+                    !this.isInWater() &&
+                    !this.hasEffect(MobEffects.BLINDNESS) &&
+                    !this.isPassenger() &&
+                    entity instanceof LivingEntity;
                 flag3 = flag3 && !this.isSprinting();
-                net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit((net.minecraft.world.entity.player.Player) (Object) this, entity, flag3, flag3 ? 1.5F : 1.0F);
+                net.minecraftforge.event.entity.player.CriticalHitEvent hitResult =
+                    net.minecraftforge.common.ForgeHooks.getCriticalHit(
+                        (net.minecraft.world.entity.player.Player) (Object) this,
+                        entity,
+                        flag3,
+                        flag3 ? 1.5F : 1.0F
+                    );
                 flag3 = hitResult != null;
                 if (flag3) {
                     f *= hitResult.getDamageModifier();
@@ -297,53 +425,137 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
                 f += f2;
                 boolean flag4 = false;
                 final double d0 = this.walkDist - this.walkDistO;
-                if (flag && !flag3 && !flag2 && this.onGround && d0 < this.getSpeed()) {
-                    final ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);
-                    flag4 = itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SWORD_SWEEP);
+                if (
+                    flag &&
+                    !flag3 &&
+                    !flag2 &&
+                    this.onGround &&
+                    d0 < this.getSpeed()
+                ) {
+                    final ItemStack itemstack = this.getItemInHand(
+                        InteractionHand.MAIN_HAND
+                    );
+                    flag4 = itemstack.canPerformAction(
+                        net.minecraftforge.common.ToolActions.SWORD_SWEEP
+                    );
                 }
                 float f4 = 0.0f;
                 boolean flag5 = false;
-                final int j = EnchantmentHelper.getFireAspect((net.minecraft.world.entity.player.Player) (Object) this);
+                final int j = EnchantmentHelper.getFireAspect(
+                    (net.minecraft.world.entity.player.Player) (Object) this
+                );
                 if (entity instanceof LivingEntity) {
                     f4 = ((LivingEntity) entity).getHealth();
                     if (j > 0 && !entity.isOnFire()) {
-                        final EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), ((EntityBridge) entity).bridge$getBukkitEntity(), 1);
+                        final EntityCombustByEntityEvent combustEvent =
+                            new EntityCombustByEntityEvent(
+                                this.getBukkitEntity(),
+                                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                                1
+                            );
                         Bukkit.getPluginManager().callEvent(combustEvent);
                         if (!combustEvent.isCancelled()) {
                             flag5 = true;
-                            ((EntityBridge) entity).bridge$setOnFire(combustEvent.getDuration(), false);
+                            ((EntityBridge) entity).bridge$setOnFire(
+                                combustEvent.getDuration(),
+                                false
+                            );
                         }
                     }
                 }
                 final Vec3 vec3d = entity.getDeltaMovement();
-                final boolean flag6 = entity.hurt(this.damageSources().playerAttack((net.minecraft.world.entity.player.Player) (Object) this), f);
+                final boolean flag6 = entity.hurt(
+                    this.damageSources().playerAttack(
+                        (net.minecraft.world.entity.player.Player) (Object) this
+                    ),
+                    f
+                );
                 if (flag6) {
                     if (i > 0) {
                         if (entity instanceof LivingEntity) {
-                            ((LivingEntity) entity).knockback(i * 0.5f, Mth.sin(this.getYRot() * 0.017453292f), -Mth.cos(this.getYRot() * 0.017453292f));
+                            ((LivingEntity) entity).knockback(
+                                i * 0.5f,
+                                Mth.sin(this.getYRot() * 0.017453292f),
+                                -Mth.cos(this.getYRot() * 0.017453292f)
+                            );
                         } else {
-                            entity.push(-Mth.sin(this.getYRot() * 0.017453292f) * i * 0.5f, 0.1, Mth.cos(this.getYRot() * 0.017453292f) * i * 0.5f);
+                            entity.push(
+                                -Mth.sin(this.getYRot() * 0.017453292f) *
+                                    i *
+                                    0.5f,
+                                0.1,
+                                Mth.cos(this.getYRot() * 0.017453292f) *
+                                    i *
+                                    0.5f
+                            );
                         }
-                        this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
+                        this.setDeltaMovement(
+                            this.getDeltaMovement().multiply(0.6, 1.0, 0.6)
+                        );
                         this.setSprinting(false);
                     }
                     if (flag4) {
-                        final float f5 = 1.0f + EnchantmentHelper.getSweepingDamageRatio((net.minecraft.world.entity.player.Player) (Object) this) * f;
-                        final List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, this.getItemInHand(InteractionHand.MAIN_HAND).getSweepHitBox((net.minecraft.world.entity.player.Player) (Object) this, entity));
-                        double entityReachSq = Mth.square(this.getEntityReach()); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
+                        final float f5 =
+                            1.0f +
+                            EnchantmentHelper.getSweepingDamageRatio(
+                                (net.minecraft.world.entity.player.Player) (Object) this
+                            ) *
+                            f;
+                        final List<LivingEntity> list =
+                            this.level().getEntitiesOfClass(
+                                LivingEntity.class,
+                                this.getItemInHand(
+                                    InteractionHand.MAIN_HAND
+                                ).getSweepHitBox(
+                                    (net.minecraft.world.entity.player.Player) (Object) this,
+                                    entity
+                                )
+                            );
+                        double entityReachSq = Mth.square(
+                            this.getEntityReach()
+                        ); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
                         for (final LivingEntity entityliving : list) {
-                            if (entityliving != (Object) this && entityliving != entity && !this.isAlliedTo(entityliving) && (!(entityliving instanceof ArmorStand) || !((ArmorStand) entityliving).isMarker()) && this.distanceToSqr(entityliving) < entityReachSq && entityliving.hurt(((DamageSourceBridge) this.damageSources().playerAttack((net.minecraft.world.entity.player.Player) (Object) this)).bridge$sweep(), f5)) {
-                                entityliving.knockback(0.4f, Mth.sin(this.getYRot() * 0.017453292f), -Mth.cos(this.getYRot() * 0.017453292f));
+                            if (
+                                entityliving != (Object) this &&
+                                entityliving != entity &&
+                                !this.isAlliedTo(entityliving) &&
+                                (!(entityliving instanceof ArmorStand) ||
+                                    !((ArmorStand) entityliving).isMarker()) &&
+                                this.distanceToSqr(entityliving) <
+                                entityReachSq &&
+                                entityliving.hurt(
+                                    ((DamageSourceBridge) this.damageSources().playerAttack(
+                                            (net.minecraft.world.entity.player.Player) (Object) this
+                                        )).bridge$sweep(),
+                                    f5
+                                )
+                            ) {
+                                entityliving.knockback(
+                                    0.4f,
+                                    Mth.sin(this.getYRot() * 0.017453292f),
+                                    -Mth.cos(this.getYRot() * 0.017453292f)
+                                );
                             }
                         }
-                        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, this.getSoundSource(), 1.0f, 1.0f);
+                        this.level().playSound(
+                            null,
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            SoundEvents.PLAYER_ATTACK_SWEEP,
+                            this.getSoundSource(),
+                            1.0f,
+                            1.0f
+                        );
                         this.sweepAttack();
                     }
                     if (entity instanceof ServerPlayer && entity.hurtMarked) {
                         boolean cancelled = false;
-                        final Player player = ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity();
+                        final Player player =
+                            ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity();
                         final Vector velocity = CraftVector.toBukkit(vec3d);
-                        final PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
+                        final PlayerVelocityEvent event =
+                            new PlayerVelocityEvent(player, velocity.clone());
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
                             cancelled = true;
@@ -351,20 +563,49 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
                             player.setVelocity(event.getVelocity());
                         }
                         if (!cancelled) {
-                            ((ServerPlayer) entity).connection.send(new ClientboundSetEntityMotionPacket(entity));
+                            ((ServerPlayer) entity).connection.send(
+                                new ClientboundSetEntityMotionPacket(entity)
+                            );
                             entity.hurtMarked = false;
                             entity.setDeltaMovement(vec3d);
                         }
                     }
                     if (flag3) {
-                        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, this.getSoundSource(), 1.0f, 1.0f);
+                        this.level().playSound(
+                            null,
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            SoundEvents.PLAYER_ATTACK_CRIT,
+                            this.getSoundSource(),
+                            1.0f,
+                            1.0f
+                        );
                         this.crit(entity);
                     }
                     if (!flag3 && !flag4) {
                         if (flag) {
-                            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_STRONG, this.getSoundSource(), 1.0f, 1.0f);
+                            this.level().playSound(
+                                null,
+                                this.getX(),
+                                this.getY(),
+                                this.getZ(),
+                                SoundEvents.PLAYER_ATTACK_STRONG,
+                                this.getSoundSource(),
+                                1.0f,
+                                1.0f
+                            );
                         } else {
-                            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_WEAK, this.getSoundSource(), 1.0f, 1.0f);
+                            this.level().playSound(
+                                null,
+                                this.getX(),
+                                this.getY(),
+                                this.getZ(),
+                                SoundEvents.PLAYER_ATTACK_WEAK,
+                                this.getSoundSource(),
+                                1.0f,
+                                1.0f
+                            );
                         }
                     }
                     if (f2 > 0.0f) {
@@ -372,41 +613,96 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
                     }
                     this.setLastHurtMob(entity);
                     if (entity instanceof LivingEntity) {
-                        EnchantmentHelper.doPostHurtEffects((LivingEntity) entity, (net.minecraft.world.entity.player.Player) (Object) this);
+                        EnchantmentHelper.doPostHurtEffects(
+                            (LivingEntity) entity,
+                            (net.minecraft.world.entity.player.Player) (Object) this
+                        );
                     }
-                    EnchantmentHelper.doPostDamageEffects((net.minecraft.world.entity.player.Player) (Object) this, entity);
+                    EnchantmentHelper.doPostDamageEffects(
+                        (net.minecraft.world.entity.player.Player) (Object) this,
+                        entity
+                    );
                     final ItemStack itemstack2 = this.getMainHandItem();
                     Entity object = entity;
                     if (entity instanceof PartEntity) {
                         object = ((PartEntity<?>) entity).getParent();
                     }
-                    if (!this.level().isClientSide && !itemstack2.isEmpty() && object instanceof LivingEntity) {
+                    if (
+                        !this.level().isClientSide &&
+                        !itemstack2.isEmpty() &&
+                        object instanceof LivingEntity
+                    ) {
                         ItemStack copy = itemstack2.copy();
-                        itemstack2.hurtEnemy((LivingEntity) object, (net.minecraft.world.entity.player.Player) (Object) this);
+                        itemstack2.hurtEnemy(
+                            (LivingEntity) object,
+                            (net.minecraft.world.entity.player.Player) (Object) this
+                        );
                         if (itemstack2.isEmpty()) {
-                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem((net.minecraft.world.entity.player.Player) (Object) this, copy, InteractionHand.MAIN_HAND);
-                            this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(
+                                (net.minecraft.world.entity.player.Player) (Object) this,
+                                copy,
+                                InteractionHand.MAIN_HAND
+                            );
+                            this.setItemInHand(
+                                InteractionHand.MAIN_HAND,
+                                ItemStack.EMPTY
+                            );
                         }
                     }
                     if (entity instanceof LivingEntity) {
-                        final float f6 = f4 - ((LivingEntity) entity).getHealth();
-                        this.awardStat(Stats.DAMAGE_DEALT, Math.round(f6 * 10.0f));
+                        final float f6 =
+                            f4 - ((LivingEntity) entity).getHealth();
+                        this.awardStat(
+                            Stats.DAMAGE_DEALT,
+                            Math.round(f6 * 10.0f)
+                        );
                         if (j > 0) {
-                            final EntityCombustByEntityEvent combustEvent2 = new EntityCombustByEntityEvent(this.getBukkitEntity(), ((EntityBridge) entity).bridge$getBukkitEntity(), j * 4);
+                            final EntityCombustByEntityEvent combustEvent2 =
+                                new EntityCombustByEntityEvent(
+                                    this.getBukkitEntity(),
+                                    ((EntityBridge) entity).bridge$getBukkitEntity(),
+                                    j * 4
+                                );
                             Bukkit.getPluginManager().callEvent(combustEvent2);
                             if (!combustEvent2.isCancelled()) {
-                                ((EntityBridge) entity).bridge$setOnFire(combustEvent2.getDuration(), false);
+                                ((EntityBridge) entity).bridge$setOnFire(
+                                    combustEvent2.getDuration(),
+                                    false
+                                );
                             }
                         }
                         if (this.level() instanceof ServerLevel && f6 > 2.0f) {
                             final int k = (int) (f6 * 0.5);
-                            ((ServerLevel) this.level()).sendParticles(ParticleTypes.DAMAGE_INDICATOR, entity.getX(), entity.getY() + entity.getBbHeight() * 0.5f, entity.getZ(), k, 0.1, 0.0, 0.1, 0.2);
+                            ((ServerLevel) this.level()).sendParticles(
+                                ParticleTypes.DAMAGE_INDICATOR,
+                                entity.getX(),
+                                entity.getY() + entity.getBbHeight() * 0.5f,
+                                entity.getZ(),
+                                k,
+                                0.1,
+                                0.0,
+                                0.1,
+                                0.2
+                            );
                         }
                     }
-                    bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.ATTACK);
-                    this.causeFoodExhaustion(((WorldBridge) level()).bridge$spigotConfig().combatExhaustion);
+                    bridge$pushExhaustReason(
+                        EntityExhaustionEvent.ExhaustionReason.ATTACK
+                    );
+                    this.causeFoodExhaustion(
+                        ((WorldBridge) level()).bridge$spigotConfig().combatExhaustion
+                    );
                 } else {
-                    this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, this.getSoundSource(), 1.0f, 1.0f);
+                    this.level().playSound(
+                        null,
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        SoundEvents.PLAYER_ATTACK_NODAMAGE,
+                        this.getSoundSource(),
+                        1.0f,
+                        1.0f
+                    );
                     if (flag5) {
                         entity.clearFire();
                     }
@@ -418,7 +714,10 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
         }
     }
 
-    public Either<net.minecraft.world.entity.player.Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos at, boolean force) {
+    public Either<
+        net.minecraft.world.entity.player.Player.BedSleepingProblem,
+        Unit
+    > startSleepInBed(BlockPos at, boolean force) {
         this.arclight$forceSleep = force;
         try {
             return this.startSleepInBed(at);
@@ -428,11 +727,20 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
     }
 
     @Override
-    public Either<net.minecraft.world.entity.player.Player.BedSleepingProblem, Unit> bridge$trySleep(BlockPos at, boolean force) {
+    public Either<
+        net.minecraft.world.entity.player.Player.BedSleepingProblem,
+        Unit
+    > bridge$trySleep(BlockPos at, boolean force) {
         return startSleepInBed(at, force);
     }
 
-    @Inject(method = "stopSleepInBed", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;sleepCounter:I"))
+    @Inject(
+        method = "stopSleepInBed",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/world/entity/player/Player;sleepCounter:I"
+        )
+    )
     private void arclight$wakeup(boolean flag, boolean flag1, CallbackInfo ci) {
         BlockPos blockPos = this.getSleepingPos().orElse(null);
         if (this.bridge$getBukkitEntity() instanceof Player player) {
@@ -440,68 +748,183 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
             if (blockPos != null) {
                 bed = CraftBlock.at(this.level(), blockPos);
             } else {
-                bed = ((WorldBridge) this.level()).bridge$getWorld().getBlockAt(player.getLocation());
+                bed = ((WorldBridge) this.level()).bridge$getWorld().getBlockAt(
+                    player.getLocation()
+                );
             }
-            PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, true);
+            PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(
+                player,
+                bed,
+                true
+            );
             Bukkit.getPluginManager().callEvent(event);
         }
     }
 
-    @ModifyArg(method = "jumpFromGround", index = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
+    @ModifyArg(
+        method = "jumpFromGround",
+        index = 0,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
     private float arclight$exhaustInfo(float f) {
-        SpigotWorldConfig config = ((WorldBridge) level()).bridge$spigotConfig();
+        SpigotWorldConfig config =
+            ((WorldBridge) level()).bridge$spigotConfig();
         if (config != null) {
             if (this.isSprinting()) {
                 f = config.jumpSprintExhaustion;
-                bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT);
+                bridge$pushExhaustReason(
+                    EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT
+                );
             } else {
                 f = config.jumpWalkExhaustion;
-                bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.JUMP);
+                bridge$pushExhaustReason(
+                    EntityExhaustionEvent.ExhaustionReason.JUMP
+                );
             }
         }
         return f;
     }
 
-    @Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setSharedFlag(IZ)V"))
-    private void arclight$toggleGlide(net.minecraft.world.entity.player.Player playerEntity, int flag, boolean set) {
-        if (playerEntity.getSharedFlag(flag) != set && !CraftEventFactory.callToggleGlideEvent((net.minecraft.world.entity.player.Player) (Object) this, set).isCancelled()) {
+    @Redirect(
+        method = "travel",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;setSharedFlag(IZ)V"
+        )
+    )
+    private void arclight$toggleGlide(
+        net.minecraft.world.entity.player.Player playerEntity,
+        int flag,
+        boolean set
+    ) {
+        if (
+            playerEntity.getSharedFlag(flag) != set &&
+            !CraftEventFactory.callToggleGlideEvent(
+                (net.minecraft.world.entity.player.Player) (Object) this,
+                set
+            ).isCancelled()
+        ) {
             playerEntity.setSharedFlag(flag, set);
         }
     }
 
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$exhauseCause1(double p_36379_, double p_36380_, double p_36381_, CallbackInfo ci) {
+    @Inject(
+        method = "checkMovementStatistics",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 0,
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
+    private void arclight$exhauseCause1(
+        double p_36379_,
+        double p_36380_,
+        double p_36381_,
+        CallbackInfo ci
+    ) {
         bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.SWIM);
     }
 
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$exhauseCause2(double p_36379_, double p_36380_, double p_36381_, CallbackInfo ci) {
-        bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER);
+    @Inject(
+        method = "checkMovementStatistics",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 1,
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
+    private void arclight$exhauseCause2(
+        double p_36379_,
+        double p_36380_,
+        double p_36381_,
+        CallbackInfo ci
+    ) {
+        bridge$pushExhaustReason(
+            EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER
+        );
     }
 
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$exhauseCause3(double p_36379_, double p_36380_, double p_36381_, CallbackInfo ci) {
-        bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER);
+    @Inject(
+        method = "checkMovementStatistics",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 2,
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
+    private void arclight$exhauseCause3(
+        double p_36379_,
+        double p_36380_,
+        double p_36381_,
+        CallbackInfo ci
+    ) {
+        bridge$pushExhaustReason(
+            EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER
+        );
     }
 
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$exhauseCause4(double p_36379_, double p_36380_, double p_36381_, CallbackInfo ci) {
+    @Inject(
+        method = "checkMovementStatistics",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 3,
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
+    private void arclight$exhauseCause4(
+        double p_36379_,
+        double p_36380_,
+        double p_36381_,
+        CallbackInfo ci
+    ) {
         bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.SPRINT);
     }
 
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 4, target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$exhauseCause5(double p_36379_, double p_36380_, double p_36381_, CallbackInfo ci) {
+    @Inject(
+        method = "checkMovementStatistics",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 4,
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
+    private void arclight$exhauseCause5(
+        double p_36379_,
+        double p_36380_,
+        double p_36381_,
+        CallbackInfo ci
+    ) {
         bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.CROUCH);
     }
 
-    @Inject(method = "checkMovementStatistics", at = @At(value = "INVOKE", ordinal = 5, target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$exhauseCause6(double p_36379_, double p_36380_, double p_36381_, CallbackInfo ci) {
+    @Inject(
+        method = "checkMovementStatistics",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 5,
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
+    private void arclight$exhauseCause6(
+        double p_36379_,
+        double p_36380_,
+        double p_36381_,
+        CallbackInfo ci
+    ) {
         bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.WALK);
     }
 
     @Inject(method = "startFallFlying", cancellable = true, at = @At("HEAD"))
     private void arclight$startGlidingEvent(CallbackInfo ci) {
-        if (CraftEventFactory.callToggleGlideEvent((net.minecraft.world.entity.player.Player) (Object) this, true).isCancelled()) {
+        if (
+            CraftEventFactory.callToggleGlideEvent(
+                (net.minecraft.world.entity.player.Player) (Object) this,
+                true
+            ).isCancelled()
+        ) {
             this.setSharedFlag(7, true);
             this.setSharedFlag(7, false);
             ci.cancel();
@@ -510,7 +933,12 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
 
     @Inject(method = "stopFallFlying", cancellable = true, at = @At("HEAD"))
     private void arclight$stopGlidingEvent(CallbackInfo ci) {
-        if (CraftEventFactory.callToggleGlideEvent((net.minecraft.world.entity.player.Player) (Object) this, false).isCancelled()) {
+        if (
+            CraftEventFactory.callToggleGlideEvent(
+                (net.minecraft.world.entity.player.Player) (Object) this,
+                false
+            ).isCancelled()
+        ) {
             ci.cancel();
         }
     }
@@ -532,13 +960,28 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
     }
 
     private boolean respawnEntityOnShoulder(final CompoundTag nbttagcompound) {
-        return this.level().isClientSide || nbttagcompound.isEmpty() || EntityType.create(nbttagcompound, this.level()).map(entity -> {
-            if (entity instanceof TamableAnimal) {
-                ((TamableAnimal) entity).setOwnerUUID(this.uuid);
-            }
-            entity.setPos(this.getX(), this.getY() + 0.699999988079071, this.getZ());
-            return ((ServerWorldBridge) this.level()).bridge$addEntitySerialized(entity, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY);
-        }).orElse(true);
+        return (
+            this.level().isClientSide ||
+            nbttagcompound.isEmpty() ||
+            EntityType.create(nbttagcompound, this.level())
+                .map(entity -> {
+                    if (entity instanceof TamableAnimal) {
+                        ((TamableAnimal) entity).setOwnerUUID(this.uuid);
+                    }
+                    entity.setPos(
+                        this.getX(),
+                        this.getY() + 0.699999988079071,
+                        this.getZ()
+                    );
+                    return (
+                        (ServerWorldBridge) this.level()
+                    ).bridge$addEntitySerialized(
+                        entity,
+                        CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY
+                    );
+                })
+                .orElse(true)
+        );
     }
 
     public CraftHumanEntity getBukkitEntity() {
@@ -551,34 +994,72 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot slot, ItemStack stack, boolean silent) {
+    public void setItemSlot(
+        EquipmentSlot slot,
+        ItemStack stack,
+        boolean silent
+    ) {
         this.verifyEquippedItem(stack);
         if (slot == EquipmentSlot.MAINHAND) {
-            this.equipEventAndSound(slot, this.inventory.items.set(this.inventory.selected, stack), stack, silent);
+            this.equipEventAndSound(
+                slot,
+                this.inventory.items.set(this.inventory.selected, stack),
+                stack,
+                silent
+            );
         } else if (slot == EquipmentSlot.OFFHAND) {
-            this.equipEventAndSound(slot, this.inventory.offhand.set(0, stack), stack, silent);
+            this.equipEventAndSound(
+                slot,
+                this.inventory.offhand.set(0, stack),
+                stack,
+                silent
+            );
         } else if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-            this.equipEventAndSound(slot, this.inventory.armor.set(slot.getIndex(), stack), stack, silent);
+            this.equipEventAndSound(
+                slot,
+                this.inventory.armor.set(slot.getIndex(), stack),
+                stack,
+                silent
+            );
         }
     }
 
-    @Redirect(method = "causeFoodExhaustion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;addExhaustion(F)V"))
+    @Redirect(
+        method = "causeFoodExhaustion",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/food/FoodData;addExhaustion(F)V"
+        )
+    )
     private void arclight$exhaustEvent(FoodData foodData, float amount) {
-        EntityExhaustionEvent.ExhaustionReason reason = arclight$exhaustReason == null ? EntityExhaustionEvent.ExhaustionReason.UNKNOWN : arclight$exhaustReason;
+        EntityExhaustionEvent.ExhaustionReason reason =
+            arclight$exhaustReason == null
+                ? EntityExhaustionEvent.ExhaustionReason.UNKNOWN
+                : arclight$exhaustReason;
         arclight$exhaustReason = null;
-        EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent((net.minecraft.world.entity.player.Player) (Object) this, reason, amount);
+        EntityExhaustionEvent event =
+            CraftEventFactory.callPlayerExhaustionEvent(
+                (net.minecraft.world.entity.player.Player) (Object) this,
+                reason,
+                amount
+            );
         if (!event.isCancelled()) {
             this.foodData.addExhaustion(event.getExhaustion());
         }
     }
 
-    public void applyExhaustion(float f, EntityExhaustionEvent.ExhaustionReason reason) {
+    public void applyExhaustion(
+        float f,
+        EntityExhaustionEvent.ExhaustionReason reason
+    ) {
         bridge$pushExhaustReason(reason);
         this.causeFoodExhaustion(f);
     }
 
     @Override
-    public void bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason reason) {
+    public void bridge$pushExhaustReason(
+        EntityExhaustionEvent.ExhaustionReason reason
+    ) {
         arclight$exhaustReason = reason;
     }
 
@@ -596,13 +1077,19 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerEnt
     public org.bukkit.Location bridge$getCompassTarget() {
         if ((Object) this instanceof ServerPlayer serverPlayer) {
             BlockPos respawnPos = serverPlayer.getRespawnPosition();
-            net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> respawnDim = serverPlayer.getRespawnDimension();
+            net.minecraft.resources.ResourceKey<
+                net.minecraft.world.level.Level
+            > respawnDim = serverPlayer.getRespawnDimension();
             if (respawnPos != null && respawnDim != null) {
-                ServerLevel world = serverPlayer.getServer().getLevel(respawnDim);
+                ServerLevel world = serverPlayer
+                    .getServer()
+                    .getLevel(respawnDim);
                 if (world != null) {
                     return new org.bukkit.Location(
-                            ((io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge) world).bridge$getWorld(),
-                            respawnPos.getX(), respawnPos.getY(), respawnPos.getZ()
+                        ((io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge) world).bridge$getWorld(),
+                        respawnPos.getX(),
+                        respawnPos.getY(),
+                        respawnPos.getZ()
                     );
                 }
             }

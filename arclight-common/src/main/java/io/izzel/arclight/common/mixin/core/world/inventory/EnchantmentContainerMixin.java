@@ -4,6 +4,8 @@ import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.PosContainerBridge;
 import io.izzel.arclight.common.bridge.core.util.IWorldPosCallableBridge;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -47,41 +49,62 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.List;
-import java.util.Map;
-
 // morejs https://github.com/AlmostReliable/morejs/blob/fd738a28a054d780031c7666fc8a01533c86f63b/Common/src/main/java/com/almostreliable/morejs/mixin/enchanting/EnchantmentMenuMixin.java
 @Mixin(value = EnchantmentMenu.class, priority = 39)
-public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMixin implements PosContainerBridge {
+public abstract class EnchantmentContainerMixin
+    extends AbstractContainerMenuMixin
+    implements PosContainerBridge {
 
     @Shadow
     @Final
     public int[] costs;
+
     @Shadow
     @Final
     public int[] enchantClue;
+
     @Shadow
     @Final
     public int[] levelClue;
+
     // @formatter:off
     @Shadow @Final private Container enchantSlots;
+
     @Shadow @Final private ContainerLevelAccess access;
+
     @Shadow @Final private RandomSource random;
+
     @Shadow @Final private DataSlot enchantmentSeed;
+
     private CraftInventoryView bukkitEntity = null;
     // @formatter:on
     private Inventory playerInventory;
 
     @Shadow
-    protected abstract List<EnchantmentInstance> getEnchantmentList(ItemStack stack, int enchantSlot, int level);
+    protected abstract List<EnchantmentInstance> getEnchantmentList(
+        ItemStack stack,
+        int enchantSlot,
+        int level
+    );
 
-    @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
-    public void arclight$init(int id, Inventory playerInventory, ContainerLevelAccess worldPosCallable, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
+        at = @At("RETURN")
+    )
+    public void arclight$init(
+        int id,
+        Inventory playerInventory,
+        ContainerLevelAccess worldPosCallable,
+        CallbackInfo ci
+    ) {
         this.playerInventory = playerInventory;
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(net.minecraft.world.entity.player.Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    public void arclight$unreachable(
+        net.minecraft.world.entity.player.Player playerIn,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (!bridge$isCheckReachable()) cir.setReturnValue(true);
     }
 
@@ -100,43 +123,103 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
                     float power = 0;
 
                     for (BlockPos blockpos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
-                        if (EnchantmentTableBlock.isValidBookShelf(p_217002_2_, p_217002_3_, blockpos)) {
-                            power += p_217002_2_.getBlockState(p_217002_3_.offset(blockpos)).getEnchantPowerBonus(p_217002_2_, p_217002_3_.offset(blockpos));
+                        if (
+                            EnchantmentTableBlock.isValidBookShelf(
+                                p_217002_2_,
+                                p_217002_3_,
+                                blockpos
+                            )
+                        ) {
+                            power += p_217002_2_
+                                .getBlockState(p_217002_3_.offset(blockpos))
+                                .getEnchantPowerBonus(
+                                    p_217002_2_,
+                                    p_217002_3_.offset(blockpos)
+                                );
                         }
                     }
 
                     this.random.setSeed(this.enchantmentSeed.get());
 
                     for (int i1 = 0; i1 < 3; ++i1) {
-                        this.costs[i1] = EnchantmentHelper.getEnchantmentCost(this.random, i1, (int) power, itemstack);
+                        this.costs[i1] = EnchantmentHelper.getEnchantmentCost(
+                            this.random,
+                            i1,
+                            (int) power,
+                            itemstack
+                        );
                         this.enchantClue[i1] = -1;
                         this.levelClue[i1] = -1;
                         if (this.costs[i1] < i1 + 1) {
                             this.costs[i1] = 0;
                         }
-                        this.costs[i1] = ForgeEventFactory.onEnchantmentLevelSet(p_217002_2_, p_217002_3_, i1, (int) power, itemstack, costs[i1]);
+                        this.costs[i1] =
+                            ForgeEventFactory.onEnchantmentLevelSet(
+                                p_217002_2_,
+                                p_217002_3_,
+                                i1,
+                                (int) power,
+                                itemstack,
+                                costs[i1]
+                            );
                     }
 
                     for (int j1 = 0; j1 < 3; ++j1) {
                         if (this.costs[j1] > 0) {
-                            List<EnchantmentInstance> list = this.getEnchantmentList(itemstack, j1, this.costs[j1]);
+                            List<EnchantmentInstance> list =
+                                this.getEnchantmentList(
+                                    itemstack,
+                                    j1,
+                                    this.costs[j1]
+                                );
                             if (list != null && !list.isEmpty()) {
-                                EnchantmentInstance enchantmentdata = list.get(this.random.nextInt(list.size()));
-                                this.enchantClue[j1] = BuiltInRegistries.ENCHANTMENT.getId(enchantmentdata.enchantment);
+                                EnchantmentInstance enchantmentdata = list.get(
+                                    this.random.nextInt(list.size())
+                                );
+                                this.enchantClue[j1] =
+                                    BuiltInRegistries.ENCHANTMENT.getId(
+                                        enchantmentdata.enchantment
+                                    );
                                 this.levelClue[j1] = enchantmentdata.level;
                             }
                         }
                     }
 
-
-                    CraftItemStack item = CraftItemStack.asCraftMirror(itemstack);
-                    org.bukkit.enchantments.EnchantmentOffer[] offers = new EnchantmentOffer[3];
+                    CraftItemStack item = CraftItemStack.asCraftMirror(
+                        itemstack
+                    );
+                    org.bukkit.enchantments.EnchantmentOffer[] offers =
+                        new EnchantmentOffer[3];
                     for (int j = 0; j < 3; ++j) {
-                        org.bukkit.enchantments.Enchantment enchantment = (this.enchantClue[j] >= 0) ? org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(ForgeRegistries.ENCHANTMENTS.getKey(BuiltInRegistries.ENCHANTMENT.byId(this.enchantClue[j])))) : null;
-                        offers[j] = (enchantment != null) ? new EnchantmentOffer(enchantment, this.levelClue[j], this.costs[j]) : null;
+                        org.bukkit.enchantments.Enchantment enchantment =
+                            (this.enchantClue[j] >= 0)
+                                ? org.bukkit.enchantments.Enchantment.getByKey(
+                                      CraftNamespacedKey.fromMinecraft(
+                                          ForgeRegistries.ENCHANTMENTS.getKey(
+                                              BuiltInRegistries.ENCHANTMENT.byId(
+                                                  this.enchantClue[j]
+                                              )
+                                          )
+                                      )
+                                  )
+                                : null;
+                        offers[j] = (enchantment != null)
+                            ? new EnchantmentOffer(
+                                  enchantment,
+                                  this.levelClue[j],
+                                  this.costs[j]
+                              )
+                            : null;
                     }
 
-                    PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(), this.getBukkitView(), ((IWorldPosCallableBridge) this.access).bridge$getLocation().getBlock(), item, offers, (int) power);
+                    PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(
+                        ((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+                        this.getBukkitView(),
+                        ((IWorldPosCallableBridge) this.access).bridge$getLocation().getBlock(),
+                        item,
+                        offers,
+                        (int) power
+                    );
                     event.setCancelled(!enchantable);
                     Bukkit.getPluginManager().callEvent(event);
 
@@ -153,7 +236,14 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
                         EnchantmentOffer offer = event.getOffers()[j];
                         if (offer != null) {
                             this.costs[j] = offer.getCost();
-                            this.enchantClue[j] = BuiltInRegistries.ENCHANTMENT.getId(ForgeRegistries.ENCHANTMENTS.getValue(CraftNamespacedKey.toMinecraft(offer.getEnchantment().getKey())));
+                            this.enchantClue[j] =
+                                BuiltInRegistries.ENCHANTMENT.getId(
+                                    ForgeRegistries.ENCHANTMENTS.getValue(
+                                        CraftNamespacedKey.toMinecraft(
+                                            offer.getEnchantment().getKey()
+                                        )
+                                    )
+                                );
                             this.levelClue[j] = offer.getEnchantmentLevel();
                         } else {
                             this.costs[j] = 0;
@@ -172,7 +262,6 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
                 }
             }
         }
-
     }
 
     /**
@@ -180,35 +269,86 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
      * @reason
      */
     @Overwrite
-    public boolean clickMenuButton(net.minecraft.world.entity.player.Player playerIn, int id) {
+    public boolean clickMenuButton(
+        net.minecraft.world.entity.player.Player playerIn,
+        int id
+    ) {
         ItemStack itemstack = this.enchantSlots.getItem(0);
         ItemStack itemstack1 = this.enchantSlots.getItem(1);
         int i = id + 1;
-        if ((itemstack1.isEmpty() || itemstack1.getCount() < i) && !playerIn.getAbilities().instabuild) {
+        if (
+            (itemstack1.isEmpty() || itemstack1.getCount() < i) &&
+            !playerIn.getAbilities().instabuild
+        ) {
             return false;
-        } else if (this.costs[id] <= 0 || itemstack.isEmpty() || (playerIn.experienceLevel < i || playerIn.experienceLevel < this.costs[id]) && !playerIn.getAbilities().instabuild) {
+        } else if (
+            this.costs[id] <= 0 ||
+            itemstack.isEmpty() ||
+            ((playerIn.experienceLevel < i ||
+                    playerIn.experienceLevel < this.costs[id]) &&
+                !playerIn.getAbilities().instabuild)
+        ) {
             return false;
         } else {
             this.access.execute((p_217003_6_, p_217003_7_) -> {
                 ItemStack itemstack2 = itemstack;
-                List<EnchantmentInstance> list = this.getEnchantmentList(itemstack, id, this.costs[id]);
+                List<EnchantmentInstance> list = this.getEnchantmentList(
+                    itemstack,
+                    id,
+                    this.costs[id]
+                );
                 if (true || !list.isEmpty()) {
-
                     //  playerIn.onEnchant(itemstack, i);
                     boolean flag = itemstack.getItem() == Items.BOOK;
-                    Map<Enchantment, Integer> enchants = new java.util.HashMap<>();
+                    Map<Enchantment, Integer> enchants =
+                        new java.util.HashMap<>();
                     for (EnchantmentInstance obj : list) {
-                        enchants.put(org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(ForgeRegistries.ENCHANTMENTS.getKey(obj.enchantment))), obj.level);
+                        enchants.put(
+                            org.bukkit.enchantments.Enchantment.getByKey(
+                                CraftNamespacedKey.fromMinecraft(
+                                    ForgeRegistries.ENCHANTMENTS.getKey(
+                                        obj.enchantment
+                                    )
+                                )
+                            ),
+                            obj.level
+                        );
                     }
-                    CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
+                    CraftItemStack item = CraftItemStack.asCraftMirror(
+                        itemstack2
+                    );
 
-                    var hintedEnchantment = org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(net.minecraft.world.item.enchantment.Enchantment.byId(enchantClue[id]))));
+                    var hintedEnchantment =
+                        org.bukkit.enchantments.Enchantment.getByKey(
+                            CraftNamespacedKey.fromMinecraft(
+                                BuiltInRegistries.ENCHANTMENT.getKey(
+                                    net.minecraft.world.item.enchantment.Enchantment.byId(
+                                        enchantClue[id]
+                                    )
+                                )
+                            )
+                        );
                     int hintedEnchantmentLevel = levelClue[id];
-                    EnchantItemEvent event = new EnchantItemEvent(((Player) ((PlayerEntityBridge) playerIn).bridge$getBukkitEntity()), this.getBukkitView(), ((IWorldPosCallableBridge) this.access).bridge$getLocation().getBlock(), item, this.costs[id], enchants, hintedEnchantment, hintedEnchantmentLevel, id);
+                    EnchantItemEvent event = new EnchantItemEvent(
+                        ((Player) ((PlayerEntityBridge) playerIn).bridge$getBukkitEntity()),
+                        this.getBukkitView(),
+                        ((IWorldPosCallableBridge) this.access).bridge$getLocation().getBlock(),
+                        item,
+                        this.costs[id],
+                        enchants,
+                        hintedEnchantment,
+                        hintedEnchantmentLevel,
+                        id
+                    );
                     Bukkit.getPluginManager().callEvent(event);
 
                     int level = event.getExpLevelCost();
-                    if (event.isCancelled() || (level > playerIn.experienceLevel && !playerIn.getAbilities().instabuild) || event.getEnchantsToAdd().isEmpty()) {
+                    if (
+                        event.isCancelled() ||
+                        (level > playerIn.experienceLevel &&
+                            !playerIn.getAbilities().instabuild) ||
+                        event.getEnchantsToAdd().isEmpty()
+                    ) {
                         return;
                     }
 
@@ -223,19 +363,39 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
                         this.enchantSlots.setItem(0, itemstack2);
                     }
 
-                    for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : event.getEnchantsToAdd().entrySet()) {
+                    for (Map.Entry<
+                        org.bukkit.enchantments.Enchantment,
+                        Integer
+                    > entry : event.getEnchantsToAdd().entrySet()) {
                         try {
                             if (flag) {
-                                NamespacedKey enchantId = entry.getKey().getKey();
-                                net.minecraft.world.item.enchantment.Enchantment nms = ForgeRegistries.ENCHANTMENTS.getValue(CraftNamespacedKey.toMinecraft(enchantId));
+                                NamespacedKey enchantId = entry
+                                    .getKey()
+                                    .getKey();
+                                net.minecraft.world.item.enchantment.Enchantment nms =
+                                    ForgeRegistries.ENCHANTMENTS.getValue(
+                                        CraftNamespacedKey.toMinecraft(
+                                            enchantId
+                                        )
+                                    );
                                 if (nms == null) {
                                     continue;
                                 }
 
-                                EnchantmentInstance weightedrandomenchant = new EnchantmentInstance(nms, entry.getValue());
-                                EnchantedBookItem.addEnchantment(itemstack2, weightedrandomenchant);
+                                EnchantmentInstance weightedrandomenchant =
+                                    new EnchantmentInstance(
+                                        nms,
+                                        entry.getValue()
+                                    );
+                                EnchantedBookItem.addEnchantment(
+                                    itemstack2,
+                                    weightedrandomenchant
+                                );
                             } else {
-                                item.addUnsafeEnchantment(entry.getKey(), entry.getValue());
+                                item.addUnsafeEnchantment(
+                                    entry.getKey(),
+                                    entry.getValue()
+                                );
                             }
                         } catch (IllegalArgumentException e) {
                             /* Just swallow invalid enchantments */
@@ -252,15 +412,25 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
 
                     playerIn.awardStat(Stats.ENCHANT_ITEM);
                     if (playerIn instanceof ServerPlayer) {
-                        CriteriaTriggers.ENCHANTED_ITEM.trigger((ServerPlayer) playerIn, itemstack2, i);
+                        CriteriaTriggers.ENCHANTED_ITEM.trigger(
+                            (ServerPlayer) playerIn,
+                            itemstack2,
+                            i
+                        );
                     }
 
                     this.enchantSlots.setChanged();
                     this.enchantmentSeed.set(playerIn.getEnchantmentSeed());
                     this.slotsChanged(this.enchantSlots);
-                    p_217003_6_.playSound(null, p_217003_7_, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, p_217003_6_.random.nextFloat() * 0.1F + 0.9F);
+                    p_217003_6_.playSound(
+                        null,
+                        p_217003_7_,
+                        SoundEvents.ENCHANTMENT_TABLE_USE,
+                        SoundSource.BLOCKS,
+                        1.0F,
+                        p_217003_6_.random.nextFloat() * 0.1F + 0.9F
+                    );
                 }
-
             });
             return true;
         }
@@ -272,8 +442,14 @@ public abstract class EnchantmentContainerMixin extends AbstractContainerMenuMix
             return bukkitEntity;
         }
 
-        CraftInventoryEnchanting inventory = new CraftInventoryEnchanting(this.enchantSlots);
-        bukkitEntity = new CraftInventoryView(((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(), inventory, (AbstractContainerMenu) (Object) this);
+        CraftInventoryEnchanting inventory = new CraftInventoryEnchanting(
+            this.enchantSlots
+        );
+        bukkitEntity = new CraftInventoryView(
+            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            inventory,
+            (AbstractContainerMenu) (Object) this
+        );
         return bukkitEntity;
     }
 

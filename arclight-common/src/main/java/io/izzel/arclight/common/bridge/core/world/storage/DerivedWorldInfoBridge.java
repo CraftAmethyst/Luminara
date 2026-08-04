@@ -5,7 +5,6 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.ServerLevelData;
 
 public interface DerivedWorldInfoBridge {
-
     ServerLevelData bridge$getDelegate();
 
     void bridge$setDimType(ResourceKey<LevelStem> typeKey);

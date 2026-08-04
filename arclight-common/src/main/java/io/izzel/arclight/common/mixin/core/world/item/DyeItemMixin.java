@@ -23,12 +23,33 @@ public class DyeItemMixin {
 
     // @formatter:off
     @Shadow @Final private DyeColor dyeColor;
+
     // @formatter:on
 
-    @Eject(method = "m_6880_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Sheep;m_29855_(Lnet/minecraft/world/item/DyeColor;)V", remap = false))
-    private void arclight$sheepDyeWool(net.minecraft.world.entity.animal.Sheep sheepEntity, DyeColor color, CallbackInfoReturnable<Boolean> cir, ItemStack stack, Player playerIn, LivingEntity target, InteractionHand hand) {
+    @Eject(
+        method = "m_6880_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/animal/Sheep;m_29855_(Lnet/minecraft/world/item/DyeColor;)V",
+            remap = false
+        )
+    )
+    private void arclight$sheepDyeWool(
+        net.minecraft.world.entity.animal.Sheep sheepEntity,
+        DyeColor color,
+        CallbackInfoReturnable<Boolean> cir,
+        ItemStack stack,
+        Player playerIn,
+        LivingEntity target,
+        InteractionHand hand
+    ) {
         byte bColor = (byte) this.dyeColor.getId();
-        SheepDyeWoolEvent event = new SheepDyeWoolEvent((Sheep) ((LivingEntityBridge) target).bridge$getBukkitEntity(), org.bukkit.DyeColor.getByWoolData(bColor), ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity());
+        SheepDyeWoolEvent event = new SheepDyeWoolEvent(
+            (Sheep) ((LivingEntityBridge) target).bridge$getBukkitEntity(),
+            org.bukkit.DyeColor.getByWoolData(bColor),
+            ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity()
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             cir.setReturnValue(false);

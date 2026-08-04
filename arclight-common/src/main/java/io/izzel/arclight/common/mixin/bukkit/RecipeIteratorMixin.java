@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.common.bridge.core.item.crafting.IRecipeBridge;
+import java.util.Iterator;
+import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeType;
 import org.bukkit.craftbukkit.v.inventory.RecipeIterator;
@@ -10,15 +12,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Iterator;
-import java.util.Map;
-
 @Mixin(value = RecipeIterator.class, remap = false)
 public class RecipeIteratorMixin {
 
     // @formatter:off
     @Shadow private Iterator<net.minecraft.world.item.crafting.Recipe<?>> current;
+
     @Shadow @Final private Iterator<Map.Entry<RecipeType<?>, Map<ResourceLocation, net.minecraft.world.item.crafting.Recipe<?>>>> recipes;
+
     // @formatter:on
 
     /**
@@ -51,7 +52,10 @@ public class RecipeIteratorMixin {
         try {
             return ((IRecipeBridge) recipe).bridge$toBukkitRecipe();
         } catch (Throwable e) {
-            throw new RuntimeException("Error converting recipe " + recipe.getId(), e);
+            throw new RuntimeException(
+                "Error converting recipe " + recipe.getId(),
+                e
+            );
         }
     }
 }

@@ -21,7 +21,11 @@ public class ArclightSpecialRecipe extends CraftComplexRecipe {
 
     @Override
     public @NotNull ItemStack getResult() {
-        return CraftItemStack.asCraftMirror(this.recipe.getResultItem(ServerLifecycleHooks.getCurrentServer().registryAccess()));
+        return CraftItemStack.asCraftMirror(
+            this.recipe.getResultItem(
+                ServerLifecycleHooks.getCurrentServer().registryAccess()
+            )
+        );
     }
 
     @Override
@@ -31,6 +35,8 @@ public class ArclightSpecialRecipe extends CraftComplexRecipe {
 
     @Override
     public void addToCraftingManager() {
-        ((RecipeManagerBridge) ServerLifecycleHooks.getCurrentServer().getRecipeManager()).bridge$addRecipe(this.recipe);
+        ((RecipeManagerBridge) ServerLifecycleHooks.getCurrentServer().getRecipeManager()).bridge$addRecipe(
+            this.recipe
+        );
     }
 }

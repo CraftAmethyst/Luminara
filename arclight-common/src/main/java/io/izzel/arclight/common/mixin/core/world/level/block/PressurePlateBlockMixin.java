@@ -21,7 +21,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PressurePlateBlock.class)
-public abstract class PressurePlateBlockMixin extends BasePressurePlateBlockMixin {
+public abstract class PressurePlateBlockMixin
+    extends BasePressurePlateBlockMixin {
 
     // @formatter:off
     @Shadow @Final private PressurePlateBlock.Sensitivity sensitivity;
@@ -31,6 +32,7 @@ public abstract class PressurePlateBlockMixin extends BasePressurePlateBlockMixi
             return !entity.isIgnoringBlockTriggers();
         }));
     }
+
     // @formatter:on
 
     @Shadow
@@ -58,16 +60,38 @@ public abstract class PressurePlateBlockMixin extends BasePressurePlateBlockMixi
         Class oclass1 = oclass;
 
         // CraftBukkit start - Call interact event when turning on a pressure plate
-        for (Entity entity : getEntities(world, TOUCH_AABB.move(blockposition), oclass)) {
-            if (this.getSignalForState(world.getBlockState(blockposition)) == 0) {
-                org.bukkit.World bworld = ((WorldBridge) world).bridge$getWorld();
-                org.bukkit.plugin.PluginManager manager = Bukkit.getPluginManager();
+        for (Entity entity : getEntities(
+            world,
+            TOUCH_AABB.move(blockposition),
+            oclass
+        )) {
+            if (
+                this.getSignalForState(world.getBlockState(blockposition)) == 0
+            ) {
+                org.bukkit.World bworld =
+                    ((WorldBridge) world).bridge$getWorld();
+                org.bukkit.plugin.PluginManager manager =
+                    Bukkit.getPluginManager();
                 org.bukkit.event.Cancellable cancellable;
 
                 if (entity instanceof Player) {
-                    cancellable = CraftEventFactory.callPlayerInteractEvent((Player) entity, Action.PHYSICAL, blockposition, null, null, null);
+                    cancellable = CraftEventFactory.callPlayerInteractEvent(
+                        (Player) entity,
+                        Action.PHYSICAL,
+                        blockposition,
+                        null,
+                        null,
+                        null
+                    );
                 } else {
-                    cancellable = new EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), bworld.getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()));
+                    cancellable = new EntityInteractEvent(
+                        ((EntityBridge) entity).bridge$getBukkitEntity(),
+                        bworld.getBlockAt(
+                            blockposition.getX(),
+                            blockposition.getY(),
+                            blockposition.getZ()
+                        )
+                    );
                     manager.callEvent((EntityInteractEvent) cancellable);
                 }
                 // We only want to block turning the plate on if all events are cancelled

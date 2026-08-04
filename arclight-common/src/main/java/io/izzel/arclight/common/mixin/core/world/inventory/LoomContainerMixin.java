@@ -19,24 +19,40 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LoomMenu.class)
-public abstract class LoomContainerMixin extends AbstractContainerMenuMixin implements PosContainerBridge {
+public abstract class LoomContainerMixin
+    extends AbstractContainerMenuMixin
+    implements PosContainerBridge {
 
     // @formatter:off
     @Shadow @Final private Container inputContainer;
+
     @Shadow @Final private Container outputContainer;
+
     @Shadow @Final private ContainerLevelAccess access;
+
     // @formatter:on
 
     private CraftInventoryView bukkitEntity;
     private Inventory playerInventory;
 
-    @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
-    public void arclight$init(int id, Inventory playerInventory, ContainerLevelAccess worldCallable, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
+        at = @At("RETURN")
+    )
+    public void arclight$init(
+        int id,
+        Inventory playerInventory,
+        ContainerLevelAccess worldCallable,
+        CallbackInfo ci
+    ) {
         this.playerInventory = playerInventory;
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    public void arclight$unreachable(
+        Player playerIn,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (!bridge$isCheckReachable()) {
             cir.setReturnValue(true);
         }
@@ -48,8 +64,15 @@ public abstract class LoomContainerMixin extends AbstractContainerMenuMixin impl
             return bukkitEntity;
         }
 
-        CraftInventoryLoom inventory = new CraftInventoryLoom(this.inputContainer, this.outputContainer);
-        bukkitEntity = new CraftInventoryView(((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(), inventory, (AbstractContainerMenu) (Object) this);
+        CraftInventoryLoom inventory = new CraftInventoryLoom(
+            this.inputContainer,
+            this.outputContainer
+        );
+        bukkitEntity = new CraftInventoryView(
+            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            inventory,
+            (AbstractContainerMenu) (Object) this
+        );
         return bukkitEntity;
     }
 

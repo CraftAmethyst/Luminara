@@ -14,9 +14,26 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(Ravager.class)
 public abstract class RavagerMixin extends PathfinderMobMixin {
 
-    @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;destroyBlock(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"))
-    private boolean arclight$entityChangeBlock(Level world, BlockPos pos, boolean dropBlock, Entity entityIn) {
-        return CraftEventFactory.callEntityChangeBlockEvent((Ravager) (Object) this, pos, Blocks.AIR.defaultBlockState())
-                && world.destroyBlock(pos, dropBlock, entityIn);
+    @Redirect(
+        method = "aiStep",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;destroyBlock(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
+    private boolean arclight$entityChangeBlock(
+        Level world,
+        BlockPos pos,
+        boolean dropBlock,
+        Entity entityIn
+    ) {
+        return (
+            CraftEventFactory.callEntityChangeBlockEvent(
+                (Ravager) (Object) this,
+                pos,
+                Blocks.AIR.defaultBlockState()
+            ) &&
+            world.destroyBlock(pos, dropBlock, entityIn)
+        );
     }
 }

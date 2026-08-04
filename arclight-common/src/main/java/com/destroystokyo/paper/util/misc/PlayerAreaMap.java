@@ -11,22 +11,38 @@ public final class PlayerAreaMap extends AreaMap<ServerPlayer> {
         super();
     }
 
-    public PlayerAreaMap(final PooledLinkedHashSets<ServerPlayer> pooledHashSets) {
+    public PlayerAreaMap(
+        final PooledLinkedHashSets<ServerPlayer> pooledHashSets
+    ) {
         super(pooledHashSets);
     }
 
-    public PlayerAreaMap(final PooledLinkedHashSets<ServerPlayer> pooledHashSets, final ChangeCallback<ServerPlayer> addCallback,
-                         final ChangeCallback<ServerPlayer> removeCallback) {
+    public PlayerAreaMap(
+        final PooledLinkedHashSets<ServerPlayer> pooledHashSets,
+        final ChangeCallback<ServerPlayer> addCallback,
+        final ChangeCallback<ServerPlayer> removeCallback
+    ) {
         this(pooledHashSets, addCallback, removeCallback, null);
     }
 
-    public PlayerAreaMap(final PooledLinkedHashSets<ServerPlayer> pooledHashSets, final ChangeCallback<ServerPlayer> addCallback,
-                         final ChangeCallback<ServerPlayer> removeCallback, final ChangeSourceCallback<ServerPlayer> changeSourceCallback) {
-        super(pooledHashSets, addCallback, removeCallback, changeSourceCallback);
+    public PlayerAreaMap(
+        final PooledLinkedHashSets<ServerPlayer> pooledHashSets,
+        final ChangeCallback<ServerPlayer> addCallback,
+        final ChangeCallback<ServerPlayer> removeCallback,
+        final ChangeSourceCallback<ServerPlayer> changeSourceCallback
+    ) {
+        super(
+            pooledHashSets,
+            addCallback,
+            removeCallback,
+            changeSourceCallback
+        );
     }
 
     @Override
-    protected PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> getEmptySetFor(final ServerPlayer player) {
+    protected PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
+        ServerPlayer
+    > getEmptySetFor(final ServerPlayer player) {
         return new PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(player);
     }
 }

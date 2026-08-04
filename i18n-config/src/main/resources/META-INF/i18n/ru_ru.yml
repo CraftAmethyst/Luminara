@@ -193,20 +193,20 @@ world:
   unknown-level-stem: "Назначить {} неизвестному стволу уровня {}"
 
 # Mod integration messages
-mod: { }
+mod: {}
 
 # Sign block entity messages
-sign: { }
+sign: {}
 
 # Enum extender messages (合并所有enum相关配置)
 enum:
   field-added: "Добавлено {} в {}"
 
 # World symlink messages
-symlink: { }
+symlink: {}
 
 # Distribution validation messages
-dist: { }
+dist: {}
 
 # Chat system messages (合并所有chat相关配置)
 chat:
@@ -375,7 +375,7 @@ comments:
       - "Следующее разрешает китайские символы:"
       - "valid-username-regex = \"^[ -~\\\\p{sc=Han}]{1,16}$\""
       - "Следующее разрешает любое имя пользователя для входа:"
-      - "valid-username-regex = \".+\""
+      - 'valid-username-regex = ".+"'
     lenient-item-tag-match.comment:
       - "Позволяет предметам с пустым nbt тегом складываться с предметами без тега"
     preload-bungee-chat-classes.comment:

@@ -15,11 +15,21 @@ public class HurtByTargetGoalMixin extends TargetGoalMixin {
 
     @Inject(method = "start", at = @At("HEAD"))
     public void arclight$reason1(CallbackInfo ci) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true);
+        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
+            EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY,
+            true
+        );
     }
 
     @Inject(method = "alertOther", at = @At("HEAD"))
-    public void arclight$reason2(Mob mobIn, LivingEntity targetIn, CallbackInfo ci) {
-        ((MobEntityBridge) mobIn).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true);
+    public void arclight$reason2(
+        Mob mobIn,
+        LivingEntity targetIn,
+        CallbackInfo ci
+    ) {
+        ((MobEntityBridge) mobIn).bridge$pushGoalTargetReason(
+            EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY,
+            true
+        );
     }
 }

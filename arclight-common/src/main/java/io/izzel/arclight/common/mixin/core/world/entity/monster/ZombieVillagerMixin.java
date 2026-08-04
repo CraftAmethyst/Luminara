@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
 import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.mixin.Eject;
+import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -14,40 +15,93 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.UUID;
-
 @Mixin(net.minecraft.world.entity.monster.ZombieVillager.class)
 public abstract class ZombieVillagerMixin extends ZombieMixin {
 
-    @Inject(method = "startConverting", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/ZombieVillager;removeEffect(Lnet/minecraft/world/effect/MobEffect;)Z"))
-    private void arclight$convert1(UUID conversionStarterIn, int conversionTimeIn, CallbackInfo ci) {
+    @Inject(
+        method = "startConverting",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/monster/ZombieVillager;removeEffect(Lnet/minecraft/world/effect/MobEffect;)Z"
+        )
+    )
+    private void arclight$convert1(
+        UUID conversionStarterIn,
+        int conversionTimeIn,
+        CallbackInfo ci
+    ) {
         this.persist = true;
         bridge$pushEffectCause(EntityPotionEffectEvent.Cause.CONVERSION);
     }
 
-    @Inject(method = "startConverting", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/ZombieVillager;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private void arclight$convert2(UUID conversionStarterIn, int conversionTimeIn, CallbackInfo ci) {
+    @Inject(
+        method = "startConverting",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/monster/ZombieVillager;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"
+        )
+    )
+    private void arclight$convert2(
+        UUID conversionStarterIn,
+        int conversionTimeIn,
+        CallbackInfo ci
+    ) {
         bridge$pushEffectCause(EntityPotionEffectEvent.Cause.CONVERSION);
     }
 
-    @Eject(method = "m_34398_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/ZombieVillager;m_21406_(Lnet/minecraft/world/entity/EntityType;Z)Lnet/minecraft/world/entity/Mob;", remap = false))
-    private <T extends Mob> T arclight$cure(net.minecraft.world.entity.monster.ZombieVillager zombieVillagerEntity, EntityType<T> entityType, boolean flag, CallbackInfo ci) {
-        T t = this.convertTo(entityType, flag, EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED);
+    @Eject(
+        method = "m_34398_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/monster/ZombieVillager;m_21406_(Lnet/minecraft/world/entity/EntityType;Z)Lnet/minecraft/world/entity/Mob;",
+            remap = false
+        )
+    )
+    private <T extends Mob> T arclight$cure(
+        net.minecraft.world.entity.monster.ZombieVillager zombieVillagerEntity,
+        EntityType<T> entityType,
+        boolean flag,
+        CallbackInfo ci
+    ) {
+        T t = this.convertTo(
+            entityType,
+            flag,
+            EntityTransformEvent.TransformReason.CURED,
+            CreatureSpawnEvent.SpawnReason.CURED
+        );
         if (t == null) {
-            ((ZombieVillager) this.bridge$getBukkitEntity()).setConversionTime(-1);
+            ((ZombieVillager) this.bridge$getBukkitEntity()).setConversionTime(
+                -1
+            );
             ci.cancel();
         } else {
-            ((LivingEntityBridge) t).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.CONVERSION);
+            ((LivingEntityBridge) t).bridge$pushEffectCause(
+                EntityPotionEffectEvent.Cause.CONVERSION
+            );
         }
         return t;
     }
 
-    @Inject(method = "finishConversion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/ZombieVillager;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"))
+    @Inject(
+        method = "finishConversion",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/monster/ZombieVillager;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"
+        )
+    )
     private void arclight$dropPre(ServerLevel world, CallbackInfo ci) {
         this.forceDrops = true;
     }
 
-    @Inject(method = "finishConversion", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/monster/ZombieVillager;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"))
+    @Inject(
+        method = "finishConversion",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/monster/ZombieVillager;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"
+        )
+    )
     private void arclight$dropPost(ServerLevel world, CallbackInfo ci) {
         this.forceDrops = false;
     }

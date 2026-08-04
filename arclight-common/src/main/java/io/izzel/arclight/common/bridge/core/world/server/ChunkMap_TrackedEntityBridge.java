@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.entity.Entity;
 
 public interface ChunkMap_TrackedEntityBridge {
-
     ServerEntity bridge$getServerEntity();
 
     Entity bridge$getEntity();

@@ -20,19 +20,37 @@ public abstract class TemptGoalMixin {
 
     // @formatter:off
     @Shadow protected Player player;
+
     @Shadow @Final protected PathfinderMob mob;
+
     // @formatter:on
 
-    @Inject(method = "canUse", cancellable = true, at = @At(value = "FIELD", shift = At.Shift.AFTER, opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/world/entity/ai/goal/TemptGoal;player:Lnet/minecraft/world/entity/player/Player;"))
+    @Inject(
+        method = "canUse",
+        cancellable = true,
+        at = @At(
+            value = "FIELD",
+            shift = At.Shift.AFTER,
+            opcode = Opcodes.PUTFIELD,
+            target = "Lnet/minecraft/world/entity/ai/goal/TemptGoal;player:Lnet/minecraft/world/entity/player/Player;"
+        )
+    )
     public void arclight$tempt(CallbackInfoReturnable<Boolean> cir) {
         boolean tempt = this.player != null;
         if (tempt) {
-            EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this.mob, this.player, EntityTargetEvent.TargetReason.TEMPT);
+            EntityTargetLivingEntityEvent event =
+                CraftEventFactory.callEntityTargetLivingEvent(
+                    this.mob,
+                    this.player,
+                    EntityTargetEvent.TargetReason.TEMPT
+                );
             if (event.isCancelled()) {
                 cir.setReturnValue(false);
                 return;
             }
-            this.player = (event.getTarget() == null) ? null : ((CraftHumanEntity) event.getTarget()).getHandle();
+            this.player = (event.getTarget() == null)
+                ? null
+                : ((CraftHumanEntity) event.getTarget()).getHandle();
         }
         cir.setReturnValue(tempt);
     }

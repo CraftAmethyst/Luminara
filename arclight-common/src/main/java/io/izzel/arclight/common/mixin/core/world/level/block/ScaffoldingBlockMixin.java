@@ -15,11 +15,31 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ScaffoldingBlock.class)
 public class ScaffoldingBlockMixin {
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
-    public Comparable<Integer> arclight$blockFade(BlockState state, Property<Integer> property, BlockState blockState, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 0,
+            target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"
+        )
+    )
+    public Comparable<Integer> arclight$blockFade(
+        BlockState state,
+        Property<Integer> property,
+        BlockState blockState,
+        ServerLevel worldIn,
+        BlockPos pos,
+        RandomSource random
+    ) {
         Integer integer = state.getValue(property);
         if (integer == 7) {
-            if (CraftEventFactory.callBlockFadeEvent(worldIn, pos, Blocks.AIR.defaultBlockState()).isCancelled()) {
+            if (
+                CraftEventFactory.callBlockFadeEvent(
+                    worldIn,
+                    pos,
+                    Blocks.AIR.defaultBlockState()
+                ).isCancelled()
+            ) {
                 return 6;
             } else {
                 return integer;

@@ -10,6 +10,7 @@ public abstract class SlotMixin implements SlotBridge {
 
     // @formatter:off
     @Shadow protected abstract void onSwapCraft(int numItemsCrafted);
+
     // @formatter:on
 
     @Override

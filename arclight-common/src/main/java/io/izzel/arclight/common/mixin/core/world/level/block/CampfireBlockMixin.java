@@ -14,9 +14,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CampfireBlock.class)
 public class CampfireBlockMixin {
 
-    @Inject(method = "onProjectileHit", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public void arclight$onFire(Level worldIn, BlockState state, BlockHitResult hit, Projectile projectile, CallbackInfo ci) {
-        if (CraftEventFactory.callBlockIgniteEvent(worldIn, hit.getBlockPos(), projectile).isCancelled()) {
+    @Inject(
+        method = "onProjectileHit",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    public void arclight$onFire(
+        Level worldIn,
+        BlockState state,
+        BlockHitResult hit,
+        Projectile projectile,
+        CallbackInfo ci
+    ) {
+        if (
+            CraftEventFactory.callBlockIgniteEvent(
+                worldIn,
+                hit.getBlockPos(),
+                projectile
+            ).isCancelled()
+        ) {
             ci.cancel();
         }
     }

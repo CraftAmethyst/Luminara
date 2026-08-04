@@ -19,14 +19,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Goat.class)
 public abstract class GoatMixin extends AnimalMixin {
 
-    @Eject(method = "m_6071_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemUtils;m_41813_(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;", remap = false))
-    private ItemStack arclight$bucketFill(ItemStack handItem, Player player, ItemStack p_41816_, CallbackInfoReturnable<InteractionResult> cir, Player p_149379_, InteractionHand hand) {
-        var event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) player.level(), player, this.blockPosition(), this.blockPosition(), null, handItem, Items.MILK_BUCKET, hand);
+    @Eject(
+        method = "m_6071_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/item/ItemUtils;m_41813_(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;",
+            remap = false
+        )
+    )
+    private ItemStack arclight$bucketFill(
+        ItemStack handItem,
+        Player player,
+        ItemStack p_41816_,
+        CallbackInfoReturnable<InteractionResult> cir,
+        Player p_149379_,
+        InteractionHand hand
+    ) {
+        var event = CraftEventFactory.callPlayerBucketFillEvent(
+            (ServerLevel) player.level(),
+            player,
+            this.blockPosition(),
+            this.blockPosition(),
+            null,
+            handItem,
+            Items.MILK_BUCKET,
+            hand
+        );
 
         if (event.isCancelled()) {
             cir.setReturnValue(InteractionResult.PASS);
             return null;
         }
-        return ItemUtils.createFilledResult(handItem, player, CraftItemStack.asNMSCopy(event.getItemStack()));
+        return ItemUtils.createFilledResult(
+            handItem,
+            player,
+            CraftItemStack.asNMSCopy(event.getItemStack())
+        );
     }
 }

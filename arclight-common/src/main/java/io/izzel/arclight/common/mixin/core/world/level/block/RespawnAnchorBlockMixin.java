@@ -18,8 +18,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(RespawnAnchorBlock.class)
 public class RespawnAnchorBlockMixin {
 
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setRespawnPosition(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/BlockPos;FZZ)V"))
-    private void arclight$cause(BlockState p_55874_, Level p_55875_, BlockPos p_55876_, Player player, InteractionHand p_55878_, BlockHitResult p_55879_, CallbackInfoReturnable<InteractionResult> cir) {
-        ((ServerPlayerEntityBridge) player).bridge$pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause.RESPAWN_ANCHOR);
+    @Inject(
+        method = "use",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerPlayer;setRespawnPosition(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/BlockPos;FZZ)V"
+        )
+    )
+    private void arclight$cause(
+        BlockState p_55874_,
+        Level p_55875_,
+        BlockPos p_55876_,
+        Player player,
+        InteractionHand p_55878_,
+        BlockHitResult p_55879_,
+        CallbackInfoReturnable<InteractionResult> cir
+    ) {
+        ((ServerPlayerEntityBridge) player).bridge$pushChangeSpawnCause(
+            PlayerSpawnChangeEvent.Cause.RESPAWN_ANCHOR
+        );
     }
 }

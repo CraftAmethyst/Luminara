@@ -22,8 +22,11 @@ public abstract class RepairContainerMixin extends ItemCombinerMixin {
 
     // @formatter:off
     @Shadow @Final public DataSlot cost;
+
     @Shadow public int repairItemCountCost;
+
     @Shadow public String itemName;
+
     public int cancelThisBySettingCostToMaximum = 40;
     // @formatter:on
     public int maximumRenameCostThreshold = 40;
@@ -45,23 +48,47 @@ public abstract class RepairContainerMixin extends ItemCombinerMixin {
     //@Overwrite
     //public void createResult()
 
-    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
-    private void arclight$callInventoryEvent(ResultContainer instance, int slot, ItemStack itemStack) {
+    @Redirect(
+        method = "createResult",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"
+        )
+    )
+    private void arclight$callInventoryEvent(
+        ResultContainer instance,
+        int slot,
+        ItemStack itemStack
+    ) {
         //The slot id is useless for DataSlot
         CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemStack);
     }
 
-    @Inject(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AnvilMenu;broadcastChanges()V"))
+    @Inject(
+        method = "createResult",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/inventory/AnvilMenu;broadcastChanges()V"
+        )
+    )
     private void arclight$sendData(CallbackInfo ci) {
         sendAllDataToRemote();
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40), require = 1)
+    @ModifyConstant(
+        method = "createResult",
+        constant = @Constant(intValue = 40),
+        require = 1
+    )
     private int arclight$maximumRepairCost(int raw) {
         return raw - 40 + maximumRepairCost;
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 39), require = 1)
+    @ModifyConstant(
+        method = "createResult",
+        constant = @Constant(intValue = 39),
+        require = 1
+    )
     private int arclight$maximumRenameCost(int raw) {
         return raw - 40 + maximumRepairCost;
     }
@@ -73,8 +100,16 @@ public abstract class RepairContainerMixin extends ItemCombinerMixin {
         }
 
         CraftInventory inventory = new CraftInventoryAnvil(
-                ((IWorldPosCallableBridge) this.access).bridge$getLocation(), this.inputSlots, this.resultSlots, (AnvilMenu) (Object) this);
-        bukkitEntity = new CraftInventoryView(((PlayerEntityBridge) this.player).bridge$getBukkitEntity(), inventory, (AbstractContainerMenu) (Object) this);
+            ((IWorldPosCallableBridge) this.access).bridge$getLocation(),
+            this.inputSlots,
+            this.resultSlots,
+            (AnvilMenu) (Object) this
+        );
+        bukkitEntity = new CraftInventoryView(
+            ((PlayerEntityBridge) this.player).bridge$getBukkitEntity(),
+            inventory,
+            (AbstractContainerMenu) (Object) this
+        );
         return bukkitEntity;
     }
 }

@@ -18,14 +18,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class FarmBlockMixin extends BlockMixin {
 
     @Inject(method = "turnToDirt", cancellable = true, at = @At("HEAD"))
-    private static void arclight$blockFade(Entity entity, BlockState state, Level worldIn, BlockPos pos, CallbackInfo ci) {
-        if (CraftEventFactory.callBlockFadeEvent(worldIn, pos, Blocks.DIRT.defaultBlockState()).isCancelled()) {
+    private static void arclight$blockFade(
+        Entity entity,
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        CallbackInfo ci
+    ) {
+        if (
+            CraftEventFactory.callBlockFadeEvent(
+                worldIn,
+                pos,
+                Blocks.DIRT.defaultBlockState()
+            ).isCancelled()
+        ) {
             ci.cancel();
         }
     }
 
-    @Redirect(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public boolean arclight$moistureChange(ServerLevel world, BlockPos pos, BlockState newState, int flags) {
-        return CraftEventFactory.handleMoistureChangeEvent(world, pos, newState, flags);
+    @Redirect(
+        method = "randomTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    public boolean arclight$moistureChange(
+        ServerLevel world,
+        BlockPos pos,
+        BlockState newState,
+        int flags
+    ) {
+        return CraftEventFactory.handleMoistureChangeEvent(
+            world,
+            pos,
+            newState,
+            flags
+        );
     }
 }

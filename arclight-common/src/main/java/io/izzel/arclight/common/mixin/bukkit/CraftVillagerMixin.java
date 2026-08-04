@@ -16,7 +16,13 @@ public class CraftVillagerMixin {
      * @reason
      */
     @Overwrite
-    public static Villager.Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Villager.Profession.valueOf(ResourceLocationUtil.standardize(ForgeRegistries.VILLAGER_PROFESSIONS.getKey(nms)));
+    public static Villager.Profession nmsToBukkitProfession(
+        VillagerProfession nms
+    ) {
+        return Villager.Profession.valueOf(
+            ResourceLocationUtil.standardize(
+                ForgeRegistries.VILLAGER_PROFESSIONS.getKey(nms)
+            )
+        );
     }
 }

@@ -19,22 +19,56 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SnowGolem.class)
 public abstract class SnowGolemMixin extends PathfinderMobMixin {
 
-    @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSources;onFire()Lnet/minecraft/world/damagesource/DamageSource;"))
+    @Redirect(
+        method = "aiStep",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/damagesource/DamageSources;onFire()Lnet/minecraft/world/damagesource/DamageSource;"
+        )
+    )
     private DamageSource arclight$useMelting(DamageSources instance) {
         return ((DamageSourcesBridge) instance).bridge$melting();
     }
 
-    @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private boolean arclight$blockForm(Level world, BlockPos pos, BlockState state) {
-        return CraftEventFactory.handleBlockFormEvent(world, pos, state, (SnowGolem) (Object) this);
+    @Redirect(
+        method = "aiStep",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+        )
+    )
+    private boolean arclight$blockForm(
+        Level world,
+        BlockPos pos,
+        BlockState state
+    ) {
+        return CraftEventFactory.handleBlockFormEvent(
+            world,
+            pos,
+            state,
+            (SnowGolem) (Object) this
+        );
     }
 
-    @Inject(method = "shear", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"))
+    @Inject(
+        method = "shear",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"
+        )
+    )
     private void arclight$forceDropOn(SoundSource pCategory, CallbackInfo ci) {
         this.forceDrops = true;
     }
 
-    @Inject(method = "shear", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"))
+    @Inject(
+        method = "shear",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/animal/SnowGolem;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;"
+        )
+    )
     private void arclight$forceDropOff(SoundSource pCategory, CallbackInfo ci) {
         this.forceDrops = false;
     }

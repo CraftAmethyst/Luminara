@@ -6,7 +6,6 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.craftbukkit.v.CraftServer;
 
 public interface MinecraftServerBridge {
-
     void bridge$setAutosavePeriod(int autosavePeriod);
 
     void bridge$setConsole(ConsoleCommandSender console);

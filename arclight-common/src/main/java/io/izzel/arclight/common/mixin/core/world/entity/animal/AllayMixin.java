@@ -25,25 +25,44 @@ public abstract class AllayMixin extends MobMixin {
 
     // @formatter:off
     @Shadow @Final private static EntityDataAccessor<Boolean> DATA_CAN_DUPLICATE;
+
     public boolean forceDancing = false;
     // @formatter:on
     private transient Allay arclight$duplicate;
 
     @Shadow
-    private void shadow$duplicateAllay() {
-    }
+    private void shadow$duplicateAllay() {}
 
     public void setCanDuplicate(boolean canDuplicate) {
         this.entityData.set(DATA_CAN_DUPLICATE, canDuplicate);
     }
 
-    @Inject(method = "aiStep", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/allay/Allay;heal(F)V"))
+    @Inject(
+        method = "aiStep",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/animal/allay/Allay;heal(F)V"
+        )
+    )
     private void arclight$healReason(CallbackInfo ci) {
         this.bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
     }
 
-    @Inject(method = "mobInteract", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/allay/Allay;duplicateAllay()V"))
-    private void arclight$cancelDuplicate(Player p_218361_, InteractionHand p_218362_, CallbackInfoReturnable<InteractionResult> cir) {
+    @Inject(
+        method = "mobInteract",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/animal/allay/Allay;duplicateAllay()V"
+        )
+    )
+    private void arclight$cancelDuplicate(
+        Player p_218361_,
+        InteractionHand p_218362_,
+        CallbackInfoReturnable<InteractionResult> cir
+    ) {
         var allay = arclight$duplicate;
         arclight$duplicate = null;
         if (allay == null) {
@@ -58,9 +77,17 @@ public abstract class AllayMixin extends MobMixin {
         }
     }
 
-    @Redirect(method = "duplicateAllay", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    @Redirect(
+        method = "duplicateAllay",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     private boolean arclight$captureDuplicate(Level instance, Entity entity) {
-        ((WorldBridge) instance).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.DUPLICATION);
+        ((WorldBridge) instance).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.DUPLICATION
+        );
         if (instance.addFreshEntity(entity)) {
             arclight$duplicate = (Allay) entity;
             return true;

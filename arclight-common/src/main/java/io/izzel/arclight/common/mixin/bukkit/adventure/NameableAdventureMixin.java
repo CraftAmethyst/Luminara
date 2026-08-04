@@ -8,20 +8,25 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = Nameable.class, remap = false)
 public interface NameableAdventureMixin {
-
     @Shadow
-    @Nullable String getCustomName();
+    @Nullable
+    String getCustomName();
 
     @Shadow
     void setCustomName(@Nullable String name);
-
 
     default net.kyori.adventure.text.@Nullable Component customName() {
         String name = getCustomName();
         return name == null ? null : PaperAdventure.legacyToAdventure(name);
     }
 
-    default void customName(final net.kyori.adventure.text.@Nullable Component customName) {
-        setCustomName(customName == null ? null : PaperAdventure.adventureToLegacy(customName));
+    default void customName(
+        final net.kyori.adventure.text.@Nullable Component customName
+    ) {
+        setCustomName(
+            customName == null
+                ? null
+                : PaperAdventure.adventureToLegacy(customName)
+        );
     }
 }

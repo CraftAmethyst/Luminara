@@ -4,6 +4,7 @@ import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.chunk.ChunkAccessBridge;
 import io.izzel.arclight.common.bridge.core.world.chunk.ChunkBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -30,14 +31,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-
 @Mixin(LevelChunk.class)
-public abstract class LevelChunkMixin extends ChunkAccessMixin implements ChunkBridge {
+public abstract class LevelChunkMixin
+    extends ChunkAccessMixin
+    implements ChunkBridge {
 
     @Shadow
     @Final
     public Level level;
+
     public boolean mustNotSave;
     // @formatter:on
     public boolean needsDecoration;

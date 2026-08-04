@@ -8,7 +8,9 @@ import java.io.IOException;
  * Used to record transformation detail for specific ClassLoaders.
  */
 public record ArclightRemapConfig(boolean remap) {
-    public static final ArclightRemapConfig PLUGIN = new ArclightRemapConfig(true);
+    public static final ArclightRemapConfig PLUGIN = new ArclightRemapConfig(
+        true
+    );
 
     public static ArclightRemapConfig read(DataInput input) throws IOException {
         return new ArclightRemapConfig(input.readBoolean());

@@ -13,13 +13,16 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(InventoryCarrier.class)
 public interface InventoryCarrierMixin {
-
     /**
      * @author IzzelAliz
      * @reason
      */
     @Overwrite
-    static void pickUpItem(Mob mob, InventoryCarrier carrier, ItemEntity itemEntity) {
+    static void pickUpItem(
+        Mob mob,
+        InventoryCarrier carrier,
+        ItemEntity itemEntity
+    ) {
         ItemStack itemstack = itemEntity.getItem();
         if (mob.wantsToPickUp(itemstack)) {
             SimpleContainer simplecontainer = carrier.getInventory();
@@ -28,8 +31,17 @@ public interface InventoryCarrierMixin {
                 return;
             }
 
-            var remaining = ArclightContainer.copyOf(carrier.getInventory()).addItem(itemstack);
-            if (CraftEventFactory.callEntityPickupItemEvent(mob, itemEntity, remaining.getCount(), false).isCancelled()) {
+            var remaining = ArclightContainer.copyOf(
+                carrier.getInventory()
+            ).addItem(itemstack);
+            if (
+                CraftEventFactory.callEntityPickupItemEvent(
+                    mob,
+                    itemEntity,
+                    remaining.getCount(),
+                    false
+                ).isCancelled()
+            ) {
                 return;
             }
             mob.onItemPickup(itemEntity);
@@ -42,8 +54,8 @@ public interface InventoryCarrierMixin {
                 itemstack.setCount(itemstack1.getCount());
             }
         }
-
     }
+
     // @formatter:on
 
     // @formatter:off

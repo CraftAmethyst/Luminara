@@ -27,7 +27,9 @@ public abstract class LavaFluidMixin {
 
     // @formatter:off
     @Shadow protected abstract boolean hasFlammableNeighbours(LevelReader worldIn, BlockPos pos);
+
     @Shadow protected abstract boolean isFlammable(LevelReader level, BlockPos pos, Direction face);
+
     // @formatter:on
 
     /**
@@ -35,14 +37,23 @@ public abstract class LavaFluidMixin {
      * @reason
      */
     @Overwrite
-    public void randomTick(Level world, BlockPos pos, FluidState state, RandomSource random) {
+    public void randomTick(
+        Level world,
+        BlockPos pos,
+        FluidState state,
+        RandomSource random
+    ) {
         if (world.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
             int i = random.nextInt(3);
             if (i > 0) {
                 BlockPos blockpos = pos;
 
                 for (int j = 0; j < i; ++j) {
-                    blockpos = blockpos.offset(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
+                    blockpos = blockpos.offset(
+                        random.nextInt(3) - 1,
+                        1,
+                        random.nextInt(3) - 1
+                    );
                     if (!world.isLoaded(blockpos)) {
                         return;
                     }
@@ -50,12 +61,30 @@ public abstract class LavaFluidMixin {
                     BlockState blockstate = world.getBlockState(blockpos);
                     if (blockstate.isAir()) {
                         if (this.hasFlammableNeighbours(world, blockpos)) {
-                            if (world.getBlockState(blockpos).getBlock() != Blocks.FIRE) {
-                                if (DistValidate.isValid(world) && CraftEventFactory.callBlockIgniteEvent(world, blockpos, pos).isCancelled()) {
+                            if (
+                                world.getBlockState(blockpos).getBlock() !=
+                                Blocks.FIRE
+                            ) {
+                                if (
+                                    DistValidate.isValid(world) &&
+                                    CraftEventFactory.callBlockIgniteEvent(
+                                        world,
+                                        blockpos,
+                                        pos
+                                    ).isCancelled()
+                                ) {
                                     continue;
                                 }
                             }
-                            world.setBlockAndUpdate(blockpos, ForgeEventFactory.fireFluidPlaceBlockEvent(world, blockpos, pos, Blocks.FIRE.defaultBlockState()));
+                            world.setBlockAndUpdate(
+                                blockpos,
+                                ForgeEventFactory.fireFluidPlaceBlockEvent(
+                                    world,
+                                    blockpos,
+                                    pos,
+                                    Blocks.FIRE.defaultBlockState()
+                                )
+                            );
                             return;
                         }
                     } else if (blockstate.blocksMotion()) {
@@ -64,30 +93,76 @@ public abstract class LavaFluidMixin {
                 }
             } else {
                 for (int k = 0; k < 3; ++k) {
-                    BlockPos blockpos1 = pos.offset(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
+                    BlockPos blockpos1 = pos.offset(
+                        random.nextInt(3) - 1,
+                        0,
+                        random.nextInt(3) - 1
+                    );
                     if (!world.isLoaded(blockpos1)) {
                         return;
                     }
 
-                    if (world.isEmptyBlock(blockpos1.above()) && this.isFlammable(world, blockpos1, Direction.UP)) {
+                    if (
+                        world.isEmptyBlock(blockpos1.above()) &&
+                        this.isFlammable(world, blockpos1, Direction.UP)
+                    ) {
                         BlockPos up = blockpos1.above();
                         if (world.getBlockState(up).getBlock() != Blocks.FIRE) {
-                            if (DistValidate.isValid(world) && CraftEventFactory.callBlockIgniteEvent(world, up, pos).isCancelled()) {
+                            if (
+                                DistValidate.isValid(world) &&
+                                CraftEventFactory.callBlockIgniteEvent(
+                                    world,
+                                    up,
+                                    pos
+                                ).isCancelled()
+                            ) {
                                 continue;
                             }
                         }
-                        world.setBlockAndUpdate(blockpos1.above(), ForgeEventFactory.fireFluidPlaceBlockEvent(world, blockpos1.above(), pos, Blocks.FIRE.defaultBlockState()));
+                        world.setBlockAndUpdate(
+                            blockpos1.above(),
+                            ForgeEventFactory.fireFluidPlaceBlockEvent(
+                                world,
+                                blockpos1.above(),
+                                pos,
+                                Blocks.FIRE.defaultBlockState()
+                            )
+                        );
                     }
                 }
             }
-
         }
     }
 
-    @Eject(method = "m_6364_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelAccessor;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z", remap = false))
-    private boolean arclight$blockFromTo(LevelAccessor world, BlockPos pos, BlockState newState, int flags, CallbackInfo ci) {
-        if (!DistValidate.isValid(world)) return world.setBlock(pos, newState, flags);
-        if (!CraftEventFactory.handleBlockFormEvent(((IWorldBridge) world).bridge$getMinecraftWorld(), pos, newState, flags)) {
+    @Eject(
+        method = "m_6364_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/LevelAccessor;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",
+            remap = false
+        )
+    )
+    private boolean arclight$blockFromTo(
+        LevelAccessor world,
+        BlockPos pos,
+        BlockState newState,
+        int flags,
+        CallbackInfo ci
+    ) {
+        if (!DistValidate.isValid(world)) return world.setBlock(
+            pos,
+            newState,
+            flags
+        );
+        if (
+            !CraftEventFactory.handleBlockFormEvent(
+                ((IWorldBridge) world).bridge$getMinecraftWorld(),
+                pos,
+                newState,
+                flags
+            )
+        ) {
             ci.cancel();
             return false;
         } else {

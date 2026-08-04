@@ -22,7 +22,12 @@ public class AsyncChatDecorateEvent extends ServerEvent implements Cancellable {
     private boolean cancelled;
 
     @ApiStatus.Internal
-    public AsyncChatDecorateEvent(final boolean async, final @Nullable Player player, final @NotNull Component originalMessage, final @NotNull Component result) {
+    public AsyncChatDecorateEvent(
+        final boolean async,
+        final @Nullable Player player,
+        final @NotNull Component originalMessage,
+        final @NotNull Component result
+    ) {
         super(async);
         this.player = player;
         this.originalMessage = originalMessage;

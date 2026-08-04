@@ -19,20 +19,50 @@ public class EatBlockGoalMixin {
 
     private transient BlockPos arclight$pos;
 
-    @Inject(method = "tick", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", ordinal = 0, remap = false, target = "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"))
+    @Inject(
+        method = "tick",
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            ordinal = 0,
+            remap = false,
+            target = "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     public void arclight$capturePos1(CallbackInfo ci, BlockPos pos) {
         arclight$pos = pos;
     }
 
-    @Inject(method = "tick", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", ordinal = 1, remap = false, target = "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"))
+    @Inject(
+        method = "tick",
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            ordinal = 1,
+            remap = false,
+            target = "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     public void arclight$capturePos2(CallbackInfo ci, BlockPos pos) {
         arclight$pos = pos.below();
     }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"))
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     public boolean arclight$entityChangeBlock(Level world, Entity entity) {
         boolean b = ForgeEventFactory.getMobGriefingEvent(world, entity);
-        var result = CraftEventFactory.callEntityChangeBlockEvent(entity, arclight$pos, Blocks.AIR.defaultBlockState(), !b);
+        var result = CraftEventFactory.callEntityChangeBlockEvent(
+            entity,
+            arclight$pos,
+            Blocks.AIR.defaultBlockState(),
+            !b
+        );
         arclight$pos = null;
         return result;
     }

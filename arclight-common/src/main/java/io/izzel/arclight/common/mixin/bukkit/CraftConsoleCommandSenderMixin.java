@@ -26,5 +26,4 @@ public class CraftConsoleCommandSenderMixin {
     public void sendRawMessage(String message) {
         LOGGER.info(message);
     }
-
 }

@@ -1,12 +1,11 @@
 package io.izzel.arclight.boot.log;
 
-import org.apache.logging.log4j.jul.ApiLogger;
-import org.apache.logging.log4j.jul.CoreLoggerAdapter;
-import org.apache.logging.log4j.spi.LoggerContext;
-
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 import java.util.logging.*;
+import org.apache.logging.log4j.jul.ApiLogger;
+import org.apache.logging.log4j.jul.CoreLoggerAdapter;
+import org.apache.logging.log4j.spi.LoggerContext;
 
 public class ArclightLoggerAdapter extends CoreLoggerAdapter {
 
@@ -101,71 +100,171 @@ public class ArclightLoggerAdapter extends CoreLoggerAdapter {
         }
 
         @Override
-        public void log(Level level, Throwable thrown, Supplier<String> msgSupplier) {
+        public void log(
+            Level level,
+            Throwable thrown,
+            Supplier<String> msgSupplier
+        ) {
             logger.log(level, thrown, msgSupplier);
         }
 
         @Override
-        public void logp(Level level, String sourceClass, String sourceMethod, String msg) {
+        public void logp(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String msg
+        ) {
             logger.logp(level, sourceClass, sourceMethod, msg);
         }
 
         @Override
-        public void logp(Level level, String sourceClass, String sourceMethod, Supplier<String> msgSupplier) {
+        public void logp(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            Supplier<String> msgSupplier
+        ) {
             logger.logp(level, sourceClass, sourceMethod, msgSupplier);
         }
 
         @Override
-        public void logp(Level level, String sourceClass, String sourceMethod, String msg, Object param1) {
+        public void logp(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String msg,
+            Object param1
+        ) {
             logger.logp(level, sourceClass, sourceMethod, msg, param1);
         }
 
         @Override
-        public void logp(Level level, String sourceClass, String sourceMethod, String msg, Object[] params) {
+        public void logp(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String msg,
+            Object[] params
+        ) {
             logger.logp(level, sourceClass, sourceMethod, msg, params);
         }
 
         @Override
-        public void logp(Level level, String sourceClass, String sourceMethod, String msg, Throwable thrown) {
+        public void logp(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String msg,
+            Throwable thrown
+        ) {
             logger.logp(level, sourceClass, sourceMethod, msg, thrown);
         }
 
         @Override
-        public void logp(Level level, String sourceClass, String sourceMethod, Throwable thrown, Supplier<String> msgSupplier) {
+        public void logp(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            Throwable thrown,
+            Supplier<String> msgSupplier
+        ) {
             logger.logp(level, sourceClass, sourceMethod, thrown, msgSupplier);
         }
 
         @Override
         @Deprecated
-        public void logrb(Level level, String sourceClass, String sourceMethod, String bundleName, String msg) {
+        public void logrb(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String bundleName,
+            String msg
+        ) {
             logger.logrb(level, sourceClass, sourceMethod, bundleName, msg);
         }
 
         @Override
         @Deprecated
-        public void logrb(Level level, String sourceClass, String sourceMethod, String bundleName, String msg, Object param1) {
-            logger.logrb(level, sourceClass, sourceMethod, bundleName, msg, param1);
+        public void logrb(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String bundleName,
+            String msg,
+            Object param1
+        ) {
+            logger.logrb(
+                level,
+                sourceClass,
+                sourceMethod,
+                bundleName,
+                msg,
+                param1
+            );
         }
 
         @Override
         @Deprecated
-        public void logrb(Level level, String sourceClass, String sourceMethod, String bundleName, String msg, Object[] params) {
-            logger.logrb(level, sourceClass, sourceMethod, bundleName, msg, params);
+        public void logrb(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String bundleName,
+            String msg,
+            Object[] params
+        ) {
+            logger.logrb(
+                level,
+                sourceClass,
+                sourceMethod,
+                bundleName,
+                msg,
+                params
+            );
         }
 
         @Override
-        public void logrb(Level level, String sourceClass, String sourceMethod, ResourceBundle bundle, String msg, Object... params) {
+        public void logrb(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            ResourceBundle bundle,
+            String msg,
+            Object... params
+        ) {
             logger.logrb(level, sourceClass, sourceMethod, bundle, msg, params);
         }
 
         @Override
         @Deprecated
-        public void logrb(Level level, String sourceClass, String sourceMethod, String bundleName, String msg, Throwable thrown) {
-            logger.logrb(level, sourceClass, sourceMethod, bundleName, msg, thrown);
+        public void logrb(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            String bundleName,
+            String msg,
+            Throwable thrown
+        ) {
+            logger.logrb(
+                level,
+                sourceClass,
+                sourceMethod,
+                bundleName,
+                msg,
+                thrown
+            );
         }
 
         @Override
-        public void logrb(Level level, String sourceClass, String sourceMethod, ResourceBundle bundle, String msg, Throwable thrown) {
+        public void logrb(
+            Level level,
+            String sourceClass,
+            String sourceMethod,
+            ResourceBundle bundle,
+            String msg,
+            Throwable thrown
+        ) {
             logger.logrb(level, sourceClass, sourceMethod, bundle, msg, thrown);
         }
 
@@ -175,12 +274,20 @@ public class ArclightLoggerAdapter extends CoreLoggerAdapter {
         }
 
         @Override
-        public void entering(String sourceClass, String sourceMethod, Object param1) {
+        public void entering(
+            String sourceClass,
+            String sourceMethod,
+            Object param1
+        ) {
             logger.entering(sourceClass, sourceMethod, param1);
         }
 
         @Override
-        public void entering(String sourceClass, String sourceMethod, Object[] params) {
+        public void entering(
+            String sourceClass,
+            String sourceMethod,
+            Object[] params
+        ) {
             logger.entering(sourceClass, sourceMethod, params);
         }
 
@@ -190,12 +297,20 @@ public class ArclightLoggerAdapter extends CoreLoggerAdapter {
         }
 
         @Override
-        public void exiting(String sourceClass, String sourceMethod, Object result) {
+        public void exiting(
+            String sourceClass,
+            String sourceMethod,
+            Object result
+        ) {
             logger.exiting(sourceClass, sourceMethod, result);
         }
 
         @Override
-        public void throwing(String sourceClass, String sourceMethod, Throwable thrown) {
+        public void throwing(
+            String sourceClass,
+            String sourceMethod,
+            Throwable thrown
+        ) {
             logger.throwing(sourceClass, sourceMethod, thrown);
         }
 
@@ -278,8 +393,7 @@ public class ArclightLoggerAdapter extends CoreLoggerAdapter {
         public void setLevel(Level newLevel) throws SecurityException {
             try {
                 logger.setLevel(newLevel);
-            } catch (Throwable ignored) {
-            }
+            } catch (Throwable ignored) {}
         }
 
         @Override
@@ -326,8 +440,7 @@ public class ArclightLoggerAdapter extends CoreLoggerAdapter {
         public void setParent(Logger parent) {
             try {
                 logger.setParent(parent);
-            } catch (Throwable ignored) {
-            }
+            } catch (Throwable ignored) {}
         }
     }
 }

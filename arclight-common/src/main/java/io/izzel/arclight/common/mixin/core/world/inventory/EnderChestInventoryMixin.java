@@ -16,20 +16,29 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PlayerEnderChestContainer.class)
-public abstract class EnderChestInventoryMixin extends SimpleContainerMixin implements IInventoryBridge, Container {
+public abstract class EnderChestInventoryMixin
+    extends SimpleContainerMixin
+    implements IInventoryBridge, Container {
 
     // @formatter:off
     @Shadow private EnderChestBlockEntity activeChest;
+
     // @formatter:on
 
     private Player owner;
 
-    public void arclight$constructor$super(int numSlots, InventoryHolder owner) {
+    public void arclight$constructor$super(
+        int numSlots,
+        InventoryHolder owner
+    ) {
         throw new RuntimeException();
     }
 
     public void arclight$constructor(Player owner) {
-        arclight$constructor$super(27, ((PlayerEntityBridge) owner).bridge$getBukkitEntity());
+        arclight$constructor$super(
+            27,
+            ((PlayerEntityBridge) owner).bridge$getBukkitEntity()
+        );
         this.owner = owner;
     }
 
@@ -51,6 +60,9 @@ public abstract class EnderChestInventoryMixin extends SimpleContainerMixin impl
 
     @Override
     public Location getLocation() {
-        return CraftBlock.at(this.activeChest.getLevel(), this.activeChest.getBlockPos()).getLocation();
+        return CraftBlock.at(
+            this.activeChest.getLevel(),
+            this.activeChest.getBlockPos()
+        ).getLocation();
     }
 }

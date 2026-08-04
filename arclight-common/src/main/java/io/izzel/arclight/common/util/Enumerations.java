@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.util;
 
 import io.izzel.arclight.api.Unsafe;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -9,7 +8,10 @@ import java.util.function.Function;
 
 public class Enumerations {
 
-    public static <A, B> Enumeration<B> transform(Enumeration<A> enumeration, Function<A, B> mapper) {
+    public static <A, B> Enumeration<B> transform(
+        Enumeration<A> enumeration,
+        Function<A, B> mapper
+    ) {
         return new Enumeration<B>() {
             @Override
             public boolean hasMoreElements() {

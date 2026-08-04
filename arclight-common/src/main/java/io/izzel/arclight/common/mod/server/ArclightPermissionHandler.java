@@ -1,6 +1,9 @@
 package io.izzel.arclight.common.mod.server;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
@@ -8,10 +11,6 @@ import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
 import org.bukkit.Bukkit;
-
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 
 public final class ArclightPermissionHandler implements IPermissionHandler {
 
@@ -34,16 +33,26 @@ public final class ArclightPermissionHandler implements IPermissionHandler {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getPermission(ServerPlayer player, PermissionNode<T> node, PermissionDynamicContext<?>... context) {
+    public <T> T getPermission(
+        ServerPlayer player,
+        PermissionNode<T> node,
+        PermissionDynamicContext<?>... context
+    ) {
         if (node.getType() == PermissionTypes.BOOLEAN) {
-            return (T) (Object) ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().hasPermission(node.getNodeName());
+            return (T) (Object) ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().hasPermission(
+                node.getNodeName()
+            );
         } else {
             return delegate.getPermission(player, node, context);
         }
     }
 
     @Override
-    public <T> T getOfflinePermission(UUID uuid, PermissionNode<T> node, PermissionDynamicContext<?>... context) {
+    public <T> T getOfflinePermission(
+        UUID uuid,
+        PermissionNode<T> node,
+        PermissionDynamicContext<?>... context
+    ) {
         var player = Bukkit.getPlayer(uuid);
         if (player != null && node.getType() == PermissionTypes.BOOLEAN) {
             return (T) (Object) player.hasPermission(node.getNodeName());

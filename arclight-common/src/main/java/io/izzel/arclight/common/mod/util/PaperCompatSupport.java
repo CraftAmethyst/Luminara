@@ -1,6 +1,10 @@
 package io.izzel.arclight.common.mod.util;
 
 import io.papermc.paper.entity.TeleportFlag;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 import net.minecraft.world.entity.RelativeMovement;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,22 +12,20 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
-
 public final class PaperCompatSupport {
 
-    private PaperCompatSupport() {
-    }
+    private PaperCompatSupport() {}
 
     public static int chunkCoord(double coord) {
         return ((int) Math.floor(coord)) >> 4;
     }
 
     public static Void logChunkCallbackException(Throwable ex) {
-        Bukkit.getLogger().log(Level.WARNING, "Exception in chunk load callback", ex);
+        Bukkit.getLogger().log(
+            Level.WARNING,
+            "Exception in chunk load callback",
+            ex
+        );
         return null;
     }
 
@@ -34,7 +36,9 @@ public final class PaperCompatSupport {
         return new HashSet<>(Arrays.asList(teleportFlags));
     }
 
-    public static RelativeMovement toNmsRelative(TeleportFlag.Relative relative) {
+    public static RelativeMovement toNmsRelative(
+        TeleportFlag.Relative relative
+    ) {
         return switch (relative) {
             case X -> RelativeMovement.X;
             case Y -> RelativeMovement.Y;
@@ -44,8 +48,15 @@ public final class PaperCompatSupport {
         };
     }
 
-    public static void restoreEntityRelationships(Entity entity, Entity previousVehicle, List<Entity> passengers) {
-        if (previousVehicle != null && entity.getWorld().equals(previousVehicle.getWorld())) {
+    public static void restoreEntityRelationships(
+        Entity entity,
+        Entity previousVehicle,
+        List<Entity> passengers
+    ) {
+        if (
+            previousVehicle != null &&
+            entity.getWorld().equals(previousVehicle.getWorld())
+        ) {
             previousVehicle.addPassenger(entity);
         }
         if (!passengers.isEmpty()) {
@@ -57,8 +68,15 @@ public final class PaperCompatSupport {
         }
     }
 
-    public static void restorePlayerRelationships(Player player, Entity previousVehicle, List<Entity> passengers) {
-        if (previousVehicle != null && player.getWorld().equals(previousVehicle.getWorld())) {
+    public static void restorePlayerRelationships(
+        Player player,
+        Entity previousVehicle,
+        List<Entity> passengers
+    ) {
+        if (
+            previousVehicle != null &&
+            player.getWorld().equals(previousVehicle.getWorld())
+        ) {
             previousVehicle.addPassenger(player);
         }
         if (!passengers.isEmpty()) {
@@ -71,9 +89,15 @@ public final class PaperCompatSupport {
     }
 
     @SuppressWarnings("JavaReflectionMemberAccess")
-    public static CompletableFuture<Boolean> tryUrgentChunkTeleport(World world, Location target, Callable<Boolean> teleportCall) {
+    public static CompletableFuture<Boolean> tryUrgentChunkTeleport(
+        World world,
+        Location target,
+        Callable<Boolean> teleportCall
+    ) {
         try {
-            var method = world.getClass().getMethod("getChunkAtAsyncUrgently", Location.class);
+            var method = world
+                .getClass()
+                .getMethod("getChunkAtAsyncUrgently", Location.class);
             Object result = method.invoke(world, target);
             if (!(result instanceof CompletableFuture<?> chunkFuture)) {
                 return null;

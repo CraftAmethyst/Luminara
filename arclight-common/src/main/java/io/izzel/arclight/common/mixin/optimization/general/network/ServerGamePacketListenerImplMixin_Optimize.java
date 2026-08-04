@@ -16,13 +16,26 @@ public class ServerGamePacketListenerImplMixin_Optimize {
     @Shadow
     public ServerPlayer player;
 
-    @Redirect(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerChunkCache;move(Lnet/minecraft/server/level/ServerPlayer;)V"))
-    private void arclight$markTrackerDirty(ServerChunkCache instance, ServerPlayer player, ServerboundMovePlayerPacket packet) {
+    @Redirect(
+        method = "handleMovePlayer",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerChunkCache;move(Lnet/minecraft/server/level/ServerPlayer;)V"
+        )
+    )
+    private void arclight$markTrackerDirty(
+        ServerChunkCache instance,
+        ServerPlayer player,
+        ServerboundMovePlayerPacket packet
+    ) {
         if (!packet.hasPosition()) {
             // do not update tracker when no position is updated
-            var old = ((ServerPlayerEntityBridge) this.player).bridge$isTrackerDirty();
+            var old =
+                ((ServerPlayerEntityBridge) this.player).bridge$isTrackerDirty();
             instance.move(player);
-            ((ServerPlayerEntityBridge) this.player).bridge$setTrackerDirty(old);
+            ((ServerPlayerEntityBridge) this.player).bridge$setTrackerDirty(
+                old
+            );
         } else {
             instance.move(player);
         }

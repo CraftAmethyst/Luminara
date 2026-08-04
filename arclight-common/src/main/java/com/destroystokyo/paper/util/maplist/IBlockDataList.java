@@ -2,21 +2,25 @@ package com.destroystokyo.paper.util.maplist;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.shorts.Short2LongOpenHashMap;
+import java.util.Arrays;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.GlobalPalette;
-
-import java.util.Arrays;
 
 /**
  * @author Spottedleaf
  */
 public final class IBlockDataList {
 
-    static final GlobalPalette<BlockState> GLOBAL_PALETTE = new GlobalPalette<>(Block.BLOCK_STATE_REGISTRY);
+    static final GlobalPalette<BlockState> GLOBAL_PALETTE = new GlobalPalette<>(
+        Block.BLOCK_STATE_REGISTRY
+    );
     private static final long[] EMPTY_LIST = new long[0];
     // map of location -> (index | (location << 16) | (palette id << 32))
-    private final Short2LongOpenHashMap map = new Short2LongOpenHashMap(2, 0.8f);
+    private final Short2LongOpenHashMap map = new Short2LongOpenHashMap(
+        2,
+        0.8f
+    );
     private long[] byIndex = EMPTY_LIST;
     private int size;
 
@@ -40,15 +44,28 @@ public final class IBlockDataList {
         return (int) ((raw >>> 16) & 0xFFFF);
     }
 
-    public static long getRawFromValues(final int index, final int location, final BlockState data) {
-        return (long) index | ((long) location << 16) | (((long) GLOBAL_PALETTE.idFor(data)) << 32);
+    public static long getRawFromValues(
+        final int index,
+        final int location,
+        final BlockState data
+    ) {
+        return (
+            (long) index |
+            ((long) location << 16) |
+            (((long) GLOBAL_PALETTE.idFor(data)) << 32)
+        );
     }
 
     public static long setIndexRawValues(final long value, final int index) {
-        return value & ~(0xFFFF) | (index);
+        return (value & ~(0xFFFF)) | (index);
     }
 
-    public long add(final int x, final int y, final int z, final BlockState data) {
+    public long add(
+        final int x,
+        final int y,
+        final int z,
+        final BlockState data
+    ) {
         return this.add(getLocationKey(x, y, z), data);
     }
 
@@ -61,14 +78,21 @@ public final class IBlockDataList {
             this.map.put((short) location, raw);
 
             if (index >= this.byIndex.length) {
-                this.byIndex = Arrays.copyOf(this.byIndex, (int) Math.max(4L, this.byIndex.length * 2L));
+                this.byIndex = Arrays.copyOf(
+                    this.byIndex,
+                    (int) Math.max(4L, this.byIndex.length * 2L)
+                );
             }
 
             this.byIndex[index] = raw;
             return raw;
         } else {
             final int index = getIndexFromRaw(curr);
-            final long raw = this.byIndex[index] = getRawFromValues(index, location, data);
+            final long raw = this.byIndex[index] = getRawFromValues(
+                index,
+                location,
+                data
+            );
 
             this.map.put((short) location, raw);
 
@@ -92,7 +116,10 @@ public final class IBlockDataList {
         final long end = this.byIndex[endIndex];
         if (index != endIndex) {
             // not empty after this call
-            this.map.put((short) getLocationFromRaw(end), setIndexRawValues(end, index));
+            this.map.put(
+                (short) getLocationFromRaw(end),
+                setIndexRawValues(end, index)
+            );
         }
         this.byIndex[index] = end;
         this.byIndex[endIndex] = 0L;

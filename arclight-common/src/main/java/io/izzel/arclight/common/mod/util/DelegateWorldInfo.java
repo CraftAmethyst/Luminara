@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mod.util;
 import com.mojang.serialization.Lifecycle;
 import io.izzel.arclight.common.bridge.core.world.storage.DerivedWorldInfoBridge;
 import io.izzel.arclight.common.bridge.core.world.storage.WorldInfoBridge;
+import java.util.UUID;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -16,22 +17,30 @@ import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.timers.TimerQueue;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 @SuppressWarnings("all")
 public class DelegateWorldInfo extends PrimaryLevelData {
 
     private final ServerLevelData serverLevelData;
 
-    public DelegateWorldInfo(LevelSettings levelSettings, WorldOptions worldOptions,
-                             SpecialWorldProperty specialWorldProperty, Lifecycle lifecycle,
-                             ServerLevelData serverLevelData) {
+    public DelegateWorldInfo(
+        LevelSettings levelSettings,
+        WorldOptions worldOptions,
+        SpecialWorldProperty specialWorldProperty,
+        Lifecycle lifecycle,
+        ServerLevelData serverLevelData
+    ) {
         super(levelSettings, worldOptions, specialWorldProperty, lifecycle);
         this.serverLevelData = serverLevelData;
     }
 
     public static DelegateWorldInfo wrap(ServerLevelData data) {
-        return new DelegateWorldInfo(worldSettings(data), generatorSettings(data), specialWorldProperty(data), lifecycle(data), data);
+        return new DelegateWorldInfo(
+            worldSettings(data),
+            generatorSettings(data),
+            specialWorldProperty(data),
+            lifecycle(data),
+            data
+        );
     }
 
     private static LevelSettings worldSettings(ServerLevelData data) {
@@ -45,8 +54,15 @@ public class DelegateWorldInfo extends PrimaryLevelData {
             return p.getLevelSettings();
         }
 
-        return new LevelSettings(data.getLevelName(), data.getGameType(), data.isHardcore(), data.getDifficulty(),
-                data.getAllowCommands(), data.getGameRules(), WorldDataConfiguration.DEFAULT);
+        return new LevelSettings(
+            data.getLevelName(),
+            data.getGameType(),
+            data.isHardcore(),
+            data.getDifficulty(),
+            data.getAllowCommands(),
+            data.getGameRules(),
+            WorldDataConfiguration.DEFAULT
+        );
     }
 
     private static WorldOptions generatorSettings(ServerLevelData data) {
@@ -59,15 +75,19 @@ public class DelegateWorldInfo extends PrimaryLevelData {
         return WorldOptions.defaultWithRandomSeed();
     }
 
-    private static SpecialWorldProperty specialWorldProperty(ServerLevelData data) {
+    private static SpecialWorldProperty specialWorldProperty(
+        ServerLevelData data
+    ) {
         data = resolveDelegate(data);
 
         if (data instanceof WorldData d) {
-            return (d.isFlatWorld() ?
-                    SpecialWorldProperty.FLAT :
-                    (d.isDebugWorld() ?
-                            SpecialWorldProperty.DEBUG :
-                            SpecialWorldProperty.NONE));
+            return (
+                d.isFlatWorld()
+                    ? SpecialWorldProperty.FLAT
+                    : (d.isDebugWorld()
+                          ? SpecialWorldProperty.DEBUG
+                          : SpecialWorldProperty.NONE)
+            );
         }
 
         return SpecialWorldProperty.NONE;
@@ -306,7 +326,13 @@ public class DelegateWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public void fillCrashReportCategory(CrashReportCategory crashReportCategory, LevelHeightAccessor levelHeightAccessor) {
-        serverLevelData.fillCrashReportCategory(crashReportCategory, levelHeightAccessor);
+    public void fillCrashReportCategory(
+        CrashReportCategory crashReportCategory,
+        LevelHeightAccessor levelHeightAccessor
+    ) {
+        serverLevelData.fillCrashReportCategory(
+            crashReportCategory,
+            levelHeightAccessor
+        );
     }
 }

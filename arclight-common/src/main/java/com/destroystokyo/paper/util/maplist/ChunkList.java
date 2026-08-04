@@ -2,11 +2,10 @@ package com.destroystokyo.paper.util.maplist;
 
 import io.papermc.paper.util.MCUtil;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import net.minecraft.world.level.chunk.LevelChunk;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 // list with O(1) remove & contains
 
@@ -16,7 +15,10 @@ import java.util.NoSuchElementException;
 public final class ChunkList implements Iterable<LevelChunk> {
 
     private static final LevelChunk[] EMPTY_LIST = new LevelChunk[0];
-    private final Long2IntOpenHashMap chunkToIndex = new Long2IntOpenHashMap(2, 0.8f);
+    private final Long2IntOpenHashMap chunkToIndex = new Long2IntOpenHashMap(
+        2,
+        0.8f
+    );
     private LevelChunk[] chunks = EMPTY_LIST;
     private int count;
 
@@ -29,11 +31,15 @@ public final class ChunkList implements Iterable<LevelChunk> {
     }
 
     public boolean contains(final LevelChunk chunk) {
-        return this.chunkToIndex.containsKey(MCUtil.getCoordinateKey(chunk.getPos()));
+        return this.chunkToIndex.containsKey(
+            MCUtil.getCoordinateKey(chunk.getPos())
+        );
     }
 
     public boolean remove(final LevelChunk chunk) {
-        final int index = this.chunkToIndex.remove(MCUtil.getCoordinateKey(chunk.getPos()));
+        final int index = this.chunkToIndex.remove(
+            MCUtil.getCoordinateKey(chunk.getPos())
+        );
         if (index == Integer.MIN_VALUE) {
             return false;
         }
@@ -53,7 +59,10 @@ public final class ChunkList implements Iterable<LevelChunk> {
 
     public boolean add(final LevelChunk chunk) {
         final int count = this.count;
-        final int currIndex = this.chunkToIndex.putIfAbsent(MCUtil.getCoordinateKey(chunk.getPos()), count);
+        final int currIndex = this.chunkToIndex.putIfAbsent(
+            MCUtil.getCoordinateKey(chunk.getPos()),
+            count
+        );
 
         if (currIndex != Integer.MIN_VALUE) {
             return false; // already in this list
@@ -63,7 +72,10 @@ public final class ChunkList implements Iterable<LevelChunk> {
 
         if (list.length == count) {
             // resize required
-            list = this.chunks = Arrays.copyOf(list, (int) Math.max(4L, count * 2L)); // overflow results in negative
+            list = this.chunks = Arrays.copyOf(
+                list,
+                (int) Math.max(4L, count * 2L)
+            ); // overflow results in negative
         }
 
         list[count] = chunk;
@@ -74,7 +86,9 @@ public final class ChunkList implements Iterable<LevelChunk> {
 
     public LevelChunk getChecked(final int index) {
         if (index < 0 || index >= this.count) {
-            throw new IndexOutOfBoundsException("Index: " + index + " is out of bounds, size: " + this.count);
+            throw new IndexOutOfBoundsException(
+                "Index: " + index + " is out of bounds, size: " + this.count
+            );
         }
         return this.chunks[index];
     }
@@ -96,7 +110,6 @@ public final class ChunkList implements Iterable<LevelChunk> {
     @Override
     public Iterator<LevelChunk> iterator() {
         return new Iterator<LevelChunk>() {
-
             LevelChunk lastRet;
             int current;
 

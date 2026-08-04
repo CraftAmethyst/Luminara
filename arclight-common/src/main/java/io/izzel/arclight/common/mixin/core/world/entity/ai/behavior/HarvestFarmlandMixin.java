@@ -12,9 +12,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(HarvestFarmland.class)
 public abstract class HarvestFarmlandMixin {
 
-    @Inject(method = "tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/npc/Villager;J)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private void on(ServerLevel worldIn, Villager owner, long gameTime, CallbackInfo ci) {
+    @Inject(
+        method = "tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/npc/Villager;J)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    private void on(
+        ServerLevel worldIn,
+        Villager owner,
+        long gameTime,
+        CallbackInfo ci
+    ) {
         ArclightCaptures.captureEntityChangeBlock(owner);
     }
-
 }

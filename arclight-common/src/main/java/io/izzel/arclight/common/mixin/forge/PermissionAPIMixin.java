@@ -20,11 +20,17 @@ public class PermissionAPIMixin {
 
     @Inject(method = "initializePermissionAPI", at = @At("RETURN"))
     private static void arclight$init(CallbackInfo ci) {
-        if (ArclightConfig.spec().getCompat().getPermissionForwarding() != PermissionForwarding.FORGE_TO_BUKKIT) {
+        if (
+            ArclightConfig.spec().getCompat().getPermissionForwarding() !=
+            PermissionForwarding.FORGE_TO_BUKKIT
+        ) {
             return;
         }
         var handler = new ArclightPermissionHandler(activeHandler);
-        ArclightMod.LOGGER.info("permission.forge-to-bukkit", activeHandler.getIdentifier());
+        ArclightMod.LOGGER.info(
+            "permission.forge-to-bukkit",
+            activeHandler.getIdentifier()
+        );
         activeHandler = handler;
     }
 }

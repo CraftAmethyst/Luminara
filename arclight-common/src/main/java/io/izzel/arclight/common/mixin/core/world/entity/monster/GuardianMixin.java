@@ -11,7 +11,13 @@ public class GuardianMixin {
 
     public Guardian.GuardianAttackGoal guardianAttackGoal;
 
-    @ModifyArg(method = "registerGoals", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/goal/GoalSelector;addGoal(ILnet/minecraft/world/entity/ai/goal/Goal;)V"))
+    @ModifyArg(
+        method = "registerGoals",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/ai/goal/GoalSelector;addGoal(ILnet/minecraft/world/entity/ai/goal/Goal;)V"
+        )
+    )
     private Goal arclight$saveGoal(Goal goal) {
         if (goal instanceof Guardian.GuardianAttackGoal guardianGoal) {
             this.guardianAttackGoal = guardianGoal;

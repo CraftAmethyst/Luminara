@@ -22,29 +22,73 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(SmallFireball.class)
 public abstract class SmallFireballMixin extends FireballMixin {
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;DDD)V", at = @At("RETURN"))
-    private void arclight$init(Level worldIn, LivingEntity shooter, double accelX, double accelY, double accelZ, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;DDD)V",
+        at = @At("RETURN")
+    )
+    private void arclight$init(
+        Level worldIn,
+        LivingEntity shooter,
+        double accelX,
+        double accelY,
+        double accelZ,
+        CallbackInfo ci
+    ) {
         if (this.getOwner() != null && this.getOwner() instanceof Mob) {
-            this.isIncendiary = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+            this.isIncendiary = this.level()
+                .getGameRules()
+                .getBoolean(GameRules.RULE_MOBGRIEFING);
         }
     }
 
-    @Redirect(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setSecondsOnFire(I)V"))
+    @Redirect(
+        method = "onHitEntity",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;setSecondsOnFire(I)V"
+        )
+    )
     private void arclight$entityCombust(Entity entity, int seconds) {
         if (this.isIncendiary) {
-            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), ((EntityBridge) entity).bridge$getBukkitEntity(), seconds);
+            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(
+                this.getBukkitEntity(),
+                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                seconds
+            );
             Bukkit.getPluginManager().callEvent(event);
 
             if (!event.isCancelled()) {
-                ((EntityBridge) entity).bridge$setOnFire(event.getDuration(), false);
+                ((EntityBridge) entity).bridge$setOnFire(
+                    event.getDuration(),
+                    false
+                );
             }
         }
     }
 
-    @Inject(method = "onHitBlock", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private void arclight$burnBlock(BlockHitResult result, CallbackInfo ci, Entity entity, BlockPos pos) {
-        if (!this.isIncendiary || CraftEventFactory.callBlockIgniteEvent(this.level(), pos, (SmallFireball) (Object) this).isCancelled()) {
+    @Inject(
+        method = "onHitBlock",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+        )
+    )
+    private void arclight$burnBlock(
+        BlockHitResult result,
+        CallbackInfo ci,
+        Entity entity,
+        BlockPos pos
+    ) {
+        if (
+            !this.isIncendiary ||
+            CraftEventFactory.callBlockIgniteEvent(
+                this.level(),
+                pos,
+                (SmallFireball) (Object) this
+            ).isCancelled()
+        ) {
             ci.cancel();
         }
     }

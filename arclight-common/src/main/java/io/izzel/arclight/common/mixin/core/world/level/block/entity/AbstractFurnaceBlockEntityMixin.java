@@ -5,6 +5,9 @@ import io.izzel.arclight.common.bridge.core.item.crafting.IRecipeBridge;
 import io.izzel.arclight.common.bridge.core.tileentity.AbstractFurnaceTileEntityBridge;
 import io.izzel.arclight.mixin.Eject;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -45,60 +48,134 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(AbstractFurnaceBlockEntity.class)
-public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntityMixin implements AbstractFurnaceTileEntityBridge {
+public abstract class AbstractFurnaceBlockEntityMixin
+    extends LockableBlockEntityMixin
+    implements AbstractFurnaceTileEntityBridge {
 
     private static AbstractFurnaceBlockEntity arclight$captureFurnace;
     private static Player arclight$capturePlayer;
     private static ItemStack arclight$item;
     private static int arclight$captureAmount;
     public List<HumanEntity> transaction = new ArrayList<>();
+
     // @formatter:off
     @Shadow protected NonNullList<ItemStack> items;
+
     // @formatter:on
     @Shadow
     @Final
     private Object2IntOpenHashMap<ResourceLocation> recipesUsed;
+
     private int maxStack = MAX_STACK;
 
-    @Eject(method = "m_155013_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;m_58425_()Z", remap = false),
-            slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;f_58317_:I", remap = false),
-                    to = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/ItemStack;hasCraftingRemainingItem()Z")))
-    private static boolean arclight$setBurnTime(AbstractFurnaceBlockEntity furnace, CallbackInfo ci) {
+    @Eject(
+        method = "m_155013_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;m_58425_()Z",
+            remap = false
+        ),
+        slice = @Slice(
+            from = @At(
+                value = "FIELD",
+                target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;f_58317_:I",
+                remap = false
+            ),
+            to = @At(
+                value = "INVOKE",
+                remap = false,
+                target = "Lnet/minecraft/world/item/ItemStack;hasCraftingRemainingItem()Z"
+            )
+        )
+    )
+    private static boolean arclight$setBurnTime(
+        AbstractFurnaceBlockEntity furnace,
+        CallbackInfo ci
+    ) {
         ItemStack itemStack = furnace.getItem(1);
         CraftItemStack fuel = CraftItemStack.asCraftMirror(itemStack);
-        FurnaceBurnEvent furnaceBurnEvent = new FurnaceBurnEvent(CraftBlock.at(furnace.level, furnace.getBlockPos()), fuel, ((AbstractFurnaceTileEntityBridge) furnace).bridge$getBurnDuration(itemStack));
+        FurnaceBurnEvent furnaceBurnEvent = new FurnaceBurnEvent(
+            CraftBlock.at(furnace.level, furnace.getBlockPos()),
+            fuel,
+            ((AbstractFurnaceTileEntityBridge) furnace).bridge$getBurnDuration(
+                itemStack
+            )
+        );
         Bukkit.getPluginManager().callEvent(furnaceBurnEvent);
 
         if (furnaceBurnEvent.isCancelled()) {
             ci.cancel();
             return false;
         }
-        return ((AbstractFurnaceTileEntityBridge) furnace).bridge$isLit() && furnaceBurnEvent.isBurning();
+        return (
+            ((AbstractFurnaceTileEntityBridge) furnace).bridge$isLit() &&
+            furnaceBurnEvent.isBurning()
+        );
     }
 
-    @Inject(method = "serverTick", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "FIELD", ordinal = 0, target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;cookingProgress:I"))
-    private static void arclight$startSmelt(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity furnace, CallbackInfo ci,
-                                            boolean flag, boolean flag1, ItemStack stack, boolean flag2, boolean flag3, Recipe<?> recipe) {
+    @Inject(
+        method = "serverTick",
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "FIELD",
+            ordinal = 0,
+            target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;cookingProgress:I"
+        )
+    )
+    private static void arclight$startSmelt(
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        AbstractFurnaceBlockEntity furnace,
+        CallbackInfo ci,
+        boolean flag,
+        boolean flag1,
+        ItemStack stack,
+        boolean flag2,
+        boolean flag3,
+        Recipe<?> recipe
+    ) {
         if (recipe != null && furnace.cookingProgress == 0) {
-            CraftItemStack source = CraftItemStack.asCraftMirror(furnace.getItem(0));
-            if (((IRecipeBridge) recipe).bridge$toBukkitRecipe() instanceof CookingRecipe<?> cookingRecipe) {
-                FurnaceStartSmeltEvent event = new FurnaceStartSmeltEvent(CraftBlock.at(level, pos), source, cookingRecipe);
+            CraftItemStack source = CraftItemStack.asCraftMirror(
+                furnace.getItem(0)
+            );
+            if (
+                ((IRecipeBridge) recipe).bridge$toBukkitRecipe() instanceof
+                    CookingRecipe<?> cookingRecipe
+            ) {
+                FurnaceStartSmeltEvent event = new FurnaceStartSmeltEvent(
+                    CraftBlock.at(level, pos),
+                    source,
+                    cookingRecipe
+                );
                 Bukkit.getPluginManager().callEvent(event);
                 furnace.cookingTotalTime = event.getTotalCookTime();
             }
         }
     }
 
-    @Redirect(method = "createExperience", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"))
-    private static void arclight$expEvent(ServerLevel level, Vec3 vec3, int amount) {
+    @Redirect(
+        method = "createExperience",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/ExperienceOrb;award(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;I)V"
+        )
+    )
+    private static void arclight$expEvent(
+        ServerLevel level,
+        Vec3 vec3,
+        int amount
+    ) {
         if (arclight$capturePlayer != null && arclight$captureAmount != 0) {
-            FurnaceExtractEvent event = new FurnaceExtractEvent(((ServerPlayerEntityBridge) arclight$capturePlayer).bridge$getBukkitEntity(),
-                    CraftBlock.at(level, arclight$captureFurnace.getBlockPos()), CraftMagicNumbers.getMaterial(arclight$item.getItem()), arclight$captureAmount, amount);
+            FurnaceExtractEvent event = new FurnaceExtractEvent(
+                ((ServerPlayerEntityBridge) arclight$capturePlayer).bridge$getBukkitEntity(),
+                CraftBlock.at(level, arclight$captureFurnace.getBlockPos()),
+                CraftMagicNumbers.getMaterial(arclight$item.getItem()),
+                arclight$captureAmount,
+                amount
+            );
             Bukkit.getPluginManager().callEvent(event);
             amount = event.getExpToDrop();
         }
@@ -112,25 +189,47 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
     protected abstract boolean isLit();
 
     @Shadow
-    public abstract List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_);
+    public abstract List<Recipe<?>> getRecipesToAwardAndPopExperience(
+        ServerLevel p_154996_,
+        Vec3 p_154997_
+    );
 
     @Shadow
-    protected abstract boolean canBurn(RegistryAccess p_266924_, @org.jetbrains.annotations.Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_);
+    protected abstract boolean canBurn(
+        RegistryAccess p_266924_,
+        @org.jetbrains.annotations.Nullable Recipe<?> p_155006_,
+        NonNullList<ItemStack> p_155007_,
+        int p_155008_
+    );
 
     /**
      * @author IzzelAliz
      * @reason
      */
     @Overwrite
-    private boolean burn(RegistryAccess registryAccess, @Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int i) {
+    private boolean burn(
+        RegistryAccess registryAccess,
+        @Nullable Recipe<?> recipe,
+        NonNullList<ItemStack> items,
+        int i
+    ) {
         if (recipe != null && this.canBurn(registryAccess, recipe, items, i)) {
             ItemStack itemstack = items.get(0);
-            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble((AbstractFurnaceBlockEntity) (Object) this, registryAccess);
+            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(
+                (AbstractFurnaceBlockEntity) (Object) this,
+                registryAccess
+            );
             ItemStack itemstack2 = items.get(2);
             CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
-            org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
+            org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(
+                itemstack1
+            );
 
-            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(level, worldPosition), source, result);
+            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(
+                CraftBlock.at(level, worldPosition),
+                source,
+                result
+            );
             Bukkit.getPluginManager().callEvent(furnaceSmeltEvent);
 
             if (furnaceSmeltEvent.isCancelled()) {
@@ -143,14 +242,20 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
             if (!itemstack1.isEmpty()) {
                 if (itemstack2.isEmpty()) {
                     items.set(2, itemstack1.copy());
-                } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
+                } else if (
+                    CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)
+                ) {
                     itemstack2.grow(itemstack1.getCount());
                 } else {
                     return false;
                 }
             }
 
-            if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !items.get(1).isEmpty() && items.get(1).is(Items.BUCKET)) {
+            if (
+                itemstack.is(Blocks.WET_SPONGE.asItem()) &&
+                !items.get(1).isEmpty() &&
+                items.get(1).is(Items.BUCKET)
+            ) {
                 items.set(1, new ItemStack(Items.WATER_BUCKET));
             }
 
@@ -161,13 +266,24 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
         }
     }
 
-    public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel world, Vec3 vec, BlockPos pos, Player entity, ItemStack itemStack, int amount) {
+    public List<Recipe<?>> getRecipesToAwardAndPopExperience(
+        ServerLevel world,
+        Vec3 vec,
+        BlockPos pos,
+        Player entity,
+        ItemStack itemStack,
+        int amount
+    ) {
         try {
             arclight$item = itemStack;
             arclight$captureAmount = amount;
-            arclight$captureFurnace = (AbstractFurnaceBlockEntity) (Object) this;
+            arclight$captureFurnace =
+                (AbstractFurnaceBlockEntity) (Object) this;
             arclight$capturePlayer = entity;
-            List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(world, vec);
+            List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(
+                world,
+                vec
+            );
             entity.awardRecipes(list);
             this.recipesUsed.clear();
             return list;
@@ -180,8 +296,19 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
     }
 
     @Override
-    public List<Recipe<?>> bridge$dropExp(ServerPlayer entity, ItemStack itemStack, int amount) {
-        return getRecipesToAwardAndPopExperience(entity.serverLevel(), entity.position(), this.worldPosition, entity, itemStack, amount);
+    public List<Recipe<?>> bridge$dropExp(
+        ServerPlayer entity,
+        ItemStack itemStack,
+        int amount
+    ) {
+        return getRecipesToAwardAndPopExperience(
+            entity.serverLevel(),
+            entity.position(),
+            this.worldPosition,
+            entity,
+            itemStack,
+            amount
+        );
     }
 
     @Override
@@ -205,8 +332,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableBlockEntit
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {

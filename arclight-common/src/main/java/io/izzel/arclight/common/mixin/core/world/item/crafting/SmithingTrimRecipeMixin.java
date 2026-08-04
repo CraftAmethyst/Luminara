@@ -18,18 +18,27 @@ public class SmithingTrimRecipeMixin implements IRecipeBridge {
     @Shadow
     @Final
     Ingredient template;
+
     @Shadow
     @Final
     Ingredient base;
+
     @Shadow
     @Final
     Ingredient addition;
+
     // @formatter:off
     @Shadow @Final private ResourceLocation id;
+
     // @formatter:on
 
     @Override
     public Recipe bridge$toBukkitRecipe() {
-        return new CraftSmithingTrimRecipe(CraftNamespacedKey.fromMinecraft(this.id), CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
+        return new CraftSmithingTrimRecipe(
+            CraftNamespacedKey.fromMinecraft(this.id),
+            CraftRecipe.toBukkit(this.template),
+            CraftRecipe.toBukkit(this.base),
+            CraftRecipe.toBukkit(this.addition)
+        );
     }
 }

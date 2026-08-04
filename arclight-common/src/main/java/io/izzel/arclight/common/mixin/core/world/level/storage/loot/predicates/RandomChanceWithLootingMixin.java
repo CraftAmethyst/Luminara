@@ -14,6 +14,7 @@ public class RandomChanceWithLootingMixin {
     @Shadow
     @Final
     private float percent;
+
     @Shadow
     @Final
     private float lootingMultiplier;
@@ -29,6 +30,9 @@ public class RandomChanceWithLootingMixin {
         if (context.hasParam(ArclightConstants.LOOTING_MOD)) {
             i = context.getParamOrNull(ArclightConstants.LOOTING_MOD);
         }
-        return context.getRandom().nextFloat() < this.percent + (float) i * this.lootingMultiplier;
+        return (
+            context.getRandom().nextFloat() <
+            this.percent + (float) i * this.lootingMultiplier
+        );
     }
 }

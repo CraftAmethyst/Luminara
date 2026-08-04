@@ -29,21 +29,47 @@ public class EnderPearlItemMixin extends Item {
      * @reason
      */
     @Overwrite
-    public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, @NotNull InteractionHand handIn) {
+    public @NotNull InteractionResultHolder<ItemStack> use(
+        Level worldIn,
+        Player playerIn,
+        @NotNull InteractionHand handIn
+    ) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         if (!worldIn.isClientSide) {
-            ThrownEnderpearl enderpearlentity = new ThrownEnderpearl(worldIn, playerIn);
+            ThrownEnderpearl enderpearlentity = new ThrownEnderpearl(
+                worldIn,
+                playerIn
+            );
             enderpearlentity.setItem(itemstack);
-            enderpearlentity.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F);
+            enderpearlentity.shootFromRotation(
+                playerIn,
+                playerIn.getXRot(),
+                playerIn.getYRot(),
+                0.0F,
+                1.5F,
+                1.0F
+            );
             if (!worldIn.addFreshEntity(enderpearlentity)) {
                 if (playerIn instanceof ServerPlayerEntityBridge) {
                     ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().updateInventory();
                 }
-                return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+                return new InteractionResultHolder<>(
+                    InteractionResult.FAIL,
+                    itemstack
+                );
             }
         }
 
-        worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.ENDER_PEARL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F));
+        worldIn.playSound(
+            null,
+            playerIn.getX(),
+            playerIn.getY(),
+            playerIn.getZ(),
+            SoundEvents.ENDER_PEARL_THROW,
+            SoundSource.NEUTRAL,
+            0.5F,
+            0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F)
+        );
         playerIn.getCooldowns().addCooldown(this, 20);
 
         playerIn.awardStat(Stats.ITEM_USED.get(this));
@@ -51,6 +77,9 @@ public class EnderPearlItemMixin extends Item {
             itemstack.shrink(1);
         }
 
-        return InteractionResultHolder.sidedSuccess(itemstack, worldIn.isClientSide());
+        return InteractionResultHolder.sidedSuccess(
+            itemstack,
+            worldIn.isClientSide()
+        );
     }
 }

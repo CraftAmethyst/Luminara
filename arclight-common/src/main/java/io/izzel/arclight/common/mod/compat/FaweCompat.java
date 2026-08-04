@@ -1,23 +1,30 @@
 package io.izzel.arclight.common.mod.compat;
 
-import org.bukkit.Bukkit;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
 
 public final class FaweCompat {
 
-    private static final Pattern MC_VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)(?:\\.(\\d+))?");
-    private static final Pattern FAWE_VERSIONED_ADAPTER_PATTERN = Pattern.compile(".*\\.v\\d+_\\d+_R\\d+\\.PaperweightFaweAdapter$");
-    private static final String FAWE_IMPL_PREFIX = "com.sk89q.worldedit.bukkit.adapter.impl.fawe.";
+    private static final Pattern MC_VERSION_PATTERN = Pattern.compile(
+        "(\\d+)\\.(\\d+)(?:\\.(\\d+))?"
+    );
+    private static final Pattern FAWE_VERSIONED_ADAPTER_PATTERN =
+        Pattern.compile(".*\\.v\\d+_\\d+_R\\d+\\.PaperweightFaweAdapter$");
+    private static final String FAWE_IMPL_PREFIX =
+        "com.sk89q.worldedit.bukkit.adapter.impl.fawe.";
 
-    private FaweCompat() {
-    }
+    private FaweCompat() {}
 
     public static String getCraftBukkitPackageVersion() {
-        String fullPackagePath = Bukkit.getServer().getClass().getPackage().getName();
-        String packageVersion = fullPackagePath.substring(fullPackagePath.lastIndexOf('.') + 1);
+        String fullPackagePath = Bukkit.getServer()
+            .getClass()
+            .getPackage()
+            .getName();
+        String packageVersion = fullPackagePath.substring(
+            fullPackagePath.lastIndexOf('.') + 1
+        );
         if (!"v".equals(packageVersion)) {
             return packageVersion;
         }
@@ -34,14 +41,21 @@ public final class FaweCompat {
         return "v1_20_R1";
     }
 
-    public static boolean addFilteredFaweCandidate(List list, Object candidate) {
+    public static boolean addFilteredFaweCandidate(
+        List list,
+        Object candidate
+    ) {
         if (shouldIncludeFaweCandidate(candidate)) {
             return list.add(candidate);
         }
         return false;
     }
 
-    public static void addFilteredFaweCandidateIndexed(List list, int index, Object candidate) {
+    public static void addFilteredFaweCandidateIndexed(
+        List list,
+        int index,
+        Object candidate
+    ) {
         if (shouldIncludeFaweCandidate(candidate)) {
             list.add(index, candidate);
         }
@@ -61,7 +75,8 @@ public final class FaweCompat {
             return false;
         }
 
-        String targetMarker = "." + getCraftBukkitPackageVersion() + ".PaperweightFaweAdapter";
+        String targetMarker =
+            "." + getCraftBukkitPackageVersion() + ".PaperweightFaweAdapter";
         if (className.endsWith(targetMarker)) {
             return true;
         }

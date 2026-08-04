@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mod.compat;
 import com.mojang.brigadier.tree.CommandNode;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
-
 import java.util.Map;
 
 public class CommandNodeHooks {
@@ -13,11 +12,21 @@ public class CommandNodeHooks {
 
     static {
         try {
-            CHILDREN = Unsafe.objectFieldOffset(CommandNode.class.getDeclaredField("children"));
-            LITERALS = Unsafe.objectFieldOffset(CommandNode.class.getDeclaredField("literals"));
-            ARGUMENTS = Unsafe.objectFieldOffset(CommandNode.class.getDeclaredField("arguments"));
-            CURRENT_BASE = Unsafe.staticFieldBase(CommandNode.class.getDeclaredField("CURRENT_COMMAND"));
-            CURRENT = Unsafe.staticFieldOffset(CommandNode.class.getDeclaredField("CURRENT_COMMAND"));
+            CHILDREN = Unsafe.objectFieldOffset(
+                CommandNode.class.getDeclaredField("children")
+            );
+            LITERALS = Unsafe.objectFieldOffset(
+                CommandNode.class.getDeclaredField("literals")
+            );
+            ARGUMENTS = Unsafe.objectFieldOffset(
+                CommandNode.class.getDeclaredField("arguments")
+            );
+            CURRENT_BASE = Unsafe.staticFieldBase(
+                CommandNode.class.getDeclaredField("CURRENT_COMMAND")
+            );
+            CURRENT = Unsafe.staticFieldOffset(
+                CommandNode.class.getDeclaredField("CURRENT_COMMAND")
+            );
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }

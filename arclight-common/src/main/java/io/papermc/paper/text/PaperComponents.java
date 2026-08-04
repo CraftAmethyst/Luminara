@@ -1,5 +1,6 @@
 package io.papermc.paper.text;
 
+import java.io.IOException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -12,21 +13,31 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 // Paper API methods for working with Components
 public final class PaperComponents {
+
     private PaperComponents() {
-        throw new RuntimeException("PaperComponents is not to be instantiated!");
+        throw new RuntimeException(
+            "PaperComponents is not to be instantiated!"
+        );
     }
 
     // Resolve component with context
-    public static @NotNull Component resolveWithContext(@NotNull Component input, @Nullable CommandSender context, @Nullable Entity scoreboardSubject) throws IOException {
+    public static @NotNull Component resolveWithContext(
+        @NotNull Component input,
+        @Nullable CommandSender context,
+        @Nullable Entity scoreboardSubject
+    ) throws IOException {
         return resolveWithContext(input, context, scoreboardSubject, true);
     }
 
     // Resolve component with context and permissions
-    public static @NotNull Component resolveWithContext(@NotNull Component input, @Nullable CommandSender context, @Nullable Entity scoreboardSubject, boolean bypassPermissions) throws IOException {
+    public static @NotNull Component resolveWithContext(
+        @NotNull Component input,
+        @Nullable CommandSender context,
+        @Nullable Entity scoreboardSubject,
+        boolean bypassPermissions
+    ) throws IOException {
         // TODO: Implement proper context resolution
         return input;
     }

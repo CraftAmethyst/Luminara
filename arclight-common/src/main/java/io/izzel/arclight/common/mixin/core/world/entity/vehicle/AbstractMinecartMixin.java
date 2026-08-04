@@ -30,26 +30,37 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractMinecart.class)
-public abstract class AbstractMinecartMixin extends EntityMixin implements IForgeAbstractMinecart {
+public abstract class AbstractMinecartMixin
+    extends EntityMixin
+    implements IForgeAbstractMinecart {
 
     public boolean slowWhenEmpty = true;
     public double maxSpeed = 0.4D;
+
     @Shadow
     private int lSteps;
+
     @Shadow
     private double lx;
+
     @Shadow
     private double ly;
+
     @Shadow
     private double lz;
+
     @Shadow
     private double lyr;
+
     @Shadow
     private double lxr;
+
     @Shadow
     private boolean flipped;
+
     @Shadow
     private boolean onRails;
+
     private double derailedX = 0.5;
     private double derailedY = 0.5;
     private double derailedZ = 0.5;
@@ -60,6 +71,7 @@ public abstract class AbstractMinecartMixin extends EntityMixin implements IForg
 
     @Shadow
     public abstract int getHurtDir();
+
     // @formatter:on
 
     // @formatter:off

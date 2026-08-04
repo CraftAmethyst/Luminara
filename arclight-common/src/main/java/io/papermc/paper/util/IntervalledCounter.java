@@ -88,7 +88,9 @@ public final class IntervalledCounter {
 
         final int head = this.head;
         final int tail = this.tail;
-        final int size = tail >= head ? (tail - head) : (tail + (oldElements.length - head));
+        final int size = tail >= head
+            ? (tail - head)
+            : (tail + (oldElements.length - head));
         this.head = 0;
         this.tail = size;
 
@@ -96,11 +98,35 @@ public final class IntervalledCounter {
             System.arraycopy(oldElements, head, newElements, 0, size);
             System.arraycopy(oldCounts, head, newCounts, 0, size);
         } else {
-            System.arraycopy(oldElements, head, newElements, 0, oldElements.length - head);
-            System.arraycopy(oldElements, 0, newElements, oldElements.length - head, tail);
+            System.arraycopy(
+                oldElements,
+                head,
+                newElements,
+                0,
+                oldElements.length - head
+            );
+            System.arraycopy(
+                oldElements,
+                0,
+                newElements,
+                oldElements.length - head,
+                tail
+            );
 
-            System.arraycopy(oldCounts, head, newCounts, 0, oldCounts.length - head);
-            System.arraycopy(oldCounts, 0, newCounts, oldCounts.length - head, tail);
+            System.arraycopy(
+                oldCounts,
+                head,
+                newCounts,
+                0,
+                oldCounts.length - head
+            );
+            System.arraycopy(
+                oldCounts,
+                0,
+                newCounts,
+                oldCounts.length - head,
+                tail
+            );
         }
     }
 

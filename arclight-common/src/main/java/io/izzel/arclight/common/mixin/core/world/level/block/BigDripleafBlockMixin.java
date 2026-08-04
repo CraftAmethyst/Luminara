@@ -31,28 +31,72 @@ public class BigDripleafBlockMixin {
     private static EnumProperty<Tilt> TILT;
 
     @Inject(method = "onProjectileHit", cancellable = true, at = @At("HEAD"))
-    private void arclight$projectileHit(Level level, BlockState state, BlockHitResult hitResult, Projectile projectile, CallbackInfo ci) {
-        if (!DistValidate.isValid(level) && CraftEventFactory.callEntityChangeBlockEvent(projectile, hitResult.getBlockPos(), state.setValue(TILT, Tilt.FULL))) {
+    private void arclight$projectileHit(
+        Level level,
+        BlockState state,
+        BlockHitResult hitResult,
+        Projectile projectile,
+        CallbackInfo ci
+    ) {
+        if (
+            !DistValidate.isValid(level) &&
+            CraftEventFactory.callEntityChangeBlockEvent(
+                projectile,
+                hitResult.getBlockPos(),
+                state.setValue(TILT, Tilt.FULL)
+            )
+        ) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "entityInside", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/BigDripleafBlock;setTiltAndScheduleTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/properties/Tilt;Lnet/minecraft/sounds/SoundEvent;)V"))
-    private void arclight$entityInteract(BlockState state, Level level, BlockPos pos, Entity entity, CallbackInfo ci) {
+    @Inject(
+        method = "entityInside",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/BigDripleafBlock;setTiltAndScheduleTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/properties/Tilt;Lnet/minecraft/sounds/SoundEvent;)V"
+        )
+    )
+    private void arclight$entityInteract(
+        BlockState state,
+        Level level,
+        BlockPos pos,
+        Entity entity,
+        CallbackInfo ci
+    ) {
         if (!DistValidate.isValid(level)) return;
         org.bukkit.event.Cancellable cancellable;
         if (entity instanceof Player) {
-            cancellable = CraftEventFactory.callPlayerInteractEvent((Player) entity, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
+            cancellable = CraftEventFactory.callPlayerInteractEvent(
+                (Player) entity,
+                org.bukkit.event.block.Action.PHYSICAL,
+                pos,
+                null,
+                null,
+                null
+            );
         } else {
-            cancellable = new EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), CraftBlock.at(level, pos));
-            Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
+            cancellable = new EntityInteractEvent(
+                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                CraftBlock.at(level, pos)
+            );
+            Bukkit.getPluginManager().callEvent(
+                (EntityInteractEvent) cancellable
+            );
         }
 
         if (cancellable.isCancelled()) {
             ci.cancel();
             return;
         }
-        if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state.setValue(TILT, Tilt.FULL))) {
+        if (
+            !CraftEventFactory.callEntityChangeBlockEvent(
+                entity,
+                pos,
+                state.setValue(TILT, Tilt.FULL)
+            )
+        ) {
             ci.cancel();
         }
     }

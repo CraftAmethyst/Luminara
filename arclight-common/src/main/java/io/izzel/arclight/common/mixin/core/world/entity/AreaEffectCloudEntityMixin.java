@@ -3,6 +3,9 @@ package io.izzel.arclight.common.mixin.core.world.entity;
 import com.google.common.collect.Lists;
 import io.izzel.arclight.common.bridge.core.entity.AreaEffectCloudEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,32 +26,40 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-
 @Mixin(AreaEffectCloud.class)
-public abstract class AreaEffectCloudEntityMixin extends EntityMixin implements AreaEffectCloudEntityBridge {
+public abstract class AreaEffectCloudEntityMixin
+    extends EntityMixin
+    implements AreaEffectCloudEntityBridge {
 
     @Shadow
     @Final
     private static EntityDataAccessor<Integer> DATA_COLOR;
+
     @Shadow
     public List<MobEffectInstance> effects;
+
     @Shadow
     public int waitTime;
+
     @Shadow
     public float radiusPerTick;
+
     @Shadow
     public int reapplicationDelay;
+
     @Shadow
     public float radiusOnUse;
+
     @Shadow
     public int durationOnUse;
+
     // @formatter:off
     @Shadow private boolean fixedColor;
+
     @Shadow private Potion potion;
+
     @Shadow private int duration;
+
     @Shadow @Final private Map<Entity, Integer> victims;
 
     @Shadow public abstract void setPotion(Potion potionIn);
@@ -66,6 +77,7 @@ public abstract class AreaEffectCloudEntityMixin extends EntityMixin implements 
     @Shadow public abstract int getColor();
 
     @Shadow @Nullable public abstract LivingEntity getOwner();
+
     // @formatter:on
 
     /**
@@ -113,13 +125,23 @@ public abstract class AreaEffectCloudEntityMixin extends EntityMixin implements 
                         d7 = (0.5D - this.random.nextDouble()) * 0.15D;
                     }
                 } else {
-                    int k = flag && this.random.nextBoolean() ? 16777215 : this.getColor();
-                    d5 = (float) (k >> 16 & 255) / 255.0F;
-                    d6 = (float) (k >> 8 & 255) / 255.0F;
+                    int k = flag && this.random.nextBoolean()
+                        ? 16777215
+                        : this.getColor();
+                    d5 = (float) ((k >> 16) & 255) / 255.0F;
+                    d6 = (float) ((k >> 8) & 255) / 255.0F;
                     d7 = (float) (k & 255) / 255.0F;
                 }
 
-                this.level().addAlwaysVisibleParticle(particleoptions, d0, d2, d4, d5, d6, d7);
+                this.level().addAlwaysVisibleParticle(
+                    particleoptions,
+                    d0,
+                    d2,
+                    d4,
+                    d5,
+                    d6,
+                    d7
+                );
             }
         } else {
             if (this.tickCount >= this.waitTime + this.duration) {
@@ -147,45 +169,89 @@ public abstract class AreaEffectCloudEntityMixin extends EntityMixin implements 
             }
 
             if (this.tickCount % 5 == 0) {
-                this.victims.entrySet().removeIf((p_146784_) -> {
+                this.victims.entrySet().removeIf(p_146784_ -> {
                     return this.tickCount >= p_146784_.getValue();
                 });
                 List<MobEffectInstance> list = Lists.newArrayList();
 
                 for (MobEffectInstance mobeffectinstance : this.potion.getEffects()) {
-                    list.add(new MobEffectInstance(mobeffectinstance.getEffect(), mobeffectinstance.getDuration() / 4, mobeffectinstance.getAmplifier(), mobeffectinstance.isAmbient(), mobeffectinstance.isVisible()));
+                    list.add(
+                        new MobEffectInstance(
+                            mobeffectinstance.getEffect(),
+                            mobeffectinstance.getDuration() / 4,
+                            mobeffectinstance.getAmplifier(),
+                            mobeffectinstance.isAmbient(),
+                            mobeffectinstance.isVisible()
+                        )
+                    );
                 }
 
                 list.addAll(this.effects);
                 if (list.isEmpty()) {
                     this.victims.clear();
                 } else {
-                    List<LivingEntity> list1 = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox());
+                    List<LivingEntity> list1 = this.level().getEntitiesOfClass(
+                        LivingEntity.class,
+                        this.getBoundingBox()
+                    );
                     if (!list1.isEmpty()) {
-                        List<org.bukkit.entity.LivingEntity> entities = new java.util.ArrayList<org.bukkit.entity.LivingEntity>(); // CraftBukkit
+                        List<org.bukkit.entity.LivingEntity> entities =
+                            new java.util.ArrayList<
+                                org.bukkit.entity.LivingEntity
+                            >(); // CraftBukkit
                         for (LivingEntity livingentity : list1) {
-                            if (!this.victims.containsKey(livingentity) && livingentity.isAffectedByPotions()) {
+                            if (
+                                !this.victims.containsKey(livingentity) &&
+                                livingentity.isAffectedByPotions()
+                            ) {
                                 double d8 = livingentity.getX() - this.getX();
                                 double d1 = livingentity.getZ() - this.getZ();
                                 double d3 = d8 * d8 + d1 * d1;
                                 if (d3 <= (double) (f * f)) {
-                                    entities.add(((LivingEntityBridge) livingentity).bridge$getBukkitEntity());
+                                    entities.add(
+                                        ((LivingEntityBridge) livingentity).bridge$getBukkitEntity()
+                                    );
                                 }
                             }
                         }
-                        AreaEffectCloudApplyEvent event = CraftEventFactory.callAreaEffectCloudApplyEvent((AreaEffectCloud) (Object) this, entities);
+                        AreaEffectCloudApplyEvent event =
+                            CraftEventFactory.callAreaEffectCloudApplyEvent(
+                                (AreaEffectCloud) (Object) this,
+                                entities
+                            );
                         if (!event.isCancelled()) {
                             for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
                                 if (entity instanceof CraftLivingEntity) {
-                                    net.minecraft.world.entity.LivingEntity livingentity = ((CraftLivingEntity) entity).getHandle();
+                                    net.minecraft.world.entity.LivingEntity livingentity =
+                                        ((CraftLivingEntity) entity).getHandle();
 
-                                    this.victims.put(livingentity, this.tickCount + this.reapplicationDelay);
+                                    this.victims.put(
+                                        livingentity,
+                                        this.tickCount + this.reapplicationDelay
+                                    );
 
                                     for (MobEffectInstance mobeffectinstance1 : list) {
-                                        if (mobeffectinstance1.getEffect().isInstantenous()) {
-                                            mobeffectinstance1.getEffect().applyInstantenousEffect((AreaEffectCloud) (Object) this, this.getOwner(), livingentity, mobeffectinstance1.getAmplifier(), 0.5D);
+                                        if (
+                                            mobeffectinstance1
+                                                .getEffect()
+                                                .isInstantenous()
+                                        ) {
+                                            mobeffectinstance1
+                                                .getEffect()
+                                                .applyInstantenousEffect(
+                                                    (AreaEffectCloud) (Object) this,
+                                                    this.getOwner(),
+                                                    livingentity,
+                                                    mobeffectinstance1.getAmplifier(),
+                                                    0.5D
+                                                );
                                         } else {
-                                            livingentity.addEffect(new MobEffectInstance(mobeffectinstance1), (AreaEffectCloud) (Object) this);
+                                            livingentity.addEffect(
+                                                new MobEffectInstance(
+                                                    mobeffectinstance1
+                                                ),
+                                                (AreaEffectCloud) (Object) this
+                                            );
                                         }
                                     }
 
@@ -213,13 +279,16 @@ public abstract class AreaEffectCloudEntityMixin extends EntityMixin implements 
                 }
             }
         }
-
     }
-
 
     public void refreshEffects() {
         if (!this.fixedColor) {
-            this.getEntityData().set(DATA_COLOR, PotionUtils.getColor(PotionUtils.getAllEffects(this.potion, this.effects)));
+            this.getEntityData().set(
+                DATA_COLOR,
+                PotionUtils.getColor(
+                    PotionUtils.getAllEffects(this.potion, this.effects)
+                )
+            );
         }
     }
 
@@ -228,7 +297,9 @@ public abstract class AreaEffectCloudEntityMixin extends EntityMixin implements 
     }
 
     public void setPotionType(final String string) {
-        this.setPotion(BuiltInRegistries.POTION.get(new ResourceLocation(string)));
+        this.setPotion(
+            BuiltInRegistries.POTION.get(new ResourceLocation(string))
+        );
     }
 
     @Override

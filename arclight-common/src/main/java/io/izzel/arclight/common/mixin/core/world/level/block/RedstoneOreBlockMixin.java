@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class RedstoneOreBlockMixin {
 
     private static transient Entity arclight$entity;
+
     // @formatter:on
 
     // @formatter:off

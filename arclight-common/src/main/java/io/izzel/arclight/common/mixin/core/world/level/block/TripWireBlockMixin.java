@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -20,14 +21,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.List;
-
 @Mixin(TripWireBlock.class)
 public abstract class TripWireBlockMixin extends BlockMixin {
 
     // @formatter:off
     @Shadow @Final public static BooleanProperty POWERED;
+
     @Shadow protected abstract void updateSource(Level worldIn, BlockPos pos, BlockState state);
+
     // @formatter:on
 
     /**
@@ -39,7 +40,10 @@ public abstract class TripWireBlockMixin extends BlockMixin {
         BlockState blockstate = worldIn.getBlockState(pos);
         boolean flag = blockstate.getValue(POWERED);
         boolean flag1 = false;
-        List<? extends Entity> list = worldIn.getEntities(null, blockstate.getShape(worldIn, pos).bounds().move(pos));
+        List<? extends Entity> list = worldIn.getEntities(
+            null,
+            blockstate.getShape(worldIn, pos).bounds().move(pos)
+        );
         if (!list.isEmpty()) {
             for (Entity entity : list) {
                 if (!entity.isIgnoringBlockTriggers()) {
@@ -49,7 +53,11 @@ public abstract class TripWireBlockMixin extends BlockMixin {
             }
         }
 
-        if (flag != flag1 && flag1 && blockstate.getValue(TripWireBlock.ATTACHED)) {
+        if (
+            flag != flag1 &&
+            flag1 &&
+            blockstate.getValue(TripWireBlock.ATTACHED)
+        ) {
             org.bukkit.block.Block block = CraftBlock.at(worldIn, pos);
             boolean allowed = false;
 
@@ -59,10 +67,22 @@ public abstract class TripWireBlockMixin extends BlockMixin {
                     Cancellable cancellable;
 
                     if (object instanceof Player) {
-                        cancellable = CraftEventFactory.callPlayerInteractEvent((Player) object, Action.PHYSICAL, pos, null, null, null);
+                        cancellable = CraftEventFactory.callPlayerInteractEvent(
+                            (Player) object,
+                            Action.PHYSICAL,
+                            pos,
+                            null,
+                            null,
+                            null
+                        );
                     } else if (object instanceof Entity) {
-                        cancellable = new EntityInteractEvent(((EntityBridge) object).bridge$getBukkitEntity(), block);
-                        Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
+                        cancellable = new EntityInteractEvent(
+                            ((EntityBridge) object).bridge$getBukkitEntity(),
+                            block
+                        );
+                        Bukkit.getPluginManager().callEvent(
+                            (EntityInteractEvent) cancellable
+                        );
                     } else {
                         continue;
                     }
@@ -88,6 +108,5 @@ public abstract class TripWireBlockMixin extends BlockMixin {
         if (flag1) {
             worldIn.scheduleTick(new BlockPos(pos), (Block) (Object) this, 10);
         }
-
     }
 }

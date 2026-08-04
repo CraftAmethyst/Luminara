@@ -12,9 +12,26 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(DaylightDetectorBlock.class)
 public class DaylightDetectorBlockMixin {
 
-    @ModifyVariable(method = "updateSignalStrength", index = 3, name = "i",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private static int arclight$blockRedstone(int i, BlockState blockState, Level world, BlockPos blockPos) {
-        return CraftEventFactory.callRedstoneChange(world, blockPos, blockState.getValue(DaylightDetectorBlock.POWER), i).getNewCurrent();
+    @ModifyVariable(
+        method = "updateSignalStrength",
+        index = 3,
+        name = "i",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    private static int arclight$blockRedstone(
+        int i,
+        BlockState blockState,
+        Level world,
+        BlockPos blockPos
+    ) {
+        return CraftEventFactory.callRedstoneChange(
+            world,
+            blockPos,
+            blockState.getValue(DaylightDetectorBlock.POWER),
+            i
+        ).getNewCurrent();
     }
 }

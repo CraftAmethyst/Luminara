@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.entity.vehicle;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EntityType;
@@ -18,27 +20,51 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(AbstractMinecartContainer.class)
-public abstract class AbstractMinecartContainerMixin extends AbstractMinecartMixin implements IInventoryBridge, Container {
+public abstract class AbstractMinecartContainerMixin
+    extends AbstractMinecartMixin
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction;
+
     @Shadow
     private NonNullList<ItemStack> itemStacks;
+
     private int maxStack;
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V", at = @At("RETURN"))
-    private void arclight$init(EntityType<?> type, Level world, CallbackInfo ci) {
-        this.itemStacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V",
+        at = @At("RETURN")
+    )
+    private void arclight$init(
+        EntityType<?> type,
+        Level world,
+        CallbackInfo ci
+    ) {
+        this.itemStacks = NonNullList.withSize(
+            getContainerSize(),
+            ItemStack.EMPTY
+        );
         maxStack = MAX_STACK;
         transaction = new ArrayList<>();
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;DDDLnet/minecraft/world/level/Level;)V", at = @At("RETURN"))
-    private void arclight$init(EntityType<?> type, double x, double y, double z, Level world, CallbackInfo ci) {
-        this.itemStacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/entity/EntityType;DDDLnet/minecraft/world/level/Level;)V",
+        at = @At("RETURN")
+    )
+    private void arclight$init(
+        EntityType<?> type,
+        double x,
+        double y,
+        double z,
+        Level world,
+        CallbackInfo ci
+    ) {
+        this.itemStacks = NonNullList.withSize(
+            getContainerSize(),
+            ItemStack.EMPTY
+        );
         maxStack = MAX_STACK;
         transaction = new ArrayList<>();
     }
@@ -71,9 +97,7 @@ public abstract class AbstractMinecartContainerMixin extends AbstractMinecartMix
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {
@@ -97,7 +121,5 @@ public abstract class AbstractMinecartContainerMixin extends AbstractMinecartMix
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-
-    }
+    public void setCurrentRecipe(Recipe<?> recipe) {}
 }

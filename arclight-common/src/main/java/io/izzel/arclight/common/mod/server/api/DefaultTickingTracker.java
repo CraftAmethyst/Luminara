@@ -58,7 +58,10 @@ public class DefaultTickingTracker implements TickingTracker {
         if (blockEntity != null) {
             var level = blockEntity.getLevel();
             if (level != null) {
-                CraftBlock block = CraftBlock.at(level, blockEntity.getBlockPos());
+                CraftBlock block = CraftBlock.at(
+                    level,
+                    blockEntity.getBlockPos()
+                );
                 BlockState state = block.getState();
                 if (state instanceof TileState) {
                     return (TileState) state;

@@ -1,10 +1,9 @@
 package io.izzel.arclight.common.mod.util.log;
 
 import io.izzel.arclight.api.Unsafe;
-import org.apache.logging.log4j.Logger;
-
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+import org.apache.logging.log4j.Logger;
 
 public class ArclightI18nLogger {
 
@@ -12,7 +11,11 @@ public class ArclightI18nLogger {
 
     static {
         try {
-            MH_GET_LOGGER = Unsafe.lookup().findStatic(Class.forName("io.izzel.arclight.boot.log.ArclightI18nLogger"), "getLogger", MethodType.methodType(Logger.class, String.class));
+            MH_GET_LOGGER = Unsafe.lookup().findStatic(
+                Class.forName("io.izzel.arclight.boot.log.ArclightI18nLogger"),
+                "getLogger",
+                MethodType.methodType(Logger.class, String.class)
+            );
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

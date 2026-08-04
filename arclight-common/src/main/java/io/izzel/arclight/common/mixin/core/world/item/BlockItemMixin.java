@@ -36,13 +36,23 @@ public abstract class BlockItemMixin {
     private transient org.bukkit.block.BlockState arclight$state;
 
     @Shadow
-    private static <T extends Comparable<T>> BlockState updateState(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
+    private static <T extends Comparable<T>> BlockState updateState(
+        BlockState p_219988_0_,
+        Property<T> p_219988_1_,
+        String p_219988_2_
+    ) {
         return null;
     }
+
     // @formatter:on
 
-    private static BlockState getBlockState(BlockState blockState, CompoundTag nbt) {
-        StateDefinition<Block, BlockState> statecontainer = blockState.getBlock().getStateDefinition();
+    private static BlockState getBlockState(
+        BlockState blockState,
+        CompoundTag nbt
+    ) {
+        StateDefinition<Block, BlockState> statecontainer = blockState
+            .getBlock()
+            .getStateDefinition();
         for (String s : nbt.getAllKeys()) {
             Property<?> iproperty = statecontainer.getProperty(s);
             if (iproperty != null) {

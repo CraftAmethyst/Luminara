@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.MobEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.EntityTypeTags;
@@ -28,17 +30,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 @Mixin(BeehiveBlockEntity.class)
 public abstract class BeehiveBlockEntityMixin extends BlockEntityMixin {
 
     private static transient boolean arclight$force;
+
     @Shadow
     @Nullable
     public BlockPos savedFlowerPos;
+
     public int maxBees = 3;
+
     // @formatter:on
     // @formatter:off
     @Shadow @Final private List<BeehiveBlockEntity.BeeData> stored;

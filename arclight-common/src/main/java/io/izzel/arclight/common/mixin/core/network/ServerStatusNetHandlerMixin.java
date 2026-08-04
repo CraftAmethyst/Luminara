@@ -2,6 +2,10 @@ package io.izzel.arclight.common.mixin.core.network;
 
 import com.mojang.authlib.GameProfile;
 import io.izzel.arclight.common.mod.util.ArclightPingEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -18,16 +22,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 @Mixin(ServerStatusPacketListenerImpl.class)
 public class ServerStatusNetHandlerMixin {
 
-    @Redirect(method = "handleStatusRequest", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V"))
-    private void arclight$handleServerPing(Connection networkManager, Packet<?> packetIn) {
+    @Redirect(
+        method = "handleStatusRequest",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V"
+        )
+    )
+    private void arclight$handleServerPing(
+        Connection networkManager,
+        Packet<?> packetIn
+    ) {
         var server = ServerLifecycleHooks.getCurrentServer();
         Object[] players = server.getPlayerList().players.toArray();
         ArclightPingEvent event = new ArclightPingEvent(networkManager, server);
@@ -46,16 +54,30 @@ public class ServerStatusNetHandlerMixin {
         }
         if (!server.hidesOnlinePlayers() && !profiles.isEmpty()) {
             Collections.shuffle(profiles);
-            profiles = profiles.subList(0, Math.min(profiles.size(), SpigotConfig.playerSample));
+            profiles = profiles.subList(
+                0,
+                Math.min(profiles.size(), SpigotConfig.playerSample)
+            );
         }
-        ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size(), (server.hidesOnlinePlayers()) ? Collections.emptyList() : profiles);
+        ServerStatus.Players playerSample = new ServerStatus.Players(
+            event.getMaxPlayers(),
+            profiles.size(),
+            (server.hidesOnlinePlayers()) ? Collections.emptyList() : profiles
+        );
         ServerStatus ping = new ServerStatus(
-                CraftChatMessage.fromString(event.getMotd(), true)[0],
-                Optional.of(playerSample),
-                Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.getServerVersion(), SharedConstants.getCurrentVersion().getProtocolVersion())),
-                (event.icon.value != null) ? Optional.of(new ServerStatus.Favicon(event.icon.value)) : Optional.empty(),
-                server.enforceSecureProfile(),
-                Optional.of(new net.minecraftforge.network.ServerStatusPing())
+            CraftChatMessage.fromString(event.getMotd(), true)[0],
+            Optional.of(playerSample),
+            Optional.of(
+                new ServerStatus.Version(
+                    server.getServerModName() + " " + server.getServerVersion(),
+                    SharedConstants.getCurrentVersion().getProtocolVersion()
+                )
+            ),
+            (event.icon.value != null)
+                ? Optional.of(new ServerStatus.Favicon(event.icon.value))
+                : Optional.empty(),
+            server.enforceSecureProfile(),
+            Optional.of(new net.minecraftforge.network.ServerStatusPing())
         );
         networkManager.send(new ClientboundStatusResponsePacket(ping));
     }

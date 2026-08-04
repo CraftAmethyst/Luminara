@@ -15,9 +15,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ShearsItem.class)
 public class ShearsItemMixin {
 
-    @Inject(method = "interactLivingEntity", cancellable = true, at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraftforge/common/IForgeShearable;isShearable(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"))
-    private void arclight$onShear(ItemStack stack, Player playerIn, LivingEntity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-        if (!CraftEventFactory.handlePlayerShearEntityEvent(playerIn, entity, stack, hand)) {
+    @Inject(
+        method = "interactLivingEntity",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Lnet/minecraftforge/common/IForgeShearable;isShearable(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z"
+        )
+    )
+    private void arclight$onShear(
+        ItemStack stack,
+        Player playerIn,
+        LivingEntity entity,
+        InteractionHand hand,
+        CallbackInfoReturnable<InteractionResult> cir
+    ) {
+        if (
+            !CraftEventFactory.handlePlayerShearEntityEvent(
+                playerIn,
+                entity,
+                stack,
+                hand
+            )
+        ) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

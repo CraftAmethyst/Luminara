@@ -17,15 +17,40 @@ public class EnderCrystalItemMixin {
 
     private transient EndCrystal arclight$enderCrystalEntity;
 
-    @Redirect(method = "useOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;setShowBottom(Z)V"))
-    public void arclight$captureEntity(EndCrystal enderCrystalEntity, boolean showBottom) {
+    @Redirect(
+        method = "useOn",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;setShowBottom(Z)V"
+        )
+    )
+    public void arclight$captureEntity(
+        EndCrystal enderCrystalEntity,
+        boolean showBottom
+    ) {
         arclight$enderCrystalEntity = enderCrystalEntity;
         enderCrystalEntity.setShowBottom(showBottom);
     }
 
-    @Inject(method = "useOn", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    public void arclight$entityPlace(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
-        if (DistValidate.isValid(context) && CraftEventFactory.callEntityPlaceEvent(context, arclight$enderCrystalEntity).isCancelled()) {
+    @Inject(
+        method = "useOn",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
+    public void arclight$entityPlace(
+        UseOnContext context,
+        CallbackInfoReturnable<InteractionResult> cir
+    ) {
+        if (
+            DistValidate.isValid(context) &&
+            CraftEventFactory.callEntityPlaceEvent(
+                context,
+                arclight$enderCrystalEntity
+            ).isCancelled()
+        ) {
             cir.setReturnValue(InteractionResult.FAIL);
         }
         arclight$enderCrystalEntity = null;

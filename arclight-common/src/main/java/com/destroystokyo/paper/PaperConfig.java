@@ -5,6 +5,5 @@ package com.destroystokyo.paper;
  */
 public final class PaperConfig {
 
-    private PaperConfig() {
-    }
+    private PaperConfig() {}
 }

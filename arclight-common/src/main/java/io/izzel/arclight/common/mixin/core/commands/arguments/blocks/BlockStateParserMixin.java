@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.commands.arguments.blocks;
 
 import com.mojang.brigadier.StringReader;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.block.Block;
@@ -13,18 +15,22 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @Mixin(BlockStateParser.class)
 public class BlockStateParserMixin {
 
     // @formatter:off
     @Shadow @Final @Mutable private Map<Property<?>, Comparable<?>> properties;
+
     // @formatter:on
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(HolderLookup<Block> registry, StringReader readerIn, boolean forTesting, boolean allowTags, CallbackInfo ci) {
+    private void arclight$init(
+        HolderLookup<Block> registry,
+        StringReader readerIn,
+        boolean forTesting,
+        boolean allowTags,
+        CallbackInfo ci
+    ) {
         this.properties = new LinkedHashMap<>(properties);
     }
 }

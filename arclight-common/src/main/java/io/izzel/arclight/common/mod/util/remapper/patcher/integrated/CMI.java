@@ -7,17 +7,40 @@ import org.objectweb.asm.tree.*;
 
 public class CMI {
 
-    private static final String COMPAT_OWNER = "io/izzel/arclight/common/mod/compat/CMICompat";
+    private static final String COMPAT_OWNER =
+        "io/izzel/arclight/common/mod/compat/CMICompat";
     private static final String COMPAT_NAME = "getExecutor";
-    private static final String COMPAT_DESC = "(Ljava/lang/Class;Ljava/util/concurrent/ExecutorService;)Ljava/util/concurrent/ExecutorService;";
+    private static final String COMPAT_DESC =
+        "(Ljava/lang/Class;Ljava/util/concurrent/ExecutorService;)Ljava/util/concurrent/ExecutorService;";
 
-    public static void handleThreadExecutor(ClassNode node, PluginPatcher.ClassRepo repo) {
+    public static void handleThreadExecutor(
+        ClassNode node,
+        PluginPatcher.ClassRepo repo
+    ) {
         for (MethodNode method : node.methods) {
-            if (method.name.equals("getExecutor") && method.desc.equals("()Ljava/util/concurrent/ExecutorService;")) {
+            if (
+                method.name.equals("getExecutor") &&
+                method.desc.equals("()Ljava/util/concurrent/ExecutorService;")
+            ) {
                 InsnList list = new InsnList();
                 list.add(new LdcInsnNode(Type.getObjectType(node.name)));
-                list.add(new FieldInsnNode(Opcodes.GETSTATIC, node.name, "EXECUTOR", "Ljava/util/concurrent/ExecutorService;"));
-                list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, COMPAT_OWNER, COMPAT_NAME, COMPAT_DESC, false));
+                list.add(
+                    new FieldInsnNode(
+                        Opcodes.GETSTATIC,
+                        node.name,
+                        "EXECUTOR",
+                        "Ljava/util/concurrent/ExecutorService;"
+                    )
+                );
+                list.add(
+                    new MethodInsnNode(
+                        Opcodes.INVOKESTATIC,
+                        COMPAT_OWNER,
+                        COMPAT_NAME,
+                        COMPAT_DESC,
+                        false
+                    )
+                );
                 list.add(new InsnNode(Opcodes.ARETURN));
 
                 method.instructions.clear();

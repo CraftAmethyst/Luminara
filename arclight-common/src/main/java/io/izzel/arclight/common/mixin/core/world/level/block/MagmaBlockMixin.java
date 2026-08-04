@@ -15,13 +15,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MagmaBlock.class)
 public class MagmaBlockMixin {
 
-    @Inject(method = "stepOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    public void arclight$blockDamagePre(Level worldIn, BlockPos pos, BlockState state, Entity entityIn, CallbackInfo ci) {
+    @Inject(
+        method = "stepOn",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+        )
+    )
+    public void arclight$blockDamagePre(
+        Level worldIn,
+        BlockPos pos,
+        BlockState state,
+        Entity entityIn,
+        CallbackInfo ci
+    ) {
         CraftEventFactory.blockDamage = CraftBlock.at(worldIn, pos);
     }
 
-    @Inject(method = "stepOn", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    public void arclight$blockDamagePost(Level worldIn, BlockPos pos, BlockState state, Entity entityIn, CallbackInfo ci) {
+    @Inject(
+        method = "stepOn",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+        )
+    )
+    public void arclight$blockDamagePost(
+        Level worldIn,
+        BlockPos pos,
+        BlockState state,
+        Entity entityIn,
+        CallbackInfo ci
+    ) {
         CraftEventFactory.blockDamage = null;
     }
 }

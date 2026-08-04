@@ -6,10 +6,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ThrowableItemProjectile.class)
-public abstract class ThrowableItemProjectileMixin extends ThrowableProjectileMixin {
+public abstract class ThrowableItemProjectileMixin
+    extends ThrowableProjectileMixin {
 
     // @formatter:off
     @Shadow protected abstract Item getDefaultItem();
+
     // @formatter:on
 
     public Item getDefaultItemPublic() {

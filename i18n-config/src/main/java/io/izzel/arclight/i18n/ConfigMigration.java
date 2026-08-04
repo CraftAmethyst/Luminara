@@ -1,31 +1,31 @@
 package io.izzel.arclight.i18n;
 
 import io.izzel.arclight.i18n.conf.PermissionForwarding;
-import ninja.leaping.configurate.ConfigurationNode;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import ninja.leaping.configurate.ConfigurationNode;
 
 final class ConfigMigration {
 
     static final int CURRENT_VERSION = 2;
     private static final List<String> UNSAFE_SETTINGS = List.of(
-            "optimization.async-system",
-            "optimization.entity-optimization",
-            "optimization.memory-optimization",
-            "optimization.world-creation",
-            "optimization.chunk-optimization",
-            "async-world-save"
+        "optimization.async-system",
+        "optimization.entity-optimization",
+        "optimization.memory-optimization",
+        "optimization.world-creation",
+        "optimization.chunk-optimization",
+        "async-world-save"
     );
 
-    private ConfigMigration() {
-    }
+    private ConfigMigration() {}
 
     static Result migrate(ConfigurationNode root) {
         int version = root.getNode("_v").getInt(1);
         if (version > CURRENT_VERSION) {
-            throw new IllegalArgumentException("Unsupported configuration version at _v: " + version);
+            throw new IllegalArgumentException(
+                "Unsupported configuration version at _v: " + version
+            );
         }
         List<String> removed = new ArrayList<>();
         if (version < 2) {
@@ -37,7 +37,11 @@ final class ConfigMigration {
             }
             root.getNode("_v").setValue(CURRENT_VERSION);
         }
-        return new Result(root, List.copyOf(removed), version != CURRENT_VERSION);
+        return new Result(
+            root,
+            List.copyOf(removed),
+            version != CURRENT_VERSION
+        );
     }
 
     private static void migratePermissionForwarding(ConfigurationNode root) {
@@ -46,16 +50,22 @@ final class ConfigMigration {
         Object raw = legacy.getValue();
         PermissionForwarding forwarding;
         if (raw instanceof Boolean enabled) {
-            forwarding = enabled ? PermissionForwarding.FORGE_TO_BUKKIT : PermissionForwarding.DISABLED;
+            forwarding = enabled
+                ? PermissionForwarding.FORGE_TO_BUKKIT
+                : PermissionForwarding.DISABLED;
         } else {
-            String value = raw == null ? "" : raw.toString().trim().toLowerCase(Locale.ROOT);
+            String value = raw == null
+                ? ""
+                : raw.toString().trim().toLowerCase(Locale.ROOT);
             forwarding = switch (value) {
                 case "true" -> PermissionForwarding.FORGE_TO_BUKKIT;
                 case "reverse" -> PermissionForwarding.BUKKIT_TO_FORGE;
                 default -> PermissionForwarding.DISABLED;
             };
         }
-        compatibility.getNode("permission-forwarding").setValue(forwarding.name());
+        compatibility
+            .getNode("permission-forwarding")
+            .setValue(forwarding.name());
         compatibility.removeChild("forward-permission");
     }
 
@@ -68,7 +78,9 @@ final class ConfigMigration {
                 return false;
             }
         }
-        ConfigurationNode candidate = parent.getNode(elements[elements.length - 1]);
+        ConfigurationNode candidate = parent.getNode(
+            elements[elements.length - 1]
+        );
         if (candidate.isVirtual()) {
             return false;
         }
@@ -76,6 +88,9 @@ final class ConfigMigration {
         return true;
     }
 
-    record Result(ConfigurationNode root, List<String> removedUnsafeSettings, boolean changed) {
-    }
+    record Result(
+        ConfigurationNode root,
+        List<String> removedUnsafeSettings,
+        boolean changed
+    ) {}
 }

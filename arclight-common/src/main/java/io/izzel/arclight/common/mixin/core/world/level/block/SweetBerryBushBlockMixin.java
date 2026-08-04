@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
 import io.izzel.arclight.mixin.Eject;
+import java.util.Collections;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -22,36 +23,103 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Collections;
-
 @Mixin(SweetBerryBushBlock.class)
 public class SweetBerryBushBlockMixin {
 
-    @Eject(method = "m_213898_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z", remap = false))
-    private boolean arclight$cropGrow(ServerLevel world, BlockPos pos, BlockState newState, int flags, CallbackInfo ci) {
-        if (!CraftEventFactory.handleBlockGrowEvent(world, pos, newState, flags)) {
+    @Eject(
+        method = "m_213898_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;m_7731_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z",
+            remap = false
+        )
+    )
+    private boolean arclight$cropGrow(
+        ServerLevel world,
+        BlockPos pos,
+        BlockState newState,
+        int flags,
+        CallbackInfo ci
+    ) {
+        if (
+            !CraftEventFactory.handleBlockGrowEvent(world, pos, newState, flags)
+        ) {
             ci.cancel();
         }
         return true;
     }
 
-    @Inject(method = "entityInside", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    public void arclight$damagePre(BlockState state, Level worldIn, BlockPos pos, Entity entityIn, CallbackInfo ci) {
+    @Inject(
+        method = "entityInside",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+        )
+    )
+    public void arclight$damagePre(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Entity entityIn,
+        CallbackInfo ci
+    ) {
         CraftEventFactory.blockDamage = CraftBlock.at(worldIn, pos);
     }
 
-    @Inject(method = "entityInside", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    public void arclight$damagePost(BlockState state, Level worldIn, BlockPos pos, Entity entityIn, CallbackInfo ci) {
+    @Inject(
+        method = "entityInside",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+        )
+    )
+    public void arclight$damagePost(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Entity entityIn,
+        CallbackInfo ci
+    ) {
         CraftEventFactory.blockDamage = null;
     }
 
-    @Eject(method = "m_6227_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SweetBerryBushBlock;m_49840_(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V", remap = false))
-    private void arclight$playerHarvest(Level worldIn, BlockPos pos, ItemStack stack, CallbackInfoReturnable<InteractionResult> cir,
-                                        BlockState state, Level worldIn1, BlockPos pos1, Player player, InteractionHand hand) {
-        PlayerHarvestBlockEvent event = CraftEventFactory.callPlayerHarvestBlockEvent(worldIn, pos, player, hand, Collections.singletonList(stack));
+    @Eject(
+        method = "m_6227_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/SweetBerryBushBlock;m_49840_(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V",
+            remap = false
+        )
+    )
+    private void arclight$playerHarvest(
+        Level worldIn,
+        BlockPos pos,
+        ItemStack stack,
+        CallbackInfoReturnable<InteractionResult> cir,
+        BlockState state,
+        Level worldIn1,
+        BlockPos pos1,
+        Player player,
+        InteractionHand hand
+    ) {
+        PlayerHarvestBlockEvent event =
+            CraftEventFactory.callPlayerHarvestBlockEvent(
+                worldIn,
+                pos,
+                player,
+                hand,
+                Collections.singletonList(stack)
+            );
         if (!event.isCancelled()) {
             for (org.bukkit.inventory.ItemStack itemStack : event.getItemsHarvested()) {
-                Block.popResource(worldIn, pos, CraftItemStack.asNMSCopy(itemStack));
+                Block.popResource(
+                    worldIn,
+                    pos,
+                    CraftItemStack.asNMSCopy(itemStack)
+                );
             }
         } else {
             cir.setReturnValue(InteractionResult.SUCCESS);

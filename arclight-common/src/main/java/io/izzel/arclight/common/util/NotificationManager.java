@@ -1,5 +1,11 @@
 package io.izzel.arclight.common.util;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -7,19 +13,21 @@ import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class NotificationManager {
-    private static final Logger LOGGER = LogManager.getLogger("Luminara-Notification");
-    private static final Pattern COLOR_PATTERN = Pattern.compile("&([0-9a-fk-or])");
-    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(2);
 
-    public static void broadcastMessage(MinecraftServer server, String message) {
+    private static final Logger LOGGER = LogManager.getLogger(
+        "Luminara-Notification"
+    );
+    private static final Pattern COLOR_PATTERN = Pattern.compile(
+        "&([0-9a-fk-or])"
+    );
+    private static final ScheduledExecutorService SCHEDULER =
+        Executors.newScheduledThreadPool(2);
+
+    public static void broadcastMessage(
+        MinecraftServer server,
+        String message
+    ) {
         if (server == null || message == null || message.isEmpty()) return;
 
         Component component = parseColoredMessage(message);
@@ -47,33 +55,43 @@ public class NotificationManager {
         LOGGER.info(stripColors(message));
     }
 
-    public static ScheduledFuture<?> scheduleCountdownNotification(MinecraftServer server,
-                                                                   String messageTemplate,
-                                                                   int seconds,
-                                                                   Runnable onComplete) {
-        return SCHEDULER.scheduleAtFixedRate(new Runnable() {
-            private int remainingSeconds = seconds;
+    public static ScheduledFuture<?> scheduleCountdownNotification(
+        MinecraftServer server,
+        String messageTemplate,
+        int seconds,
+        Runnable onComplete
+    ) {
+        return SCHEDULER.scheduleAtFixedRate(
+            new Runnable() {
+                private int remainingSeconds = seconds;
 
-            @Override
-            public void run() {
-                if (remainingSeconds <= 0) {
-                    if (onComplete != null) {
-                        // Execute onComplete on main thread to avoid async chunk access
-                        server.execute(onComplete);
+                @Override
+                public void run() {
+                    if (remainingSeconds <= 0) {
+                        if (onComplete != null) {
+                            // Execute onComplete on main thread to avoid async chunk access
+                            server.execute(onComplete);
+                        }
+                        return;
                     }
-                    return;
-                }
 
-                // Send countdown message at specific intervals
-                if (remainingSeconds <= 10 || remainingSeconds % 10 == 0) {
-                    String message = messageTemplate.replace("{time}", String.valueOf(remainingSeconds));
-                    // Execute broadcast on main thread to avoid async player access
-                    server.execute(() -> broadcastMessage(server, message));
-                }
+                    // Send countdown message at specific intervals
+                    if (remainingSeconds <= 10 || remainingSeconds % 10 == 0) {
+                        String message = messageTemplate.replace(
+                            "{time}",
+                            String.valueOf(remainingSeconds)
+                        );
+                        // Execute broadcast on main thread to avoid async player access
+                        server.execute(() -> broadcastMessage(server, message));
+                    }
 
-                remainingSeconds--;
-            }
-        }, 0, 1, TimeUnit.SECONDS);
+                    remainingSeconds--;
+                }
+            },
+            0,
+            1,
+            TimeUnit.SECONDS
+        );
     }
 
     private static Component parseColoredMessage(String message) {

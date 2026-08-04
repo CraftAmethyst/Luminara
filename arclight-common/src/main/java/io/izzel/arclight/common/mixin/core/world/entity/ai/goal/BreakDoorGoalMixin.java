@@ -16,9 +16,21 @@ public abstract class BreakDoorGoalMixin extends DoorInteractGoal {
         super(entityIn);
     }
 
-    @Inject(method = "tick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
+    @Inject(
+        method = "tick",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"
+        )
+    )
     public void arclight$breakDoor(CallbackInfo ci) {
-        if (CraftEventFactory.callEntityBreakDoorEvent(this.mob, this.doorPos).isCancelled()) {
+        if (
+            CraftEventFactory.callEntityBreakDoorEvent(
+                this.mob,
+                this.doorPos
+            ).isCancelled()
+        ) {
             this.start();
             ci.cancel();
         }

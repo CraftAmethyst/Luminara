@@ -7,7 +7,11 @@ import org.bukkit.entity.Skeleton;
 import org.jetbrains.annotations.NotNull;
 
 public class ArclightModAbstractSkeleton extends CraftAbstractSkeleton {
-    public ArclightModAbstractSkeleton(CraftServer server, AbstractSkeleton entity) {
+
+    public ArclightModAbstractSkeleton(
+        CraftServer server,
+        AbstractSkeleton entity
+    ) {
         super(server, entity);
     }
 
@@ -18,6 +22,5 @@ public class ArclightModAbstractSkeleton extends CraftAbstractSkeleton {
     }
 
     @Override
-    public void setSkeletonType(Skeleton.SkeletonType type) {
-    }
+    public void setSkeletonType(Skeleton.SkeletonType type) {}
 }

@@ -12,9 +12,6 @@ import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.boot.AbstractBootstrap;
 import io.izzel.arclight.boot.asm.ArclightImplementer;
 import io.izzel.arclight.forgeinstaller.ForgeInstaller;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.MarkerManager;
-
 import java.io.File;
 import java.io.InputStream;
 import java.lang.invoke.MethodType;
@@ -32,14 +29,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.jar.Manifest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.MarkerManager;
 
 public class ModBootstrap extends AbstractBootstrap {
 
-    private static final Set<String> EXCLUDES = Set.of("org/apache/maven/artifact/repository/metadata");
+    private static final Set<String> EXCLUDES = Set.of(
+        "org/apache/maven/artifact/repository/metadata"
+    );
     private static ModBoot modBoot;
 
     static void run() {
-        var plugin = Launcher.INSTANCE.environment().findLaunchPlugin("arclight_implementer");
+        var plugin = Launcher.INSTANCE.environment().findLaunchPlugin(
+            "arclight_implementer"
+        );
         if (plugin.isPresent()) return;
         var logger = LogManager.getLogger("Luminara");
         var marker = MarkerManager.getMarker("INSTALL");
@@ -59,9 +62,15 @@ public class ModBootstrap extends AbstractBootstrap {
         try {
             var conf = modBoot.configuration();
             var parent = modBoot.parent();
-            var classLoader = (ModuleClassLoader) Thread.currentThread().getContextClassLoader();
-            var parentField = ModuleClassLoader.class.getDeclaredField("parentLoaders");
-            var parentLoaders = (Map<String, ClassLoader>) Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(parentField));
+            var classLoader =
+                (ModuleClassLoader) Thread.currentThread().getContextClassLoader();
+            var parentField = ModuleClassLoader.class.getDeclaredField(
+                "parentLoaders"
+            );
+            var parentLoaders = (Map<String, ClassLoader>) Unsafe.getObject(
+                classLoader,
+                Unsafe.objectFieldOffset(parentField)
+            );
             for (var mod : conf.modules()) {
                 for (var pk : mod.reference().descriptor().packages()) {
                     parentLoaders.put(pk, parent);
@@ -75,25 +84,55 @@ public class ModBootstrap extends AbstractBootstrap {
 
     @SuppressWarnings("unchecked")
     private static void load(Path[] file) throws Throwable {
-        var classLoader = (ModuleClassLoader) ModBootstrap.class.getClassLoader();
-        var secureJar = SecureJar.from((path, base) -> EXCLUDES.stream().noneMatch(path::startsWith), file);
-        var configurationField = ModuleClassLoader.class.getDeclaredField("configuration");
+        var classLoader =
+            (ModuleClassLoader) ModBootstrap.class.getClassLoader();
+        var secureJar = SecureJar.from(
+            (path, base) -> EXCLUDES.stream().noneMatch(path::startsWith),
+            file
+        );
+        var configurationField = ModuleClassLoader.class.getDeclaredField(
+            "configuration"
+        );
         var confOffset = Unsafe.objectFieldOffset(configurationField);
         var oldConf = (Configuration) Unsafe.getObject(classLoader, confOffset);
-        var conf = oldConf.resolveAndBind(JarModuleFinder.of(secureJar), ModuleFinder.of(), List.of(secureJar.name()));
+        var conf = oldConf.resolveAndBind(
+            JarModuleFinder.of(secureJar),
+            ModuleFinder.of(),
+            List.of(secureJar.name())
+        );
         modBoot = new ModBoot(conf, classLoader);
         Unsafe.putObjectVolatile(classLoader, confOffset, conf);
-        var pkgField = ModuleClassLoader.class.getDeclaredField("packageLookup");
-        var packageLookup = (Map<String, ResolvedModule>) Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(pkgField));
-        var rootField = ModuleClassLoader.class.getDeclaredField("resolvedRoots");
-        var resolvedRoots = (Map<String, Object>) Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(rootField));
-        var moduleRefCtor = Unsafe.lookup().findConstructor(Class.forName("cpw.mods.cl.JarModuleFinder$JarModuleReference"),
-                MethodType.methodType(void.class, SecureJar.ModuleDataProvider.class));
+        var pkgField = ModuleClassLoader.class.getDeclaredField(
+            "packageLookup"
+        );
+        var packageLookup = (Map<String, ResolvedModule>) Unsafe.getObject(
+            classLoader,
+            Unsafe.objectFieldOffset(pkgField)
+        );
+        var rootField = ModuleClassLoader.class.getDeclaredField(
+            "resolvedRoots"
+        );
+        var resolvedRoots = (Map<String, Object>) Unsafe.getObject(
+            classLoader,
+            Unsafe.objectFieldOffset(rootField)
+        );
+        var moduleRefCtor = Unsafe.lookup().findConstructor(
+            Class.forName("cpw.mods.cl.JarModuleFinder$JarModuleReference"),
+            MethodType.methodType(
+                void.class,
+                SecureJar.ModuleDataProvider.class
+            )
+        );
         for (var mod : conf.modules()) {
             for (var pk : mod.reference().descriptor().packages()) {
                 packageLookup.put(pk, mod);
             }
-            resolvedRoots.put(mod.name(), moduleRefCtor.invokeWithArguments(new JarModuleDataProvider((Jar) secureJar)));
+            resolvedRoots.put(
+                mod.name(),
+                moduleRefCtor.invokeWithArguments(
+                    new JarModuleDataProvider((Jar) secureJar)
+                )
+            );
         }
     }
 
@@ -104,7 +143,10 @@ public class ModBootstrap extends AbstractBootstrap {
 
     private void injectClassPath() throws Throwable {
         var platform = ClassLoader.getPlatformClassLoader();
-        var ucpField = platform.getClass().getSuperclass().getDeclaredField("ucp");
+        var ucpField = platform
+            .getClass()
+            .getSuperclass()
+            .getDeclaredField("ucp");
         var ucp = Unsafe.lookup().unreflectGetter(ucpField).invoke(platform);
         if (ucp == null) {
             for (var module : ModuleLayer.boot().configuration().modules()) {
@@ -132,11 +174,13 @@ public class ModBootstrap extends AbstractBootstrap {
         map.put(plugin.name(), plugin);
     }
 
-    public static record ModBoot(Configuration configuration, ClassLoader parent) {
-    }
+    public static record ModBoot(
+        Configuration configuration,
+        ClassLoader parent
+    ) {}
 
-    private record JarModuleDataProvider(Jar jar) implements SecureJar.ModuleDataProvider {
-
+    private record JarModuleDataProvider(Jar jar) implements
+        SecureJar.ModuleDataProvider {
         @Override
         public String name() {
             return jar.name();
@@ -159,7 +203,12 @@ public class ModBootstrap extends AbstractBootstrap {
 
         @Override
         public Optional<InputStream> open(final String name) {
-            return jar.findFile(name).map(Paths::get).map(LambdaExceptionUtils.rethrowFunction(Files::newInputStream));
+            return jar
+                .findFile(name)
+                .map(Paths::get)
+                .map(
+                    LambdaExceptionUtils.rethrowFunction(Files::newInputStream)
+                );
         }
 
         @Override
@@ -168,7 +217,10 @@ public class ModBootstrap extends AbstractBootstrap {
         }
 
         @Override
-        public CodeSigner[] verifyAndGetSigners(final String cname, final byte[] bytes) {
+        public CodeSigner[] verifyAndGetSigners(
+            final String cname,
+            final byte[] bytes
+        ) {
             return jar.verifyAndGetSigners(cname, bytes);
         }
     }

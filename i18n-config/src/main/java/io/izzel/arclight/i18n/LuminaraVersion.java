@@ -7,11 +7,13 @@ import java.util.Properties;
 
 public final class LuminaraVersion {
 
-    private static final String RESOURCE = "/META-INF/luminara-version.properties";
-    private static final Properties PROPERTIES = load(LuminaraVersion.class.getResourceAsStream(RESOURCE));
+    private static final String RESOURCE =
+        "/META-INF/luminara-version.properties";
+    private static final Properties PROPERTIES = load(
+        LuminaraVersion.class.getResourceAsStream(RESOURCE)
+    );
 
-    private LuminaraVersion() {
-    }
+    private LuminaraVersion() {}
 
     public static String minecraftVersion() {
         return required("minecraftVersion");
@@ -38,21 +40,49 @@ public final class LuminaraVersion {
     }
 
     public static void verify(String minecraftVersion, String forgeVersion) {
-        if (!minecraftVersion().equals(minecraftVersion) || !forgeVersion().equals(forgeVersion)) {
-            throw new IllegalStateException("Unsupported installer metadata: Minecraft " + minecraftVersion
-                    + " / Forge " + forgeVersion + "; expected Minecraft " + minecraftVersion()
-                    + " / Forge " + forgeVersion());
+        if (
+            !minecraftVersion().equals(minecraftVersion) ||
+            !forgeVersion().equals(forgeVersion)
+        ) {
+            throw new IllegalStateException(
+                "Unsupported installer metadata: Minecraft " +
+                    minecraftVersion +
+                    " / Forge " +
+                    forgeVersion +
+                    "; expected Minecraft " +
+                    minecraftVersion() +
+                    " / Forge " +
+                    forgeVersion()
+            );
         }
         int runtimeFeature = Runtime.version().feature();
         int requiredFeature = Integer.parseInt(javaVersion());
         if (runtimeFeature < requiredFeature) {
-            throw new IllegalStateException("Java " + requiredFeature + " is required; found " + runtimeFeature);
+            throw new IllegalStateException(
+                "Java " +
+                    requiredFeature +
+                    " is required; found " +
+                    runtimeFeature
+            );
         }
     }
 
     public static String compatibilityLine() {
-        return "Luminara " + version() + " (Minecraft " + minecraftVersion() + ", Forge " + forgeVersion()
-                + ", Java " + javaVersion() + ", Bukkit " + bukkitPackage() + ", commit " + gitCommit() + ")";
+        return (
+            "Luminara " +
+            version() +
+            " (Minecraft " +
+            minecraftVersion() +
+            ", Forge " +
+            forgeVersion() +
+            ", Java " +
+            javaVersion() +
+            ", Bukkit " +
+            bukkitPackage() +
+            ", commit " +
+            gitCommit() +
+            ")"
+        );
     }
 
     static Properties load(InputStream input) {
@@ -61,7 +91,10 @@ public final class LuminaraVersion {
         try (input) {
             properties.load(input);
         } catch (IOException exception) {
-            throw new IllegalStateException("Cannot read " + RESOURCE, exception);
+            throw new IllegalStateException(
+                "Cannot read " + RESOURCE,
+                exception
+            );
         }
         return properties;
     }

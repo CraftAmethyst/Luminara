@@ -20,6 +20,9 @@ public class DefendVillageTargetGoalMixin {
 
     @Inject(method = "start", at = @At("HEAD"))
     public void arclight$reason(CallbackInfo ci) {
-        ((MobEntityBridge) this.golem).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.DEFEND_VILLAGE, true);
+        ((MobEntityBridge) this.golem).bridge$pushGoalTargetReason(
+            EntityTargetEvent.TargetReason.DEFEND_VILLAGE,
+            true
+        );
     }
 }

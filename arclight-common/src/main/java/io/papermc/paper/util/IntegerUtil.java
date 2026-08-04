@@ -104,7 +104,9 @@ public final class IntegerUtil {
         final int ad = branchlessAbs(d);
 
         if (ad < 2) {
-            throw new IllegalArgumentException("|number| must be in [2, 2^31 -1], not: " + d);
+            throw new IllegalArgumentException(
+                "|number| must be in [2, 2^31 -1], not: " + d
+            );
         }
 
         final int two31 = 0x80000000;
@@ -139,15 +141,17 @@ public final class IntegerUtil {
 
         do {
             p = p + 1;
-            q1 = 2 * q1;                        // Update q1 = 2**p/|nc|.
-            r1 = 2 * r1;                        // Update r1 = rem(2**p, |nc|).
-            if ((r1 & mask) >= (anc & mask)) {// (Must be an unsigned comparison here)
+            q1 = 2 * q1; // Update q1 = 2**p/|nc|.
+            r1 = 2 * r1; // Update r1 = rem(2**p, |nc|).
+            if ((r1 & mask) >= (anc & mask)) {
+                // (Must be an unsigned comparison here)
                 q1 = q1 + 1;
                 r1 = r1 - anc;
             }
-            q2 = 2 * q2;                       // Update q2 = 2**p/|d|.
-            r2 = 2 * r2;                       // Update r2 = rem(2**p, |d|).
-            if ((r2 & mask) >= (ad & mask)) {// (Must be an unsigned comparison here)
+            q2 = 2 * q2; // Update q2 = 2**p/|d|.
+            r2 = 2 * r2; // Update r2 = rem(2**p, |d|).
+            if ((r2 & mask) >= (ad & mask)) {
+                // (Must be an unsigned comparison here)
                 q2 = q2 + 1;
                 r2 = r2 - ad;
             }

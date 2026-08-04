@@ -1,5 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -13,17 +15,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(ShulkerBoxBlockEntity.class)
-public abstract class ShulkerBoxBlockEntityMixin extends LockableBlockEntityMixin {
+public abstract class ShulkerBoxBlockEntityMixin
+    extends LockableBlockEntityMixin {
 
     public List<HumanEntity> transaction = new ArrayList<>();
     // @formatter:on
     public boolean opened;
+
     // @formatter:off
     @Shadow private NonNullList<ItemStack> itemStacks;
+
     private int maxStack = MAX_STACK;
 
     @Inject(method = "startOpen", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;blockEvent(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;II)V"))

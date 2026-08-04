@@ -22,23 +22,34 @@ public abstract class CraftEntityMixin implements org.bukkit.entity.Entity {
 
     @Shadow
     protected Entity entity;
+
     @Shadow
     @Final
     protected CraftServer server;
 
     @Inject(method = "getEntity", cancellable = true, at = @At("HEAD"))
-    private static void arclight$fakePlayer(CraftServer server, Entity entity, CallbackInfoReturnable<CraftEntity> cir) {
+    private static void arclight$fakePlayer(
+        CraftServer server,
+        Entity entity,
+        CallbackInfoReturnable<CraftEntity> cir
+    ) {
         if (entity instanceof FakePlayer) {
-            cir.setReturnValue(new ArclightFakePlayer(server, (FakePlayer) entity));
+            cir.setReturnValue(
+                new ArclightFakePlayer(server, (FakePlayer) entity)
+            );
             return;
         }
         if (entity instanceof EnderDragonPart part) {
             if (part.parentMob instanceof EnderDragon) {
-                cir.setReturnValue(new CraftEnderDragonPart(server, (EnderDragonPart) entity));
+                cir.setReturnValue(
+                    new CraftEnderDragonPart(server, (EnderDragonPart) entity)
+                );
                 return;
             }
 
-            cir.setReturnValue(new CraftComplexPart(server, (EnderDragonPart) entity));
+            cir.setReturnValue(
+                new CraftComplexPart(server, (EnderDragonPart) entity)
+            );
             return;
         }
         var convert = EntityClassLookup.getConvert(entity);

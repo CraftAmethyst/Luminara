@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class SculkSpreaderMixin implements SculkSpreaderBridge {
 
     private transient Level arclight$level;
+
     // @formatter:on
 
     // @formatter:off

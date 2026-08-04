@@ -6,6 +6,9 @@ import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import io.izzel.arclight.mixin.Eject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -38,69 +41,149 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BooleanSupplier;
-
 @Mixin(HopperBlockEntity.class)
 public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
 
     public List<HumanEntity> transaction = new ArrayList<>();
+
     // @formatter:off
     @Shadow private NonNullList<ItemStack> items;
+
     private int maxStack = MAX_STACK;
+
     // @formatter:on
 
     @Shadow
-    private static boolean tryMoveItems(Level p_155579_, BlockPos p_155580_, BlockState p_155581_, HopperBlockEntity p_155582_, BooleanSupplier p_155583_) {
+    private static boolean tryMoveItems(
+        Level p_155579_,
+        BlockPos p_155580_,
+        BlockState p_155581_,
+        HopperBlockEntity p_155582_,
+        BooleanSupplier p_155583_
+    ) {
         return false;
     }
 
-    @Redirect(method = "pushItemsTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;tryMoveItems(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;Ljava/util/function/BooleanSupplier;)Z"))
-    private static boolean arclight$hopperCheck(Level level, BlockPos pos, BlockState state, HopperBlockEntity hopper, BooleanSupplier flag) {
+    @Redirect(
+        method = "pushItemsTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;tryMoveItems(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;Ljava/util/function/BooleanSupplier;)Z"
+        )
+    )
+    private static boolean arclight$hopperCheck(
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        HopperBlockEntity hopper,
+        BooleanSupplier flag
+    ) {
         var result = tryMoveItems(level, pos, state, hopper, flag);
-        if (!result && DistValidate.isValid(level) && ((WorldBridge) level).bridge$spigotConfig().hopperCheck > 1) {
-            hopper.setCooldown(((WorldBridge) level).bridge$spigotConfig().hopperCheck);
+        if (
+            !result &&
+            DistValidate.isValid(level) &&
+            ((WorldBridge) level).bridge$spigotConfig().hopperCheck > 1
+        ) {
+            hopper.setCooldown(
+                ((WorldBridge) level).bridge$spigotConfig().hopperCheck
+            );
         }
         return result;
     }
 
-    @Eject(method = "ejectItems(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)Z", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;m_59326_(Lnet/minecraft/world/Container;Lnet/minecraft/world/Container;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/item/ItemStack;", remap = false))
-    private static ItemStack arclight$moveItem(Container source, Container destination, ItemStack stack, Direction direction, CallbackInfoReturnable<Boolean> cir, Level level, BlockPos p_155564_, BlockState p_155565_, HopperBlockEntity entity) {
+    @Eject(
+        method = "ejectItems(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)Z",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;m_59326_(Lnet/minecraft/world/Container;Lnet/minecraft/world/Container;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/item/ItemStack;",
+            remap = false
+        )
+    )
+    private static ItemStack arclight$moveItem(
+        Container source,
+        Container destination,
+        ItemStack stack,
+        Direction direction,
+        CallbackInfoReturnable<Boolean> cir,
+        Level level,
+        BlockPos p_155564_,
+        BlockState p_155565_,
+        HopperBlockEntity entity
+    ) {
         CraftItemStack original = CraftItemStack.asCraftMirror(stack);
 
         Inventory destinationInventory;
         // Have to special case large chests as they work oddly
         if (destination instanceof CompoundContainer) {
-            destinationInventory = new CraftInventoryDoubleChest(((CompoundContainer) destination));
+            destinationInventory = new CraftInventoryDoubleChest(
+                ((CompoundContainer) destination)
+            );
         } else {
-            destinationInventory = ((IInventoryBridge) destination).getOwnerInventory();
+            destinationInventory =
+                ((IInventoryBridge) destination).getOwnerInventory();
         }
 
-        InventoryMoveItemEvent event = new InventoryMoveItemEvent(((TileEntityBridge) entity).bridge$getOwner().getInventory(), original.clone(), destinationInventory, true);
+        InventoryMoveItemEvent event = new InventoryMoveItemEvent(
+            ((TileEntityBridge) entity).bridge$getOwner().getInventory(),
+            original.clone(),
+            destinationInventory,
+            true
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            entity.setCooldown(((WorldBridge) level).bridge$spigotConfig().hopperTransfer); // Delay hopper checks
+            entity.setCooldown(
+                ((WorldBridge) level).bridge$spigotConfig().hopperTransfer
+            ); // Delay hopper checks
             cir.setReturnValue(false);
             return null;
         }
-        return HopperBlockEntity.addItem(source, destination, CraftItemStack.asNMSCopy(event.getItem()), direction);
+        return HopperBlockEntity.addItem(
+            source,
+            destination,
+            CraftItemStack.asNMSCopy(event.getItem()),
+            direction
+        );
     }
 
-    @Eject(method = "m_59354_(Lnet/minecraft/world/level/block/entity/Hopper;Lnet/minecraft/world/Container;ILnet/minecraft/core/Direction;)Z", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;m_59326_(Lnet/minecraft/world/Container;Lnet/minecraft/world/Container;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/item/ItemStack;", remap = false))
-    private static ItemStack arclight$pullItem(Container source, Container destination, ItemStack stack, Direction direction, CallbackInfoReturnable<Boolean> cir, Hopper hopper, Container inv, int index) {
+    @Eject(
+        method = "m_59354_(Lnet/minecraft/world/level/block/entity/Hopper;Lnet/minecraft/world/Container;ILnet/minecraft/core/Direction;)Z",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;m_59326_(Lnet/minecraft/world/Container;Lnet/minecraft/world/Container;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/item/ItemStack;",
+            remap = false
+        )
+    )
+    private static ItemStack arclight$pullItem(
+        Container source,
+        Container destination,
+        ItemStack stack,
+        Direction direction,
+        CallbackInfoReturnable<Boolean> cir,
+        Hopper hopper,
+        Container inv,
+        int index
+    ) {
         ItemStack origin = inv.getItem(index).copy();
         CraftItemStack original = CraftItemStack.asCraftMirror(stack);
 
         Inventory sourceInventory;
         // Have to special case large chests as they work oddly
         if (source instanceof CompoundContainer) {
-            sourceInventory = new CraftInventoryDoubleChest(((CompoundContainer) source));
+            sourceInventory = new CraftInventoryDoubleChest(
+                ((CompoundContainer) source)
+            );
         } else {
             sourceInventory = ((IInventoryBridge) source).getOwnerInventory();
         }
 
-        InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, original.clone(), ((IInventoryBridge) destination).getOwnerInventory(), false);
+        InventoryMoveItemEvent event = new InventoryMoveItemEvent(
+            sourceInventory,
+            original.clone(),
+            ((IInventoryBridge) destination).getOwnerInventory(),
+            false
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             inv.setItem(index, origin);
@@ -110,40 +193,104 @@ public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
             cir.setReturnValue(false);
             return null;
         }
-        return HopperBlockEntity.addItem(source, destination, CraftItemStack.asNMSCopy(event.getItem()), direction);
+        return HopperBlockEntity.addItem(
+            source,
+            destination,
+            CraftItemStack.asNMSCopy(event.getItem()),
+            direction
+        );
     }
 
-    @Inject(method = "addItem(Lnet/minecraft/world/Container;Lnet/minecraft/world/entity/item/ItemEntity;)Z", cancellable = true, at = @At("HEAD"))
-    private static void arclight$pickupItem(Container inventory, ItemEntity itemEntity, CallbackInfoReturnable<Boolean> cir) {
-        InventoryPickupItemEvent event = new InventoryPickupItemEvent(((IInventoryBridge) inventory).getOwnerInventory(), (Item) ((EntityBridge) itemEntity).bridge$getBukkitEntity());
+    @Inject(
+        method = "addItem(Lnet/minecraft/world/Container;Lnet/minecraft/world/entity/item/ItemEntity;)Z",
+        cancellable = true,
+        at = @At("HEAD")
+    )
+    private static void arclight$pickupItem(
+        Container inventory,
+        ItemEntity itemEntity,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        InventoryPickupItemEvent event = new InventoryPickupItemEvent(
+            ((IInventoryBridge) inventory).getOwnerInventory(),
+            (Item) ((EntityBridge) itemEntity).bridge$getBukkitEntity()
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             cir.setReturnValue(false);
         }
     }
 
-    private static Container runHopperInventorySearchEvent(Container inventory, CraftBlock hopper, CraftBlock searchLocation, HopperInventorySearchEvent.ContainerType containerType) {
-        var event = new HopperInventorySearchEvent((inventory != null) ? new CraftInventory(inventory) : null, containerType, hopper, searchLocation);
+    private static Container runHopperInventorySearchEvent(
+        Container inventory,
+        CraftBlock hopper,
+        CraftBlock searchLocation,
+        HopperInventorySearchEvent.ContainerType containerType
+    ) {
+        var event = new HopperInventorySearchEvent(
+            (inventory != null) ? new CraftInventory(inventory) : null,
+            containerType,
+            hopper,
+            searchLocation
+        );
         Bukkit.getServer().getPluginManager().callEvent(event);
         CraftInventory craftInventory = (CraftInventory) event.getInventory();
         return (craftInventory != null) ? craftInventory.getInventory() : null;
     }
 
-    @Inject(method = "getAttachedContainer", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
-    private static void arclight$searchTo(Level level, BlockPos pos, BlockState p_155595_, CallbackInfoReturnable<Container> cir, Direction direction) {
+    @Inject(
+        method = "getAttachedContainer",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At("RETURN")
+    )
+    private static void arclight$searchTo(
+        Level level,
+        BlockPos pos,
+        BlockState p_155595_,
+        CallbackInfoReturnable<Container> cir,
+        Direction direction
+    ) {
         var container = cir.getReturnValue();
         var hopper = CraftBlock.at(level, pos);
         var searchBlock = CraftBlock.at(level, pos.relative(direction));
-        cir.setReturnValue(runHopperInventorySearchEvent(container, hopper, searchBlock, HopperInventorySearchEvent.ContainerType.DESTINATION));
+        cir.setReturnValue(
+            runHopperInventorySearchEvent(
+                container,
+                hopper,
+                searchBlock,
+                HopperInventorySearchEvent.ContainerType.DESTINATION
+            )
+        );
     }
 
-    @Inject(method = "getSourceContainer", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
-    private static void arclight$searchFrom(Level level, Hopper hopper, CallbackInfoReturnable<Container> cir) {
+    @Inject(
+        method = "getSourceContainer",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At("RETURN")
+    )
+    private static void arclight$searchFrom(
+        Level level,
+        Hopper hopper,
+        CallbackInfoReturnable<Container> cir
+    ) {
         var container = cir.getReturnValue();
-        var blockPos = BlockPos.containing(hopper.getLevelX(), hopper.getLevelY(), hopper.getLevelZ());
+        var blockPos = BlockPos.containing(
+            hopper.getLevelX(),
+            hopper.getLevelY(),
+            hopper.getLevelZ()
+        );
         var hopperBlock = CraftBlock.at(level, blockPos);
         var containerBlock = CraftBlock.at(level, blockPos.above());
-        cir.setReturnValue(runHopperInventorySearchEvent(container, hopperBlock, containerBlock, HopperInventorySearchEvent.ContainerType.SOURCE));
+        cir.setReturnValue(
+            runHopperInventorySearchEvent(
+                container,
+                hopperBlock,
+                containerBlock,
+                HopperInventorySearchEvent.ContainerType.SOURCE
+            )
+        );
     }
 
     @Shadow
@@ -170,8 +317,7 @@ public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {

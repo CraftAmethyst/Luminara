@@ -30,23 +30,46 @@ public class SnowballItemMixin extends Item {
      * @reason
      */
     @Overwrite
-    public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, @NotNull InteractionHand handIn) {
+    public @NotNull InteractionResultHolder<ItemStack> use(
+        Level worldIn,
+        Player playerIn,
+        @NotNull InteractionHand handIn
+    ) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         if (!worldIn.isClientSide) {
             Snowball snowballentity = new Snowball(worldIn, playerIn);
             snowballentity.setItem(itemstack);
-            snowballentity.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F);
+            snowballentity.shootFromRotation(
+                playerIn,
+                playerIn.getXRot(),
+                playerIn.getYRot(),
+                0.0F,
+                1.5F,
+                1.0F
+            );
             if (worldIn.addFreshEntity(snowballentity)) {
                 if (!playerIn.getAbilities().instabuild) {
                     itemstack.shrink(1);
                 }
-                worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F));
+                worldIn.playSound(
+                    null,
+                    playerIn.getX(),
+                    playerIn.getY(),
+                    playerIn.getZ(),
+                    SoundEvents.SNOWBALL_THROW,
+                    SoundSource.NEUTRAL,
+                    0.5F,
+                    0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F)
+                );
             } else if (playerIn instanceof ServerPlayer) {
                 ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().updateInventory();
             }
         }
 
         playerIn.awardStat(Stats.ITEM_USED.get(this));
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+        return new InteractionResultHolder<>(
+            InteractionResult.SUCCESS,
+            itemstack
+        );
     }
 }

@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,31 +23,53 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-
 @Mixin(ChorusFlowerBlock.class)
 public abstract class ChorusFlowerBlockMixin extends BlockMixin {
 
     // @formatter:off
     @Shadow @Final public static IntegerProperty AGE;
+
     @Shadow @Final private ChorusPlantBlock plant;
+
     @Shadow private static boolean allNeighborsEmpty(LevelReader worldIn, BlockPos pos, @Nullable Direction excludingSide) { return false; }
+
     @Shadow protected abstract void placeGrownFlower(Level worldIn, BlockPos pos, int age);
+
     @Shadow protected abstract void placeDeadFlower(Level worldIn, BlockPos pos);
+
     // @formatter:on
 
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
-    public void arclight$randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
+    public void arclight$randomTick(
+        BlockState state,
+        ServerLevel worldIn,
+        BlockPos pos,
+        RandomSource random,
+        CallbackInfo ci
+    ) {
         // Call the original logic but make it cancellable for compatibility
         this.arclight$performRandomTick(state, worldIn, pos, random);
         ci.cancel(); // Prevent original method execution
     }
 
-    private void arclight$performRandomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+    private void arclight$performRandomTick(
+        BlockState state,
+        ServerLevel worldIn,
+        BlockPos pos,
+        RandomSource random
+    ) {
         BlockPos blockpos = pos.above();
         if (worldIn.isEmptyBlock(blockpos) && blockpos.getY() < 256) {
             int i = state.getValue(AGE);
-            if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, blockpos, state, true)) {
+            if (
+                i < 5 &&
+                net.minecraftforge.common.ForgeHooks.onCropsGrowPre(
+                    worldIn,
+                    blockpos,
+                    state,
+                    true
+                )
+            ) {
                 boolean flag = false;
                 boolean flag1 = false;
                 BlockState blockstate = worldIn.getBlockState(pos.below());
@@ -57,7 +80,9 @@ public abstract class ChorusFlowerBlockMixin extends BlockMixin {
                     int j = 1;
 
                     for (int k = 0; k < 4; ++k) {
-                        Block block1 = worldIn.getBlockState(pos.below(j + 1)).getBlock();
+                        Block block1 = worldIn
+                            .getBlockState(pos.below(j + 1))
+                            .getBlock();
                         if (block1 != this.plant) {
                             if (block1 == Blocks.END_STONE) {
                                 flag1 = true;
@@ -75,9 +100,28 @@ public abstract class ChorusFlowerBlockMixin extends BlockMixin {
                     flag = true;
                 }
 
-                if (flag && allNeighborsEmpty(worldIn, blockpos, (Direction) null) && worldIn.isEmptyBlock(pos.above(2))) {
-                    if (CraftEventFactory.handleBlockSpreadEvent(worldIn, pos, blockpos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i), 2)) {
-                        worldIn.setBlock(pos, this.plant.getStateForPlacement(worldIn, pos), 2);
+                if (
+                    flag &&
+                    allNeighborsEmpty(worldIn, blockpos, (Direction) null) &&
+                    worldIn.isEmptyBlock(pos.above(2))
+                ) {
+                    if (
+                        CraftEventFactory.handleBlockSpreadEvent(
+                            worldIn,
+                            pos,
+                            blockpos,
+                            this.defaultBlockState().setValue(
+                                ChorusFlowerBlock.AGE,
+                                i
+                            ),
+                            2
+                        )
+                    ) {
+                        worldIn.setBlock(
+                            pos,
+                            this.plant.getStateForPlacement(worldIn, pos),
+                            2
+                        );
                         this.placeGrownFlower(worldIn, blockpos, i);
                     }
                 } else if (i < 4) {
@@ -89,36 +133,109 @@ public abstract class ChorusFlowerBlockMixin extends BlockMixin {
                     boolean flag2 = false;
 
                     for (int i1 = 0; i1 < l; ++i1) {
-                        Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(random);
+                        Direction direction =
+                            Direction.Plane.HORIZONTAL.getRandomDirection(
+                                random
+                            );
                         BlockPos blockpos1 = pos.relative(direction);
-                        if (worldIn.isEmptyBlock(blockpos1) && worldIn.isEmptyBlock(blockpos1.below()) && allNeighborsEmpty(worldIn, blockpos1, direction.getOpposite())) {
-                            if (CraftEventFactory.handleBlockSpreadEvent(worldIn, pos, blockpos1, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i + 1), 2)) {
-                                this.placeGrownFlower(worldIn, blockpos1, i + 1);
+                        if (
+                            worldIn.isEmptyBlock(blockpos1) &&
+                            worldIn.isEmptyBlock(blockpos1.below()) &&
+                            allNeighborsEmpty(
+                                worldIn,
+                                blockpos1,
+                                direction.getOpposite()
+                            )
+                        ) {
+                            if (
+                                CraftEventFactory.handleBlockSpreadEvent(
+                                    worldIn,
+                                    pos,
+                                    blockpos1,
+                                    this.defaultBlockState().setValue(
+                                        ChorusFlowerBlock.AGE,
+                                        i + 1
+                                    ),
+                                    2
+                                )
+                            ) {
+                                this.placeGrownFlower(
+                                    worldIn,
+                                    blockpos1,
+                                    i + 1
+                                );
                                 flag2 = true;
                             }
                         }
                     }
 
                     if (flag2) {
-                        worldIn.setBlock(pos, this.plant.getStateForPlacement(worldIn, pos), 2);
+                        worldIn.setBlock(
+                            pos,
+                            this.plant.getStateForPlacement(worldIn, pos),
+                            2
+                        );
                     } else {
-                        if (CraftEventFactory.handleBlockGrowEvent(worldIn, pos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
+                        if (
+                            CraftEventFactory.handleBlockGrowEvent(
+                                worldIn,
+                                pos,
+                                this.defaultBlockState().setValue(
+                                    ChorusFlowerBlock.AGE,
+                                    5
+                                ),
+                                2
+                            )
+                        ) {
                             this.placeDeadFlower(worldIn, pos);
                         }
                     }
                 } else {
-                    if (CraftEventFactory.handleBlockGrowEvent(worldIn, pos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
+                    if (
+                        CraftEventFactory.handleBlockGrowEvent(
+                            worldIn,
+                            pos,
+                            this.defaultBlockState().setValue(
+                                ChorusFlowerBlock.AGE,
+                                5
+                            ),
+                            2
+                        )
+                    ) {
                         this.placeDeadFlower(worldIn, pos);
                     }
                 }
-                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state);
+                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(
+                    worldIn,
+                    pos,
+                    state
+                );
             }
         }
     }
 
-    @Inject(method = "onProjectileHit", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;destroyBlock(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$hitByProjectile(Level p_51654_, BlockState p_51655_, BlockHitResult result, Projectile projectile, CallbackInfo ci) {
-        if (!CraftEventFactory.callEntityChangeBlockEvent(projectile, result.getBlockPos(), Blocks.AIR.defaultBlockState())) {
+    @Inject(
+        method = "onProjectileHit",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;destroyBlock(Lnet/minecraft/core/BlockPos;ZLnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
+    private void arclight$hitByProjectile(
+        Level p_51654_,
+        BlockState p_51655_,
+        BlockHitResult result,
+        Projectile projectile,
+        CallbackInfo ci
+    ) {
+        if (
+            !CraftEventFactory.callEntityChangeBlockEvent(
+                projectile,
+                result.getBlockPos(),
+                Blocks.AIR.defaultBlockState()
+            )
+        ) {
             ci.cancel();
         }
     }

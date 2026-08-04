@@ -9,7 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArclightModChestedHorse extends CraftChestedHorse {
 
-    public ArclightModChestedHorse(CraftServer server, AbstractChestedHorse entity) {
+    public ArclightModChestedHorse(
+        CraftServer server,
+        AbstractChestedHorse entity
+    ) {
         super(server, entity);
     }
 

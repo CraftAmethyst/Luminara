@@ -16,8 +16,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Spider.class)
 public abstract class SpiderMixin extends PathfinderMobMixin {
 
-    @Inject(method = "finalizeSpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Spider;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private void arclight$potionReason(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, SpawnGroupData spawnDataIn, CompoundTag dataTag, CallbackInfoReturnable<SpawnGroupData> cir) {
+    @Inject(
+        method = "finalizeSpawn",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/monster/Spider;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"
+        )
+    )
+    private void arclight$potionReason(
+        ServerLevelAccessor worldIn,
+        DifficultyInstance difficultyIn,
+        MobSpawnType reason,
+        SpawnGroupData spawnDataIn,
+        CompoundTag dataTag,
+        CallbackInfoReturnable<SpawnGroupData> cir
+    ) {
         bridge$pushEffectCause(EntityPotionEffectEvent.Cause.SPIDER_SPAWN);
     }
 }

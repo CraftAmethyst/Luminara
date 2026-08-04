@@ -14,7 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class DirtPathBlockMixin {
 
     @Inject(method = "tick", cancellable = true, at = @At("HEAD"))
-    private void arclight$checkValid(BlockState state, ServerLevel level, BlockPos pos, RandomSource p_221073_, CallbackInfo ci) {
+    private void arclight$checkValid(
+        BlockState state,
+        ServerLevel level,
+        BlockPos pos,
+        RandomSource p_221073_,
+        CallbackInfo ci
+    ) {
         if (!state.canSurvive(level, pos)) {
             ci.cancel();
         }

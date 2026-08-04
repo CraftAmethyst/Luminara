@@ -19,9 +19,23 @@ public class PlayerAdvancementsMixin {
     @Shadow
     private ServerPlayer player;
 
-    @Inject(method = "award",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/Advancement;getRewards()Lnet/minecraft/advancements/AdvancementRewards;"))
-    public void arclight$callEvent(Advancement advancementIn, String criterionKey, CallbackInfoReturnable<Boolean> cir) {
-        Bukkit.getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent((Player) ((EntityBridge) this.player).bridge$getBukkitEntity(), ((AdvancementBridge) advancementIn).bridge$getBukkit()));
+    @Inject(
+        method = "award",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/advancements/Advancement;getRewards()Lnet/minecraft/advancements/AdvancementRewards;"
+        )
+    )
+    public void arclight$callEvent(
+        Advancement advancementIn,
+        String criterionKey,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        Bukkit.getPluginManager().callEvent(
+            new org.bukkit.event.player.PlayerAdvancementDoneEvent(
+                (Player) ((EntityBridge) this.player).bridge$getBukkitEntity(),
+                ((AdvancementBridge) advancementIn).bridge$getBukkit()
+            )
+        );
     }
 }

@@ -1,10 +1,9 @@
 package io.papermc.paper.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A mutable transforming view backed by another list.
@@ -12,20 +11,25 @@ import java.util.function.Predicate;
  * @param <F> backing element type
  * @param <T> transformed element type
  */
-public final class TransformingRandomAccessList<F, T> extends AbstractList<T> implements RandomAccess {
+public final class TransformingRandomAccessList<F, T>
+    extends AbstractList<T>
+    implements RandomAccess {
 
     private final List<F> fromList;
     private final Function<? super F, ? extends T> toFunction;
     private final Function<? super T, ? extends F> fromFunction;
 
     public TransformingRandomAccessList(
-            final @NotNull List<F> fromList,
-            final @NotNull Function<? super F, ? extends T> toFunction,
-            final @NotNull Function<? super T, ? extends F> fromFunction
+        final @NotNull List<F> fromList,
+        final @NotNull Function<? super F, ? extends T> toFunction,
+        final @NotNull Function<? super T, ? extends F> fromFunction
     ) {
         this.fromList = Objects.requireNonNull(fromList, "fromList");
         this.toFunction = Objects.requireNonNull(toFunction, "toFunction");
-        this.fromFunction = Objects.requireNonNull(fromFunction, "fromFunction");
+        this.fromFunction = Objects.requireNonNull(
+            fromFunction,
+            "fromFunction"
+        );
     }
 
     @Override
@@ -45,7 +49,9 @@ public final class TransformingRandomAccessList<F, T> extends AbstractList<T> im
 
     @Override
     public @NotNull ListIterator<T> listIterator(int index) {
-        return new TransformedListIterator<F, T>(this.fromList.listIterator(index)) {
+        return new TransformedListIterator<F, T>(
+            this.fromList.listIterator(index)
+        ) {
             @Override
             T transform(F from) {
                 return TransformingRandomAccessList.this.toFunction.apply(from);
@@ -66,7 +72,9 @@ public final class TransformingRandomAccessList<F, T> extends AbstractList<T> im
     @Override
     public boolean removeIf(Predicate<? super T> filter) {
         Objects.requireNonNull(filter, "filter");
-        return this.fromList.removeIf(element -> filter.test(this.toFunction.apply(element)));
+        return this.fromList.removeIf(element ->
+            filter.test(this.toFunction.apply(element))
+        );
     }
 
     @Override
@@ -81,7 +89,9 @@ public final class TransformingRandomAccessList<F, T> extends AbstractList<T> im
 
     @Override
     public T set(int index, T element) {
-        return this.toFunction.apply(this.fromList.set(index, this.fromFunction.apply(element)));
+        return this.toFunction.apply(
+            this.fromList.set(index, this.fromFunction.apply(element))
+        );
     }
 
     @Override
@@ -89,11 +99,16 @@ public final class TransformingRandomAccessList<F, T> extends AbstractList<T> im
         this.fromList.add(index, this.fromFunction.apply(element));
     }
 
-    static abstract class TransformedListIterator<F, T> implements ListIterator<T>, Iterator<T> {
+    abstract static class TransformedListIterator<F, T>
+        implements ListIterator<T>, Iterator<T> {
+
         final Iterator<F> backingIterator;
 
         TransformedListIterator(ListIterator<F> backingIterator) {
-            this.backingIterator = Objects.requireNonNull(backingIterator, "backingIterator");
+            this.backingIterator = Objects.requireNonNull(
+                backingIterator,
+                "backingIterator"
+            );
         }
 
         @SuppressWarnings("unchecked")

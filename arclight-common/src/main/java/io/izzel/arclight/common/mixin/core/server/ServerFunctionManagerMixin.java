@@ -20,7 +20,11 @@ public class ServerFunctionManagerMixin {
     MinecraftServer server;
 
     @Inject(method = "getDispatcher", cancellable = true, at = @At("HEAD"))
-    private void arclight$useVanillaDispatcher(CallbackInfoReturnable<CommandDispatcher<CommandSourceStack>> cir) {
-        cir.setReturnValue(((MinecraftServerBridge) this.server).bridge$getVanillaCommands().getDispatcher());
+    private void arclight$useVanillaDispatcher(
+        CallbackInfoReturnable<CommandDispatcher<CommandSourceStack>> cir
+    ) {
+        cir.setReturnValue(
+            ((MinecraftServerBridge) this.server).bridge$getVanillaCommands().getDispatcher()
+        );
     }
 }

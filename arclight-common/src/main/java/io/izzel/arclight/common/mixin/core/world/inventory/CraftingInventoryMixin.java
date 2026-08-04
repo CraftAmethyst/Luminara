@@ -4,6 +4,8 @@ import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.inventory.CraftingInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.PosContainerBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -20,20 +22,21 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(TransientCraftingContainer.class)
-public abstract class CraftingInventoryMixin implements CraftingInventoryBridge, Container {
+public abstract class CraftingInventoryMixin
+    implements CraftingInventoryBridge, Container {
 
     @Shadow
     @Final
     public AbstractContainerMenu menu;
+
     public List<HumanEntity> transaction = new ArrayList<>();
     // @formatter:on
     public Container resultInventory;
+
     // @formatter:off
     @Shadow @Final private NonNullList<ItemStack> items;
+
     private Recipe<?> currentRecipe;
     private Player owner;
     private InventoryHolder bukkitOwner;

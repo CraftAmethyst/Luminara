@@ -14,11 +14,24 @@ public abstract class BatMixin extends MobMixin {
 
     // @formatter:off
     @Shadow public abstract boolean isResting();
+
     // @formatter:on
 
-    @Inject(method = "customServerAiStep", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ambient/Bat;setResting(Z)V"))
+    @Inject(
+        method = "customServerAiStep",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/ambient/Bat;setResting(Z)V"
+        )
+    )
     private void arclight$toggleSleep(CallbackInfo ci) {
-        if (!CraftEventFactory.handleBatToggleSleepEvent((Bat) (Object) this, !this.isResting())) {
+        if (
+            !CraftEventFactory.handleBatToggleSleepEvent(
+                (Bat) (Object) this,
+                !this.isResting()
+            )
+        ) {
             ci.cancel();
         }
     }

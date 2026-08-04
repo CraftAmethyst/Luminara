@@ -17,36 +17,129 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LayeredCauldronBlock.class)
 public class LayeredCauldronBlockMixin {
 
-    @Redirect(method = "lowerFillLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private static boolean arclight$lowerFill(Level level, BlockPos pos, BlockState state, BlockState old) {
-        return CauldronHooks.changeLevel(old, level, pos, state, CauldronHooks.getEntity(), CauldronHooks.getReason());
+    @Redirect(
+        method = "lowerFillLevel",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+        )
+    )
+    private static boolean arclight$lowerFill(
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        BlockState old
+    ) {
+        return CauldronHooks.changeLevel(
+            old,
+            level,
+            pos,
+            state,
+            CauldronHooks.getEntity(),
+            CauldronHooks.getReason()
+        );
     }
 
-    @Redirect(method = "entityInside", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;clearFire()V"))
-    private void arclight$extinguish1(Entity entity) {
+    @Redirect(
+        method = "entityInside",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;clearFire()V"
+        )
+    )
+    private void arclight$extinguish1(Entity entity) {}
+
+    @Inject(
+        method = "entityInside",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/LayeredCauldronBlock;handleEntityOnFireInside(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"
+        )
+    )
+    private void arclight$extinguish2(
+        BlockState p_153534_,
+        Level p_153535_,
+        BlockPos p_153536_,
+        Entity entity,
+        CallbackInfo ci
+    ) {
+        CauldronHooks.setChangeReason(
+            entity,
+            CauldronLevelChangeEvent.ChangeReason.EXTINGUISH
+        );
     }
 
-    @Inject(method = "entityInside", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/LayeredCauldronBlock;handleEntityOnFireInside(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-    private void arclight$extinguish2(BlockState p_153534_, Level p_153535_, BlockPos p_153536_, Entity entity, CallbackInfo ci) {
-        CauldronHooks.setChangeReason(entity, CauldronLevelChangeEvent.ChangeReason.EXTINGUISH);
-    }
-
-    @Inject(method = "entityInside", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/block/LayeredCauldronBlock;handleEntityOnFireInside(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-    private void arclight$extinguish3(BlockState p_153534_, Level p_153535_, BlockPos p_153536_, Entity p_153537_, CallbackInfo ci) {
+    @Inject(
+        method = "entityInside",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/level/block/LayeredCauldronBlock;handleEntityOnFireInside(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"
+        )
+    )
+    private void arclight$extinguish3(
+        BlockState p_153534_,
+        Level p_153535_,
+        BlockPos p_153536_,
+        Entity p_153537_,
+        CallbackInfo ci
+    ) {
         if (!CauldronHooks.getResult()) {
             ci.cancel();
         }
         CauldronHooks.reset();
     }
 
-    @Redirect(method = "handlePrecipitation", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private boolean arclight$precipitation(Level level, BlockPos pos, BlockState state, BlockState old) {
-        return CauldronHooks.changeLevel(old, level, pos, state, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL);
+    @Redirect(
+        method = "handlePrecipitation",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+        )
+    )
+    private boolean arclight$precipitation(
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        BlockState old
+    ) {
+        return CauldronHooks.changeLevel(
+            old,
+            level,
+            pos,
+            state,
+            null,
+            CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL
+        );
     }
 
-    @Eject(method = "m_142310_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_46597_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z", remap = false))
-    private boolean arclight$drip(Level level, BlockPos pos, BlockState state, CallbackInfo ci, BlockState old) {
-        if (CauldronHooks.changeLevel(old, level, pos, state, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL)) {
+    @Eject(
+        method = "m_142310_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;m_46597_(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z",
+            remap = false
+        )
+    )
+    private boolean arclight$drip(
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        CallbackInfo ci,
+        BlockState old
+    ) {
+        if (
+            CauldronHooks.changeLevel(
+                old,
+                level,
+                pos,
+                state,
+                null,
+                CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL
+            )
+        ) {
             return true;
         } else {
             ci.cancel();

@@ -9,7 +9,9 @@ import org.spongepowered.asm.mixin.injection.struct.InjectionInfo;
 
 public class ArclightConnector implements IMixinConnector {
 
-    public static final Logger LOGGER = ArclightI18nLogger.getLogger("Arclight");
+    public static final Logger LOGGER = ArclightI18nLogger.getLogger(
+        "Arclight"
+    );
 
     @Override
     public void connect() {

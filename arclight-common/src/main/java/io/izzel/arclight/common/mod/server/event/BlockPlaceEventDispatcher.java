@@ -4,6 +4,8 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.mod.util.ArclightBlockSnapshot;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -19,9 +21,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BlockPlaceEventDispatcher {
 
     @SubscribeEvent(receiveCanceled = true)
@@ -31,9 +30,18 @@ public class BlockPlaceEventDispatcher {
             Player player = playerEntity.bridge$getBukkitEntity();
             Direction direction = ArclightCaptures.getPlaceEventDirection();
             if (direction != null && DistValidate.isValid(event.getLevel())) {
-                InteractionHand hand = ArclightCaptures.getPlaceEventHand(InteractionHand.MAIN_HAND);
-                CraftBlock placedBlock = ArclightBlockSnapshot.fromBlockSnapshot(event.getBlockSnapshot(), true);
-                CraftBlock againstBlock = CraftBlock.at(event.getLevel(), event.getPos().relative(direction.getOpposite()));
+                InteractionHand hand = ArclightCaptures.getPlaceEventHand(
+                    InteractionHand.MAIN_HAND
+                );
+                CraftBlock placedBlock =
+                    ArclightBlockSnapshot.fromBlockSnapshot(
+                        event.getBlockSnapshot(),
+                        true
+                    );
+                CraftBlock againstBlock = CraftBlock.at(
+                    event.getLevel(),
+                    event.getPos().relative(direction.getOpposite())
+                );
                 ItemStack bukkitStack;
                 EquipmentSlot bukkitHand;
                 if (hand == InteractionHand.MAIN_HAND) {
@@ -44,17 +52,19 @@ public class BlockPlaceEventDispatcher {
                     bukkitHand = EquipmentSlot.OFF_HAND;
                 }
                 BlockPlaceEvent placeEvent = new BlockPlaceEvent(
-                        placedBlock,
-                        placedBlock.getState(),
-                        againstBlock,
-                        bukkitStack,
-                        player,
-                        !event.isCanceled(),
-                        bukkitHand
+                    placedBlock,
+                    placedBlock.getState(),
+                    againstBlock,
+                    bukkitStack,
+                    player,
+                    !event.isCanceled(),
+                    bukkitHand
                 );
                 placeEvent.setCancelled(event.isCanceled());
                 Bukkit.getPluginManager().callEvent(placeEvent);
-                event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
+                event.setCanceled(
+                    placeEvent.isCancelled() || !placeEvent.canBuild()
+                );
             }
         }
     }
@@ -66,12 +76,24 @@ public class BlockPlaceEventDispatcher {
             Player player = playerEntity.bridge$getBukkitEntity();
             Direction direction = ArclightCaptures.getPlaceEventDirection();
             if (direction != null && DistValidate.isValid(event.getLevel())) {
-                InteractionHand hand = ArclightCaptures.getPlaceEventHand(InteractionHand.MAIN_HAND);
-                List<BlockState> placedBlocks = new ArrayList<>(event.getReplacedBlockSnapshots().size());
+                InteractionHand hand = ArclightCaptures.getPlaceEventHand(
+                    InteractionHand.MAIN_HAND
+                );
+                List<BlockState> placedBlocks = new ArrayList<>(
+                    event.getReplacedBlockSnapshots().size()
+                );
                 for (BlockSnapshot snapshot : event.getReplacedBlockSnapshots()) {
-                    placedBlocks.add(ArclightBlockSnapshot.fromBlockSnapshot(snapshot, true).getState());
+                    placedBlocks.add(
+                        ArclightBlockSnapshot.fromBlockSnapshot(
+                            snapshot,
+                            true
+                        ).getState()
+                    );
                 }
-                CraftBlock againstBlock = CraftBlock.at(event.getLevel(), event.getPos().relative(direction.getOpposite()));
+                CraftBlock againstBlock = CraftBlock.at(
+                    event.getLevel(),
+                    event.getPos().relative(direction.getOpposite())
+                );
                 ItemStack bukkitStack;
                 if (hand == InteractionHand.MAIN_HAND) {
                     bukkitStack = player.getInventory().getItemInMainHand();
@@ -79,15 +101,17 @@ public class BlockPlaceEventDispatcher {
                     bukkitStack = player.getInventory().getItemInOffHand();
                 }
                 BlockPlaceEvent placeEvent = new BlockMultiPlaceEvent(
-                        placedBlocks,
-                        againstBlock,
-                        bukkitStack,
-                        player,
-                        !event.isCanceled()
+                    placedBlocks,
+                    againstBlock,
+                    bukkitStack,
+                    player,
+                    !event.isCanceled()
                 );
                 placeEvent.setCancelled(event.isCanceled());
                 Bukkit.getPluginManager().callEvent(placeEvent);
-                event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
+                event.setCanceled(
+                    placeEvent.isCancelled() || !placeEvent.canBuild()
+                );
             }
         }
     }

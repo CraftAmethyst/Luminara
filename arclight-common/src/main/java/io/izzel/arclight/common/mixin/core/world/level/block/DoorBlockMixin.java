@@ -24,9 +24,13 @@ public abstract class DoorBlockMixin {
 
     // @formatter:off
     @Shadow @Final public static EnumProperty<DoubleBlockHalf> HALF;
+
     @Shadow @Final public static BooleanProperty POWERED;
+
     @Shadow @Final public static BooleanProperty OPEN;
+
     @Shadow protected abstract void playSound(@Nullable Entity p_251616_, Level p_249656_, BlockPos p_249439_, boolean p_251628_);
+
     // @formatter:on
 
     /**
@@ -34,8 +38,19 @@ public abstract class DoorBlockMixin {
      * @reason
      */
     @Overwrite
-    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        BlockPos blockPos = pos.relative(state.getValue(HALF) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN);
+    public void neighborChanged(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Block blockIn,
+        BlockPos fromPos,
+        boolean isMoving
+    ) {
+        BlockPos blockPos = pos.relative(
+            state.getValue(HALF) == DoubleBlockHalf.LOWER
+                ? Direction.UP
+                : Direction.DOWN
+        );
 
         org.bukkit.block.Block bukkitBlock = CraftBlock.at(worldIn, pos);
         org.bukkit.block.Block blockTop = CraftBlock.at(worldIn, blockPos);
@@ -45,8 +60,12 @@ public abstract class DoorBlockMixin {
         if (powerTop > power) power = powerTop;
         int oldPower = state.getValue(DoorBlock.POWERED) ? 15 : 0;
 
-        if (oldPower == 0 ^ power == 0) {
-            BlockRedstoneEvent event = new BlockRedstoneEvent(bukkitBlock, oldPower, power);
+        if ((oldPower == 0) ^ (power == 0)) {
+            BlockRedstoneEvent event = new BlockRedstoneEvent(
+                bukkitBlock,
+                oldPower,
+                power
+            );
             Bukkit.getPluginManager().callEvent(event);
 
             boolean flag = event.getNewCurrent() > 0;
@@ -54,7 +73,11 @@ public abstract class DoorBlockMixin {
                 this.playSound(null, worldIn, pos, flag);
             }
 
-            worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
+            worldIn.setBlock(
+                pos,
+                state.setValue(POWERED, flag).setValue(OPEN, flag),
+                2
+            );
         }
     }
 }

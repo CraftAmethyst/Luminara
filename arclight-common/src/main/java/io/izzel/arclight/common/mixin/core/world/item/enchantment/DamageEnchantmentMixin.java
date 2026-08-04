@@ -13,8 +13,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DamageEnchantment.class)
 public class DamageEnchantmentMixin {
 
-    @Inject(method = "doPostAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    public void arclight$entityDamage(LivingEntity user, Entity target, int level, CallbackInfo ci) {
-        ((LivingEntityBridge) target).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
+    @Inject(
+        method = "doPostAttack",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"
+        )
+    )
+    public void arclight$entityDamage(
+        LivingEntity user,
+        Entity target,
+        int level,
+        CallbackInfo ci
+    ) {
+        ((LivingEntityBridge) target).bridge$pushEffectCause(
+            EntityPotionEffectEvent.Cause.ATTACK
+        );
     }
 }

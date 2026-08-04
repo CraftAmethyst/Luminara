@@ -12,8 +12,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(IronGolem.class)
 public abstract class IronGolemMixin extends PathfinderMobMixin {
 
-    @Inject(method = "doPush", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/IronGolem;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"))
+    @Inject(
+        method = "doPush",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/animal/IronGolem;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"
+        )
+    )
     private void arclight$targetReason(Entity entityIn, CallbackInfo ci) {
-        bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.COLLISION, true);
+        bridge$pushGoalTargetReason(
+            EntityTargetEvent.TargetReason.COLLISION,
+            true
+        );
     }
 }

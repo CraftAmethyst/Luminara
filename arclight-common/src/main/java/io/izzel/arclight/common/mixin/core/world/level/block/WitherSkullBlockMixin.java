@@ -21,14 +21,41 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(WitherSkullBlock.class)
 public class WitherSkullBlockMixin {
 
-    @Redirect(method = "checkSpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/CarvedPumpkinBlock;clearPatternBlocks(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/pattern/BlockPattern$BlockPatternMatch;)V"))
-    private static void arclight$clearLater(Level p_249604_, BlockPattern.BlockPatternMatch p_251190_) {
-    }
+    @Redirect(
+        method = "checkSpawn",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/CarvedPumpkinBlock;clearPatternBlocks(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/pattern/BlockPattern$BlockPatternMatch;)V"
+        )
+    )
+    private static void arclight$clearLater(
+        Level p_249604_,
+        BlockPattern.BlockPatternMatch p_251190_
+    ) {}
 
-    @Inject(method = "checkSpawn", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;makeInvulnerable()V"))
-    private static void arclight$addEntity(Level level, BlockPos pos, SkullBlockEntity p_58258_, CallbackInfo ci,
-                                           BlockState state, boolean flag, BlockPattern.BlockPatternMatch patternMatch, WitherBoss witherBoss) {
-        ((WorldBridge) level).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.BUILD_WITHER);
+    @Inject(
+        method = "checkSpawn",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/world/entity/boss/wither/WitherBoss;makeInvulnerable()V"
+        )
+    )
+    private static void arclight$addEntity(
+        Level level,
+        BlockPos pos,
+        SkullBlockEntity p_58258_,
+        CallbackInfo ci,
+        BlockState state,
+        boolean flag,
+        BlockPattern.BlockPatternMatch patternMatch,
+        WitherBoss witherBoss
+    ) {
+        ((WorldBridge) level).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.BUILD_WITHER
+        );
         if (!level.addFreshEntity(witherBoss)) {
             ci.cancel();
         } else {
@@ -36,7 +63,13 @@ public class WitherSkullBlockMixin {
         }
     }
 
-    @Redirect(method = "checkSpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    @Redirect(
+        method = "checkSpawn",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     private static boolean arclight$muteSpawn(Level instance, Entity entity) {
         return true;
     }

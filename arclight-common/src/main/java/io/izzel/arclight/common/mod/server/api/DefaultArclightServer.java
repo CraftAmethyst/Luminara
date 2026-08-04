@@ -13,7 +13,11 @@ public class DefaultArclightServer implements ArclightServer {
     private final TickingTracker tickingTracker = new DefaultTickingTracker();
 
     @Override
-    public void registerForgeEvent(Plugin plugin, IEventBus bus, Object target) {
+    public void registerForgeEvent(
+        Plugin plugin,
+        IEventBus bus,
+        Object target
+    ) {
         try {
             if (bus instanceof EventBus) {
                 PluginEventHandler.register(plugin, (EventBus) bus, target);

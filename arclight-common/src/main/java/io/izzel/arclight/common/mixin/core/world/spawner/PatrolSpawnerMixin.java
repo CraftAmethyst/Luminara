@@ -14,8 +14,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PatrolSpawner.class)
 public class PatrolSpawnerMixin {
 
-    @Inject(method = "spawnPatrolMember", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
-    public void arclight$spawnReason(ServerLevel worldIn, BlockPos p_222695_2_, RandomSource random, boolean p_222695_4_, CallbackInfoReturnable<Boolean> cir) {
-        ((WorldBridge) worldIn).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.PATROL);
+    @Inject(
+        method = "spawnPatrolMember",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"
+        )
+    )
+    public void arclight$spawnReason(
+        ServerLevel worldIn,
+        BlockPos p_222695_2_,
+        RandomSource random,
+        boolean p_222695_4_,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        ((WorldBridge) worldIn).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.PATROL
+        );
     }
 }

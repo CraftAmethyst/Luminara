@@ -19,6 +19,11 @@ public class NearestAttackableTargetGoalMixin extends TargetGoalMixin {
 
     @Inject(method = "start", at = @At("HEAD"))
     public void arclight$reason(CallbackInfo ci) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(this.target instanceof ServerPlayer ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
+        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
+            this.target instanceof ServerPlayer
+                ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER
+                : EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
+            true
+        );
     }
 }

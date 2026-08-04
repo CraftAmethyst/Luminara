@@ -1,6 +1,10 @@
 package io.izzel.arclight.common.mod.util;
 
 import io.izzel.arclight.common.mod.ArclightConstants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Stack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.WorldLoader;
@@ -17,11 +21,6 @@ import org.bukkit.craftbukkit.v.event.CraftPortalEvent;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Stack;
-
 public class ArclightCaptures {
 
     /**
@@ -31,7 +30,8 @@ public class ArclightCaptures {
      * @see net.minecraft.server.level.ServerPlayerGameMode#destroyBlock(BlockPos)
      */
     public static boolean isPrimaryEvent = false;
-    public static Stack<BlockBreakEventContext> blockBreakEventStack = new Stack<>();
+    public static Stack<BlockBreakEventContext> blockBreakEventStack =
+        new Stack<>();
     private static Entity entityChangeBlock;
     private static String quitMessage;
     private static Direction placeEventDirection;
@@ -72,7 +72,9 @@ public class ArclightCaptures {
     }
 
     public static void captureBlockBreakPlayer(BlockBreakEvent event) {
-        blockBreakEventStack.push(new BlockBreakEventContext(event, isPrimaryEvent));
+        blockBreakEventStack.push(
+            new BlockBreakEventContext(event, isPrimaryEvent)
+        );
         isPrimaryEvent = false;
     }
 
@@ -89,7 +91,8 @@ public class ArclightCaptures {
 
             // deal with unhandled secondary events
             // should never happen, but just in case
-            ArrayList<BlockBreakEventContext> unhandledEvents = new ArrayList<>();
+            ArrayList<BlockBreakEventContext> unhandledEvents =
+                new ArrayList<>();
             while (!blockBreakEventStack.empty() && !eventContext.isPrimary()) {
                 unhandledEvents.add(eventContext);
                 eventContext = blockBreakEventStack.pop();
@@ -171,7 +174,9 @@ public class ArclightCaptures {
         }
     }
 
-    public static void captureWorkbenchContainer(AbstractContainerMenu container) {
+    public static void captureWorkbenchContainer(
+        AbstractContainerMenu container
+    ) {
         arclight$capturedContainer = container;
     }
 
@@ -249,7 +254,9 @@ public class ArclightCaptures {
         }
     }
 
-    public static void captureDataLoadContext(WorldLoader.DataLoadContext context) {
+    public static void captureDataLoadContext(
+        WorldLoader.DataLoadContext context
+    ) {
         dataLoadContext = context;
     }
 
@@ -334,10 +341,10 @@ public class ArclightCaptures {
 
     public static class BlockBreakEventContext {
 
-        final private BlockBreakEvent blockBreakEvent;
-        final private ArrayList<ItemEntity> blockDrops;
-        final private BlockState blockBreakPlayerState;
-        final private boolean primary;
+        private final BlockBreakEvent blockBreakEvent;
+        private final ArrayList<ItemEntity> blockDrops;
+        private final BlockState blockBreakPlayerState;
+        private final boolean primary;
 
         public BlockBreakEventContext(BlockBreakEvent event, boolean primary) {
             this.blockBreakEvent = event;

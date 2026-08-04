@@ -1,25 +1,30 @@
 package io.izzel.arclight.boot.asm;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import java.lang.reflect.Modifier;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import java.lang.reflect.Modifier;
-
 public class InventoryImplementer implements Implementer {
 
     private static final Marker MARKER = MarkerManager.getMarker("INVENTORY");
-    private static final String BRIDGE_TYPE = "io/izzel/arclight/common/bridge/core/inventory/IInventoryBridge";
+    private static final String BRIDGE_TYPE =
+        "io/izzel/arclight/common/bridge/core/inventory/IInventoryBridge";
 
-    public InventoryImplementer() {
-    }
+    public InventoryImplementer() {}
 
     @Override
-    public boolean processClass(ClassNode node, ILaunchPluginService.ITransformerLoader transformerLoader) {
-        if (Modifier.isInterface(node.access) || node.interfaces.contains(BRIDGE_TYPE)) {
+    public boolean processClass(
+        ClassNode node,
+        ILaunchPluginService.ITransformerLoader transformerLoader
+    ) {
+        if (
+            Modifier.isInterface(node.access) ||
+            node.interfaces.contains(BRIDGE_TYPE)
+        ) {
             return false;
         }
         return tryImplement(node);
@@ -28,7 +33,12 @@ public class InventoryImplementer implements Implementer {
     private boolean tryImplement(ClassNode node) {
         MethodNode stackLimitMethod = null;
         for (MethodNode method : node.methods) {
-            if (!Modifier.isAbstract(method.access) && method.name.equals("m_6893_") && method.desc.equals("()I")) { // getMaxStackSize
+            if (
+                !Modifier.isAbstract(method.access) &&
+                method.name.equals("m_6893_") &&
+                method.desc.equals("()I")
+            ) {
+                // getMaxStackSize
                 stackLimitMethod = method;
                 break;
             }
@@ -37,34 +47,89 @@ public class InventoryImplementer implements Implementer {
             return false;
         } else {
             for (MethodNode method : node.methods) {
-                if (method.name.equals("setMaxStackSize") && method.desc.equals("(I)V")) {
-                    ArclightImplementer.LOGGER.debug(MARKER, "Found implemented class {}", node.name);
+                if (
+                    method.name.equals("setMaxStackSize") &&
+                    method.desc.equals("(I)V")
+                ) {
+                    ArclightImplementer.LOGGER.debug(
+                        MARKER,
+                        "Found implemented class {}",
+                        node.name
+                    );
                     return false;
                 }
             }
 
-            ArclightImplementer.LOGGER.debug(MARKER, "Implementing inventory for class {}", node.name);
-            FieldNode maxStack = new FieldNode(Opcodes.ACC_PRIVATE, "arclight$maxStack", Type.getType(Integer.class).getDescriptor(), null, null);
+            ArclightImplementer.LOGGER.debug(
+                MARKER,
+                "Implementing inventory for class {}",
+                node.name
+            );
+            FieldNode maxStack = new FieldNode(
+                Opcodes.ACC_PRIVATE,
+                "arclight$maxStack",
+                Type.getType(Integer.class).getDescriptor(),
+                null,
+                null
+            );
             node.fields.add(maxStack);
             node.interfaces.add(BRIDGE_TYPE);
             InsnList list = new InsnList();
             LabelNode labelNode = new LabelNode();
             list.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, maxStack.name, maxStack.desc));
+            list.add(
+                new FieldInsnNode(
+                    Opcodes.GETFIELD,
+                    node.name,
+                    maxStack.name,
+                    maxStack.desc
+                )
+            );
             list.add(new InsnNode(Opcodes.DUP));
             list.add(new JumpInsnNode(Opcodes.IFNULL, labelNode));
-            list.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(Integer.class), "intValue", "()I", false));
+            list.add(
+                new MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    Type.getInternalName(Integer.class),
+                    "intValue",
+                    "()I",
+                    false
+                )
+            );
             list.add(new InsnNode(Opcodes.IRETURN));
             list.add(labelNode);
             list.add(new InsnNode(Opcodes.POP));
             stackLimitMethod.instructions.insert(list);
             {
-                MethodNode methodNode = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "setMaxStackSize", "(I)V", null, null);
+                MethodNode methodNode = new MethodNode(
+                    Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC,
+                    "setMaxStackSize",
+                    "(I)V",
+                    null,
+                    null
+                );
                 InsnList insnList = new InsnList();
                 insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
                 insnList.add(new VarInsnNode(Opcodes.ILOAD, 1));
-                insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(Integer.class), "valueOf", Type.getMethodDescriptor(Type.getType(Integer.class), Type.INT_TYPE)));
-                insnList.add(new FieldInsnNode(Opcodes.PUTFIELD, node.name, maxStack.name, maxStack.desc));
+                insnList.add(
+                    new MethodInsnNode(
+                        Opcodes.INVOKESTATIC,
+                        Type.getInternalName(Integer.class),
+                        "valueOf",
+                        Type.getMethodDescriptor(
+                            Type.getType(Integer.class),
+                            Type.INT_TYPE
+                        )
+                    )
+                );
+                insnList.add(
+                    new FieldInsnNode(
+                        Opcodes.PUTFIELD,
+                        node.name,
+                        maxStack.name,
+                        maxStack.desc
+                    )
+                );
                 insnList.add(new InsnNode(Opcodes.RETURN));
                 methodNode.instructions = insnList;
                 node.methods.add(methodNode);

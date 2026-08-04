@@ -26,8 +26,10 @@ public class InfoSubCommand implements LuminaraSubCommand {
     @Override
     public LiteralArgumentBuilder<CommandSourceStack> build() {
         return Commands.literal(getName())
-                .requires(source -> source.hasPermission(getRequiredPermissionLevel()))
-                .executes(this::execute);
+            .requires(source ->
+                source.hasPermission(getRequiredPermissionLevel())
+            )
+            .executes(this::execute);
     }
 
     @Override
@@ -37,16 +39,38 @@ public class InfoSubCommand implements LuminaraSubCommand {
 
     private int execute(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        CommandSender sender = ((CommandSourceBridge) source).bridge$getBukkitSender();
+        CommandSender sender =
+            ((CommandSourceBridge) source).bridge$getBukkitSender();
 
         try {
             sender.sendMessage("§6=== Luminara Information ===");
-            sender.sendMessage("§eLuminara Version: §f" + LuminaraVersion.version() + " (" + LuminaraVersion.gitCommit() + ")");
-            sender.sendMessage("§eMinecraft / Forge / Java: §f" + LuminaraVersion.minecraftVersion() + " / "
-                    + LuminaraVersion.forgeVersion() + " / " + LuminaraVersion.javaVersion());
-            sender.sendMessage("§eCraftBukkit Package: §f" + LuminaraVersion.bukkitPackage());
-            sender.sendMessage("§eBukkit Version: §f" + Bukkit.getBukkitVersion());
-            sender.sendMessage("§eOnline Players: §f" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers());
+            sender.sendMessage(
+                "§eLuminara Version: §f" +
+                    LuminaraVersion.version() +
+                    " (" +
+                    LuminaraVersion.gitCommit() +
+                    ")"
+            );
+            sender.sendMessage(
+                "§eMinecraft / Forge / Java: §f" +
+                    LuminaraVersion.minecraftVersion() +
+                    " / " +
+                    LuminaraVersion.forgeVersion() +
+                    " / " +
+                    LuminaraVersion.javaVersion()
+            );
+            sender.sendMessage(
+                "§eCraftBukkit Package: §f" + LuminaraVersion.bukkitPackage()
+            );
+            sender.sendMessage(
+                "§eBukkit Version: §f" + Bukkit.getBukkitVersion()
+            );
+            sender.sendMessage(
+                "§eOnline Players: §f" +
+                    Bukkit.getOnlinePlayers().size() +
+                    "/" +
+                    Bukkit.getMaxPlayers()
+            );
 
             // Runtime information
             Runtime runtime = Runtime.getRuntime();
@@ -55,15 +79,26 @@ public class InfoSubCommand implements LuminaraSubCommand {
             long freeMemory = runtime.freeMemory() / 1024 / 1024;
             long usedMemory = totalMemory - freeMemory;
 
-            sender.sendMessage("§eMemory Usage: §f" + usedMemory + "MB / " + maxMemory + "MB");
-            sender.sendMessage("§eAvailable Processors: §f" + runtime.availableProcessors());
+            sender.sendMessage(
+                "§eMemory Usage: §f" + usedMemory + "MB / " + maxMemory + "MB"
+            );
+            sender.sendMessage(
+                "§eAvailable Processors: §f" + runtime.availableProcessors()
+            );
 
             sender.sendMessage("§6========================");
 
-            source.sendSuccess(() -> Component.literal("Information displayed"), false);
+            source.sendSuccess(
+                () -> Component.literal("Information displayed"),
+                false
+            );
             return 1;
         } catch (Exception e) {
-            source.sendFailure(Component.literal("Failed to show information: " + e.getMessage()));
+            source.sendFailure(
+                Component.literal(
+                    "Failed to show information: " + e.getMessage()
+                )
+            );
             return 0;
         }
     }

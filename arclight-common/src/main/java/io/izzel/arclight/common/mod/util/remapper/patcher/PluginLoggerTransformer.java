@@ -12,12 +12,22 @@ import org.objectweb.asm.tree.MethodInsnNode;
 public class PluginLoggerTransformer implements PluginTransformer {
 
     @Override
-    public void handleClass(ClassNode node, ClassLoaderRemapper remapper, ArclightRemapConfig config) {
+    public void handleClass(
+        ClassNode node,
+        ClassLoaderRemapper remapper,
+        ArclightRemapConfig config
+    ) {
         for (var mn : node.methods) {
             for (var insn : mn.instructions) {
-                if (insn.getOpcode() == Opcodes.INVOKESTATIC && insn instanceof MethodInsnNode method
-                        && method.owner.equals("java/util/logging/Logger") && method.name.equals("getLogger")) {
-                    method.owner = Type.getInternalName(ArclightPluginLogger.class);
+                if (
+                    insn.getOpcode() == Opcodes.INVOKESTATIC &&
+                    insn instanceof MethodInsnNode method &&
+                    method.owner.equals("java/util/logging/Logger") &&
+                    method.name.equals("getLogger")
+                ) {
+                    method.owner = Type.getInternalName(
+                        ArclightPluginLogger.class
+                    );
                 }
             }
         }

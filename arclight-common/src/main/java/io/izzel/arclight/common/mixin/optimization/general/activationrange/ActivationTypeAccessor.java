@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(value = ActivationRange.ActivationType.class, remap = false)
 public interface ActivationTypeAccessor {
-
     @Accessor("boundingBox")
     AABB arclight$getBoundingBox();
 }

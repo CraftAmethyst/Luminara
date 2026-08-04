@@ -37,7 +37,9 @@ public class DerivedWorldInfoMixin implements DerivedWorldInfoBridge {
                 } else if (typeKey == LevelStem.END) {
                     suffix = "the_end";
                 } else {
-                    suffix = (typeKey.location().getNamespace() + "_" + typeKey.location().getPath()).replace('/', '_');
+                    suffix = (typeKey.location().getNamespace() +
+                        "_" +
+                        typeKey.location().getPath()).replace('/', '_');
                 }
                 return worldName + suffix;
             } else {
@@ -48,7 +50,10 @@ public class DerivedWorldInfoMixin implements DerivedWorldInfoBridge {
                 } else if (typeKey == LevelStem.NETHER) {
                     suffix = "DIM-1";
                 } else {
-                    suffix = typeKey.location().getNamespace() + "/" + typeKey.location().getPath();
+                    suffix =
+                        typeKey.location().getNamespace() +
+                        "/" +
+                        typeKey.location().getPath();
                 }
                 return worldName + suffix;
             }

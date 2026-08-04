@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelSettings;
 
 public interface WorldInfoBridge {
-
     void bridge$setWorld(ServerLevel world);
 
     ServerLevel bridge$getWorld();

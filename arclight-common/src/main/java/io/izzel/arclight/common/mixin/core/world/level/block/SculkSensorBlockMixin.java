@@ -25,24 +25,65 @@ public class SculkSensorBlockMixin {
     private int newCurrent;
 
     @Inject(method = "deactivate", cancellable = true, at = @At("HEAD"))
-    private static void arclight$deactivate(Level level, BlockPos pos, BlockState state, CallbackInfo ci) {
-        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(CraftBlock.at(level, pos), state.getValue(SculkSensorBlock.POWER), 0);
+    private static void arclight$deactivate(
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        CallbackInfo ci
+    ) {
+        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
+            CraftBlock.at(level, pos),
+            state.getValue(SculkSensorBlock.POWER),
+            0
+        );
         Bukkit.getPluginManager().callEvent(eventRedstone);
 
         if (eventRedstone.getNewCurrent() > 0) {
-            level.setBlock(pos, state.setValue(SculkSensorBlock.POWER, eventRedstone.getNewCurrent()), 3);
+            level.setBlock(
+                pos,
+                state.setValue(
+                    SculkSensorBlock.POWER,
+                    eventRedstone.getNewCurrent()
+                ),
+                3
+            );
             ci.cancel();
         }
     }
 
-    @Inject(method = "stepOn", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"))
-    private void arclight$stepOn(Level level, BlockPos pos, BlockState p_222134_, Entity entity, CallbackInfo ci) {
+    @Inject(
+        method = "stepOn",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"
+        )
+    )
+    private void arclight$stepOn(
+        Level level,
+        BlockPos pos,
+        BlockState p_222134_,
+        Entity entity,
+        CallbackInfo ci
+    ) {
         org.bukkit.event.Cancellable cancellable;
         if (entity instanceof Player) {
-            cancellable = CraftEventFactory.callPlayerInteractEvent((Player) entity, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
+            cancellable = CraftEventFactory.callPlayerInteractEvent(
+                (Player) entity,
+                org.bukkit.event.block.Action.PHYSICAL,
+                pos,
+                null,
+                null,
+                null
+            );
         } else {
-            cancellable = new org.bukkit.event.entity.EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), CraftBlock.at(level, pos));
-            Bukkit.getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
+            cancellable = new org.bukkit.event.entity.EntityInteractEvent(
+                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                CraftBlock.at(level, pos)
+            );
+            Bukkit.getPluginManager().callEvent(
+                (org.bukkit.event.entity.EntityInteractEvent) cancellable
+            );
         }
         if (cancellable.isCancelled()) {
             ci.cancel();
@@ -50,8 +91,20 @@ public class SculkSensorBlockMixin {
     }
 
     @Inject(method = "activate", cancellable = true, at = @At("HEAD"))
-    private void arclight$activate(Entity p_222126_, Level level, BlockPos pos, BlockState state, int i, int j, CallbackInfo ci) {
-        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(CraftBlock.at(level, pos), state.getValue(SculkSensorBlock.POWER), i);
+    private void arclight$activate(
+        Entity p_222126_,
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        int i,
+        int j,
+        CallbackInfo ci
+    ) {
+        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
+            CraftBlock.at(level, pos),
+            state.getValue(SculkSensorBlock.POWER),
+            i
+        );
         Bukkit.getPluginManager().callEvent(eventRedstone);
         if (eventRedstone.getNewCurrent() <= 0) {
             ci.cancel();
@@ -59,7 +112,15 @@ public class SculkSensorBlockMixin {
         newCurrent = eventRedstone.getNewCurrent();
     }
 
-    @ModifyVariable(method = "activate", ordinal = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"), argsOnly = true)
+    @ModifyVariable(
+        method = "activate",
+        ordinal = 0,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        ),
+        argsOnly = true
+    )
     private int arclight$updateCurrent(int old) {
         return newCurrent;
     }

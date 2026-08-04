@@ -10,8 +10,8 @@
 bootstrap:
   error: Luminara 引导程序错误
 chat:
-  empty-message: '{} 试图发送空消息'
-  message-too-long: '{} 试图发送过长的消息: {} 个字符'
+  empty-message: "{} 试图发送空消息"
+  message-too-long: "{} 试图发送过长的消息: {} 个字符"
   processing-exception: 处理聊天事件时发生异常
 chunk:
   load-callback:
@@ -20,16 +20,16 @@ chunk:
     failed: 为区块 {} 安排卸载回调失败
 classloader:
   class-not-found: 找不到类 {}
-  client-side-class: '加载客户端类: {}'
+  client-side-class: "加载客户端类: {}"
   dump-failed: 转储类 {} 失败
   no-remap-config: 类 {} 没有提供重映射配置，使用 PLUGIN
 comments:
   _v:
     comment:
-      - '源代码仓库: https://github.com/QianMo0721/Luminara'
-      - '提交反馈/错误报告: https://github.com/QianMo0721/Luminara/issues'
-      - ''
-      - ''
+      - "源代码仓库: https://github.com/QianMo0721/Luminara"
+      - "提交反馈/错误报告: https://github.com/QianMo0721/Luminara/issues"
+      - ""
+      - ""
       - 配置文件版本号，请勿编辑
   async-catcher:
     comment:
@@ -215,10 +215,10 @@ comments:
         - 通常应与 Velocity 配置中的 online-mode 设置保持一致
 component:
   bridge:
-    create-iterator-failed: '创建 Component iterator 失败: {}'
-    create-stream-failed: '创建 Component stream 失败: {}'
-    get-siblings-failed: '从 Component 获取 siblings 失败: {}'
-    init-failed: '初始化 ComponentBridgeHandler 失败: {}'
+    create-iterator-failed: "创建 Component iterator 失败: {}"
+    create-stream-failed: "创建 Component stream 失败: {}"
+    get-siblings-failed: "从 Component 获取 siblings 失败: {}"
+    init-failed: "初始化 ComponentBridgeHandler 失败: {}"
     method-not-found: 在 Component 类中找不到 getSiblings 方法
 entity:
   target:
@@ -228,11 +228,11 @@ enum:
 error-symlink: 文件系统不支持符号链接
 event:
   handler:
-    registration-failed: '注册事件处理器时发生错误: {} {}'
+    registration-failed: "注册事件处理器时发生错误: {} {}"
 i18n:
   using-language: 正在使用 {0} 语言，{1} 作为备选语言
 item:
-  legacy-itemstack: '正在使用旧版 ItemStack，更新将不会应用: {}'
+  legacy-itemstack: "正在使用旧版 ItemStack，更新将不会应用: {}"
 java:
   deprecated:
     - 您正在使用过时的 Java 版本
@@ -240,18 +240,18 @@ java:
     - 该版本的 Java 未来将不受支持
 loading-mapping: 正在加载混淆数据 ...
 logo:
-  - ''
-  - ''
-  - '    §1    __                    _                       '
-  - '    §9   / /   __  ______ ___  (_)___  ____ __________ _'
+  - ""
+  - ""
+  - "    §1    __                    _                       "
+  - "    §9   / /   __  ______ ___  (_)___  ____ __________ _"
   - '    §3  / /   / / / / __ `__ \/ / __ \/ __ `/ ___/ __ `/'
-  - '    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / '
+  - "    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / "
   - '    §e/_____/\__,_/_/ /_/ /_/_/_/ /_/\__,_/_/   \__,_/  '
-  - ''
-  - '    §eLuminara·流明纳拉 服务端 By§b QianMo0721'
-  - '    §a运行版本 {} / {}'
-  - '    §a构建日期 {}'
-  - ''
+  - ""
+  - "    §eLuminara·流明纳拉 服务端 By§b QianMo0721"
+  - "    §a运行版本 {} / {}"
+  - "    §a构建日期 {}"
+  - ""
 loot:
   container:
     overfill-attempt: 尝试过度填充容器
@@ -265,11 +265,11 @@ network:
   custom-payload:
     dispatch-failed: 无法分发自定义载荷
     register-error: 无法注册自定义载荷
-    register-string-too-long: '自定义载荷 REGISTER 字符串过长: {} 个字符'
-    register-too-large: '自定义载荷 REGISTER 过大: {} 字节'
+    register-string-too-long: "自定义载荷 REGISTER 字符串过长: {} 个字符"
+    register-too-large: "自定义载荷 REGISTER 过大: {} 字节"
     unregister-error: 无法注销自定义载荷
-    unregister-string-too-long: '自定义载荷 UNREGISTER 字符串过长: {} 个字符'
-    unregister-too-large: '自定义载荷 UNREGISTER 过大: {} 字节'
+    unregister-string-too-long: "自定义载荷 UNREGISTER 字符串过长: {} 个字符"
+    unregister-too-large: "自定义载荷 UNREGISTER 过大: {} 字节"
   packet:
     handle-failed: 处理数据包 {} 失败，抑制错误
 optimization:
@@ -282,20 +282,20 @@ optimization:
     handling-error: 处理 {} 和 {} 之间的异步碰撞时发生错误
     processing-error: 异步碰撞处理实体 {} 时发生错误
   async-event:
-    disabled-due-to-errors: '由于错误禁用事件类型的异步处理: {}'
+    disabled-due-to-errors: "由于错误禁用事件类型的异步处理: {}"
     handler-error: 事件 {} 的异步事件处理器发生错误
-    registered: '已注册异步事件: {}'
+    registered: "已注册异步事件: {}"
     shutdown-interrupted: 关闭期间被中断
   async-redstone:
     calculation-error: 计算红石信号时发生错误
     update-error: 在 {} 处理异步红石更新时发生错误
   chunk:
-    rate-limit: '区块加载速率限制: 原始 {} -> 限制 {}'
+    rate-limit: "区块加载速率限制: 原始 {} -> 限制 {}"
     unloaded: 已卸载 {} 个区块
     unloading: 正在卸载区块 [{}, {}] 在世界 {}
   error-handling:
     continue-on-crash-disabled: 崩溃后继续运行已禁用，服务器将停止
-    continue-on-crash-warning: '警告: 崩溃后继续运行已启用，这可能导致数据损坏'
+    continue-on-crash-warning: "警告: 崩溃后继续运行已启用，这可能导致数据损坏"
   manager:
     shutdown-error: 优化系统关闭时发生错误
   memory:
@@ -305,12 +305,12 @@ optimization:
     cleanup-complete: 内存清理完成，释放了 {} MB
     cleanup-start: 开始内存清理...
     gc-triggered: 触发垃圾回收
-    high-usage: '内存使用率过高: {}%'
+    high-usage: "内存使用率过高: {}%"
   thread:
     uncaught-exception: 线程 {} 中发生未捕获异常
   thread-pool:
-    forced-shutdown-failed: '{} 线程池强制关闭后仍未终止'
-    graceful-shutdown-failed: '{} 线程池未能正常关闭，强制关闭'
+    forced-shutdown-failed: "{} 线程池强制关闭后仍未终止"
+    graceful-shutdown-failed: "{} 线程池未能正常关闭，强制关闭"
     shutdown-interrupted: 关闭 {} 线程池时被中断
 patcher:
   load-error: 加载 Patcher 时发生错误
@@ -320,16 +320,16 @@ permission:
   forge-to-bukkit: 将 forge 权限[{}]转发到 bukkit
 player:
   attack-invalid-entity: 玩家 {} 尝试攻击无效实体
-  command-issued: '{} 执行了服务器命令: {}'
+  command-issued: "{} 执行了服务器命令: {}"
   data:
     load-failed: 加载玩家 {} 的数据失败
-  dropped-items-quickly: '{} 丢弃物品过快！'
-  invalid-hotbar: '{} 试图设置无效的快捷栏选择'
-  moved-too-quickly: '{} 移动过快！{},{},{}'
-  moved-wrongly: '{} 移动异常！'
+  dropped-items-quickly: "{} 丢弃物品过快！"
+  invalid-hotbar: "{} 试图设置无效的快捷栏选择"
+  moved-too-quickly: "{} 移动过快！{},{},{}"
+  moved-wrongly: "{} 移动异常！"
   place-in-world-failed: 无法将玩家放置到世界中
-  vehicle-moved-too-quickly: '{} ({} 的载具) 移动过快！{},{},{}'
-  vehicle-moved-wrongly: '{} ({} 的载具) 移动异常！{}'
+  vehicle-moved-too-quickly: "{} ({} 的载具) 移动过快！{},{},{}"
+  vehicle-moved-wrongly: "{} ({} 的载具) 移动异常！{}"
 recipe:
   loading:
     completed: 已加载 {} 个配方
@@ -339,21 +339,21 @@ registry:
   begin: 正在向 Bukkit 注册 ...
   biome: 注册了 {} 个新的生物群系
   block-state:
-    error: '{} 提供的 itemMetaType {} 无效: {}'
-    no-candidate: '{} 未在提供的 blockStateClass {} 找到合适的构造方法'
-    not-subclass: '{} 不是 {} 的子类'
+    error: "{} 提供的 itemMetaType {} 无效: {}"
+    no-candidate: "{} 未在提供的 blockStateClass {} 找到合适的构造方法"
+    not-subclass: "{} 不是 {} 的子类"
   entity:
-    error: '{} 提供的 entityClass {} 无效: {}'
-    not-subclass: '{} 不是 {} 的子类'
+    error: "{} 提供的 entityClass {} 无效: {}"
+    not-subclass: "{} 不是 {} 的子类"
   entity-type: 注册了 {} 个新的生物类型
   environment: 注册了 {} 个新的世界类型
-  error: '处理 Forge 注册时出错 '
+  error: "处理 Forge 注册时出错 "
   forge-event: Luminara 事件系统已注册
   material: 注册了 {} 个材料，其中 {} 个方块 {} 个物品
   meta-type:
-    error: '{} 提供的 itemMetaType {} 无效: {}'
-    no-candidate: '{} 未在提供的 itemMetaType {} 找到合适的构造方法'
-    not-subclass: '{} 不是 {} 的子类'
+    error: "{} 提供的 itemMetaType {} 无效: {}"
+    no-candidate: "{} 未在提供的 itemMetaType {} 找到合适的构造方法"
+    not-subclass: "{} 不是 {} 的子类"
   villager-profession: 注册了 {} 个新的村民职业
 release-name:
   Executions: 折威
@@ -367,7 +367,7 @@ server:
     timeout-or-failed: 异步世界保存未在超时时间内完成或失败
   continuing-after-crash: 根据配置，服务器将在崩溃后继续运行
   crash-report-failed: 无法将崩溃报告保存到磁盘
-  crash-report-saved: '崩溃报告已保存到: {}'
+  crash-report-saved: "崩溃报告已保存到: {}"
   overload-warning: 服务器无法跟上！服务器过载了吗？落后了 {} 毫秒或 {} 个tick
   preparing-start-region: 为维度 {} 准备起始区域
   starting: 正在启动 Luminara...
@@ -375,7 +375,7 @@ server:
   stopped: Luminara 服务器已关闭
   stopping: 正在关闭 Luminara...
   threads:
-    force-exit: '{} 个线程未正确关闭，强制退出'
+    force-exit: "{} 个线程未正确关闭，强制退出"
   unexpected-exception: 遇到意外异常
   world-save:
     all-successful: 所有世界保存成功
@@ -391,16 +391,16 @@ velocity:
   enabled: Velocity Modern 转发已启用
   failed-load-argument-types: 加载集成参数类型失败，使用默认值
   forwarding:
-    enabled-for-player: '已为玩家启用 Velocity Modern 转发: {} (在线模式: {})'
+    enabled-for-player: "已为玩家启用 Velocity Modern 转发: {} (在线模式: {})"
     initialized: Velocity Modern 转发已初始化
     packet-exception: 处理来自 {} 的 Velocity 转发数据包时发生异常
-    player-processed-successfully: '成功为玩家处理 Velocity 转发: {} (在线模式: {})'
-    processed-successfully: '成功为玩家处理 Velocity 转发: {}'
+    player-processed-successfully: "成功为玩家处理 Velocity 转发: {} (在线模式: {})"
+    processed-successfully: "成功为玩家处理 Velocity 转发: {}"
   loaded-argument-types: 已加载 {} 个集成参数类型
   login:
     exception-processing: 处理玩家 {} 的 Velocity 登录时发生异常
   packet:
-    too-small: 'Velocity 数据包过小: {} 字节'
+    too-small: "Velocity 数据包过小: {} 字节"
   query:
     null-response: 收到空数据的 Velocity 查询响应
     send-failed: 发送 Velocity 查询数据包失败
@@ -414,7 +414,7 @@ world:
   loading: 正在加载世界 {}
   save-error: 保存世界 {} 时发生错误
   saved-successfully: 世界 {} 保存成功
-  saving: '正在保存世界: {}'
+  saving: "正在保存世界: {}"
   unknown-level-stem: 将 {} 分配给未知的世界类型 {}
   unloaded: 世界 {} 已卸载
   unloading: 正在卸载世界 {}

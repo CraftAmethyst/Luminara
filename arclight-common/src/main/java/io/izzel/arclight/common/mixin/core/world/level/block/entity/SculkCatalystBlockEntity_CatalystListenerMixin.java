@@ -10,7 +10,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(SculkCatalystBlockEntity.CatalystListener.class)
-public class SculkCatalystBlockEntity_CatalystListenerMixin implements SculkCatalystListenerBridge {
+public class SculkCatalystBlockEntity_CatalystListenerMixin
+    implements SculkCatalystListenerBridge {
 
     @Shadow
     @Final

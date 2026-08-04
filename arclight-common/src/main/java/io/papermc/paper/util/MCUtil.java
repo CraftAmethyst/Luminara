@@ -1,18 +1,16 @@
 package io.papermc.paper.util;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.ChunkPos;
-
 import java.lang.ref.Cleaner;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 
 public final class MCUtil {
 
-    private MCUtil() {
-    }
+    private MCUtil() {}
 
     public static Runnable once(Runnable run) {
         AtomicBoolean ran = new AtomicBoolean(false);
@@ -33,14 +31,22 @@ public final class MCUtil {
         return cleaner;
     }
 
-    public static <T> Runnable registerListCleaner(Object obj, List<T> list, Consumer<T> cleaner) {
+    public static <T> Runnable registerListCleaner(
+        Object obj,
+        List<T> list,
+        Consumer<T> cleaner
+    ) {
         return registerCleaner(obj, () -> {
             list.forEach(cleaner);
             list.clear();
         });
     }
 
-    public static <T> Runnable registerCleaner(Object obj, T resource, Consumer<T> cleaner) {
+    public static <T> Runnable registerCleaner(
+        Object obj,
+        T resource,
+        Consumer<T> cleaner
+    ) {
         return registerCleaner(obj, () -> cleaner.accept(resource));
     }
 
@@ -55,11 +61,17 @@ public final class MCUtil {
     }
 
     public static long getCoordinateKey(final BlockPos blockPos) {
-        return ((long) (blockPos.getZ() >> 4) << 32) | ((blockPos.getX() >> 4) & 0xFFFFFFFFL);
+        return (
+            ((long) (blockPos.getZ() >> 4) << 32) |
+            ((blockPos.getX() >> 4) & 0xFFFFFFFFL)
+        );
     }
 
     public static long getCoordinateKey(final Entity entity) {
-        return ((long) (fastFloor(entity.getZ()) >> 4) << 32) | ((fastFloor(entity.getX()) >> 4) & 0xFFFFFFFFL);
+        return (
+            ((long) (fastFloor(entity.getZ()) >> 4) << 32) |
+            ((fastFloor(entity.getX()) >> 4) & 0xFFFFFFFFL)
+        );
     }
 
     public static long getCoordinateKey(final ChunkPos pair) {
@@ -79,6 +91,7 @@ public final class MCUtil {
     }
 
     private static final class CleanerHolder {
+
         private static final Cleaner CLEANER = Cleaner.create();
     }
 }

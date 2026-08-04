@@ -7,17 +7,16 @@ import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.mod.util.remapper.patcher.ArclightPluginPatcher;
 import io.izzel.arclight.common.mod.util.remapper.resource.RemapSourceHandler;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.function.Function;
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.JarRemapper;
 import net.md_5.specialsource.provider.ClassLoaderProvider;
 import net.md_5.specialsource.provider.JointProvider;
 import org.apache.commons.io.FileUtils;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
 public class ArclightRemapper {
@@ -39,12 +38,15 @@ public class ArclightRemapper {
                 }
                 try {
                     FileUtils.forceDelete(DUMP);
-                } catch (IOException ignored) {
-                }
+                } catch (IOException ignored) {}
             } else {
                 DUMP = null;
             }
-            SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName("io.izzel.arclight.boot.asm.SwitchTableFixer").getField("INSTANCE").get(null);
+            SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName(
+                "io.izzel.arclight.boot.asm.SwitchTableFixer"
+            )
+                .getField("INSTANCE")
+                .get(null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -52,11 +54,21 @@ public class ArclightRemapper {
 
     static {
         try {
-            pkgOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("packages"));
-            clOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("classes"));
-            mdOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("methods"));
-            fdOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("fields"));
-            mapOffset = Unsafe.objectFieldOffset(JarMapping.class.getDeclaredField("inheritanceMap"));
+            pkgOffset = Unsafe.objectFieldOffset(
+                JarMapping.class.getField("packages")
+            );
+            clOffset = Unsafe.objectFieldOffset(
+                JarMapping.class.getField("classes")
+            );
+            mdOffset = Unsafe.objectFieldOffset(
+                JarMapping.class.getField("methods")
+            );
+            fdOffset = Unsafe.objectFieldOffset(
+                JarMapping.class.getField("fields")
+            );
+            mapOffset = Unsafe.objectFieldOffset(
+                JarMapping.class.getDeclaredField("inheritanceMap")
+            );
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -75,43 +87,98 @@ public class ArclightRemapper {
         this.toBukkitMapping = new JarMapping();
         this.inheritanceMap = new InheritanceMap();
         this.toNmsMapping.loadMappings(
-                new BufferedReader(new InputStreamReader(ArclightRemapper.class.getResourceAsStream("/bukkit_srg.srg"))),
-                null, null, false
+            new BufferedReader(
+                new InputStreamReader(
+                    ArclightRemapper.class.getResourceAsStream(
+                        "/bukkit_srg.srg"
+                    )
+                )
+            ),
+            null,
+            null,
+            false
         );
         // TODO workaround for https://github.com/md-5/SpecialSource/pull/81
         //  remove on update
-        var content = new String(ArclightRemapper.class.getResourceAsStream("/bukkit_srg.srg").readAllBytes(), StandardCharsets.UTF_8);
-        var i = content.indexOf("net/minecraft/server/level/ChunkMap net/minecraft/server/level/ChunkTracker");
-        var nextSection = content.substring(i).lines().skip(1).dropWhile(it -> it.startsWith("\t")).findFirst().orElseThrow();
+        var content = new String(
+            ArclightRemapper.class.getResourceAsStream(
+                "/bukkit_srg.srg"
+            ).readAllBytes(),
+            StandardCharsets.UTF_8
+        );
+        var i = content.indexOf(
+            "net/minecraft/server/level/ChunkMap net/minecraft/server/level/ChunkTracker"
+        );
+        var nextSection = content
+            .substring(i)
+            .lines()
+            .skip(1)
+            .dropWhile(it -> it.startsWith("\t"))
+            .findFirst()
+            .orElseThrow();
         var nextIndex = content.indexOf(nextSection);
         this.toBukkitMapping.loadMappings(
-                new BufferedReader(new StringReader(content.substring(0, i) + content.substring(nextIndex))),
-                null, null, true
+            new BufferedReader(
+                new StringReader(
+                    content.substring(0, i) + content.substring(nextIndex)
+                )
+            ),
+            null,
+            null,
+            true
         );
         this.toBukkitMapping.loadMappings(
-                new BufferedReader(new StringReader(content.substring(i, nextIndex))),
-                null, null, true
+            new BufferedReader(
+                new StringReader(content.substring(i, nextIndex))
+            ),
+            null,
+            null,
+            true
         );
-        BiMap<String, String> inverseClassMap = HashBiMap.create(toNmsMapping.classes).inverse();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ArclightRemapper.class.getResourceAsStream("/inheritanceMap.txt")))) {
+        BiMap<String, String> inverseClassMap = HashBiMap.create(
+            toNmsMapping.classes
+        ).inverse();
+        try (
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                    ArclightRemapper.class.getResourceAsStream(
+                        "/inheritanceMap.txt"
+                    )
+                )
+            )
+        ) {
             inheritanceMap.load(reader, inverseClassMap);
         }
         JointProvider inheritanceProvider = new JointProvider();
         inheritanceProvider.add(inheritanceMap);
-        inheritanceProvider.add(new ClassLoaderProvider(ClassLoader.getSystemClassLoader()));
+        inheritanceProvider.add(
+            new ClassLoaderProvider(ClassLoader.getSystemClassLoader())
+        );
         this.toNmsMapping.setFallbackInheritanceProvider(inheritanceProvider);
-        this.toBukkitMapping.setFallbackInheritanceProvider(inheritanceProvider);
+        this.toBukkitMapping.setFallbackInheritanceProvider(
+            inheritanceProvider
+        );
         this.patchers = ArclightPluginPatcher.load();
-        boolean useJulBridge = java.util.logging.LogManager.getLogManager() instanceof org.apache.logging.log4j.jul.LogManager;
+        boolean useJulBridge =
+            java.util.logging.LogManager.getLogManager() instanceof
+                org.apache.logging.log4j.jul.LogManager;
         this.transformerList = RemapperPipeline.create(useJulBridge, patchers);
-        toBukkitMapping.setFallbackInheritanceProvider(GlobalClassRepo.inheritanceProvider());
+        toBukkitMapping.setFallbackInheritanceProvider(
+            GlobalClassRepo.inheritanceProvider()
+        );
         this.toBukkitRemapper = new LenientJarRemapper(toBukkitMapping);
         this.toNmsRemapper = new LenientJarRemapper(toNmsMapping);
         RemapSourceHandler.register();
     }
 
-    public static ClassLoaderRemapper createClassLoaderRemapper(ClassLoader classLoader) {
-        return new ClassLoaderRemapper(INSTANCE.copyOf(INSTANCE.toNmsMapping), INSTANCE.copyOf(INSTANCE.toBukkitMapping), classLoader);
+    public static ClassLoaderRemapper createClassLoaderRemapper(
+        ClassLoader classLoader
+    ) {
+        return new ClassLoaderRemapper(
+            INSTANCE.copyOf(INSTANCE.toNmsMapping),
+            INSTANCE.copyOf(INSTANCE.toBukkitMapping),
+            classLoader
+        );
     }
 
     public static JarRemapper getResourceMapper() {
@@ -132,11 +199,31 @@ public class ArclightRemapper {
 
     private JarMapping copyOf(JarMapping mapping) {
         JarMapping jarMapping = new JarMapping();
-        Unsafe.putObject(jarMapping, pkgOffset, Unsafe.getObject(mapping, pkgOffset));
-        Unsafe.putObject(jarMapping, clOffset, Unsafe.getObject(mapping, clOffset));
-        Unsafe.putObject(jarMapping, mdOffset, Unsafe.getObject(mapping, mdOffset));
-        Unsafe.putObject(jarMapping, fdOffset, Unsafe.getObject(mapping, fdOffset));
-        Unsafe.putObject(jarMapping, mapOffset, Unsafe.getObject(mapping, mapOffset));
+        Unsafe.putObject(
+            jarMapping,
+            pkgOffset,
+            Unsafe.getObject(mapping, pkgOffset)
+        );
+        Unsafe.putObject(
+            jarMapping,
+            clOffset,
+            Unsafe.getObject(mapping, clOffset)
+        );
+        Unsafe.putObject(
+            jarMapping,
+            mdOffset,
+            Unsafe.getObject(mapping, mdOffset)
+        );
+        Unsafe.putObject(
+            jarMapping,
+            fdOffset,
+            Unsafe.getObject(mapping, fdOffset)
+        );
+        Unsafe.putObject(
+            jarMapping,
+            mapOffset,
+            Unsafe.getObject(mapping, mapOffset)
+        );
         return jarMapping;
     }
 }

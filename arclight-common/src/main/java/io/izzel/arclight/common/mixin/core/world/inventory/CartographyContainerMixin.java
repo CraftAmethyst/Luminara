@@ -20,26 +20,43 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CartographyTableMenu.class)
-public abstract class CartographyContainerMixin extends AbstractContainerMenuMixin implements PosContainerBridge {
+public abstract class CartographyContainerMixin
+    extends AbstractContainerMenuMixin
+    implements PosContainerBridge {
 
     @Shadow
     @Final
     public Container container;
+
     // @formatter:off
     @Shadow @Final private ContainerLevelAccess access;
+
     @Shadow @Final private ResultContainer resultContainer;
+
     // @formatter:on
 
     private CraftInventoryView bukkitEntity = null;
     private Player player;
 
-    @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
-    public void arclight$init(int id, Inventory playerInventory, ContainerLevelAccess worldPosCallable, CallbackInfo ci) {
-        this.player = ((ServerPlayerEntityBridge) playerInventory.player).bridge$getBukkitEntity();
+    @Inject(
+        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
+        at = @At("RETURN")
+    )
+    public void arclight$init(
+        int id,
+        Inventory playerInventory,
+        ContainerLevelAccess worldPosCallable,
+        CallbackInfo ci
+    ) {
+        this.player =
+            ((ServerPlayerEntityBridge) playerInventory.player).bridge$getBukkitEntity();
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(net.minecraft.world.entity.player.Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    public void arclight$unreachable(
+        net.minecraft.world.entity.player.Player playerIn,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (!bridge$isCheckReachable()) cir.setReturnValue(true);
     }
 
@@ -49,8 +66,15 @@ public abstract class CartographyContainerMixin extends AbstractContainerMenuMix
             return bukkitEntity;
         }
 
-        CraftInventoryCartography inventory = new CraftInventoryCartography(this.container, this.resultContainer);
-        bukkitEntity = new CraftInventoryView(this.player, inventory, (AbstractContainerMenu) (Object) this);
+        CraftInventoryCartography inventory = new CraftInventoryCartography(
+            this.container,
+            this.resultContainer
+        );
+        bukkitEntity = new CraftInventoryView(
+            this.player,
+            inventory,
+            (AbstractContainerMenu) (Object) this
+        );
         return bukkitEntity;
     }
 

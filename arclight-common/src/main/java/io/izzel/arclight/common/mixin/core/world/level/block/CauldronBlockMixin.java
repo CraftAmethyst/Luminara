@@ -13,8 +13,26 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(CauldronBlock.class)
 public class CauldronBlockMixin {
 
-    @Redirect(method = "receiveStalactiteDrip", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private boolean arclight$drip(Level level, BlockPos pos, BlockState state, BlockState old) {
-        return CauldronHooks.changeLevel(old, level, pos, state, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL);
+    @Redirect(
+        method = "receiveStalactiteDrip",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
+        )
+    )
+    private boolean arclight$drip(
+        Level level,
+        BlockPos pos,
+        BlockState state,
+        BlockState old
+    ) {
+        return CauldronHooks.changeLevel(
+            old,
+            level,
+            pos,
+            state,
+            null,
+            CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL
+        );
     }
 }

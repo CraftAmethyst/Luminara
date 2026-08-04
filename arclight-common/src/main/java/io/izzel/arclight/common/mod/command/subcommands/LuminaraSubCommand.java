@@ -7,7 +7,6 @@ import net.minecraft.commands.CommandSourceStack;
  * Luminara subcommand interface
  */
 public interface LuminaraSubCommand {
-
     String getName();
 
     String getDescription();

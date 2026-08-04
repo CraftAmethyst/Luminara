@@ -12,8 +12,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PhantomSpawner.class)
 public class PhantomSpawnerMixin {
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
-    public void arclight$spawnReason(ServerLevel worldIn, boolean spawnHostileMobs, boolean spawnPeacefulMobs, CallbackInfoReturnable<Integer> cir) {
-        ((WorldBridge) worldIn).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.NATURAL);
+    @Inject(
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"
+        )
+    )
+    public void arclight$spawnReason(
+        ServerLevel worldIn,
+        boolean spawnHostileMobs,
+        boolean spawnPeacefulMobs,
+        CallbackInfoReturnable<Integer> cir
+    ) {
+        ((WorldBridge) worldIn).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.NATURAL
+        );
     }
 }

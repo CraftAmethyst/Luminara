@@ -6,6 +6,10 @@ package com.destroystokyo.paper.event.server;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.util.TransformingRandomAccessList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
 import net.kyori.examination.Examinable;
 import net.kyori.examination.ExaminableProperty;
@@ -18,32 +22,38 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
-
 public class AsyncTabCompleteEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
+
     @NotNull
     private final CommandSender sender;
+
     @NotNull
     private final String buffer;
+
     private final boolean isCommand;
+
     @Nullable
     private final Location loc;
+
     private final List<Completion> completions = new ArrayList<>();
-    private final List<String> stringCompletions = new TransformingRandomAccessList<>(
+    private final List<String> stringCompletions =
+        new TransformingRandomAccessList<>(
             this.completions,
             Completion::suggestion,
             Completion::completion
-    );
+        );
     private boolean cancelled;
     private boolean handled;
     private boolean fireSyncHandler = true;
 
-    public AsyncTabCompleteEvent(@NotNull CommandSender sender, @NotNull String buffer, boolean isCommand, @Nullable Location loc) {
+    public AsyncTabCompleteEvent(
+        @NotNull CommandSender sender,
+        @NotNull String buffer,
+        boolean isCommand,
+        @Nullable Location loc
+    ) {
         super(true);
         this.sender = sender;
         this.buffer = buffer;
@@ -52,7 +62,13 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
     }
 
     @Deprecated
-    public AsyncTabCompleteEvent(@NotNull CommandSender sender, @NotNull List<String> completions, @NotNull String buffer, boolean isCommand, @Nullable Location loc) {
+    public AsyncTabCompleteEvent(
+        @NotNull CommandSender sender,
+        @NotNull List<String> completions,
+        @NotNull String buffer,
+        boolean isCommand,
+        @Nullable Location loc
+    ) {
         super(true);
         this.sender = sender;
         this.completions.addAll(fromStrings(completions));
@@ -66,7 +82,9 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    private static @NotNull List<Completion> fromStrings(final @NotNull List<String> strings) {
+    private static @NotNull List<Completion> fromStrings(
+        final @NotNull List<String> strings
+    ) {
         final List<Completion> list = new ArrayList<>();
         for (final String it : strings) {
             list.add(new CompletionImpl(it, null));
@@ -151,11 +169,16 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
     }
 
     public interface Completion extends Examinable {
-        static @NotNull Completion completion(final @NotNull String suggestion) {
+        static @NotNull Completion completion(
+            final @NotNull String suggestion
+        ) {
             return new CompletionImpl(suggestion, null);
         }
 
-        static @NotNull Completion completion(final @NotNull String suggestion, final @Nullable Component tooltip) {
+        static @NotNull Completion completion(
+            final @NotNull String suggestion,
+            final @Nullable Component tooltip
+        ) {
             return new CompletionImpl(suggestion, tooltip);
         }
 
@@ -166,45 +189,54 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
         Component tooltip();
 
         @Override
-        default @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
+        default @NotNull Stream<
+            ? extends ExaminableProperty
+        > examinableProperties() {
             return Stream.of(
-                    ExaminableProperty.of("suggestion", this.suggestion()),
-                    ExaminableProperty.of("tooltip", this.tooltip())
+                ExaminableProperty.of("suggestion", this.suggestion()),
+                ExaminableProperty.of("tooltip", this.tooltip())
             );
         }
     }
 
-    record CompletionImpl(String suggestion, Component tooltip) implements Completion {
-            CompletionImpl(final @NotNull String suggestion, final @Nullable Component tooltip) {
-                this.suggestion = suggestion;
-                this.tooltip = tooltip;
-            }
-
-            @Override
-            public @NotNull String suggestion() {
-                return this.suggestion;
-            }
-
-            @Override
-            public @Nullable Component tooltip() {
-                return this.tooltip;
-            }
-
-            @Override
-            public boolean equals(final @Nullable Object o) {
-                if (this == o) {
-                    return true;
-                }
-                if (o == null || this.getClass() != o.getClass()) {
-                    return false;
-                }
-                final CompletionImpl that = (CompletionImpl) o;
-                return this.suggestion.equals(that.suggestion) && Objects.equals(this.tooltip, that.tooltip);
-            }
+    record CompletionImpl(String suggestion, Component tooltip) implements
+        Completion {
+        CompletionImpl(
+            final @NotNull String suggestion,
+            final @Nullable Component tooltip
+        ) {
+            this.suggestion = suggestion;
+            this.tooltip = tooltip;
+        }
 
         @Override
-            public @NotNull String toString() {
-                return StringExaminer.simpleEscaping().examine(this);
-            }
+        public @NotNull String suggestion() {
+            return this.suggestion;
         }
+
+        @Override
+        public @Nullable Component tooltip() {
+            return this.tooltip;
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || this.getClass() != o.getClass()) {
+                return false;
+            }
+            final CompletionImpl that = (CompletionImpl) o;
+            return (
+                this.suggestion.equals(that.suggestion) &&
+                Objects.equals(this.tooltip, that.tooltip)
+            );
+        }
+
+        @Override
+        public @NotNull String toString() {
+            return StringExaminer.simpleEscaping().examine(this);
+        }
+    }
 }

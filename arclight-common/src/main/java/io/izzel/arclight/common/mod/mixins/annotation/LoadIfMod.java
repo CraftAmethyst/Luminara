@@ -8,13 +8,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.CLASS)
 public @interface LoadIfMod {
-
     String[] modid();
 
     ModCondition condition();
 
     enum ModCondition {
         ABSENT,
-        PRESENT
+        PRESENT,
     }
 }

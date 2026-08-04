@@ -12,8 +12,24 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(NetherWartBlock.class)
 public class NetherWartBlockMixin {
 
-    @Redirect(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public boolean arclight$cropGrow(ServerLevel world, BlockPos pos, BlockState newState, int flags) {
-        return CraftEventFactory.handleBlockGrowEvent(world, pos, newState, flags);
+    @Redirect(
+        method = "randomTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    public boolean arclight$cropGrow(
+        ServerLevel world,
+        BlockPos pos,
+        BlockState newState,
+        int flags
+    ) {
+        return CraftEventFactory.handleBlockGrowEvent(
+            world,
+            pos,
+            newState,
+            flags
+        );
     }
 }

@@ -10,6 +10,8 @@ public class CustomRecipeMixin implements IRecipeBridge {
 
     @Override
     public Recipe bridge$toBukkitRecipe() {
-        return new org.bukkit.craftbukkit.v.inventory.CraftComplexRecipe((CustomRecipe) (Object) this);
+        return new org.bukkit.craftbukkit.v.inventory.CraftComplexRecipe(
+            (CustomRecipe) (Object) this
+        );
     }
 }

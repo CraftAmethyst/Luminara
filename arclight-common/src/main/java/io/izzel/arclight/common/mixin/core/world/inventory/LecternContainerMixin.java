@@ -20,10 +20,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LecternMenu.class)
-public abstract class LecternContainerMixin extends AbstractContainerMenuMixin implements LecternContainerBridge {
+public abstract class LecternContainerMixin
+    extends AbstractContainerMenuMixin
+    implements LecternContainerBridge {
 
     // @formatter:off
     @Shadow @Final private Container lectern;
+
     // @formatter:on
 
     private CraftInventoryView bukkitEntity;
@@ -33,7 +36,11 @@ public abstract class LecternContainerMixin extends AbstractContainerMenuMixin i
         throw new RuntimeException();
     }
 
-    public void arclight$constructor(int i, Container inventory, ContainerData intArray) {
+    public void arclight$constructor(
+        int i,
+        Container inventory,
+        ContainerData intArray
+    ) {
         throw new RuntimeException();
     }
 
@@ -42,14 +49,33 @@ public abstract class LecternContainerMixin extends AbstractContainerMenuMixin i
         this.playerInventory = playerInventory;
     }
 
-    public void arclight$constructor(int i, Container inventory, ContainerData intArray, Inventory playerInventory) {
+    public void arclight$constructor(
+        int i,
+        Container inventory,
+        ContainerData intArray,
+        Inventory playerInventory
+    ) {
         arclight$constructor(i, inventory, intArray);
         this.playerInventory = playerInventory;
     }
 
-    @Inject(method = "clickMenuButton", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;removeItemNoUpdate(I)Lnet/minecraft/world/item/ItemStack;"))
-    public void arclight$takeBook(Player playerIn, int id, CallbackInfoReturnable<Boolean> cir) {
-        PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(), ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
+    @Inject(
+        method = "clickMenuButton",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/Container;removeItemNoUpdate(I)Lnet/minecraft/world/item/ItemStack;"
+        )
+    )
+    public void arclight$takeBook(
+        Player playerIn,
+        int id,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(
+            ((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder()
+        );
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             cir.setReturnValue(false);
@@ -57,7 +83,10 @@ public abstract class LecternContainerMixin extends AbstractContainerMenuMixin i
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    public void arclight$unreachable(
+        Player playerIn,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (!bridge$isCheckReachable()) cir.setReturnValue(true);
     }
 
@@ -66,8 +95,14 @@ public abstract class LecternContainerMixin extends AbstractContainerMenuMixin i
         if (bukkitEntity != null) {
             return bukkitEntity;
         }
-        CraftInventoryLectern inventory = new CraftInventoryLectern(this.lectern);
-        bukkitEntity = new CraftInventoryView(((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(), inventory, (AbstractContainerMenu) (Object) this);
+        CraftInventoryLectern inventory = new CraftInventoryLectern(
+            this.lectern
+        );
+        bukkitEntity = new CraftInventoryView(
+            ((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            inventory,
+            (AbstractContainerMenu) (Object) this
+        );
         return bukkitEntity;
     }
 

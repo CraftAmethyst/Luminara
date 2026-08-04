@@ -9,7 +9,9 @@ import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(BaseContainerBlockEntity.class)
-public abstract class LockableBlockEntityMixin extends BlockEntityMixin implements IInventoryBridge, Container {
+public abstract class LockableBlockEntityMixin
+    extends BlockEntityMixin
+    implements IInventoryBridge, Container {
 
     @Override
     public Location getLocation() {
@@ -22,6 +24,5 @@ public abstract class LockableBlockEntityMixin extends BlockEntityMixin implemen
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-    }
+    public void setCurrentRecipe(Recipe<?> recipe) {}
 }

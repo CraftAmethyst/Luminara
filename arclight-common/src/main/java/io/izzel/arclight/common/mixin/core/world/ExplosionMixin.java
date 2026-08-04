@@ -7,6 +7,11 @@ import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.world.ExplosionBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import javax.annotation.Nullable;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -50,30 +55,36 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 @Mixin(Explosion.class)
 public abstract class ExplosionMixin implements ExplosionBridge {
 
     @Shadow
     @Final
     public Entity source;
+
     public boolean wasCanceled = false;
+
     // @formatter:off
     @Shadow @Final private Level level;
+
     @Shadow @Final private Explosion.BlockInteraction blockInteraction;
+
     @Shadow @Mutable @Final private float radius;
+
     @Shadow @Final private ObjectArrayList<BlockPos> toBlow;
+
     @Shadow @Final private double x;
+
     @Shadow @Final private double y;
+
     @Shadow @Final private double z;
+
     @Shadow @Final private Map<Player, Vec3> hitPlayers;
+
     @Shadow @Final private boolean fire;
+
     @Shadow @Final private RandomSource random;
+
     @Shadow @Final private ExplosionDamageCalculator damageCalculator;
 
     @Shadow private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> dropPositionArray, ItemStack stack, BlockPos pos) { }
@@ -94,6 +105,7 @@ public abstract class ExplosionMixin implements ExplosionBridge {
     @Accessor("radius") public abstract void bridge$setSize(float size);
 
     @Accessor("blockInteraction") public abstract Explosion.BlockInteraction bridge$getMode();
+
     // @formatter:on
 
     @Shadow
@@ -103,9 +115,21 @@ public abstract class ExplosionMixin implements ExplosionBridge {
     @Nullable
     public abstract LivingEntity getIndirectSourceEntity();
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Explosion$BlockInteraction;)V",
-            at = @At("RETURN"))
-    public void arclight$adjustSize(Level worldIn, Entity exploderIn, double xIn, double yIn, double zIn, float sizeIn, boolean causesFireIn, Explosion.BlockInteraction modeIn, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Explosion$BlockInteraction;)V",
+        at = @At("RETURN")
+    )
+    public void arclight$adjustSize(
+        Level worldIn,
+        Entity exploderIn,
+        double xIn,
+        double yIn,
+        double zIn,
+        float sizeIn,
+        boolean causesFireIn,
+        Explosion.BlockInteraction modeIn,
+        CallbackInfo ci
+    ) {
         this.radius = Math.max(sizeIn, 0F);
     }
 
@@ -119,41 +143,74 @@ public abstract class ExplosionMixin implements ExplosionBridge {
         if (this.radius < 0.1F) {
             return;
         }
-        this.level.gameEvent(this.source, GameEvent.EXPLODE, new Vec3(this.x, this.y, this.z));
+        this.level.gameEvent(
+            this.source,
+            GameEvent.EXPLODE,
+            new Vec3(this.x, this.y, this.z)
+        );
         Set<BlockPos> set = Sets.newHashSet();
         int i = 16;
 
         for (int j = 0; j < 16; ++j) {
             for (int k = 0; k < 16; ++k) {
                 for (int l = 0; l < 16; ++l) {
-                    if (j == 0 || j == 15 || k == 0 || k == 15 || l == 0 || l == 15) {
-                        double d0 = ((float) j / 15.0F * 2.0F - 1.0F);
-                        double d1 = ((float) k / 15.0F * 2.0F - 1.0F);
-                        double d2 = ((float) l / 15.0F * 2.0F - 1.0F);
+                    if (
+                        j == 0 ||
+                        j == 15 ||
+                        k == 0 ||
+                        k == 15 ||
+                        l == 0 ||
+                        l == 15
+                    ) {
+                        double d0 = (((float) j / 15.0F) * 2.0F - 1.0F);
+                        double d1 = (((float) k / 15.0F) * 2.0F - 1.0F);
+                        double d2 = (((float) l / 15.0F) * 2.0F - 1.0F);
                         double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
                         d0 = d0 / d3;
                         d1 = d1 / d3;
                         d2 = d2 / d3;
-                        float f = this.radius * (0.7F + this.level.random.nextFloat() * 0.6F);
+                        float f =
+                            this.radius *
+                            (0.7F + this.level.random.nextFloat() * 0.6F);
                         double d4 = this.x;
                         double d6 = this.y;
                         double d8 = this.z;
 
                         for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
                             BlockPos blockpos = BlockPos.containing(d4, d6, d8);
-                            BlockState blockstate = this.level.getBlockState(blockpos);
-                            FluidState fluidstate = this.level.getFluidState(blockpos);
+                            BlockState blockstate = this.level.getBlockState(
+                                blockpos
+                            );
+                            FluidState fluidstate = this.level.getFluidState(
+                                blockpos
+                            );
 
                             if (!this.level.isInWorldBounds(blockpos)) {
                                 break;
                             }
 
-                            Optional<Float> optional = this.damageCalculator.getBlockExplosionResistance((Explosion) (Object) this, this.level, blockpos, blockstate, fluidstate);
+                            Optional<Float> optional =
+                                this.damageCalculator.getBlockExplosionResistance(
+                                    (Explosion) (Object) this,
+                                    this.level,
+                                    blockpos,
+                                    blockstate,
+                                    fluidstate
+                                );
                             if (optional.isPresent()) {
                                 f -= (optional.get() + 0.3F) * 0.3F;
                             }
 
-                            if (f > 0.0F && this.damageCalculator.shouldBlockExplode((Explosion) (Object) this, this.level, blockpos, blockstate, f)) {
+                            if (
+                                f > 0.0F &&
+                                this.damageCalculator.shouldBlockExplode(
+                                    (Explosion) (Object) this,
+                                    this.level,
+                                    blockpos,
+                                    blockstate,
+                                    f
+                                )
+                            ) {
                                 set.add(blockpos);
                             }
 
@@ -174,8 +231,16 @@ public abstract class ExplosionMixin implements ExplosionBridge {
         int i1 = Mth.floor(this.y + (double) f3 + 1.0D);
         int j2 = Mth.floor(this.z - (double) f3 - 1.0D);
         int j1 = Mth.floor(this.z + (double) f3 + 1.0D);
-        List<Entity> list = this.level.getEntities(this.source, new AABB(k1, i2, j2, l1, i1, j1));
-        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.level, (Explosion) (Object) this, list, f3);
+        List<Entity> list = this.level.getEntities(
+            this.source,
+            new AABB(k1, i2, j2, l1, i1, j1)
+        );
+        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(
+            this.level,
+            (Explosion) (Object) this,
+            list,
+            f3
+        );
         Vec3 vec3d = new Vec3(this.x, this.y, this.z);
 
         for (Entity entity : list) {
@@ -204,30 +269,61 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                         }
 
                         CraftEventFactory.entityDamage = this.source;
-                        ((EntityBridge) entity).bridge$setLastDamageCancelled(false);
+                        ((EntityBridge) entity).bridge$setLastDamageCancelled(
+                            false
+                        );
 
                         var parts = entity.getParts();
                         if (parts != null) {
                             for (var part : parts) {
                                 // Calculate damage separately for each part
                                 double dist;
-                                if (list.contains(part) && (dist = Math.sqrt(part.distanceToSqr(vec3d)) / f3) <= 1.0D) {
-                                    double dmg = (1.0D - dist) * getSeenPercent(vec3d, part);
-                                    part.hurt(this.getDamageSource(), (float) ((int) ((dmg * dmg + dmg) / 2.0D * 7.0D * (double) f3 + 1.0D)));
+                                if (
+                                    list.contains(part) &&
+                                    (dist =
+                                            Math.sqrt(
+                                                part.distanceToSqr(vec3d)
+                                            ) /
+                                            f3) <=
+                                    1.0D
+                                ) {
+                                    double dmg =
+                                        (1.0D - dist) *
+                                        getSeenPercent(vec3d, part);
+                                    part.hurt(
+                                        this.getDamageSource(),
+                                        (float) ((int) (((dmg * dmg + dmg) /
+                                                        2.0D) *
+                                                    7.0D *
+                                                    (double) f3 +
+                                                1.0D))
+                                    );
                                 }
                             }
                         } else {
-                            entity.hurt(this.getDamageSource(), (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f3 + 1.0D)));
+                            entity.hurt(
+                                this.getDamageSource(),
+                                (float) ((int) (((d10 * d10 + d10) / 2.0D) *
+                                            7.0D *
+                                            (double) f3 +
+                                        1.0D))
+                            );
                         }
 
                         CraftEventFactory.entityDamage = null;
-                        if (((EntityBridge) entity).bridge$isLastDamageCancelled()) {
+                        if (
+                            ((EntityBridge) entity).bridge$isLastDamageCancelled()
+                        ) {
                             continue;
                         }
 
                         double d11;
                         if (entity instanceof LivingEntity) {
-                            d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, d10);
+                            d11 =
+                                ProtectionEnchantment.getExplosionKnockbackAfterDampener(
+                                    (LivingEntity) entity,
+                                    d10
+                                );
                         } else {
                             d11 = d10;
                         }
@@ -237,9 +333,15 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                         d9 *= d11;
                         Vec3 vec3d1 = new Vec3(d5, d7, d9);
 
-                        entity.setDeltaMovement(entity.getDeltaMovement().add(vec3d1));
+                        entity.setDeltaMovement(
+                            entity.getDeltaMovement().add(vec3d1)
+                        );
                         if (entity instanceof Player playerentity) {
-                            if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {
+                            if (
+                                !playerentity.isSpectator() &&
+                                (!playerentity.isCreative() ||
+                                    !playerentity.getAbilities().flying)
+                            ) {
                                 this.hitPlayers.put(playerentity, vec3d1);
                             }
                         }
@@ -247,7 +349,6 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                 }
             }
         }
-
     }
 
     @Override
@@ -262,20 +363,50 @@ public abstract class ExplosionMixin implements ExplosionBridge {
     @Overwrite
     public void finalizeExplosion(boolean spawnParticles) {
         if (this.level.isClientSide) {
-            this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
+            this.level.playLocalSound(
+                this.x,
+                this.y,
+                this.z,
+                SoundEvents.GENERIC_EXPLODE,
+                SoundSource.BLOCKS,
+                4.0F,
+                (1.0F +
+                        (this.level.random.nextFloat() -
+                            this.level.random.nextFloat()) *
+                        0.2F) *
+                    0.7F,
+                false
+            );
         }
 
         boolean flag = this.interactsWithBlocks();
         if (spawnParticles) {
             if (!(this.radius < 2.0F) && flag) {
-                this.level.addParticle(ParticleTypes.EXPLOSION_EMITTER, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D);
+                this.level.addParticle(
+                    ParticleTypes.EXPLOSION_EMITTER,
+                    this.x,
+                    this.y,
+                    this.z,
+                    1.0D,
+                    0.0D,
+                    0.0D
+                );
             } else {
-                this.level.addParticle(ParticleTypes.EXPLOSION, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D);
+                this.level.addParticle(
+                    ParticleTypes.EXPLOSION,
+                    this.x,
+                    this.y,
+                    this.z,
+                    1.0D,
+                    0.0D,
+                    0.0D
+                );
             }
         }
 
         if (flag) {
-            ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist = new ObjectArrayList<>();
+            ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist =
+                new ObjectArrayList<>();
             boolean flag2 = this.getIndirectSourceEntity() instanceof Player;
             Util.shuffle(this.toBlow, this.level.random);
             var iterator = this.toBlow.iterator();
@@ -294,9 +425,24 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                 // CraftBukkit start - TNTPrimeEvent
                 if (block instanceof TntBlock) {
                     var sourceEntity = source == null ? null : source;
-                    var sourceBlock = sourceEntity == null ? BlockPos.containing(this.x, this.y, this.z) : null;
-                    if (!CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
-                        this.level.sendBlockUpdated(blockpos, Blocks.AIR.defaultBlockState(), blockstate, 3); // Update the block on the client
+                    var sourceBlock = sourceEntity == null
+                        ? BlockPos.containing(this.x, this.y, this.z)
+                        : null;
+                    if (
+                        !CraftEventFactory.callTNTPrimeEvent(
+                            this.level,
+                            blockpos,
+                            TNTPrimeEvent.PrimeCause.EXPLOSION,
+                            sourceEntity,
+                            sourceBlock
+                        )
+                    ) {
+                        this.level.sendBlockUpdated(
+                            blockpos,
+                            Blocks.AIR.defaultBlockState(),
+                            blockstate,
+                            3
+                        ); // Update the block on the client
                         continue;
                     }
                 }
@@ -304,35 +450,100 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                 if (!blockstate.isAir()) {
                     BlockPos blockpos1 = blockpos.immutable();
                     this.level.getProfiler().push("explosion_blocks");
-                    if (blockstate.canDropFromExplosion(this.level, blockpos, (Explosion) (Object) this) && this.level instanceof ServerLevel serverLevel) {
-                        BlockEntity tileentity = blockstate.hasBlockEntity() ? this.level.getBlockEntity(blockpos) : null;
-                        LootParams.Builder lootcontext$builder = new LootParams.Builder(serverLevel).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, tileentity).withOptionalParameter(LootContextParams.THIS_ENTITY, this.source);
+                    if (
+                        blockstate.canDropFromExplosion(
+                            this.level,
+                            blockpos,
+                            (Explosion) (Object) this
+                        ) &&
+                        this.level instanceof ServerLevel serverLevel
+                    ) {
+                        BlockEntity tileentity = blockstate.hasBlockEntity()
+                            ? this.level.getBlockEntity(blockpos)
+                            : null;
+                        LootParams.Builder lootcontext$builder =
+                            new LootParams.Builder(serverLevel)
+                                .withParameter(
+                                    LootContextParams.ORIGIN,
+                                    Vec3.atCenterOf(blockpos)
+                                )
+                                .withParameter(
+                                    LootContextParams.TOOL,
+                                    ItemStack.EMPTY
+                                )
+                                .withOptionalParameter(
+                                    LootContextParams.BLOCK_ENTITY,
+                                    tileentity
+                                )
+                                .withOptionalParameter(
+                                    LootContextParams.THIS_ENTITY,
+                                    this.source
+                                );
                         if (yield < 1.0F) {
-                            lootcontext$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, 1.0F / yield);
+                            lootcontext$builder.withParameter(
+                                LootContextParams.EXPLOSION_RADIUS,
+                                1.0F / yield
+                            );
                         }
 
-                        blockstate.spawnAfterBreak(serverLevel, blockpos, ItemStack.EMPTY, flag2);
-                        blockstate.getDrops(lootcontext$builder).forEach((stack) -> {
-                            addBlockDrops(objectarraylist, stack, blockpos1);
-                        });
+                        blockstate.spawnAfterBreak(
+                            serverLevel,
+                            blockpos,
+                            ItemStack.EMPTY,
+                            flag2
+                        );
+                        blockstate
+                            .getDrops(lootcontext$builder)
+                            .forEach(stack -> {
+                                addBlockDrops(
+                                    objectarraylist,
+                                    stack,
+                                    blockpos1
+                                );
+                            });
                     }
 
-                    blockstate.onBlockExploded(this.level, blockpos, (Explosion) (Object) this);
+                    blockstate.onBlockExploded(
+                        this.level,
+                        blockpos,
+                        (Explosion) (Object) this
+                    );
                     this.level.getProfiler().pop();
                 }
             }
 
             for (Pair<ItemStack, BlockPos> pair : objectarraylist) {
-                Block.popResource(this.level, pair.getSecond(), pair.getFirst());
+                Block.popResource(
+                    this.level,
+                    pair.getSecond(),
+                    pair.getFirst()
+                );
             }
         }
 
         if (this.fire) {
             for (BlockPos blockpos2 : this.toBlow) {
-                if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos2).isAir() && this.level.getBlockState(blockpos2.below()).isSolidRender(this.level, blockpos2.below())) {
-                    BlockIgniteEvent event = CraftEventFactory.callBlockIgniteEvent(this.level, blockpos2.getX(), blockpos2.getY(), blockpos2.getZ(), (Explosion) (Object) this);
+                if (
+                    this.random.nextInt(3) == 0 &&
+                    this.level.getBlockState(blockpos2).isAir() &&
+                    this.level.getBlockState(blockpos2.below()).isSolidRender(
+                        this.level,
+                        blockpos2.below()
+                    )
+                ) {
+                    BlockIgniteEvent event =
+                        CraftEventFactory.callBlockIgniteEvent(
+                            this.level,
+                            blockpos2.getX(),
+                            blockpos2.getY(),
+                            blockpos2.getZ(),
+                            (Explosion) (Object) this
+                        );
                     if (!event.isCancelled()) {
-                        this.level.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level, blockpos2));
+                        this.level.setBlockAndUpdate(
+                            blockpos2,
+                            BaseFireBlock.getState(this.level, blockpos2)
+                        );
                     }
                 }
             }
@@ -341,12 +552,18 @@ public abstract class ExplosionMixin implements ExplosionBridge {
 
     private float callBlockExplodeEvent() {
         org.bukkit.World world = ((WorldBridge) this.level).bridge$getWorld();
-        org.bukkit.entity.Entity exploder = this.source == null ? null : ((EntityBridge) this.source).bridge$getBukkitEntity();
+        org.bukkit.entity.Entity exploder = this.source == null
+            ? null
+            : ((EntityBridge) this.source).bridge$getBukkitEntity();
         Location location = new Location(world, this.x, this.y, this.z);
         List<org.bukkit.block.Block> blockList = Lists.newArrayList();
         for (int i = this.toBlow.size() - 1; i >= 0; i--) {
             BlockPos blockPos = this.toBlow.get(i);
-            org.bukkit.block.Block block = world.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            org.bukkit.block.Block block = world.getBlockAt(
+                blockPos.getX(),
+                blockPos.getY(),
+                blockPos.getZ()
+            );
             if (!block.getType().isAir()) {
                 blockList.add(block);
             }
@@ -357,13 +574,28 @@ public abstract class ExplosionMixin implements ExplosionBridge {
         float bukkitYield;
 
         if (exploder != null) {
-            EntityExplodeEvent event = new EntityExplodeEvent(exploder, location, blockList, this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY ? 1.0F / this.radius : 1.0F);
+            EntityExplodeEvent event = new EntityExplodeEvent(
+                exploder,
+                location,
+                blockList,
+                this.blockInteraction ==
+                        Explosion.BlockInteraction.DESTROY_WITH_DECAY
+                    ? 1.0F / this.radius
+                    : 1.0F
+            );
             Bukkit.getPluginManager().callEvent(event);
             cancelled = event.isCancelled();
             bukkitBlocks = event.blockList();
             bukkitYield = event.getYield();
         } else {
-            BlockExplodeEvent event = new BlockExplodeEvent(location.getBlock(), blockList, this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY ? 1.0F / this.radius : 1.0F);
+            BlockExplodeEvent event = new BlockExplodeEvent(
+                location.getBlock(),
+                blockList,
+                this.blockInteraction ==
+                        Explosion.BlockInteraction.DESTROY_WITH_DECAY
+                    ? 1.0F / this.radius
+                    : 1.0F
+            );
             Bukkit.getPluginManager().callEvent(event);
             cancelled = event.isCancelled();
             bukkitBlocks = event.blockList();
@@ -373,7 +605,11 @@ public abstract class ExplosionMixin implements ExplosionBridge {
         this.toBlow.clear();
 
         for (org.bukkit.block.Block block : bukkitBlocks) {
-            BlockPos blockPos = new BlockPos(block.getX(), block.getY(), block.getZ());
+            BlockPos blockPos = new BlockPos(
+                block.getX(),
+                block.getY(),
+                block.getZ()
+            );
             this.toBlow.add(blockPos);
         }
         return cancelled ? Float.NaN : bukkitYield;

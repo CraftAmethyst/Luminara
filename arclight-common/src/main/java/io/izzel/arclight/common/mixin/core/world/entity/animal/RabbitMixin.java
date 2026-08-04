@@ -9,6 +9,7 @@ public abstract class RabbitMixin extends AnimalMixin {
 
     // @formatter:off
     @Shadow public abstract void setSpeedModifier(double newSpeed);
+
     // @formatter:on
 
     public void initializePathFinderGoals() {

@@ -15,14 +15,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NaturalSpawner.SpawnState.class)
-public abstract class WorldEntitySpawner_EntityDensityManagerMixin implements WorldEntitySpawnerBridge.EntityDensityManagerBridge {
+public abstract class WorldEntitySpawner_EntityDensityManagerMixin
+    implements WorldEntitySpawnerBridge.EntityDensityManagerBridge {
 
     @Shadow
     @Final
     private int spawnableChunkCount;
+
     @Shadow
     @Final
     private Object2IntOpenHashMap<MobCategory> mobCategoryCounts;
+
     @Shadow
     @Final
     private LocalMobCapCalculator localMobCapCalculator;
@@ -31,10 +34,15 @@ public abstract class WorldEntitySpawner_EntityDensityManagerMixin implements Wo
     @Shadow protected abstract void afterSpawn(Mob p_234990_1_, ChunkAccess p_234990_2_);
 
     @Shadow protected abstract boolean canSpawn(EntityType<?> p_234989_1_, BlockPos p_234989_2_, ChunkAccess p_234989_3_);
+
     // @formatter:on
 
     @Override
-    public boolean bridge$canSpawn(EntityType<?> entityType, BlockPos pos, ChunkAccess chunk) {
+    public boolean bridge$canSpawn(
+        EntityType<?> entityType,
+        BlockPos pos,
+        ChunkAccess chunk
+    ) {
         return this.canSpawn(entityType, pos, chunk);
     }
 
@@ -44,8 +52,14 @@ public abstract class WorldEntitySpawner_EntityDensityManagerMixin implements Wo
     }
 
     @Override
-    public boolean bridge$canSpawn(MobCategory classification, ChunkPos pos, int limit) {
-        int i = limit * this.spawnableChunkCount / 289;
-        return this.mobCategoryCounts.getInt(classification) >= i ? false : this.localMobCapCalculator.canSpawn(classification, pos);
+    public boolean bridge$canSpawn(
+        MobCategory classification,
+        ChunkPos pos,
+        int limit
+    ) {
+        int i = (limit * this.spawnableChunkCount) / 289;
+        return this.mobCategoryCounts.getInt(classification) >= i
+            ? false
+            : this.localMobCapCalculator.canSpawn(classification, pos);
     }
 }

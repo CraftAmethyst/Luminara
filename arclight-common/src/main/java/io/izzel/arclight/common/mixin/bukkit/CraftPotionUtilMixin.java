@@ -13,9 +13,11 @@ public class CraftPotionUtilMixin {
     @Shadow
     @Final
     private static BiMap<PotionType, String> upgradeable;
+
     @Shadow
     @Final
     private static BiMap<PotionType, String> extendable;
+
     @Shadow
     @Final
     @Mutable
@@ -36,7 +38,10 @@ public class CraftPotionUtilMixin {
             type = regular.get(data.getType());
         }
 
-        Preconditions.checkNotNull(type, "Unknown potion type from data " + data);
+        Preconditions.checkNotNull(
+            type,
+            "Unknown potion type from data " + data
+        );
         if (type.indexOf(':') != -1) {
             return type;
         } else {

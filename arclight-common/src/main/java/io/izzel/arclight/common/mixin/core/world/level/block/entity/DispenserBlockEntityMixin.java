@@ -1,5 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
@@ -9,16 +11,16 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(DispenserBlockEntity.class)
-public abstract class DispenserBlockEntityMixin extends LockableBlockEntityMixin {
+public abstract class DispenserBlockEntityMixin
+    extends LockableBlockEntityMixin {
 
     public List<HumanEntity> transaction = new ArrayList<>();
+
     // @formatter:on
     // @formatter:off
     @Shadow private NonNullList<ItemStack> items;
+
     private int maxStack = MAX_STACK;
 
     @Override

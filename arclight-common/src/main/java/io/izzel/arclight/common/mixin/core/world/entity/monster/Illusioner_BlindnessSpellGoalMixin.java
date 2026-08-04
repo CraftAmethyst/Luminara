@@ -9,15 +9,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.world.entity.monster.Illusioner$IllusionerBlindnessSpellGoal")
+@Mixin(
+    targets = "net.minecraft.world.entity.monster.Illusioner$IllusionerBlindnessSpellGoal"
+)
 public class Illusioner_BlindnessSpellGoalMixin {
 
     @SuppressWarnings("target")
-    @Shadow(aliases = {"this$0", "f_32941_"}, remap = false)
+    @Shadow(aliases = { "this$0", "f_32941_" }, remap = false)
     private Illusioner outerThis;
 
     @Inject(method = "performSpellCasting", at = @At("HEAD"))
     private void arclight$reason(CallbackInfo ci) {
-        ((LivingEntityBridge) outerThis).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
+        ((LivingEntityBridge) outerThis).bridge$pushEffectCause(
+            EntityPotionEffectEvent.Cause.ATTACK
+        );
     }
 }

@@ -13,6 +13,16 @@ import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.mixin.Eject;
+import java.io.File;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.UUIDUtil;
@@ -64,44 +74,41 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.io.File;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin implements PlayerListBridge {
 
     @Shadow
     @Final
     private static SimpleDateFormat BAN_DATE_FORMAT;
+
     @Shadow
     @Final
     public PlayerDataStorage playerIo;
+
     @Shadow
     @Final
     public List<ServerPlayer> players;
+
     @Shadow
     @Final
     protected int maxPlayers;
+
     @Shadow
     @Final
     private UserBanList bans;
+
     @Shadow
     @Final
     private IpBanList ipBans;
+
     @Shadow
     @Final
     private MinecraftServer server;
+
     @Shadow
     @Final
     private Map<UUID, ServerPlayer> playersByUUID;
+
     private CraftServer cserver;
     private transient Location arclight$loc;
     private transient Boolean arclight$suffo;
@@ -123,6 +130,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
     @Shadow public abstract IpBanList getIpBans();
 
     @Shadow public abstract void sendLevelInfo(ServerPlayer playerIn, ServerLevel worldIn);
+
     // @formatter:on
 
     @Shadow
@@ -136,7 +144,10 @@ public abstract class PlayerListMixin implements PlayerListBridge {
     public abstract ServerPlayer getPlayer(UUID playerUUID);
 
     @Shadow
-    public abstract void broadcastSystemMessage(Component p_240618_, boolean p_240644_);
+    public abstract void broadcastSystemMessage(
+        Component p_240618_,
+        boolean p_240644_
+    );
 
     @Override
     public CraftServer bridge$getCraftServer() {
@@ -144,35 +155,107 @@ public abstract class PlayerListMixin implements PlayerListBridge {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$loadServer(MinecraftServer minecraftServer, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_, CallbackInfo ci) {
-        cserver = ArclightServer.createOrLoad((DedicatedServer) minecraftServer, (PlayerList) (Object) this);
+    private void arclight$loadServer(
+        MinecraftServer minecraftServer,
+        LayeredRegistryAccess<RegistryLayer> p_251844_,
+        PlayerDataStorage p_203844_,
+        int p_203845_,
+        CallbackInfo ci
+    ) {
+        cserver = ArclightServer.createOrLoad(
+            (DedicatedServer) minecraftServer,
+            (PlayerList) (Object) this
+        );
     }
 
-    @Redirect(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getLevel(Lnet/minecraft/resources/ResourceKey;)Lnet/minecraft/server/level/ServerLevel;"))
-    private ServerLevel arclight$spawnLocationEvent(MinecraftServer minecraftServer, ResourceKey<Level> dimension, Connection netManager, ServerPlayer playerIn) {
-        CraftPlayer player = ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity();
-        PlayerSpawnLocationEvent event = new PlayerSpawnLocationEvent(player, player.getLocation());
+    @Redirect(
+        method = "placeNewPlayer",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/MinecraftServer;getLevel(Lnet/minecraft/resources/ResourceKey;)Lnet/minecraft/server/level/ServerLevel;"
+        )
+    )
+    private ServerLevel arclight$spawnLocationEvent(
+        MinecraftServer minecraftServer,
+        ResourceKey<Level> dimension,
+        Connection netManager,
+        ServerPlayer playerIn
+    ) {
+        CraftPlayer player =
+            ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity();
+        PlayerSpawnLocationEvent event = new PlayerSpawnLocationEvent(
+            player,
+            player.getLocation()
+        );
         cserver.getPluginManager().callEvent(event);
         Location loc = event.getSpawnLocation();
         ServerLevel world = ((CraftWorld) loc.getWorld()).getHandle();
         playerIn.setServerLevel(world);
-        playerIn.absMoveTo(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        playerIn.absMoveTo(
+            loc.getX(),
+            loc.getY(),
+            loc.getZ(),
+            loc.getYaw(),
+            loc.getPitch()
+        );
         return world;
     }
 
-    @Redirect(method = "placeNewPlayer", at = @At(value = "FIELD", target = "Lnet/minecraft/server/players/PlayerList;viewDistance:I"))
-    private int arclight$spigotViewDistance(PlayerList playerList, Connection netManager, ServerPlayer playerIn) {
-        return ((WorldBridge) playerIn.serverLevel()).bridge$spigotConfig().viewDistance;
+    @Redirect(
+        method = "placeNewPlayer",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/server/players/PlayerList;viewDistance:I"
+        )
+    )
+    private int arclight$spigotViewDistance(
+        PlayerList playerList,
+        Connection netManager,
+        ServerPlayer playerIn
+    ) {
+        return (
+            (WorldBridge) playerIn.serverLevel()
+        ).bridge$spigotConfig().viewDistance;
     }
 
-    @Redirect(method = "placeNewPlayer", at = @At(value = "FIELD", target = "Lnet/minecraft/server/players/PlayerList;simulationDistance:I"))
-    private int arclight$spigotSimDistance(PlayerList instance, Connection netManager, ServerPlayer playerIn) {
-        return ((WorldBridge) playerIn.serverLevel()).bridge$spigotConfig().simulationDistance;
+    @Redirect(
+        method = "placeNewPlayer",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/server/players/PlayerList;simulationDistance:I"
+        )
+    )
+    private int arclight$spigotSimDistance(
+        PlayerList instance,
+        Connection netManager,
+        ServerPlayer playerIn
+    ) {
+        return (
+            (WorldBridge) playerIn.serverLevel()
+        ).bridge$spigotConfig().simulationDistance;
     }
 
-    @Eject(method = "m_11261_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;m_240416_(Lnet/minecraft/network/chat/Component;Z)V", remap = false))
-    private void arclight$playerJoin(PlayerList playerList, Component component, boolean flag, CallbackInfo ci, Connection netManager, ServerPlayer playerIn) {
-        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(), CraftChatMessage.fromComponent(component));
+    @Eject(
+        method = "m_11261_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/players/PlayerList;m_240416_(Lnet/minecraft/network/chat/Component;Z)V",
+            remap = false
+        )
+    )
+    private void arclight$playerJoin(
+        PlayerList playerList,
+        Component component,
+        boolean flag,
+        CallbackInfo ci,
+        Connection netManager,
+        ServerPlayer playerIn
+    ) {
+        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(
+            ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(),
+            CraftChatMessage.fromComponent(component)
+        );
         this.players.add(playerIn);
         this.playersByUUID.put(playerIn.getUUID(), playerIn);
         this.cserver.getPluginManager().callEvent(playerJoinEvent);
@@ -189,41 +272,91 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         }
     }
 
-    @Redirect(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addNewPlayer(Lnet/minecraft/server/level/ServerPlayer;)V"))
-    private void arclight$addNewPlayer(ServerLevel instance, ServerPlayer player) {
-        if (player.level() == instance && !instance.players().contains(player)) {
+    @Redirect(
+        method = "placeNewPlayer",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;addNewPlayer(Lnet/minecraft/server/level/ServerPlayer;)V"
+        )
+    )
+    private void arclight$addNewPlayer(
+        ServerLevel instance,
+        ServerPlayer player
+    ) {
+        if (
+            player.level() == instance && !instance.players().contains(player)
+        ) {
             instance.addNewPlayer(player);
         }
     }
 
-    @ModifyVariable(method = "placeNewPlayer", ordinal = 1, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/level/ServerLevel;addNewPlayer(Lnet/minecraft/server/level/ServerPlayer;)V"))
-    private ServerLevel arclight$handleWorldChanges(ServerLevel value, Connection connection, ServerPlayer player) {
+    @ModifyVariable(
+        method = "placeNewPlayer",
+        ordinal = 1,
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/server/level/ServerLevel;addNewPlayer(Lnet/minecraft/server/level/ServerPlayer;)V"
+        )
+    )
+    private ServerLevel arclight$handleWorldChanges(
+        ServerLevel value,
+        Connection connection,
+        ServerPlayer player
+    ) {
         return player.serverLevel();
     }
 
     @Inject(method = "save", cancellable = true, at = @At("HEAD"))
-    private void arclight$returnIfNotPersist(ServerPlayer playerIn, CallbackInfo ci) {
+    private void arclight$returnIfNotPersist(
+        ServerPlayer playerIn,
+        CallbackInfo ci
+    ) {
         if (!((ServerPlayerEntityBridge) playerIn).bridge$isPersist()) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "remove", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;save(Lnet/minecraft/server/level/ServerPlayer;)V"))
-    private void arclight$playerQuitPre(ServerPlayer playerIn, CallbackInfo ci) {
+    @Inject(
+        method = "remove",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/players/PlayerList;save(Lnet/minecraft/server/level/ServerPlayer;)V"
+        )
+    )
+    private void arclight$playerQuitPre(
+        ServerPlayer playerIn,
+        CallbackInfo ci
+    ) {
         if (playerIn.inventoryMenu != playerIn.containerMenu) {
             ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().closeInventory();
         }
         var quitMessage = ArclightCaptures.getQuitMessage();
-        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(), quitMessage != null ? quitMessage : "\u00A7e" + playerIn.getScoreboardName() + " left the game");
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(
+            ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(),
+            quitMessage != null
+                ? quitMessage
+                : "\u00A7e" + playerIn.getScoreboardName() + " left the game"
+        );
         cserver.getPluginManager().callEvent(playerQuitEvent);
-        ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
+        ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().disconnect(
+            playerQuitEvent.getQuitMessage()
+        );
         // playerIn.doTick();
         ArclightCaptures.captureQuitMessage(playerQuitEvent.getQuitMessage());
-        cserver.getScoreboardManager().removePlayer(((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity());
+        cserver
+            .getScoreboardManager()
+            .removePlayer(
+                ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity()
+            );
     }
 
     @Override
-    public ServerPlayer bridge$canPlayerLogin(SocketAddress socketAddress, GameProfile gameProfile, ServerLoginPacketListenerImpl handler) {
+    public ServerPlayer bridge$canPlayerLogin(
+        SocketAddress socketAddress,
+        GameProfile gameProfile,
+        ServerLoginPacketListenerImpl handler
+    ) {
         UUID uuid = UUIDUtil.getOrCreatePlayerUUID(gameProfile);
         List<ServerPlayer> list = Lists.newArrayList();
         for (ServerPlayer entityplayer : this.players) {
@@ -233,57 +366,133 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         }
         for (ServerPlayer entityplayer : list) {
             this.save(entityplayer);
-            entityplayer.connection.disconnect(Component.translatable("multiplayer.disconnect.duplicate_login"));
+            entityplayer.connection.disconnect(
+                Component.translatable("multiplayer.disconnect.duplicate_login")
+            );
         }
-        ServerPlayer entity = new ServerPlayer(this.server, this.server.getLevel(Level.OVERWORLD), gameProfile);
-        Player player = ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity();
+        ServerPlayer entity = new ServerPlayer(
+            this.server,
+            this.server.getLevel(Level.OVERWORLD),
+            gameProfile
+        );
+        Player player =
+            ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity();
 
-        String hostname = handler == null ? "" : ((NetworkManagerBridge) handler.connection).bridge$getHostname();
-        InetAddress realAddress = handler == null ? ((InetSocketAddress) socketAddress).getAddress() : ((InetSocketAddress) handler.connection.channel.remoteAddress()).getAddress();
+        String hostname = handler == null
+            ? ""
+            : ((NetworkManagerBridge) handler.connection).bridge$getHostname();
+        InetAddress realAddress = handler == null
+            ? ((InetSocketAddress) socketAddress).getAddress()
+            : ((InetSocketAddress) handler.connection.channel.remoteAddress()).getAddress();
 
-        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((InetSocketAddress) socketAddress).getAddress(), realAddress);
-        if (this.getBans().isBanned(gameProfile) && !this.getBans().get(gameProfile).hasExpired()) {
+        PlayerLoginEvent event = new PlayerLoginEvent(
+            player,
+            hostname,
+            ((InetSocketAddress) socketAddress).getAddress(),
+            realAddress
+        );
+        if (
+            this.getBans().isBanned(gameProfile) &&
+            !this.getBans().get(gameProfile).hasExpired()
+        ) {
             UserBanListEntry gameprofilebanentry = this.bans.get(gameProfile);
-            var chatmessage = Component.translatable("multiplayer.disconnect.banned.reason", gameprofilebanentry.getReason());
+            var chatmessage = Component.translatable(
+                "multiplayer.disconnect.banned.reason",
+                gameprofilebanentry.getReason()
+            );
             if (gameprofilebanentry.getExpires() != null) {
-                chatmessage.append(Component.translatable("multiplayer.disconnect.banned.expiration", BAN_DATE_FORMAT.format(gameprofilebanentry.getExpires())));
+                chatmessage.append(
+                    Component.translatable(
+                        "multiplayer.disconnect.banned.expiration",
+                        BAN_DATE_FORMAT.format(gameprofilebanentry.getExpires())
+                    )
+                );
             }
-            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
+            event.disallow(
+                PlayerLoginEvent.Result.KICK_BANNED,
+                CraftChatMessage.fromComponent(chatmessage)
+            );
         } else if (!this.isWhiteListed(gameProfile)) {
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, SpigotConfig.whitelistMessage);
-        } else if (this.getIpBans().isBanned(socketAddress) && !this.getIpBans().get(socketAddress).hasExpired()) {
+            event.disallow(
+                PlayerLoginEvent.Result.KICK_WHITELIST,
+                SpigotConfig.whitelistMessage
+            );
+        } else if (
+            this.getIpBans().isBanned(socketAddress) &&
+            !this.getIpBans().get(socketAddress).hasExpired()
+        ) {
             IpBanListEntry ipbanentry = this.ipBans.get(socketAddress);
-            var chatmessage = Component.translatable("multiplayer.disconnect.banned_ip.reason", ipbanentry.getReason());
+            var chatmessage = Component.translatable(
+                "multiplayer.disconnect.banned_ip.reason",
+                ipbanentry.getReason()
+            );
             if (ipbanentry.getExpires() != null) {
-                chatmessage.append(Component.translatable("multiplayer.disconnect.banned_ip.expiration", BAN_DATE_FORMAT.format(ipbanentry.getExpires())));
+                chatmessage.append(
+                    Component.translatable(
+                        "multiplayer.disconnect.banned_ip.expiration",
+                        BAN_DATE_FORMAT.format(ipbanentry.getExpires())
+                    )
+                );
             }
-            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
-        } else if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameProfile)) {
-            event.disallow(PlayerLoginEvent.Result.KICK_FULL, SpigotConfig.serverFullMessage);
+            event.disallow(
+                PlayerLoginEvent.Result.KICK_BANNED,
+                CraftChatMessage.fromComponent(chatmessage)
+            );
+        } else if (
+            this.players.size() >= this.maxPlayers &&
+            !this.canBypassPlayerLimit(gameProfile)
+        ) {
+            event.disallow(
+                PlayerLoginEvent.Result.KICK_FULL,
+                SpigotConfig.serverFullMessage
+            );
         }
         this.cserver.getPluginManager().callEvent(event);
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
             if (handler != null) {
-                handler.disconnect(CraftChatMessage.fromStringOrNull(event.getKickMessage()));
+                handler.disconnect(
+                    CraftChatMessage.fromStringOrNull(event.getKickMessage())
+                );
             }
             return null;
         }
         return entity;
     }
 
-    public ServerPlayer respawn(ServerPlayer entityplayer, boolean flag, PlayerRespawnEvent.RespawnReason reason) {
-        return this.respawn(entityplayer, this.server.getLevel(entityplayer.getRespawnDimension()), flag, null, true, reason);
+    public ServerPlayer respawn(
+        ServerPlayer entityplayer,
+        boolean flag,
+        PlayerRespawnEvent.RespawnReason reason
+    ) {
+        return this.respawn(
+            entityplayer,
+            this.server.getLevel(entityplayer.getRespawnDimension()),
+            flag,
+            null,
+            true,
+            reason
+        );
     }
 
-    public ServerPlayer respawn(ServerPlayer playerIn, ServerLevel worldIn, boolean flag, Location location, boolean avoidSuffocation, PlayerRespawnEvent.RespawnReason respawnReason) {
+    public ServerPlayer respawn(
+        ServerPlayer playerIn,
+        ServerLevel worldIn,
+        boolean flag,
+        Location location,
+        boolean avoidSuffocation,
+        PlayerRespawnEvent.RespawnReason respawnReason
+    ) {
         playerIn.stopRiding();
         this.players.remove(playerIn);
-        playerIn.serverLevel().removePlayerImmediately(playerIn, Entity.RemovalReason.DISCARDED);
+        playerIn
+            .serverLevel()
+            .removePlayerImmediately(playerIn, Entity.RemovalReason.DISCARDED);
         playerIn.revive();
         BlockPos pos = playerIn.getRespawnPosition();
         float f = playerIn.getRespawnAngle();
         boolean flag2 = playerIn.isRespawnForced();
-        org.bukkit.World fromWorld = ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().getWorld();
+        org.bukkit.World fromWorld =
+            ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().getWorld();
         playerIn.wonGame = false;
         /*
         playerIn.copyFrom(playerIn, flag);
@@ -296,11 +505,20 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         boolean flag3 = false;
         if (location == null) {
             boolean isBedSpawn = false;
-            ServerLevel spawnWorld = this.server.getLevel(playerIn.getRespawnDimension());
+            ServerLevel spawnWorld = this.server.getLevel(
+                playerIn.getRespawnDimension()
+            );
             if (spawnWorld != null) {
                 Optional<Vec3> optional;
                 if (pos != null) {
-                    optional = net.minecraft.world.entity.player.Player.findRespawnPositionAndUseSpawnBlock(spawnWorld, pos, f, flag2, flag);
+                    optional =
+                        net.minecraft.world.entity.player.Player.findRespawnPositionAndUseSpawnBlock(
+                            spawnWorld,
+                            pos,
+                            f,
+                            flag2,
+                            flag
+                        );
                 } else {
                     optional = Optional.empty();
                 }
@@ -312,29 +530,69 @@ public abstract class PlayerListMixin implements PlayerListBridge {
                     if (!iblockdata.is(BlockTags.BEDS) && !flag4) {
                         f2 = f;
                     } else {
-                        Vec3 vec3d2 = Vec3.atBottomCenterOf(pos).subtract(vec3d).normalize();
-                        f2 = (float) Mth.wrapDegrees(Mth.atan2(vec3d2.z, vec3d2.x) * 57.2957763671875 - 90.0);
+                        Vec3 vec3d2 = Vec3.atBottomCenterOf(pos)
+                            .subtract(vec3d)
+                            .normalize();
+                        f2 = (float) Mth.wrapDegrees(
+                            Mth.atan2(vec3d2.z, vec3d2.x) * 57.2957763671875 -
+                                90.0
+                        );
                     }
                     // playerIn.setLocationAndAngles(vec3d.x, vec3d.y, vec3d.z, f2, 0.0f);
                     // playerIn.setRespawnPosition(spawnWorld.dimension(), pos, f2, flag2, false);
                     flag3 = (!flag && flag4);
                     isBedSpawn = true;
-                    location = new Location(((WorldBridge) spawnWorld).bridge$getWorld(), vec3d.x, vec3d.y, vec3d.z);
+                    location = new Location(
+                        ((WorldBridge) spawnWorld).bridge$getWorld(),
+                        vec3d.x,
+                        vec3d.y,
+                        vec3d.z
+                    );
                 } else if (pos != null) {
-                    playerIn.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0f));
-                    ((ServerPlayerEntityBridge) playerIn).bridge$pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause.RESET);
-                    playerIn.setRespawnPosition(Level.OVERWORLD, null, 0f, false, false); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
+                    playerIn.connection.send(
+                        new ClientboundGameEventPacket(
+                            ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE,
+                            0.0f
+                        )
+                    );
+                    ((ServerPlayerEntityBridge) playerIn).bridge$pushChangeSpawnCause(
+                        PlayerSpawnChangeEvent.Cause.RESET
+                    );
+                    playerIn.setRespawnPosition(
+                        Level.OVERWORLD,
+                        null,
+                        0f,
+                        false,
+                        false
+                    ); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
                 }
             }
             if (location == null) {
                 spawnWorld = this.server.getLevel(Level.OVERWORLD);
-                pos = ((ServerPlayerEntityBridge) playerIn).bridge$getSpawnPoint(spawnWorld);
-                location = new Location(((WorldBridge) spawnWorld).bridge$getWorld(), pos.getX() + 0.5f, pos.getY() + 0.1f, pos.getZ() + 0.5f);
+                pos =
+                    ((ServerPlayerEntityBridge) playerIn).bridge$getSpawnPoint(
+                        spawnWorld
+                    );
+                location = new Location(
+                    ((WorldBridge) spawnWorld).bridge$getWorld(),
+                    pos.getX() + 0.5f,
+                    pos.getY() + 0.1f,
+                    pos.getZ() + 0.5f
+                );
             }
-            Player respawnPlayer = ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity();
-            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag3, flag3, respawnReason);
+            Player respawnPlayer =
+                ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity();
+            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(
+                respawnPlayer,
+                location,
+                isBedSpawn && !flag3,
+                flag3,
+                respawnReason
+            );
             this.cserver.getPluginManager().callEvent(respawnEvent);
-            if (((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()) {
+            if (
+                ((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()
+            ) {
                 return playerIn;
             }
             location = respawnEvent.getRespawnLocation();
@@ -344,46 +602,136 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         } else {
             location.setWorld(((WorldBridge) worldIn).bridge$getWorld());
         }
-        ServerLevel serverWorld = ((CraftWorld) location.getWorld()).getHandle();
-        playerIn.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        ServerLevel serverWorld =
+            ((CraftWorld) location.getWorld()).getHandle();
+        playerIn.moveTo(
+            location.getX(),
+            location.getY(),
+            location.getZ(),
+            location.getYaw(),
+            location.getPitch()
+        );
         playerIn.connection.resetPosition();
-        while (avoidSuffocation && !serverWorld.noCollision(playerIn) && playerIn.getY() < serverWorld.getMaxBuildHeight()) {
-            playerIn.setPos(playerIn.getX(), playerIn.getY() + 1.0, playerIn.getZ());
+        while (
+            avoidSuffocation &&
+            !serverWorld.noCollision(playerIn) &&
+            playerIn.getY() < serverWorld.getMaxBuildHeight()
+        ) {
+            playerIn.setPos(
+                playerIn.getX(),
+                playerIn.getY() + 1.0,
+                playerIn.getZ()
+            );
         }
         LevelData worlddata = serverWorld.getLevelData();
-        playerIn.connection.send(new ClientboundRespawnPacket(serverWorld.dimensionTypeId(), serverWorld.dimension(), BiomeManager.obfuscateSeed(serverWorld.getSeed()), playerIn.gameMode.getGameModeForPlayer(), playerIn.gameMode.getPreviousGameModeForPlayer(), serverWorld.isDebug(), serverWorld.isFlat(), (byte) (flag ? 1 : 0), playerIn.getLastDeathLocation(), playerIn.getPortalCooldown()));
-        playerIn.connection.send(new ClientboundSetChunkCacheRadiusPacket(((WorldBridge) serverWorld).bridge$spigotConfig().viewDistance));
-        playerIn.connection.send(new ClientboundSetSimulationDistancePacket(((WorldBridge) serverWorld).bridge$spigotConfig().simulationDistance));
+        playerIn.connection.send(
+            new ClientboundRespawnPacket(
+                serverWorld.dimensionTypeId(),
+                serverWorld.dimension(),
+                BiomeManager.obfuscateSeed(serverWorld.getSeed()),
+                playerIn.gameMode.getGameModeForPlayer(),
+                playerIn.gameMode.getPreviousGameModeForPlayer(),
+                serverWorld.isDebug(),
+                serverWorld.isFlat(),
+                (byte) (flag ? 1 : 0),
+                playerIn.getLastDeathLocation(),
+                playerIn.getPortalCooldown()
+            )
+        );
+        playerIn.connection.send(
+            new ClientboundSetChunkCacheRadiusPacket(
+                ((WorldBridge) serverWorld).bridge$spigotConfig().viewDistance
+            )
+        );
+        playerIn.connection.send(
+            new ClientboundSetSimulationDistancePacket(
+                ((WorldBridge) serverWorld).bridge$spigotConfig().simulationDistance
+            )
+        );
         playerIn.setServerLevel(serverWorld);
-        ((ServerPlayNetHandlerBridge) playerIn.connection).bridge$teleport(new Location(((WorldBridge) serverWorld).bridge$getWorld(), playerIn.getX(), playerIn.getY(), playerIn.getZ(), playerIn.getYRot(), playerIn.getXRot()));
+        ((ServerPlayNetHandlerBridge) playerIn.connection).bridge$teleport(
+            new Location(
+                ((WorldBridge) serverWorld).bridge$getWorld(),
+                playerIn.getX(),
+                playerIn.getY(),
+                playerIn.getZ(),
+                playerIn.getYRot(),
+                playerIn.getXRot()
+            )
+        );
         playerIn.setShiftKeyDown(false);
-        playerIn.connection.send(new ClientboundSetDefaultSpawnPositionPacket(serverWorld.getSharedSpawnPos(), serverWorld.getSharedSpawnAngle()));
-        playerIn.connection.send(new ClientboundChangeDifficultyPacket(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
-        playerIn.connection.send(new ClientboundSetExperiencePacket(playerIn.experienceProgress, playerIn.totalExperience, playerIn.experienceLevel));
+        playerIn.connection.send(
+            new ClientboundSetDefaultSpawnPositionPacket(
+                serverWorld.getSharedSpawnPos(),
+                serverWorld.getSharedSpawnAngle()
+            )
+        );
+        playerIn.connection.send(
+            new ClientboundChangeDifficultyPacket(
+                worlddata.getDifficulty(),
+                worlddata.isDifficultyLocked()
+            )
+        );
+        playerIn.connection.send(
+            new ClientboundSetExperiencePacket(
+                playerIn.experienceProgress,
+                playerIn.totalExperience,
+                playerIn.experienceLevel
+            )
+        );
         this.sendLevelInfo(playerIn, serverWorld);
         this.sendPlayerPermissionLevel(playerIn);
-        if (!((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()) {
+        if (
+            !((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()
+        ) {
             serverWorld.addRespawnedPlayer(playerIn);
             this.players.add(playerIn);
             this.playersByUUID.put(playerIn.getUUID(), playerIn);
         }
         playerIn.setHealth(playerIn.getHealth());
-        ForgeEventFactory.firePlayerChangedDimensionEvent(playerIn, ((CraftWorld) fromWorld).getHandle().dimension, serverWorld.dimension);
+        ForgeEventFactory.firePlayerChangedDimensionEvent(
+            playerIn,
+            ((CraftWorld) fromWorld).getHandle().dimension,
+            serverWorld.dimension
+        );
         if (flag3) {
-            playerIn.connection.send(new ClientboundSoundPacket(SoundEvents.RESPAWN_ANCHOR_DEPLETE, SoundSource.BLOCKS, pos.getX(), pos.getY(), pos.getZ(), 1.0f, 1.0f, serverWorld.random.nextLong()));
+            playerIn.connection.send(
+                new ClientboundSoundPacket(
+                    SoundEvents.RESPAWN_ANCHOR_DEPLETE,
+                    SoundSource.BLOCKS,
+                    pos.getX(),
+                    pos.getY(),
+                    pos.getZ(),
+                    1.0f,
+                    1.0f,
+                    serverWorld.random.nextLong()
+                )
+            );
         }
         this.sendAllPlayerInfo(playerIn);
         playerIn.onUpdateAbilities();
         for (Object o1 : playerIn.getActiveEffects()) {
             MobEffectInstance mobEffect = (MobEffectInstance) o1;
-            playerIn.connection.send(new ClientboundUpdateMobEffectPacket(playerIn.getId(), mobEffect));
+            playerIn.connection.send(
+                new ClientboundUpdateMobEffectPacket(
+                    playerIn.getId(),
+                    mobEffect
+                )
+            );
         }
-        playerIn.triggerDimensionChangeTriggers(((CraftWorld) fromWorld).getHandle());
+        playerIn.triggerDimensionChangeTriggers(
+            ((CraftWorld) fromWorld).getHandle()
+        );
         if (fromWorld != location.getWorld()) {
-            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(), fromWorld);
+            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(
+                ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(),
+                fromWorld
+            );
             Bukkit.getPluginManager().callEvent(event);
         }
-        if (((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()) {
+        if (
+            ((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()
+        ) {
             this.save(playerIn);
         }
         return playerIn;
@@ -399,26 +747,40 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         arclight$loc = null;
         boolean avoidSuffocation = arclight$suffo == null || arclight$suffo;
         arclight$suffo = null;
-        var respawnReason = arclight$respawnReason == null ? PlayerRespawnEvent.RespawnReason.DEATH : arclight$respawnReason;
+        var respawnReason = arclight$respawnReason == null
+            ? PlayerRespawnEvent.RespawnReason.DEATH
+            : arclight$respawnReason;
         arclight$respawnReason = null;
         playerIn.stopRiding();
         this.players.remove(playerIn);
-        playerIn.serverLevel().removePlayerImmediately(playerIn, Entity.RemovalReason.DISCARDED);
+        playerIn
+            .serverLevel()
+            .removePlayerImmediately(playerIn, Entity.RemovalReason.DISCARDED);
         BlockPos pos = playerIn.getRespawnPosition();
         float f = playerIn.getRespawnAngle();
         boolean flag2 = playerIn.isRespawnForced();
 
-        org.bukkit.World fromWorld = ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().getWorld();
+        org.bukkit.World fromWorld =
+            ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().getWorld();
         playerIn.wonGame = false;
 
         boolean flag3 = false;
-        ServerLevel spawnWorld = this.server.getLevel(playerIn.getRespawnDimension());
+        ServerLevel spawnWorld = this.server.getLevel(
+            playerIn.getRespawnDimension()
+        );
         if (location == null) {
             boolean isBedSpawn = false;
             if (spawnWorld != null) {
                 Optional<Vec3> optional;
                 if (pos != null) {
-                    optional = net.minecraft.world.entity.player.Player.findRespawnPositionAndUseSpawnBlock(spawnWorld, pos, f, flag2, conqueredEnd);
+                    optional =
+                        net.minecraft.world.entity.player.Player.findRespawnPositionAndUseSpawnBlock(
+                            spawnWorld,
+                            pos,
+                            f,
+                            flag2,
+                            conqueredEnd
+                        );
                 } else {
                     optional = Optional.empty();
                 }
@@ -430,29 +792,69 @@ public abstract class PlayerListMixin implements PlayerListBridge {
                     if (!iblockdata.is(BlockTags.BEDS) && !flag4) {
                         f2 = f;
                     } else {
-                        Vec3 vec3d2 = Vec3.atBottomCenterOf(pos).subtract(vec3d).normalize();
-                        f2 = (float) Mth.wrapDegrees(Mth.atan2(vec3d2.z, vec3d2.x) * 57.2957763671875 - 90.0);
+                        Vec3 vec3d2 = Vec3.atBottomCenterOf(pos)
+                            .subtract(vec3d)
+                            .normalize();
+                        f2 = (float) Mth.wrapDegrees(
+                            Mth.atan2(vec3d2.z, vec3d2.x) * 57.2957763671875 -
+                                90.0
+                        );
                     }
                     // playerIn.setLocationAndAngles(vec3d.x, vec3d.y, vec3d.z, f2, 0.0f);
                     // playerIn.setRespawnPosition(spawnWorld.dimension(), pos, f2, flag2, false);
                     flag3 = (!flag2 && flag4);
                     isBedSpawn = true;
-                    location = new Location(((WorldBridge) spawnWorld).bridge$getWorld(), vec3d.x, vec3d.y, vec3d.z);
+                    location = new Location(
+                        ((WorldBridge) spawnWorld).bridge$getWorld(),
+                        vec3d.x,
+                        vec3d.y,
+                        vec3d.z
+                    );
                 } else if (pos != null) {
-                    playerIn.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0f));
-                    ((ServerPlayerEntityBridge) playerIn).bridge$pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause.RESET);
-                    playerIn.setRespawnPosition(Level.OVERWORLD, null, 0f, false, false);
+                    playerIn.connection.send(
+                        new ClientboundGameEventPacket(
+                            ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE,
+                            0.0f
+                        )
+                    );
+                    ((ServerPlayerEntityBridge) playerIn).bridge$pushChangeSpawnCause(
+                        PlayerSpawnChangeEvent.Cause.RESET
+                    );
+                    playerIn.setRespawnPosition(
+                        Level.OVERWORLD,
+                        null,
+                        0f,
+                        false,
+                        false
+                    );
                 }
             }
             if (location == null) {
                 spawnWorld = this.server.getLevel(Level.OVERWORLD);
-                pos = ((ServerPlayerEntityBridge) playerIn).bridge$getSpawnPoint(spawnWorld);
-                location = new Location(((WorldBridge) spawnWorld).bridge$getWorld(), pos.getX() + 0.5f, pos.getY() + 0.1f, pos.getZ() + 0.5f);
+                pos =
+                    ((ServerPlayerEntityBridge) playerIn).bridge$getSpawnPoint(
+                        spawnWorld
+                    );
+                location = new Location(
+                    ((WorldBridge) spawnWorld).bridge$getWorld(),
+                    pos.getX() + 0.5f,
+                    pos.getY() + 0.1f,
+                    pos.getZ() + 0.5f
+                );
             }
-            Player respawnPlayer = ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity();
-            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag3, flag3, respawnReason);
+            Player respawnPlayer =
+                ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity();
+            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(
+                respawnPlayer,
+                location,
+                isBedSpawn && !flag3,
+                flag3,
+                respawnReason
+            );
             this.cserver.getPluginManager().callEvent(respawnEvent);
-            if (((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()) {
+            if (
+                ((ServerPlayNetHandlerBridge) playerIn.connection).bridge$isDisconnected()
+            ) {
                 return playerIn;
             }
             location = respawnEvent.getRespawnLocation();
@@ -463,13 +865,22 @@ public abstract class PlayerListMixin implements PlayerListBridge {
             location.setWorld(((WorldBridge) spawnWorld).bridge$getWorld());
         }
 
-        ServerLevel serverWorld = ((CraftWorld) location.getWorld()).getHandle();
+        ServerLevel serverWorld =
+            ((CraftWorld) location.getWorld()).getHandle();
 
-        ServerPlayer serverplayerentity = new ServerPlayer(this.server, serverWorld, playerIn.getGameProfile());
+        ServerPlayer serverplayerentity = new ServerPlayer(
+            this.server,
+            serverWorld,
+            playerIn.getGameProfile()
+        );
 
         // Forward to new player instance
-        ((InternalEntityBridge) playerIn).internal$getBukkitEntity().setHandle(serverplayerentity);
-        ((EntityBridge) serverplayerentity).bridge$setBukkitEntity(((InternalEntityBridge) playerIn).internal$getBukkitEntity());
+        ((InternalEntityBridge) playerIn).internal$getBukkitEntity().setHandle(
+            serverplayerentity
+        );
+        ((EntityBridge) serverplayerentity).bridge$setBukkitEntity(
+            ((InternalEntityBridge) playerIn).internal$getBukkitEntity()
+        );
         if ((Object) playerIn instanceof Mob) {
             ((Mob) (Object) playerIn).dropLeash(true, false);
         }
@@ -477,10 +888,18 @@ public abstract class PlayerListMixin implements PlayerListBridge {
 
         serverplayerentity.connection = playerIn.connection;
         serverplayerentity.restoreFrom(playerIn, conqueredEnd);
-        serverplayerentity.setRespawnPosition(playerIn.getRespawnDimension(), playerIn.getRespawnPosition(),
-                playerIn.getRespawnAngle(), playerIn.isRespawnForced(), false);
-        if (!conqueredEnd) {  // keep inventory here since inventory dropped at ServerPlayerEntity#onDeath
-            serverplayerentity.getInventory().replaceWith(playerIn.getInventory());
+        serverplayerentity.setRespawnPosition(
+            playerIn.getRespawnDimension(),
+            playerIn.getRespawnPosition(),
+            playerIn.getRespawnAngle(),
+            playerIn.isRespawnForced(),
+            false
+        );
+        if (!conqueredEnd) {
+            // keep inventory here since inventory dropped at ServerPlayerEntity#onDeath
+            serverplayerentity
+                .getInventory()
+                .replaceWith(playerIn.getInventory());
             serverplayerentity.experienceLevel = playerIn.experienceLevel;
             serverplayerentity.totalExperience = playerIn.totalExperience;
             serverplayerentity.experienceProgress = playerIn.experienceProgress;
@@ -493,56 +912,157 @@ public abstract class PlayerListMixin implements PlayerListBridge {
             serverplayerentity.addTag(s);
         }
 
-        serverplayerentity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        serverplayerentity.moveTo(
+            location.getX(),
+            location.getY(),
+            location.getZ(),
+            location.getYaw(),
+            location.getPitch()
+        );
         serverplayerentity.connection.resetPosition();
 
-        while (avoidSuffocation && !serverWorld.noCollision(serverplayerentity) && serverplayerentity.getY() < serverWorld.getMaxBuildHeight()) {
-            serverplayerentity.setPos(serverplayerentity.getX(), serverplayerentity.getY() + 1.0D, serverplayerentity.getZ());
+        while (
+            avoidSuffocation &&
+            !serverWorld.noCollision(serverplayerentity) &&
+            serverplayerentity.getY() < serverWorld.getMaxBuildHeight()
+        ) {
+            serverplayerentity.setPos(
+                serverplayerentity.getX(),
+                serverplayerentity.getY() + 1.0D,
+                serverplayerentity.getZ()
+            );
         }
 
         LevelData iworldinfo = serverplayerentity.level().getLevelData();
-        serverplayerentity.connection.send(new ClientboundRespawnPacket(serverplayerentity.level().dimensionTypeId(), serverplayerentity.level().dimension(), BiomeManager.obfuscateSeed(serverplayerentity.serverLevel().getSeed()), serverplayerentity.gameMode.getGameModeForPlayer(), serverplayerentity.gameMode.getPreviousGameModeForPlayer(), serverplayerentity.serverLevel().isDebug(), serverplayerentity.serverLevel().isFlat(), (byte) (conqueredEnd ? 1 : 0), serverplayerentity.getLastDeathLocation(), serverplayerentity.getPortalCooldown()));
-        serverplayerentity.connection.send(new ClientboundSetChunkCacheRadiusPacket(((WorldBridge) serverWorld).bridge$spigotConfig().viewDistance));
-        serverplayerentity.connection.send(new ClientboundSetSimulationDistancePacket(((WorldBridge) serverWorld).bridge$spigotConfig().simulationDistance));
+        serverplayerentity.connection.send(
+            new ClientboundRespawnPacket(
+                serverplayerentity.level().dimensionTypeId(),
+                serverplayerentity.level().dimension(),
+                BiomeManager.obfuscateSeed(
+                    serverplayerentity.serverLevel().getSeed()
+                ),
+                serverplayerentity.gameMode.getGameModeForPlayer(),
+                serverplayerentity.gameMode.getPreviousGameModeForPlayer(),
+                serverplayerentity.serverLevel().isDebug(),
+                serverplayerentity.serverLevel().isFlat(),
+                (byte) (conqueredEnd ? 1 : 0),
+                serverplayerentity.getLastDeathLocation(),
+                serverplayerentity.getPortalCooldown()
+            )
+        );
+        serverplayerentity.connection.send(
+            new ClientboundSetChunkCacheRadiusPacket(
+                ((WorldBridge) serverWorld).bridge$spigotConfig().viewDistance
+            )
+        );
+        serverplayerentity.connection.send(
+            new ClientboundSetSimulationDistancePacket(
+                ((WorldBridge) serverWorld).bridge$spigotConfig().simulationDistance
+            )
+        );
         serverplayerentity.setServerLevel(serverWorld);
-        ((ServerPlayNetHandlerBridge) serverplayerentity.connection).bridge$teleport(new Location(((WorldBridge) serverWorld).bridge$getWorld(), serverplayerentity.getX(), serverplayerentity.getY(), serverplayerentity.getZ(), serverplayerentity.getYRot(), serverplayerentity.getXRot()));
+        ((ServerPlayNetHandlerBridge) serverplayerentity.connection).bridge$teleport(
+            new Location(
+                ((WorldBridge) serverWorld).bridge$getWorld(),
+                serverplayerentity.getX(),
+                serverplayerentity.getY(),
+                serverplayerentity.getZ(),
+                serverplayerentity.getYRot(),
+                serverplayerentity.getXRot()
+            )
+        );
         serverplayerentity.setShiftKeyDown(false);
-        serverplayerentity.connection.send(new ClientboundSetDefaultSpawnPositionPacket(serverWorld.getSharedSpawnPos(), serverWorld.getSharedSpawnAngle()));
-        serverplayerentity.connection.send(new ClientboundChangeDifficultyPacket(iworldinfo.getDifficulty(), iworldinfo.isDifficultyLocked()));
-        serverplayerentity.connection.send(new ClientboundSetExperiencePacket(serverplayerentity.experienceProgress, serverplayerentity.totalExperience, serverplayerentity.experienceLevel));
+        serverplayerentity.connection.send(
+            new ClientboundSetDefaultSpawnPositionPacket(
+                serverWorld.getSharedSpawnPos(),
+                serverWorld.getSharedSpawnAngle()
+            )
+        );
+        serverplayerentity.connection.send(
+            new ClientboundChangeDifficultyPacket(
+                iworldinfo.getDifficulty(),
+                iworldinfo.isDifficultyLocked()
+            )
+        );
+        serverplayerentity.connection.send(
+            new ClientboundSetExperiencePacket(
+                serverplayerentity.experienceProgress,
+                serverplayerentity.totalExperience,
+                serverplayerentity.experienceLevel
+            )
+        );
         this.sendLevelInfo(serverplayerentity, serverWorld);
         this.sendPlayerPermissionLevel(serverplayerentity);
-        if (!((ServerPlayNetHandlerBridge) serverplayerentity.connection).bridge$isDisconnected()) {
+        if (
+            !((ServerPlayNetHandlerBridge) serverplayerentity.connection).bridge$isDisconnected()
+        ) {
             serverWorld.addRespawnedPlayer(serverplayerentity);
             this.players.add(serverplayerentity);
-            this.playersByUUID.put(serverplayerentity.getUUID(), serverplayerentity);
+            this.playersByUUID.put(
+                serverplayerentity.getUUID(),
+                serverplayerentity
+            );
         }
         serverplayerentity.initInventoryMenu();
         serverplayerentity.setHealth(serverplayerentity.getHealth());
-        ForgeEventFactory.firePlayerRespawnEvent(serverplayerentity, conqueredEnd);
+        ForgeEventFactory.firePlayerRespawnEvent(
+            serverplayerentity,
+            conqueredEnd
+        );
         if (flag2) {
-            serverplayerentity.connection.send(new ClientboundSoundPacket(SoundEvents.RESPAWN_ANCHOR_DEPLETE, SoundSource.BLOCKS, (double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), 1.0F, 1.0F, serverWorld.random.nextLong()));
+            serverplayerentity.connection.send(
+                new ClientboundSoundPacket(
+                    SoundEvents.RESPAWN_ANCHOR_DEPLETE,
+                    SoundSource.BLOCKS,
+                    (double) pos.getX(),
+                    (double) pos.getY(),
+                    (double) pos.getZ(),
+                    1.0F,
+                    1.0F,
+                    serverWorld.random.nextLong()
+                )
+            );
         }
         this.sendAllPlayerInfo(serverplayerentity);
         serverplayerentity.onUpdateAbilities();
         for (Object o1 : serverplayerentity.getActiveEffects()) {
             MobEffectInstance mobEffect = (MobEffectInstance) o1;
-            serverplayerentity.connection.send(new ClientboundUpdateMobEffectPacket(serverplayerentity.getId(), mobEffect));
+            serverplayerentity.connection.send(
+                new ClientboundUpdateMobEffectPacket(
+                    serverplayerentity.getId(),
+                    mobEffect
+                )
+            );
         }
-        serverplayerentity.triggerDimensionChangeTriggers(((CraftWorld) fromWorld).getHandle());
+        serverplayerentity.triggerDimensionChangeTriggers(
+            ((CraftWorld) fromWorld).getHandle()
+        );
         if (fromWorld != location.getWorld()) {
-            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(((ServerPlayerEntityBridge) serverplayerentity).bridge$getBukkitEntity(), fromWorld);
+            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(
+                ((ServerPlayerEntityBridge) serverplayerentity).bridge$getBukkitEntity(),
+                fromWorld
+            );
             Bukkit.getPluginManager().callEvent(event);
         }
-        if (((ServerPlayNetHandlerBridge) serverplayerentity.connection).bridge$isDisconnected()) {
+        if (
+            ((ServerPlayNetHandlerBridge) serverplayerentity.connection).bridge$isDisconnected()
+        ) {
             this.save(serverplayerentity);
         }
         return serverplayerentity;
     }
 
-    public void broadcastAll(Packet<?> packet, net.minecraft.world.entity.player.Player entityhuman) {
+    public void broadcastAll(
+        Packet<?> packet,
+        net.minecraft.world.entity.player.Player entityhuman
+    ) {
         for (ServerPlayer entityplayer : this.players) {
-            if (!(entityhuman instanceof ServerPlayer) || ((ServerPlayerEntityBridge) entityplayer).bridge$getBukkitEntity().canSee(((ServerPlayerEntityBridge) entityhuman).bridge$getBukkitEntity())) {
+            if (
+                !(entityhuman instanceof ServerPlayer) ||
+                ((ServerPlayerEntityBridge) entityplayer).bridge$getBukkitEntity().canSee(
+                    ((ServerPlayerEntityBridge) entityhuman).bridge$getBukkitEntity()
+                )
+            ) {
                 entityplayer.connection.send(packet);
             }
         }
@@ -554,19 +1074,54 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         }
     }
 
-    @Inject(method = "sendPlayerPermissionLevel(Lnet/minecraft/server/level/ServerPlayer;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getCommands()Lnet/minecraft/commands/Commands;"))
-    private void arclight$calculatePerms(ServerPlayer player, int permLevel, CallbackInfo ci) {
+    @Inject(
+        method = "sendPlayerPermissionLevel(Lnet/minecraft/server/level/ServerPlayer;I)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/MinecraftServer;getCommands()Lnet/minecraft/commands/Commands;"
+        )
+    )
+    private void arclight$calculatePerms(
+        ServerPlayer player,
+        int permLevel,
+        CallbackInfo ci
+    ) {
         ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().recalculatePermissions();
     }
 
-    @Redirect(method = "sendAllPlayerInfo", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;resetSentInfo()V"))
+    @Redirect(
+        method = "sendAllPlayerInfo",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerPlayer;resetSentInfo()V"
+        )
+    )
     private void arclight$useScaledHealth(ServerPlayer playerEntity) {
         ((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity().updateScaledHealth();
-        ((SynchedEntityDataBridge) playerEntity.getEntityData()).bridge$refresh(playerEntity);
-        int i = playerEntity.level().getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) ? 22 : 23;
-        playerEntity.connection.send(new ClientboundEntityEventPacket(playerEntity, (byte) i));
-        float immediateRespawn = playerEntity.level().getGameRules().getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN) ? 1.0f : 0.0f;
-        playerEntity.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.IMMEDIATE_RESPAWN, immediateRespawn));
+        ((SynchedEntityDataBridge) playerEntity.getEntityData()).bridge$refresh(
+            playerEntity
+        );
+        int i = playerEntity
+                .level()
+                .getGameRules()
+                .getBoolean(GameRules.RULE_REDUCEDDEBUGINFO)
+            ? 22
+            : 23;
+        playerEntity.connection.send(
+            new ClientboundEntityEventPacket(playerEntity, (byte) i)
+        );
+        float immediateRespawn = playerEntity
+                .level()
+                .getGameRules()
+                .getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN)
+            ? 1.0f
+            : 0.0f;
+        playerEntity.connection.send(
+            new ClientboundGameEventPacket(
+                ClientboundGameEventPacket.IMMEDIATE_RESPAWN,
+                immediateRespawn
+            )
+        );
     }
 
     public void broadcastMessage(Component[] components) {
@@ -582,18 +1137,30 @@ public abstract class PlayerListMixin implements PlayerListBridge {
 
     public ServerStatsCounter getPlayerStats(ServerPlayer entityhuman) {
         ServerStatsCounter serverstatisticmanager = entityhuman.getStats();
-        return serverstatisticmanager == null ? this.getPlayerStats(entityhuman.getUUID(), entityhuman.getName().getString()) : serverstatisticmanager;
+        return serverstatisticmanager == null
+            ? this.getPlayerStats(
+                  entityhuman.getUUID(),
+                  entityhuman.getName().getString()
+              )
+            : serverstatisticmanager;
     }
 
     public ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
         ServerStatsCounter serverstatisticmanager;
         ServerPlayer entityhuman = this.getPlayer(uuid);
-        ServerStatsCounter serverStatisticsManager = serverstatisticmanager = entityhuman == null ? null : entityhuman.getStats();
+        ServerStatsCounter serverStatisticsManager = serverstatisticmanager =
+            entityhuman == null ? null : entityhuman.getStats();
         if (serverstatisticmanager == null) {
             File file2;
-            File file = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
+            File file = this.server.getWorldPath(
+                LevelResource.PLAYER_STATS_DIR
+            ).toFile();
             File file1 = new File(file, uuid + ".json");
-            if (!file1.exists() && (file2 = new File(file, displayName + ".json")).exists() && file2.isFile()) {
+            if (
+                !file1.exists() &&
+                (file2 = new File(file, displayName + ".json")).exists() &&
+                file2.isFile()
+            ) {
                 file2.renameTo(file1);
             }
             serverstatisticmanager = new ServerStatsCounter(this.server, file1);

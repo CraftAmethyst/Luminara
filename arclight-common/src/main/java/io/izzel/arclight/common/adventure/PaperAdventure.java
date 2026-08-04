@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.adventure;
 
-
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
@@ -13,16 +15,15 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-
 // Adventure integration for Luminara
 public final class PaperAdventure {
 
-    private static final GsonComponentSerializer GSON_SERIALIZER = GsonComponentSerializer.gson();
-    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
-    private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
+    private static final GsonComponentSerializer GSON_SERIALIZER =
+        GsonComponentSerializer.gson();
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER =
+        LegacyComponentSerializer.legacySection();
+    private static final PlainTextComponentSerializer PLAIN_SERIALIZER =
+        PlainTextComponentSerializer.plainText();
     private static final MiniMessage MINI_MESSAGE = createMiniMessage();
 
     private PaperAdventure() {
@@ -34,20 +35,31 @@ public final class PaperAdventure {
     }
 
     // Convert Adventure Component to Minecraft Component
-    public static net.minecraft.network.chat.Component asVanilla(@NotNull Component component) {
+    public static net.minecraft.network.chat.Component asVanilla(
+        @NotNull Component component
+    ) {
         try {
             String json = GSON_SERIALIZER.serialize(component);
-            return net.minecraft.network.chat.Component.Serializer.fromJson(json);
+            return net.minecraft.network.chat.Component.Serializer.fromJson(
+                json
+            );
         } catch (Exception e) {
             // Fallback to plain text if conversion fails
-            return net.minecraft.network.chat.Component.literal(PLAIN_SERIALIZER.serialize(component));
+            return net.minecraft.network.chat.Component.literal(
+                PLAIN_SERIALIZER.serialize(component)
+            );
         }
     }
 
     // Convert Minecraft Component to Adventure Component
-    public static @NotNull Component asAdventure(@NotNull net.minecraft.network.chat.Component component) {
+    public static @NotNull Component asAdventure(
+        @NotNull net.minecraft.network.chat.Component component
+    ) {
         try {
-            String json = net.minecraft.network.chat.Component.Serializer.toJson(component);
+            String json =
+                net.minecraft.network.chat.Component.Serializer.toJson(
+                    component
+                );
             return GSON_SERIALIZER.deserialize(json);
         } catch (Exception e) {
             // Fallback to plain text if conversion fails
@@ -61,7 +73,9 @@ public final class PaperAdventure {
     }
 
     // Convert Adventure Component to legacy string
-    public static @NotNull String adventureToLegacy(@NotNull Component component) {
+    public static @NotNull String adventureToLegacy(
+        @NotNull Component component
+    ) {
         return LEGACY_SERIALIZER.serialize(component);
     }
 
@@ -71,12 +85,16 @@ public final class PaperAdventure {
     }
 
     // Convert MiniMessage string to Adventure Component
-    public static @NotNull Component miniMessageToAdventure(@NotNull String miniMessage) {
+    public static @NotNull Component miniMessageToAdventure(
+        @NotNull String miniMessage
+    ) {
         return MINI_MESSAGE.deserialize(miniMessage);
     }
 
     // Convert Adventure Component to MiniMessage string
-    public static @NotNull String adventureToMiniMessage(@NotNull Component component) {
+    public static @NotNull String adventureToMiniMessage(
+        @NotNull Component component
+    ) {
         return MINI_MESSAGE.serialize(component);
     }
 
@@ -84,7 +102,6 @@ public final class PaperAdventure {
     public static @NotNull MiniMessage miniMessage() {
         return MINI_MESSAGE;
     }
-
 
     // Enhanced message parsing that supports multiple formats
     public static @NotNull Component parseMessage(@NotNull String message) {
@@ -101,26 +118,39 @@ public final class PaperAdventure {
         }
     }
 
-    public static @NotNull Component resolveWithContext(@NotNull Component input, @Nullable CommandSender context, @Nullable Entity scoreboardSubject, boolean bypassPermissions) throws IOException {
+    public static @NotNull Component resolveWithContext(
+        @NotNull Component input,
+        @Nullable CommandSender context,
+        @Nullable Entity scoreboardSubject,
+        boolean bypassPermissions
+    ) throws IOException {
         if (context == null) {
             return input;
         }
         return input;
     }
 
-    public static @NotNull List<Audience> audiences(@NotNull List<? extends CommandSender> senders) {
-        return senders.stream()
-                .filter(sender -> sender instanceof Audience)
-                .map(sender -> (Audience) sender)
-                .toList();
+    public static @NotNull List<Audience> audiences(
+        @NotNull List<? extends CommandSender> senders
+    ) {
+        return senders
+            .stream()
+            .filter(sender -> sender instanceof Audience)
+            .map(sender -> (Audience) sender)
+            .toList();
     }
 
-    public static @NotNull SignedMessage createUnsignedMessage(@NotNull String content) {
+    public static @NotNull SignedMessage createUnsignedMessage(
+        @NotNull String content
+    ) {
         return SimpleSignedMessage.unsigned(content);
     }
 
     // Create signed SignedMessage
-    public static @NotNull SignedMessage createSignedMessage(@NotNull String content, @NotNull UUID sender) {
+    public static @NotNull SignedMessage createSignedMessage(
+        @NotNull String content,
+        @NotNull UUID sender
+    ) {
         return SimpleSignedMessage.signed(content, sender);
     }
 }

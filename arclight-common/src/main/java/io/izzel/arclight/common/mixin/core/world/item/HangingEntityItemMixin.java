@@ -29,15 +29,41 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(HangingEntityItem.class)
 public class HangingEntityItemMixin {
 
-    @Inject(method = "useOn", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/HangingEntity;playPlacementSound()V"))
-    public void arclight$hangingPlace(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir, BlockPos blockPos, Direction direction, BlockPos blockPos1, net.minecraft.world.entity.player.Player playerEntity, ItemStack itemStack, Level world, HangingEntity hangingEntity) {
+    @Inject(
+        method = "useOn",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/decoration/HangingEntity;playPlacementSound()V"
+        )
+    )
+    public void arclight$hangingPlace(
+        UseOnContext context,
+        CallbackInfoReturnable<InteractionResult> cir,
+        BlockPos blockPos,
+        Direction direction,
+        BlockPos blockPos1,
+        net.minecraft.world.entity.player.Player playerEntity,
+        ItemStack itemStack,
+        Level world,
+        HangingEntity hangingEntity
+    ) {
         if (!DistValidate.isValid(context)) return;
-        Player who = (context.getPlayer() == null) ? null : (Player) ((PlayerEntityBridge) context.getPlayer()).bridge$getBukkitEntity();
+        Player who = (context.getPlayer() == null)
+            ? null
+            : (Player) ((PlayerEntityBridge) context.getPlayer()).bridge$getBukkitEntity();
         Block blockClicked = CraftBlock.at(world, blockPos);
         BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
 
-        HangingPlaceEvent event = new HangingPlaceEvent((Hanging) ((EntityBridge) hangingEntity).bridge$getBukkitEntity(), who, blockClicked, blockFace, CraftEquipmentSlot.getHand(context.getHand()), CraftItemStack.asBukkitCopy(itemStack));
+        HangingPlaceEvent event = new HangingPlaceEvent(
+            (Hanging) ((EntityBridge) hangingEntity).bridge$getBukkitEntity(),
+            who,
+            blockClicked,
+            blockFace,
+            CraftEquipmentSlot.getHand(context.getHand()),
+            CraftItemStack.asBukkitCopy(itemStack)
+        );
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {

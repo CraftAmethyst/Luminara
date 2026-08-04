@@ -12,11 +12,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(RconConsoleSource.class)
-public class RConConsoleSourceMixin implements ICommandSourceBridge, RConConsoleSourceBridge {
+public class RConConsoleSourceMixin
+    implements ICommandSourceBridge, RConConsoleSourceBridge {
 
     // @formatter:off
     @Shadow @Final private StringBuffer buffer;
+
     @Shadow @Final private MinecraftServer server;
+
     // @formatter:on
 
     public CommandSender getBukkitSender() {

@@ -12,5 +12,4 @@ public class LoggingSpec {
     public boolean isUseSimpleFormat() {
         return useSimpleFormat;
     }
-
 }

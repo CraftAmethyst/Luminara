@@ -12,7 +12,12 @@ public final class SmokePlugin extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(
+        CommandSender sender,
+        Command command,
+        String label,
+        String[] args
+    ) {
         sender.sendMessage("LUMINARA_SMOKE_COMMAND_OK");
         return true;
     }

@@ -18,9 +18,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(InteractWithDoor.class)
 public abstract class InteractWithDoorMixin {
 
-    @Eject(method = "desc=/Z$/", require = 2, remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/DoorBlock;m_153165_(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Z)V", remap = false))
-    private static void arclight$openDoor1(DoorBlock instance, Entity entity, Level p_153167_, BlockState p_153168_, BlockPos pos, boolean p_153170_, CallbackInfoReturnable<Boolean> cir) {
-        var event = new EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), CraftBlock.at(entity.level(), pos));
+    @Eject(
+        method = "desc=/Z$/",
+        require = 2,
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/DoorBlock;m_153165_(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Z)V",
+            remap = false
+        )
+    )
+    private static void arclight$openDoor1(
+        DoorBlock instance,
+        Entity entity,
+        Level p_153167_,
+        BlockState p_153168_,
+        BlockPos pos,
+        boolean p_153170_,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        var event = new EntityInteractEvent(
+            ((EntityBridge) entity).bridge$getBukkitEntity(),
+            CraftBlock.at(entity.level(), pos)
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             cir.setReturnValue(false);

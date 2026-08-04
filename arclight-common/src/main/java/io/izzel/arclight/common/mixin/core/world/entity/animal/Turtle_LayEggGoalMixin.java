@@ -23,7 +23,11 @@ public abstract class Turtle_LayEggGoalMixin extends MoveToBlockGoal {
     @Final
     private Turtle turtle;
 
-    public Turtle_LayEggGoalMixin(PathfinderMob creature, double speedIn, int length) {
+    public Turtle_LayEggGoalMixin(
+        PathfinderMob creature,
+        double speedIn,
+        int length
+    ) {
         super(creature, speedIn, length);
     }
 
@@ -38,13 +42,32 @@ public abstract class Turtle_LayEggGoalMixin extends MoveToBlockGoal {
         if (!this.turtle.isInWater() && this.isReachedTarget()) {
             if (((TurtleEntityBridge) this.turtle).bridge$getDigging() < 1) {
                 ((TurtleEntityBridge) this.turtle).bridge$setDigging(true);
-            } else if (((TurtleEntityBridge) this.turtle).bridge$getDigging() > 200) {
+            } else if (
+                ((TurtleEntityBridge) this.turtle).bridge$getDigging() > 200
+            ) {
                 Level world = this.turtle.level();
-                if (CraftEventFactory.callEntityChangeBlockEvent(this.turtle, this.blockPos.above(), (Blocks.TURTLE_EGG.defaultBlockState()).setValue(TurtleEggBlock.EGGS, this.turtle.getRandom().nextInt(4) + 1))) {
+                if (
+                    CraftEventFactory.callEntityChangeBlockEvent(
+                        this.turtle,
+                        this.blockPos.above(),
+                        (Blocks.TURTLE_EGG.defaultBlockState()).setValue(
+                            TurtleEggBlock.EGGS,
+                            this.turtle.getRandom().nextInt(4) + 1
+                        )
+                    )
+                ) {
                     BlockPos blockpos1 = this.blockPos.above();
-                    BlockState blockstate = Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, this.turtle.getRandom().nextInt(4) + 1);
+                    BlockState blockstate =
+                        Blocks.TURTLE_EGG.defaultBlockState().setValue(
+                            TurtleEggBlock.EGGS,
+                            this.turtle.getRandom().nextInt(4) + 1
+                        );
                     world.setBlock(blockpos1, blockstate, 3);
-                    world.gameEvent(GameEvent.BLOCK_PLACE, blockpos1, GameEvent.Context.of(this.turtle, blockstate));
+                    world.gameEvent(
+                        GameEvent.BLOCK_PLACE,
+                        blockpos1,
+                        GameEvent.Context.of(this.turtle, blockstate)
+                    );
                 }
                 ((TurtleEntityBridge) this.turtle).bridge$setHasEgg(false);
                 ((TurtleEntityBridge) this.turtle).bridge$setDigging(false);
@@ -52,9 +75,10 @@ public abstract class Turtle_LayEggGoalMixin extends MoveToBlockGoal {
             }
 
             if (this.turtle.isLayingEgg()) {
-                ((TurtleEntityBridge) this.turtle).bridge$setDigging(((TurtleEntityBridge) this.turtle).bridge$getDigging() + 1);
+                ((TurtleEntityBridge) this.turtle).bridge$setDigging(
+                    ((TurtleEntityBridge) this.turtle).bridge$getDigging() + 1
+                );
             }
         }
-
     }
 }

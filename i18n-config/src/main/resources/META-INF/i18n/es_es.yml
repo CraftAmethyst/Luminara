@@ -225,20 +225,20 @@ world:
   unknown-level-stem: "Asignar {} a tipo de nivel desconocido {}"
 
 # Mod integration messages
-mod: { }
+mod: {}
 
 # Sign block entity messages
-sign: { }
+sign: {}
 
 # Enum extender messages
 enum:
   field-added: "Agregado {} a {}"
 
 # World symlink messages
-symlink: { }
+symlink: {}
 
 # Distribution validation messages
-dist: { }
+dist: {}
 
 # Chat system messages (合并所有chat相关配置)
 chat:
@@ -376,7 +376,7 @@ comments:
       - "Lo siguiente permite caracteres chinos:"
       - "valid-username-regex = \"^[ -~\\\\p{sc=Han}]{1,16}$\""
       - "Lo siguiente permite cualquier nombre de usuario para iniciar sesión:"
-      - "valid-username-regex = \".+\""
+      - 'valid-username-regex = ".+"'
     lenient-item-tag-match.comment:
       - "Permite que los elementos con una etiqueta nbt vacía se apilen en elementos sin etiqueta"
     preload-bungee-chat-classes.comment:

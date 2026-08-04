@@ -20,17 +20,32 @@ public class FenceGateBlockMixin {
 
     // @formatter:off
     @Shadow @Final public static BooleanProperty POWERED;
+
     // @formatter:on
 
-    @Redirect(method = "neighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;hasNeighborSignal(Lnet/minecraft/core/BlockPos;)Z"))
-    private boolean arclight$blockRedstone(Level world, BlockPos pos, BlockState state) {
+    @Redirect(
+        method = "neighborChanged",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;hasNeighborSignal(Lnet/minecraft/core/BlockPos;)Z"
+        )
+    )
+    private boolean arclight$blockRedstone(
+        Level world,
+        BlockPos pos,
+        BlockState state
+    ) {
         boolean powered = world.hasNeighborSignal(pos);
         boolean oldPowered = state.getValue(POWERED);
         if (oldPowered != powered) {
             int newPower = powered ? 15 : 0;
             int oldPower = oldPowered ? 15 : 0;
             Block bukkitBlock = CraftBlock.at(world, pos);
-            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, oldPower, newPower);
+            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
+                bukkitBlock,
+                oldPower,
+                newPower
+            );
             Bukkit.getPluginManager().callEvent(eventRedstone);
             return eventRedstone.getNewCurrent() > 0;
         }

@@ -1,13 +1,12 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
+import java.util.Arrays;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.util.Arrays;
 
 @Mixin(value = PotionEffectType.class, remap = false)
 public class PotionEffectTypeMixin {

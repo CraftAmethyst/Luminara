@@ -11,19 +11,6 @@ import io.izzel.arclight.common.mod.util.remapper.generated.ArclightReflectionHa
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.JarRemapper;
-import net.md_5.specialsource.RemappingClassAdapter;
-import net.md_5.specialsource.repo.ClassRepo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.objectweb.asm.*;
-import org.objectweb.asm.commons.ClassRemapper;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.spongepowered.asm.service.MixinService;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -39,12 +26,26 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarFile;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.JarRemapper;
+import net.md_5.specialsource.RemappingClassAdapter;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.*;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.spongepowered.asm.service.MixinService;
 
 public class ClassLoaderRemapper extends LenientJarRemapper {
 
     private static final Logger LOGGER = LogManager.getLogger("Arclight");
     private static final String PREFIX = "net/minecraft/";
-    private static final String REPLACED_NAME = Type.getInternalName(ArclightReflectionHandler.class);
+    private static final String REPLACED_NAME = Type.getInternalName(
+        ArclightReflectionHandler.class
+    );
     private static final AtomicInteger COUNTER = new AtomicInteger();
     private final JarMapping toBukkitMapping;
     private final JarRemapper toBukkitRemapper;
@@ -52,41 +53,73 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     private final String generatedHandler;
     private final Class<?> generatedHandlerClass;
     private final GeneratedHandlerAdapter generatedHandlerAdapter;
-    private final Map<String, Boolean> secureJarInfo = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> secureJarInfo =
+        new ConcurrentHashMap<>();
     // BiMap: srg -> bukkit
-    private final Map<String, BiMap<Field, String>> cacheFields = new ConcurrentHashMap<>();
-    private final Map<String, Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>>> cacheMethods = new ConcurrentHashMap<>();
+    private final Map<String, BiMap<Field, String>> cacheFields =
+        new ConcurrentHashMap<>();
+    private final Map<
+        String,
+        Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>>
+    > cacheMethods = new ConcurrentHashMap<>();
     private final Map<String, Boolean> cacheRemap = new ConcurrentHashMap<>();
 
-    public ClassLoaderRemapper(JarMapping jarMapping, JarMapping toBukkitMapping, ClassLoader classLoader) {
+    public ClassLoaderRemapper(
+        JarMapping jarMapping,
+        JarMapping toBukkitMapping,
+        ClassLoader classLoader
+    ) {
         super(jarMapping);
         this.toBukkitMapping = toBukkitMapping;
         this.classLoader = classLoader;
-        this.jarMapping.setInheritanceMap(ArclightRemapper.INSTANCE.inheritanceMap);
-        this.jarMapping.setFallbackInheritanceProvider(GlobalClassRepo.inheritanceProvider());
-        this.toBukkitMapping.setFallbackInheritanceProvider(GlobalClassRepo.inheritanceProvider());
+        this.jarMapping.setInheritanceMap(
+            ArclightRemapper.INSTANCE.inheritanceMap
+        );
+        this.jarMapping.setFallbackInheritanceProvider(
+            GlobalClassRepo.inheritanceProvider()
+        );
+        this.toBukkitMapping.setFallbackInheritanceProvider(
+            GlobalClassRepo.inheritanceProvider()
+        );
         this.toBukkitRemapper = new LenientJarRemapper(this.toBukkitMapping);
         this.generatedHandlerClass = generateReflectionHandler();
         this.generatedHandler = Type.getInternalName(generatedHandlerClass);
-        this.generatedHandlerAdapter = new GeneratedHandlerAdapter(REPLACED_NAME, generatedHandler);
+        this.generatedHandlerAdapter = new GeneratedHandlerAdapter(
+            REPLACED_NAME,
+            generatedHandler
+        );
         GlobalClassRepo.INSTANCE.addRepo(new ClassLoaderRepo(this.classLoader));
     }
 
     private static byte[] dump(byte[] bytes) {
         try {
             if (ArclightRemapper.DUMP != null) {
-                String className = new ClassReader(bytes).getClassName() + ".class";
+                String className =
+                    new ClassReader(bytes).getClassName() + ".class";
                 int index = className.lastIndexOf('/');
                 if (index != -1) {
-                    File file = new File(ArclightRemapper.DUMP, className.substring(0, index));
+                    File file = new File(
+                        ArclightRemapper.DUMP,
+                        className.substring(0, index)
+                    );
                     file.mkdirs();
-                    Files.write(file.toPath().resolve(className.substring(index + 1)), bytes);
+                    Files.write(
+                        file.toPath().resolve(className.substring(index + 1)),
+                        bytes
+                    );
                 } else {
-                    Files.write(ArclightRemapper.DUMP.toPath().resolve(className), bytes);
+                    Files.write(
+                        ArclightRemapper.DUMP.toPath().resolve(className),
+                        bytes
+                    );
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("classloader.dump-failed", new ClassReader(bytes).getClassName(), e);
+            LOGGER.error(
+                "classloader.dump-failed",
+                new ClassReader(bytes).getClassName(),
+                e
+            );
         }
         return bytes;
     }
@@ -115,11 +148,19 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         return generatedHandlerClass;
     }
 
-    private Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>> getMethods(Class<?> cl, String internalName) {
-        return cacheMethods.computeIfAbsent(internalName, k -> this.tryGetMethods(cl));
+    private Map.Entry<
+        Map<Method, String>,
+        Map<WrappedMethod, Method>
+    > getMethods(Class<?> cl, String internalName) {
+        return cacheMethods.computeIfAbsent(internalName, k ->
+            this.tryGetMethods(cl)
+        );
     }
 
-    private Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>> tryGetMethods(Class<?> cl) {
+    private Map.Entry<
+        Map<Method, String>,
+        Map<WrappedMethod, Method>
+    > tryGetMethods(Class<?> cl) {
         try {
             Map<Method, String> names = new HashMap<>();
             Map<WrappedMethod, Method> types = new HashMap<>();
@@ -127,14 +168,20 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                 checkMethodTypes(method);
                 String name = mapMethod(method);
                 names.put(method, name);
-                WrappedMethod wrapped = new WrappedMethod(name, method.getParameterTypes());
+                WrappedMethod wrapped = new WrappedMethod(
+                    name,
+                    method.getParameterTypes()
+                );
                 types.put(wrapped, method);
             }
             for (Method method : cl.getDeclaredMethods()) {
                 checkMethodTypes(method);
                 String name = mapMethod(method);
                 names.put(method, name);
-                WrappedMethod wrapped = new WrappedMethod(name, method.getParameterTypes());
+                WrappedMethod wrapped = new WrappedMethod(
+                    name,
+                    method.getParameterTypes()
+                );
                 types.put(wrapped, method);
             }
             return Maps.immutableEntry(names, types);
@@ -150,7 +197,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     }
 
     private BiMap<Field, String> getFields(Class<?> cl, String internalName) {
-        return cacheFields.computeIfAbsent(internalName, k -> this.tryGetFields(cl));
+        return cacheFields.computeIfAbsent(internalName, k ->
+            this.tryGetFields(cl)
+        );
     }
 
     private BiMap<Field, String> tryGetFields(Class<?> cl) {
@@ -180,17 +229,26 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         field.getGenericType();
     }
 
-    private void checkMethodTypes(Method method) throws TypeNotPresentException {
+    private void checkMethodTypes(Method method)
+        throws TypeNotPresentException {
         method.getGenericReturnType();
         method.getGenericParameterTypes();
     }
 
     public void tryDefineClass(String internalName) {
-        String normalizedName = internalName.indexOf('.') == -1 ? internalName : internalName.replace('.', '/');
-        normalizedName = CraftBukkitVersionRemapper.remapInternalName(normalizedName);
+        String normalizedName = internalName.indexOf('.') == -1
+            ? internalName
+            : internalName.replace('.', '/');
+        normalizedName = CraftBukkitVersionRemapper.remapInternalName(
+            normalizedName
+        );
         if (!normalizedName.startsWith(PREFIX)) {
             try {
-                Class.forName(normalizedName.replace('/', '.'), false, classLoader);
+                Class.forName(
+                    normalizedName.replace('/', '.'),
+                    false,
+                    classLoader
+                );
                 return;
             } catch (ClassNotFoundException ignored) {
                 throw new NoClassDefFoundError(internalName);
@@ -198,10 +256,24 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         }
         LOGGER.warn("classloader.client-side-class", normalizedName);
         ClassWriter writer = new ClassWriter(0);
-        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC | Opcodes.ACC_DEPRECATED, normalizedName, null, "java/lang/Object", new String[]{});
+        writer.visit(
+            Opcodes.V1_8,
+            Opcodes.ACC_PUBLIC | Opcodes.ACC_DEPRECATED,
+            normalizedName,
+            null,
+            "java/lang/Object",
+            new String[] {}
+        );
         writer.visitEnd();
         byte[] bytes = writer.toByteArray();
-        Unsafe.defineClass(Type.getObjectType(normalizedName).getClassName(), bytes, 0, bytes.length, getClass().getClassLoader(), getClass().getProtectionDomain());
+        Unsafe.defineClass(
+            Type.getObjectType(normalizedName).getClassName(),
+            bytes,
+            0,
+            bytes.length,
+            getClass().getClassLoader(),
+            getClass().getProtectionDomain()
+        );
     }
 
     private String mapMethod(Method method) {
@@ -234,7 +306,11 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         } else return bukkitName;
     }
 
-    public String tryMapFieldToBukkit(Class<?> cl, String srgName, Field field) {
+    public String tryMapFieldToBukkit(
+        Class<?> cl,
+        String srgName,
+        Field field
+    ) {
         String internalName = Type.getInternalName(cl);
         if (internalName.startsWith(PREFIX)) {
             BiMap<Field, String> fields = getFields(cl, internalName);
@@ -242,24 +318,34 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         } else return srgName;
     }
 
-    public Method tryMapMethodToSrg(Class<?> cl, String bukkitName, Class<?>[] pTypes) {
+    public Method tryMapMethodToSrg(
+        Class<?> cl,
+        String bukkitName,
+        Class<?>[] pTypes
+    ) {
         String internalName = Type.getInternalName(cl);
         if (shouldRemap(internalName)) {
-            return getMethods(cl, internalName).getValue().get(new WrappedMethod(bukkitName, pTypes));
+            return getMethods(cl, internalName)
+                .getValue()
+                .get(new WrappedMethod(bukkitName, pTypes));
         } else return null;
     }
 
     public String tryMapMethodToBukkit(Class<?> cl, Method method) {
         String internalName = Type.getInternalName(cl);
         if (shouldRemap(internalName)) {
-            return getMethods(cl, internalName).getKey().getOrDefault(method, method.getName());
+            return getMethods(cl, internalName)
+                .getKey()
+                .getOrDefault(method, method.getName());
         } else return method.getName();
     }
 
     private boolean shouldRemap(String internalName) {
         Boolean b = cacheRemap.get(internalName);
         if (b != null) return b;
-        for (String s : GlobalClassRepo.inheritanceProvider().getAll(internalName)) {
+        for (String s : GlobalClassRepo.inheritanceProvider().getAll(
+            internalName
+        )) {
             if (s.startsWith(PREFIX)) {
                 cacheRemap.put(internalName, true);
                 return true;
@@ -270,29 +356,61 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     }
 
     public MethodInsnNode mapMethod(String owner, String name, String desc) {
-        Map.Entry<String, String> entry = tryClimb(jarMapping.methods, owner, name + " " + desc, -1);
+        Map.Entry<String, String> entry = tryClimb(
+            jarMapping.methods,
+            owner,
+            name + " " + desc,
+            -1
+        );
         if (entry == null) return null;
-        return new MethodInsnNode(Opcodes.INVOKEVIRTUAL, mapType(entry.getKey()), entry.getValue(), mapMethodDesc(desc), false);
+        return new MethodInsnNode(
+            Opcodes.INVOKEVIRTUAL,
+            mapType(entry.getKey()),
+            entry.getValue(),
+            mapMethodDesc(desc),
+            false
+        );
     }
 
-    public Map.Entry<String, String> tryClimb(Map<String, String> map, String owner, String name, int access) {
+    public Map.Entry<String, String> tryClimb(
+        Map<String, String> map,
+        String owner,
+        String name,
+        int access
+    ) {
         String key = owner + "/" + name;
 
         String mapped = map.get(key);
-        if (mapped == null && (access == -1 || (!Modifier.isPrivate(access) && !Modifier.isStatic(access)))) {
+        if (
+            mapped == null &&
+            (access == -1 ||
+                (!Modifier.isPrivate(access) && !Modifier.isStatic(access)))
+        ) {
             Collection<String> parents;
 
             if (ArclightRemapper.INSTANCE.inheritanceMap.hasParents(owner)) {
-                parents = ArclightRemapper.INSTANCE.inheritanceMap.getParents(owner);
+                parents = ArclightRemapper.INSTANCE.inheritanceMap.getParents(
+                    owner
+                );
             } else {
-                parents = GlobalClassRepo.inheritanceProvider().getParents(owner);
-                ArclightRemapper.INSTANCE.inheritanceMap.setParents(owner, parents);
+                parents = GlobalClassRepo.inheritanceProvider().getParents(
+                    owner
+                );
+                ArclightRemapper.INSTANCE.inheritanceMap.setParents(
+                    owner,
+                    parents
+                );
             }
 
             if (parents != null) {
                 // climb the inheritance tree
                 for (String parent : parents) {
-                    Map.Entry<String, String> entry = tryClimb(map, parent, name, access);
+                    Map.Entry<String, String> entry = tryClimb(
+                        map,
+                        parent,
+                        name,
+                        access
+                    );
                     if (entry != null) {
                         return entry;
                     }
@@ -305,31 +423,51 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
     private boolean isSecureJar(JarFile jarFile) {
         return this.secureJarInfo.computeIfAbsent(jarFile.getName(), key ->
-                jarFile.stream().anyMatch(it -> {
+            jarFile
+                .stream()
+                .anyMatch(it -> {
                     if (it.isDirectory()) return false;
                     String name = it.getName().toUpperCase(Locale.ROOT);
-                    return name.startsWith("META-INF") && (name.endsWith(".DSA") ||
+                    return (
+                        name.startsWith("META-INF") &&
+                        (name.endsWith(".DSA") ||
                             name.endsWith(".RSA") ||
                             name.endsWith(".EC") ||
-                            name.endsWith(".SF"));
-                }));
+                            name.endsWith(".SF"))
+                    );
+                })
+        );
     }
 
-    public Product2<byte[], CodeSource> remapClass(String className, Callable<byte[]> byteSource, URLConnection connection, ArclightRemapConfig config) throws ClassNotFoundException {
+    public Product2<byte[], CodeSource> remapClass(
+        String className,
+        Callable<byte[]> byteSource,
+        URLConnection connection,
+        ArclightRemapConfig config
+    ) throws ClassNotFoundException {
         try {
-            ArclightClassCache.CacheSegment segment = ArclightClassCache.instance().makeSegment(connection);
+            ArclightClassCache.CacheSegment segment =
+                ArclightClassCache.instance().makeSegment(connection);
             Optional<byte[]> optional = segment.findByName(className, config);
             if (optional.isPresent()) {
                 byte[] bytes = optional.get();
                 ClassWriter cw = new ClassWriter(0);
-                new ClassReader(bytes).accept(new ClassRemapper(cw, generatedHandlerAdapter), 0);
+                new ClassReader(bytes).accept(
+                    new ClassRemapper(cw, generatedHandlerAdapter),
+                    0
+                );
                 URL url;
                 CodeSigner[] signers;
                 if (connection instanceof JarURLConnection) {
                     url = ((JarURLConnection) connection).getJarFileURL();
-                    if (isSecureJar(((JarURLConnection) connection).getJarFile())) {
+                    if (
+                        isSecureJar(
+                            ((JarURLConnection) connection).getJarFile()
+                        )
+                    ) {
                         ByteStreams.exhaust(connection.getInputStream()); // must read before asking signers
-                        signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+                        signers =
+                            ((JarURLConnection) connection).getJarEntry().getCodeSigners();
                     } else {
                         signers = null;
                     }
@@ -337,12 +475,29 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                     url = connection.getURL();
                     signers = null;
                 }
-                return Product.of(cw.toByteArray(), new CodeSource(url, signers));
+                return Product.of(
+                    cw.toByteArray(),
+                    new CodeSource(url, signers)
+                );
             } else {
-                byte[] bytes = remapClassFile(byteSource.call(), new ClassRepoWrapper(GlobalClassRepo.INSTANCE, config));
-                if (ArclightConfig.spec().getOptimization().isCachePluginClass()) {
+                byte[] bytes = remapClassFile(
+                    byteSource.call(),
+                    new ClassRepoWrapper(GlobalClassRepo.INSTANCE, config)
+                );
+                if (
+                    ArclightConfig.spec().getOptimization().isCachePluginClass()
+                ) {
                     ClassWriter cw = new ClassWriter(0);
-                    new ClassReader(bytes).accept(new ClassRemapper(cw, new GeneratedHandlerAdapter(generatedHandler, REPLACED_NAME)), 0);
+                    new ClassReader(bytes).accept(
+                        new ClassRemapper(
+                            cw,
+                            new GeneratedHandlerAdapter(
+                                generatedHandler,
+                                REPLACED_NAME
+                            )
+                        ),
+                        0
+                    );
                     byte[] store = cw.toByteArray();
                     segment.addToCache(className, store, config);
                 }
@@ -350,7 +505,8 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                 CodeSigner[] signers;
                 if (connection instanceof JarURLConnection) {
                     url = ((JarURLConnection) connection).getJarFileURL();
-                    signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+                    signers =
+                        ((JarURLConnection) connection).getJarEntry().getCodeSigners();
                 } else {
                     url = connection.getURL();
                     signers = null;
@@ -374,13 +530,20 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
     private byte[] remapClassFile(ClassReader reader, final ClassRepo repo) {
         ClassNode node = new ClassNode();
-        RemappingClassAdapter mapper = new RemappingClassAdapter(node, this, repo);
+        RemappingClassAdapter mapper = new RemappingClassAdapter(
+            node,
+            this,
+            repo
+        );
         reader.accept(mapper, 0);
         ArclightRemapConfig config;
         if (repo instanceof ClassRepoWrapper wrapper) {
             config = wrapper.config();
         } else {
-            ArclightMod.LOGGER.warn("classloader.no-remap-config", node.name.replace('/', '.'));
+            ArclightMod.LOGGER.warn(
+                "classloader.no-remap-config",
+                node.name.replace('/', '.')
+            );
             config = ArclightRemapConfig.PLUGIN;
         }
 
@@ -396,15 +559,32 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
     private Class<?> generateReflectionHandler() {
         try {
-            ClassNode node = MixinService.getService().getBytecodeProvider().getClassNode(Type.getInternalName(ArclightReflectionHandler.class));
+            ClassNode node = MixinService.getService()
+                .getBytecodeProvider()
+                .getClassNode(
+                    Type.getInternalName(ArclightReflectionHandler.class)
+                );
             Preconditions.checkNotNull(node, "node");
             ClassWriter writer = new ClassWriter(0);
-            String name = Type.getInternalName(ArclightReflectionHandler.class) + "_" + COUNTER.getAndIncrement();
-            ClassVisitor visitor = new ClassRemapper(writer, new NameRemapper(name));
+            String name =
+                Type.getInternalName(ArclightReflectionHandler.class) +
+                "_" +
+                COUNTER.getAndIncrement();
+            ClassVisitor visitor = new ClassRemapper(
+                writer,
+                new NameRemapper(name)
+            );
             node.accept(visitor);
             byte[] bytes = writer.toByteArray();
             dump(bytes);
-            Class<?> cl = Unsafe.defineClass(name.replace('/', '.'), bytes, 0, bytes.length, getClass().getClassLoader(), getClass().getProtectionDomain());
+            Class<?> cl = Unsafe.defineClass(
+                name.replace('/', '.'),
+                bytes,
+                0,
+                bytes.length,
+                getClass().getClassLoader(),
+                getClass().getProtectionDomain()
+            );
             Unsafe.ensureClassInitialized(cl);
             Field remapper = cl.getField("remapper");
             remapper.set(null, this);
@@ -416,7 +596,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
     private static class NameRemapper extends Remapper {
 
-        private static final String ORIGIN = Type.getInternalName(ArclightReflectionHandler.class);
+        private static final String ORIGIN = Type.getInternalName(
+            ArclightReflectionHandler.class
+        );
 
         private final String internal;
 
@@ -441,11 +623,16 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
         @Override
         protected String getCommonSuperClass(String type1, String type2) {
-            Collection<String> parents = GlobalClassRepo.remappingProvider().getAll(type2);
+            Collection<String> parents =
+                GlobalClassRepo.remappingProvider().getAll(type2);
             if (parents.contains(type1)) {
                 return type1;
             }
-            if (GlobalClassRepo.remappingProvider().getAll(type1).contains(type2)) {
+            if (
+                GlobalClassRepo.remappingProvider()
+                    .getAll(type1)
+                    .contains(type2)
+            ) {
                 return type2;
             }
             do {
@@ -498,8 +685,10 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             WrappedMethod that = (WrappedMethod) o;
-            return Objects.equals(name, that.name) &&
-                    Arrays.equals(pTypes, that.pTypes);
+            return (
+                Objects.equals(name, that.name) &&
+                Arrays.equals(pTypes, that.pTypes)
+            );
         }
 
         @Override

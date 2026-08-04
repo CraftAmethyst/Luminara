@@ -12,8 +12,20 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(Fireball.class)
 public abstract class FireballMixin extends AbstractHurtingProjectileMixin {
 
-    @Inject(method = "readAdditionalSaveData", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Fireball;setItem(Lnet/minecraft/world/item/ItemStack;)V"))
-    private void arclight$nonNullItem(CompoundTag compound, CallbackInfo ci, ItemStack stack) {
+    @Inject(
+        method = "readAdditionalSaveData",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/projectile/Fireball;setItem(Lnet/minecraft/world/item/ItemStack;)V"
+        )
+    )
+    private void arclight$nonNullItem(
+        CompoundTag compound,
+        CallbackInfo ci,
+        ItemStack stack
+    ) {
         if (stack.isEmpty()) ci.cancel();
     }
 }

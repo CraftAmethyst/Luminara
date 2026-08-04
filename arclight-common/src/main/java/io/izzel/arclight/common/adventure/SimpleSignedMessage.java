@@ -1,13 +1,12 @@
 package io.izzel.arclight.common.adventure;
 
+import java.time.Instant;
+import java.util.UUID;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.time.Instant;
-import java.util.UUID;
 
 // Simple SignedMessage implementation
 public class SimpleSignedMessage implements SignedMessage {
@@ -62,11 +61,13 @@ public class SimpleSignedMessage implements SignedMessage {
         return !signed;
     }
 
-    public @NotNull SignedMessage withUnsignedContent(@NotNull Component unsignedContent) {
+    public @NotNull SignedMessage withUnsignedContent(
+        @NotNull Component unsignedContent
+    ) {
         return new SimpleSignedMessage(
-                PaperAdventure.asPlain(unsignedContent),
-                this.signed,
-                this.sender
+            PaperAdventure.asPlain(unsignedContent),
+            this.signed,
+            this.sender
         );
     }
 

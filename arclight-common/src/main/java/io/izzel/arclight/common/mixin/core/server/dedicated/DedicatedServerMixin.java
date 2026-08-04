@@ -3,6 +3,9 @@ package io.izzel.arclight.common.mixin.core.server.dedicated;
 import io.izzel.arclight.common.mixin.core.server.MinecraftServerMixin;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.ConsoleInput;
@@ -25,44 +28,70 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(DedicatedServer.class)
 public abstract class DedicatedServerMixin extends MinecraftServerMixin {
 
     // @formatter:off
     @Shadow @Final public RconConsoleSource rconConsoleSource;
+
     // @formatter:on
 
     public DedicatedServerMixin(String name) {
         super(name);
     }
 
-    @Inject(method = "initServer", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/server/dedicated/DedicatedServer;setPlayerList(Lnet/minecraft/server/players/PlayerList;)V"))
+    @Inject(
+        method = "initServer",
+        at = @At(
+            value = "INVOKE",
+            shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/server/dedicated/DedicatedServer;setPlayerList(Lnet/minecraft/server/players/PlayerList;)V"
+        )
+    )
     public void arclight$loadPlugins(CallbackInfoReturnable<Boolean> cir) {
         BukkitRegistry.unlockRegistries();
         ((CraftServer) Bukkit.getServer()).loadPlugins();
-        ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.STARTUP);
+        ((CraftServer) Bukkit.getServer()).enablePlugins(
+            PluginLoadOrder.STARTUP
+        );
         BukkitRegistry.lockRegistries();
     }
 
-    @Inject(method = "initServer", at = @At(value = "FIELD", target = "Lnet/minecraft/server/dedicated/DedicatedServerProperties;enableRcon:Z"))
+    @Inject(
+        method = "initServer",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/server/dedicated/DedicatedServerProperties;enableRcon:Z"
+        )
+    )
     public void arclight$setRcon(CallbackInfoReturnable<Boolean> cir) {
-        this.remoteConsole = new CraftRemoteConsoleCommandSender(this.rconConsoleSource);
+        this.remoteConsole = new CraftRemoteConsoleCommandSender(
+            this.rconConsoleSource
+        );
     }
 
-
-    @Redirect(method = "handleConsoleInputs", at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/Commands;performPrefixedCommand(Lnet/minecraft/commands/CommandSourceStack;Ljava/lang/String;)I"))
-    private int arclight$serverCommandEvent(Commands commands, CommandSourceStack source, String command) {
+    @Redirect(
+        method = "handleConsoleInputs",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/commands/Commands;performPrefixedCommand(Lnet/minecraft/commands/CommandSourceStack;Ljava/lang/String;)I"
+        )
+    )
+    private int arclight$serverCommandEvent(
+        Commands commands,
+        CommandSourceStack source,
+        String command
+    ) {
         if (command.isEmpty()) {
             return 0;
         }
         ServerCommandEvent event = new ServerCommandEvent(console, command);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            server.dispatchServerCommand(console, new ConsoleInput(event.getCommand(), source));
+            server.dispatchServerCommand(
+                console,
+                new ConsoleInput(event.getCommand(), source)
+            );
         }
         return 0;
     }
@@ -75,12 +104,21 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin {
     public String runCommand(String command) {
         this.rconConsoleSource.prepareForCommand();
         this.executeBlocking(() -> {
-            RemoteServerCommandEvent event = new RemoteServerCommandEvent(remoteConsole, command);
+            RemoteServerCommandEvent event = new RemoteServerCommandEvent(
+                remoteConsole,
+                command
+            );
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return;
             }
-            this.server.dispatchServerCommand(remoteConsole, new ConsoleInput(event.getCommand(), this.rconConsoleSource.createCommandSourceStack()));
+            this.server.dispatchServerCommand(
+                remoteConsole,
+                new ConsoleInput(
+                    event.getCommand(),
+                    this.rconConsoleSource.createCommandSourceStack()
+                )
+            );
         });
         return this.rconConsoleSource.getCommandResponse();
     }
@@ -105,13 +143,21 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin {
         }
         List<String> threads = new ArrayList<>();
         for (Thread thread : Thread.getAllStackTraces().keySet()) {
-            if (!thread.isDaemon() && !thread.getName().equals("DestroyJavaVM")) {
+            if (
+                !thread.isDaemon() && !thread.getName().equals("DestroyJavaVM")
+            ) {
                 threads.add(thread.getName());
             }
         }
         if (!threads.isEmpty()) {
-            ArclightMod.LOGGER.debug("Threads {} not shutting down", String.join(", ", threads));
-            ArclightMod.LOGGER.info("server.threads.force-exit", threads.size());
+            ArclightMod.LOGGER.debug(
+                "Threads {} not shutting down",
+                String.join(", ", threads)
+            );
+            ArclightMod.LOGGER.info(
+                "server.threads.force-exit",
+                threads.size()
+            );
         }
         System.exit(0);
     }
@@ -123,7 +169,9 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin {
     @Overwrite
     public String getPluginNames() {
         StringBuilder result = new StringBuilder();
-        org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
+        org.bukkit.plugin.Plugin[] plugins = server
+            .getPluginManager()
+            .getPlugins();
 
         result.append(server.getName());
         result.append(" on Bukkit ");
@@ -139,7 +187,11 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin {
 
                 result.append(plugins[i].getDescription().getName());
                 result.append(" ");
-                result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
+                result.append(
+                    plugins[i].getDescription()
+                        .getVersion()
+                        .replaceAll(";", ",")
+                );
             }
         }
 

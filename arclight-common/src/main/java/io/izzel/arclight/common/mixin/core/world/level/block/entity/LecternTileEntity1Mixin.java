@@ -3,6 +3,9 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -15,16 +18,15 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @Mixin(targets = "net/minecraft/world/level/block/entity/LecternBlockEntity$1")
-public abstract class LecternTileEntity1Mixin implements IInventoryBridge, Container {
+public abstract class LecternTileEntity1Mixin
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction = new ArrayList<>();
-    @Shadow(aliases = {"this$0", "f_59572_"}, remap = false)
+
+    @Shadow(aliases = { "this$0", "f_59572_" }, remap = false)
     private LecternBlockEntity outerThis;
+
     private int maxStack = 1;
 
     @Override
@@ -32,7 +34,13 @@ public abstract class LecternTileEntity1Mixin implements IInventoryBridge, Conta
         if (index == 0) {
             outerThis.setBook(stack);
             if (outerThis.getLevel() != null) {
-                LecternBlock.resetBookState(null, outerThis.getLevel(), outerThis.getBlockPos(), outerThis.getBlockState(), outerThis.hasBook());
+                LecternBlock.resetBookState(
+                    null,
+                    outerThis.getLevel(),
+                    outerThis.getBlockPos(),
+                    outerThis.getBlockState(),
+                    outerThis.hasBook()
+                );
             }
         }
     }
@@ -63,8 +71,7 @@ public abstract class LecternTileEntity1Mixin implements IInventoryBridge, Conta
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {
@@ -80,7 +87,12 @@ public abstract class LecternTileEntity1Mixin implements IInventoryBridge, Conta
     @Override
     public Location getLocation() {
         if (outerThis.getLevel() == null) return null;
-        return new Location(((WorldBridge) outerThis.getLevel()).bridge$getWorld(), outerThis.getBlockPos().getX(), outerThis.getBlockPos().getY(), outerThis.getBlockPos().getZ());
+        return new Location(
+            ((WorldBridge) outerThis.getLevel()).bridge$getWorld(),
+            outerThis.getBlockPos().getX(),
+            outerThis.getBlockPos().getY(),
+            outerThis.getBlockPos().getZ()
+        );
     }
 
     @Override
@@ -89,8 +101,7 @@ public abstract class LecternTileEntity1Mixin implements IInventoryBridge, Conta
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-    }
+    public void setCurrentRecipe(Recipe<?> recipe) {}
 
     public LecternBlockEntity getLectern() {
         return outerThis;

@@ -18,8 +18,25 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(Raider.class)
 public abstract class RaiderMixin extends PathfinderMobMixin {
 
-    @Inject(method = "die", locals = LocalCapture.CAPTURE_FAILHARD, require = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private void arclight$raid(DamageSource cause, CallbackInfo ci, Entity entity, Raid raid, ItemStack itemStack, Player playerEntity) {
-        ((PlayerEntityBridge) playerEntity).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.PATROL_CAPTAIN);
+    @Inject(
+        method = "die",
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        require = 1,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"
+        )
+    )
+    private void arclight$raid(
+        DamageSource cause,
+        CallbackInfo ci,
+        Entity entity,
+        Raid raid,
+        ItemStack itemStack,
+        Player playerEntity
+    ) {
+        ((PlayerEntityBridge) playerEntity).bridge$pushEffectCause(
+            EntityPotionEffectEvent.Cause.PATROL_CAPTAIN
+        );
     }
 }

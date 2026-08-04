@@ -7,12 +7,20 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 
 public interface MobEntityBridge extends LivingEntityBridge {
+    void bridge$pushGoalTargetReason(
+        EntityTargetEvent.TargetReason reason,
+        boolean fireEvent
+    );
 
-    void bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason reason, boolean fireEvent);
+    void bridge$pushTransformReason(
+        EntityTransformEvent.TransformReason transformReason
+    );
 
-    void bridge$pushTransformReason(EntityTransformEvent.TransformReason transformReason);
-
-    boolean bridge$setGoalTarget(LivingEntity livingEntity, EntityTargetEvent.TargetReason reason, boolean fireEvent);
+    boolean bridge$setGoalTarget(
+        LivingEntity livingEntity,
+        EntityTargetEvent.TargetReason reason,
+        boolean fireEvent
+    );
 
     boolean bridge$lastGoalTargetResult();
 

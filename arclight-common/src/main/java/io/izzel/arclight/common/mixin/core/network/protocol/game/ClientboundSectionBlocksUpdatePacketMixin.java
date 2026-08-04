@@ -16,16 +16,22 @@ public class ClientboundSectionBlocksUpdatePacketMixin {
     @Final
     @Mutable
     private SectionPos sectionPos;
+
     @Shadow
     @Final
     @Mutable
     private short[] positions;
+
     @Shadow
     @Final
     @Mutable
     private BlockState[] states;
 
-    public void arclight$constructor(SectionPos sectionposition, ShortSet shortset, BlockState[] states) {
+    public void arclight$constructor(
+        SectionPos sectionposition,
+        ShortSet shortset,
+        BlockState[] states
+    ) {
         this.sectionPos = sectionposition;
         this.positions = shortset.toShortArray();
         this.states = states;

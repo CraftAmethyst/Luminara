@@ -24,15 +24,50 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NetherPortalBlock.class)
 public class NetherPortalBlockMixin {
 
-    @Redirect(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityType;spawn(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/MobSpawnType;)Lnet/minecraft/world/entity/Entity;"))
-    public Entity arclight$spawn(EntityType<?> instance, ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_) {
-        return ((EntityTypeBridge<?>) instance).bridge$spawnCreature(p_262634_, p_262707_, p_262597_, CreatureSpawnEvent.SpawnReason.NETHER_PORTAL);
+    @Redirect(
+        method = "randomTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/EntityType;spawn(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/MobSpawnType;)Lnet/minecraft/world/entity/Entity;"
+        )
+    )
+    public Entity arclight$spawn(
+        EntityType<?> instance,
+        ServerLevel p_262634_,
+        BlockPos p_262707_,
+        MobSpawnType p_262597_
+    ) {
+        return ((EntityTypeBridge<?>) instance).bridge$spawnCreature(
+            p_262634_,
+            p_262707_,
+            p_262597_,
+            CreatureSpawnEvent.SpawnReason.NETHER_PORTAL
+        );
     }
 
-    @Inject(method = "entityInside", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;handleInsidePortal(Lnet/minecraft/core/BlockPos;)V"))
-    public void arclight$portalEnter(BlockState state, Level worldIn, BlockPos pos, Entity entityIn, CallbackInfo ci) {
-        EntityPortalEnterEvent event = new EntityPortalEnterEvent(((EntityBridge) entityIn).bridge$getBukkitEntity(),
-                new Location(((WorldBridge) worldIn).bridge$getWorld(), pos.getX(), pos.getY(), pos.getZ()));
+    @Inject(
+        method = "entityInside",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;handleInsidePortal(Lnet/minecraft/core/BlockPos;)V"
+        )
+    )
+    public void arclight$portalEnter(
+        BlockState state,
+        Level worldIn,
+        BlockPos pos,
+        Entity entityIn,
+        CallbackInfo ci
+    ) {
+        EntityPortalEnterEvent event = new EntityPortalEnterEvent(
+            ((EntityBridge) entityIn).bridge$getBukkitEntity(),
+            new Location(
+                ((WorldBridge) worldIn).bridge$getWorld(),
+                pos.getX(),
+                pos.getY(),
+                pos.getZ()
+            )
+        );
         Bukkit.getPluginManager().callEvent(event);
     }
 }

@@ -13,8 +13,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InfestedBlock.class)
 public class InfestedBlockMixin {
 
-    @Inject(method = "spawnInfestation", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    public void arclight$spawn(ServerLevel world, BlockPos pos, CallbackInfo ci) {
-        ((WorldBridge) world).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK);
+    @Inject(
+        method = "spawnInfestation",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
+    public void arclight$spawn(
+        ServerLevel world,
+        BlockPos pos,
+        CallbackInfo ci
+    ) {
+        ((WorldBridge) world).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK
+        );
     }
 }

@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.item;
 
 import io.izzel.arclight.common.bridge.core.world.storage.MapDataBridge;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
@@ -16,14 +17,28 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.annotation.Nullable;
-
 @Mixin(MapItem.class)
 public abstract class MapItemMixin {
 
-    @Inject(method = "createNewSavedData", locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
-    private static void arclight$mapInit(Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_, CallbackInfoReturnable<Integer> cir, MapItemSavedData mapData) {
-        MapInitializeEvent event = new MapInitializeEvent(((MapDataBridge) mapData).bridge$getMapView());
+    @Inject(
+        method = "createNewSavedData",
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At("RETURN")
+    )
+    private static void arclight$mapInit(
+        Level p_151121_,
+        int p_151122_,
+        int p_151123_,
+        int p_151124_,
+        boolean p_151125_,
+        boolean p_151126_,
+        ResourceKey<Level> p_151127_,
+        CallbackInfoReturnable<Integer> cir,
+        MapItemSavedData mapData
+    ) {
+        MapInitializeEvent event = new MapInitializeEvent(
+            ((MapDataBridge) mapData).bridge$getMapView()
+        );
         Bukkit.getPluginManager().callEvent(event);
     }
 
@@ -35,6 +50,8 @@ public abstract class MapItemMixin {
     @Overwrite
     public static Integer getMapId(ItemStack stack) {
         CompoundTag compoundnbt = stack.getTag();
-        return compoundnbt != null && compoundnbt.contains("map", 99) ? compoundnbt.getInt("map") : -1;
+        return compoundnbt != null && compoundnbt.contains("map", 99)
+            ? compoundnbt.getInt("map")
+            : -1;
     }
 }

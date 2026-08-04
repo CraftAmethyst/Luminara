@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
       - name: Verify and assemble
@@ -56,7 +56,7 @@ jobs:
         uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
       - name: Verify and assemble

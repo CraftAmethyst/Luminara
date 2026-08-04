@@ -17,8 +17,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SummonCommand.class)
 public class SummonCommandMixin {
 
-    @Inject(method = "createEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tryAddFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)Z"))
-    private static void arclight$summonReason(CommandSourceStack source, Holder.Reference<EntityType<?>> p_270277_, Vec3 p_270366_, CompoundTag p_270197_, boolean p_270947_, CallbackInfoReturnable<Entity> cir) {
-        ((ServerWorldBridge) source.getLevel()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.COMMAND);
+    @Inject(
+        method = "createEntity",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;tryAddFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
+    private static void arclight$summonReason(
+        CommandSourceStack source,
+        Holder.Reference<EntityType<?>> p_270277_,
+        Vec3 p_270366_,
+        CompoundTag p_270197_,
+        boolean p_270947_,
+        CallbackInfoReturnable<Entity> cir
+    ) {
+        ((ServerWorldBridge) source.getLevel()).bridge$pushAddEntityReason(
+            CreatureSpawnEvent.SpawnReason.COMMAND
+        );
     }
 }

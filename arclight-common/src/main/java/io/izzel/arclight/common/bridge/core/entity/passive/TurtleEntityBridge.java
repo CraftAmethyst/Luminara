@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.bridge.core.entity.passive;
 
 public interface TurtleEntityBridge extends AnimalEntityBridge {
-
     int bridge$getDigging();
 
     void bridge$setDigging(boolean digging);

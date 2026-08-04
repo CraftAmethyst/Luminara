@@ -14,10 +14,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BellBlock.class)
 public class BellBlockMixin {
 
-    @Inject(method = "attemptToRing(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z",
-            cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BellBlockEntity;onHit(Lnet/minecraft/core/Direction;)V"))
-    private void arclight$bellRing(Entity entity, Level level, BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
-        if (!CraftEventFactory.handleBellRingEvent(level, pos, direction, entity)) {
+    @Inject(
+        method = "attemptToRing(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/entity/BellBlockEntity;onHit(Lnet/minecraft/core/Direction;)V"
+        )
+    )
+    private void arclight$bellRing(
+        Entity entity,
+        Level level,
+        BlockPos pos,
+        Direction direction,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (
+            !CraftEventFactory.handleBellRingEvent(
+                level,
+                pos,
+                direction,
+                entity
+            )
+        ) {
             cir.setReturnValue(false);
         }
     }

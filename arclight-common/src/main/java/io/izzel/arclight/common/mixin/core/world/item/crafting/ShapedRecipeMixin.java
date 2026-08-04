@@ -21,20 +21,37 @@ public abstract class ShapedRecipeMixin implements IRecipeBridge {
 
     // @formatter:off
     @Shadow @Final ItemStack result;
+
     @Shadow @Final String group;
+
     @Shadow @Final NonNullList<Ingredient> recipeItems;
+
     @Shadow public abstract int getHeight();
+
     @Shadow public abstract int getWidth();
+
     @Shadow public abstract CraftingBookCategory category();
+
     // @formatter:on
 
     @Override
     public Recipe bridge$toBukkitRecipe() {
-        if (this.getWidth() < 1 || this.getWidth() > 3 || this.getHeight() < 1 || this.getHeight() > 3 || this.result.isEmpty()) {
-            return new ArclightSpecialRecipe((net.minecraft.world.item.crafting.Recipe<?>) this);
+        if (
+            this.getWidth() < 1 ||
+            this.getWidth() > 3 ||
+            this.getHeight() < 1 ||
+            this.getHeight() > 3 ||
+            this.result.isEmpty()
+        ) {
+            return new ArclightSpecialRecipe(
+                (net.minecraft.world.item.crafting.Recipe<?>) this
+            );
         }
         CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-        CraftShapedRecipe recipe = new CraftShapedRecipe(result, (ShapedRecipe) (Object) this);
+        CraftShapedRecipe recipe = new CraftShapedRecipe(
+            result,
+            (ShapedRecipe) (Object) this
+        );
         recipe.setGroup(this.group == null ? "" : this.group);
         recipe.setCategory(CraftRecipe.getCategory(this.category()));
 

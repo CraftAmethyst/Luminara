@@ -22,6 +22,7 @@ public abstract class PrimedTntMixin extends EntityMixin {
 
     public float yield;
     public boolean isIncendiary;
+
     // @formatter:on
 
     // @formatter:off

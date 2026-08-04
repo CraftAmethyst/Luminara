@@ -1,5 +1,9 @@
 package io.izzel.arclight.boot.mod;
 
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
@@ -7,11 +11,6 @@ import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 public class ArclightJarInJarAdaptor implements IDependencyLocator {
 
@@ -29,16 +28,23 @@ public class ArclightJarInJarAdaptor implements IDependencyLocator {
             var field = FMLLoader.class.getDeclaredField("modDiscoverer");
             field.setAccessible(true);
             var discoverer = (ModDiscoverer) field.get(null);
-            var locatorField = ModDiscoverer.class.getDeclaredField("dependencyLocatorList");
+            var locatorField = ModDiscoverer.class.getDeclaredField(
+                "dependencyLocatorList"
+            );
             locatorField.setAccessible(true);
-            var locatorList = (List<IDependencyLocator>) locatorField.get(discoverer);
-            var newList = locatorList.stream().map(it -> {
-                if (it instanceof JarInJarDependencyLocator) {
-                    return new ArclightJarInJarAdaptor(it);
-                } else {
-                    return it;
-                }
-            }).toList();
+            var locatorList = (List<IDependencyLocator>) locatorField.get(
+                discoverer
+            );
+            var newList = locatorList
+                .stream()
+                .map(it -> {
+                    if (it instanceof JarInJarDependencyLocator) {
+                        return new ArclightJarInJarAdaptor(it);
+                    } else {
+                        return it;
+                    }
+                })
+                .toList();
             locatorField.set(discoverer, newList);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -47,12 +53,25 @@ public class ArclightJarInJarAdaptor implements IDependencyLocator {
 
     @Override
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
-        return delegate.scanMods(loadedMods).stream().filter(it -> {
-            var optional = getClass().getModule().getLayer().findModule(it.getModFileInfo().moduleName());
-            optional.ifPresent(module -> LOGGER.info("Skip jij dependency {}@{} because Luminara has {}",
-                    it.getModFileInfo().moduleName(), it.getModFileInfo().versionString(), module.getDescriptor().toNameAndVersion()));
-            return optional.isEmpty();
-        }).toList();
+        return delegate
+            .scanMods(loadedMods)
+            .stream()
+            .filter(it -> {
+                var optional = getClass()
+                    .getModule()
+                    .getLayer()
+                    .findModule(it.getModFileInfo().moduleName());
+                optional.ifPresent(module ->
+                    LOGGER.info(
+                        "Skip jij dependency {}@{} because Luminara has {}",
+                        it.getModFileInfo().moduleName(),
+                        it.getModFileInfo().versionString(),
+                        module.getDescriptor().toNameAndVersion()
+                    )
+                );
+                return optional.isEmpty();
+            })
+            .toList();
     }
 
     @Override

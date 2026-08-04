@@ -15,14 +15,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(MenuType.class)
 public class ContainerTypeMixin {
 
-    @Inject(method = "register(Ljava/lang/String;Lnet/minecraft/world/inventory/MenuType$MenuSupplier;)Lnet/minecraft/world/inventory/MenuType;", cancellable = true, at = @At("HEAD"))
-    private static <T extends AbstractContainerMenu> void arclight$replaceLectern(String key, MenuType.MenuSupplier<T> factory, CallbackInfoReturnable<MenuType<T>> cir) {
+    @Inject(
+        method = "register(Ljava/lang/String;Lnet/minecraft/world/inventory/MenuType$MenuSupplier;)Lnet/minecraft/world/inventory/MenuType;",
+        cancellable = true,
+        at = @At("HEAD")
+    )
+    private static <
+        T extends AbstractContainerMenu
+    > void arclight$replaceLectern(
+        String key,
+        MenuType.MenuSupplier<T> factory,
+        CallbackInfoReturnable<MenuType<T>> cir
+    ) {
         if (key.equals("lectern")) {
-            cir.setReturnValue(Registry.register(BuiltInRegistries.MENU, key, new MenuType<>((i, inv) -> {
-                LecternMenu container = new LecternMenu(i);
-                ((LecternContainerBridge) container).bridge$setPlayerInventory(inv);
-                return (T) container;
-            }, FeatureFlags.VANILLA_SET)));
+            cir.setReturnValue(
+                Registry.register(
+                    BuiltInRegistries.MENU,
+                    key,
+                    new MenuType<>(
+                        (i, inv) -> {
+                            LecternMenu container = new LecternMenu(i);
+                            ((LecternContainerBridge) container).bridge$setPlayerInventory(
+                                inv
+                            );
+                            return (T) container;
+                        },
+                        FeatureFlags.VANILLA_SET
+                    )
+                )
+            );
         }
     }
 }

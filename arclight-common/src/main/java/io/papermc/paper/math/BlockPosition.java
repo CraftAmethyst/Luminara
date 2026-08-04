@@ -4,7 +4,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public interface BlockPosition extends Position {
-
     @Override
     int blockX();
 

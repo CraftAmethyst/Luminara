@@ -9,15 +9,19 @@ import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.event.entity.EntityExhaustionEvent;
 
 public interface PlayerEntityBridge extends LivingEntityBridge {
-
     boolean bridge$isFauxSleeping();
 
     @Override
     CraftHumanEntity bridge$getBukkitEntity();
 
-    Either<Player.BedSleepingProblem, Unit> bridge$trySleep(BlockPos at, boolean force);
+    Either<Player.BedSleepingProblem, Unit> bridge$trySleep(
+        BlockPos at,
+        boolean force
+    );
 
-    void bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason reason);
+    void bridge$pushExhaustReason(
+        EntityExhaustionEvent.ExhaustionReason reason
+    );
 
     float bridge$getAttackCooldown();
 

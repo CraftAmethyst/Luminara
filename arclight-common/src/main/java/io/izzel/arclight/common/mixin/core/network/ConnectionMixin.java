@@ -3,21 +3,22 @@ package io.izzel.arclight.common.mixin.core.network;
 import com.mojang.authlib.properties.Property;
 import io.izzel.arclight.common.bridge.core.network.NetworkManagerBridge;
 import io.netty.channel.Channel;
+import java.net.SocketAddress;
+import java.util.UUID;
 import net.minecraft.network.Connection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.net.SocketAddress;
-import java.util.UUID;
 
 @Mixin(Connection.class)
 public class ConnectionMixin implements NetworkManagerBridge {
 
     @Shadow
     public Channel channel;
+
     public java.util.UUID spoofedUUID;
     public com.mojang.authlib.properties.Property[] spoofedProfile;
     public String hostname;
+
     @Shadow
     private SocketAddress address;
 

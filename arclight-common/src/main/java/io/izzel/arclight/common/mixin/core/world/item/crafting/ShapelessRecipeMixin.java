@@ -20,9 +20,13 @@ public abstract class ShapelessRecipeMixin implements IRecipeBridge {
 
     // @formatter:off
     @Shadow @Final ItemStack result;
+
     @Shadow @Final String group;
+
     @Shadow @Final NonNullList<Ingredient> ingredients;
+
     @Shadow public abstract CraftingBookCategory category();
+
     // @formatter:on
 
     @Override
@@ -31,7 +35,10 @@ public abstract class ShapelessRecipeMixin implements IRecipeBridge {
             return new ArclightSpecialRecipe((ShapelessRecipe) (Object) this);
         }
         CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-        CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, (ShapelessRecipe) (Object) this);
+        CraftShapelessRecipe recipe = new CraftShapelessRecipe(
+            result,
+            (ShapelessRecipe) (Object) this
+        );
         recipe.setGroup(this.group == null ? "" : this.group);
         recipe.setCategory(CraftRecipe.getCategory(this.category()));
         for (Ingredient list : this.ingredients) {

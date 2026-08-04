@@ -18,25 +18,58 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(WeightedPressurePlateBlock.class)
-public abstract class WeightedPressurePlateBlockMixin extends BasePressurePlateBlockMixin {
+public abstract class WeightedPressurePlateBlockMixin
+    extends BasePressurePlateBlockMixin {
 
-    private static <T extends Entity> java.util.List<T> getEntities(Level world, AABB axisalignedbb, Class<T> oclass) {
-        return world.getEntitiesOfClass(oclass, axisalignedbb, EntitySelector.NO_SPECTATORS.and((entity) -> {
-            return !entity.isIgnoringBlockTriggers();
-        }));
+    private static <T extends Entity> java.util.List<T> getEntities(
+        Level world,
+        AABB axisalignedbb,
+        Class<T> oclass
+    ) {
+        return world.getEntitiesOfClass(
+            oclass,
+            axisalignedbb,
+            EntitySelector.NO_SPECTATORS.and(entity -> {
+                return !entity.isIgnoringBlockTriggers();
+            })
+        );
     }
 
-    @Redirect(method = "getSignalStrength", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/WeightedPressurePlateBlock;getEntityCount(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/AABB;Ljava/lang/Class;)I"))
-    public int arclight$entityInteract(Level level, AABB aabb, Class<Entity> aClass, Level world, BlockPos pos) {
+    @Redirect(
+        method = "getSignalStrength",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/WeightedPressurePlateBlock;getEntityCount(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/AABB;Ljava/lang/Class;)I"
+        )
+    )
+    public int arclight$entityInteract(
+        Level level,
+        AABB aabb,
+        Class<Entity> aClass,
+        Level world,
+        BlockPos pos
+    ) {
         int i = 0;
         for (Entity entity : getEntities(level, aabb, aClass)) {
             org.bukkit.event.Cancellable cancellable;
 
             if (entity instanceof Player) {
-                cancellable = CraftEventFactory.callPlayerInteractEvent((Player) entity, Action.PHYSICAL, pos, null, null, null);
+                cancellable = CraftEventFactory.callPlayerInteractEvent(
+                    (Player) entity,
+                    Action.PHYSICAL,
+                    pos,
+                    null,
+                    null,
+                    null
+                );
             } else {
-                cancellable = new EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), CraftBlock.at(world, pos));
-                Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
+                cancellable = new EntityInteractEvent(
+                    ((EntityBridge) entity).bridge$getBukkitEntity(),
+                    CraftBlock.at(world, pos)
+                );
+                Bukkit.getPluginManager().callEvent(
+                    (EntityInteractEvent) cancellable
+                );
             }
 
             // We only want to block turning the plate on if all events are cancelled

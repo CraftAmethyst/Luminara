@@ -1,11 +1,10 @@
 package io.izzel.arclight.common.mod.util;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class WrappedContents extends NonNullList<ItemStack> {

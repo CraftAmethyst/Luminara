@@ -7,6 +7,7 @@ import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.mod.command.ArclightDummyCommandSender;
 import io.izzel.arclight.common.mod.compat.CommandNodeHooks;
+import java.util.Objects;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
@@ -24,15 +25,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Objects;
-
 @Mixin(CommandSourceStack.class)
 public abstract class CommandSourceStackMixin implements CommandSourceBridge {
 
     // @formatter:off
     @Shadow @Final @Mutable public CommandSource source;
+
     public CommandNode currentCommand;
+
     @Shadow @Final private int permissionLevel;
+
     // @formatter:on
 
     @Shadow
@@ -43,23 +45,49 @@ public abstract class CommandSourceStackMixin implements CommandSourceBridge {
         this.source = source;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Inject(method = "hasPermission", cancellable = true, at = @At("HEAD"))
-    public void arclight$checkPermission(int level, CallbackInfoReturnable<Boolean> cir) {
+    public void arclight$checkPermission(
+        int level,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         CommandNode currentCommand = bridge$getCurrentCommand();
         if (currentCommand != null) {
-            cir.setReturnValue(hasPermission(level, VanillaCommandWrapper.getPermission(currentCommand)));
+            cir.setReturnValue(
+                hasPermission(
+                    level,
+                    VanillaCommandWrapper.getPermission(currentCommand)
+                )
+            );
         }
     }
 
-    @Redirect(method = "broadcastToAdmins", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;isOp(Lcom/mojang/authlib/GameProfile;)Z"))
-    private boolean arclight$feedbackPermission(PlayerList instance, GameProfile profile) {
-        return ((ServerPlayerEntityBridge) instance.getPlayer(profile.getId())).bridge$getBukkitEntity().hasPermission("minecraft.admin.command_feedback");
+    @Redirect(
+        method = "broadcastToAdmins",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/players/PlayerList;isOp(Lcom/mojang/authlib/GameProfile;)Z"
+        )
+    )
+    private boolean arclight$feedbackPermission(
+        PlayerList instance,
+        GameProfile profile
+    ) {
+        return (
+            (ServerPlayerEntityBridge) instance.getPlayer(profile.getId())
+        ).bridge$getBukkitEntity().hasPermission(
+            "minecraft.admin.command_feedback"
+        );
     }
 
     public boolean hasPermission(int i, String bukkitPermission) {
         // World is null when loading functions
-        return ((getLevel() == null || !((CraftServer) Bukkit.getServer()).ignoreVanillaPermissions) && this.permissionLevel >= i) || getBukkitSender().hasPermission(bukkitPermission);
+        return (
+            ((getLevel() == null ||
+                    !((CraftServer) Bukkit.getServer()).ignoreVanillaPermissions) &&
+                this.permissionLevel >= i) ||
+            getBukkitSender().hasPermission(bukkitPermission)
+        );
     }
 
     @Override
@@ -83,9 +111,12 @@ public abstract class CommandSourceStackMixin implements CommandSourceBridge {
 
     public CommandSender getBukkitSender() {
         var thus = (CommandSourceStack) (Object) this;
-        var sender = ((ICommandSourceBridge) this.source).bridge$getBukkitSender(thus);
+        var sender =
+            ((ICommandSourceBridge) this.source).bridge$getBukkitSender(thus);
         // It means that this is a custom CommandSource
-        return Objects.requireNonNullElseGet(sender, () -> new ArclightDummyCommandSender(thus));
+        return Objects.requireNonNullElseGet(sender, () ->
+            new ArclightDummyCommandSender(thus)
+        );
     }
 
     @Override

@@ -18,14 +18,46 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(MushroomBlock.class)
 public class MushroomBlockMixin {
 
-    @Redirect(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public boolean arclight$blockSpread(ServerLevel world, BlockPos toPos, BlockState newState, int flags, BlockState state, ServerLevel worldIn, BlockPos fromPos) {
-        return CraftEventFactory.handleBlockSpreadEvent(world, fromPos, toPos, newState, flags);
+    @Redirect(
+        method = "randomTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+        )
+    )
+    public boolean arclight$blockSpread(
+        ServerLevel world,
+        BlockPos toPos,
+        BlockState newState,
+        int flags,
+        BlockState state,
+        ServerLevel worldIn,
+        BlockPos fromPos
+    ) {
+        return CraftEventFactory.handleBlockSpreadEvent(
+            world,
+            fromPos,
+            toPos,
+            newState,
+            flags
+        );
     }
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method = "growMushroom", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/feature/ConfiguredFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z"))
-    private void arclight$captureTree(ServerLevel world, BlockPos pos, BlockState state, RandomSource rand, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(
+        method = "growMushroom",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/levelgen/feature/ConfiguredFeature;place(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;)Z"
+        )
+    )
+    private void arclight$captureTree(
+        ServerLevel world,
+        BlockPos pos,
+        BlockState state,
+        RandomSource rand,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if ((Object) this == Blocks.BROWN_MUSHROOM) {
             ArclightCaptures.captureTreeType(TreeType.BROWN_MUSHROOM);
         } else if ((Object) this == Blocks.RED_MUSHROOM) {

@@ -2,8 +2,7 @@ package com.destroystokyo.paper.util;
 
 public final class SneakyThrow {
 
-    private SneakyThrow() {
-    }
+    private SneakyThrow() {}
 
     public static RuntimeException sneaky(final Throwable throwable) {
         if (throwable instanceof RuntimeException runtimeException) {

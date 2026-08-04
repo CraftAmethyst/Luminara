@@ -20,9 +20,18 @@ public class Cat_CatRelaxOnOwnerGoalMixin {
     @Final
     private Cat cat;
 
-    @Redirect(method = "giveMorningGift", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    @Redirect(
+        method = "giveMorningGift",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
+        )
+    )
     private boolean arclight$dropItem(Level instance, Entity entity) {
-        var event = new EntityDropItemEvent(((EntityBridge) this.cat).bridge$getBukkitEntity(), (Item) ((EntityBridge) entity).bridge$getBukkitEntity());
+        var event = new EntityDropItemEvent(
+            ((EntityBridge) this.cat).bridge$getBukkitEntity(),
+            (Item) ((EntityBridge) entity).bridge$getBukkitEntity()
+        );
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             return instance.addFreshEntity(entity);

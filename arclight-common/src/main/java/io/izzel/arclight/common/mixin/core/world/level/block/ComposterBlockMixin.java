@@ -32,8 +32,11 @@ public abstract class ComposterBlockMixin {
 
     // @formatter:off
     @Shadow @Final public static IntegerProperty LEVEL;
+
     @Shadow @Final public static Object2FloatMap<ItemLike> COMPOSTABLES;
+
     @Shadow static BlockState empty(@Nullable Entity p_270236_, BlockState p_270873_, LevelAccessor p_270963_, BlockPos p_270211_) { return null; }
+
     // @formatter:on
 
     /**
@@ -41,13 +44,34 @@ public abstract class ComposterBlockMixin {
      * @reason
      */
     @Overwrite
-    public static BlockState insertItem(Entity entity, BlockState state, ServerLevel world, ItemStack stack, BlockPos pos) {
+    public static BlockState insertItem(
+        Entity entity,
+        BlockState state,
+        ServerLevel world,
+        ItemStack stack,
+        BlockPos pos
+    ) {
         int i = state.getValue(LEVEL);
         if (i < 7 && COMPOSTABLES.containsKey(stack.getItem())) {
             double rand = world.random.nextDouble();
-            BlockState state1 = addItem(entity, state, DummyGeneratorAccess.INSTANCE, pos, stack, rand);
+            BlockState state1 = addItem(
+                entity,
+                state,
+                DummyGeneratorAccess.INSTANCE,
+                pos,
+                stack,
+                rand
+            );
 
-            if (state == state1 || (entity != null && !CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state1))) {
+            if (
+                state == state1 ||
+                (entity != null &&
+                    !CraftEventFactory.callEntityChangeBlockEvent(
+                        entity,
+                        pos,
+                        state1
+                    ))
+            ) {
                 return state;
             }
 
@@ -60,16 +84,40 @@ public abstract class ComposterBlockMixin {
     }
 
     @Inject(method = "extractProduce", cancellable = true, at = @At("HEAD"))
-    private static void arclight$emptyComposter(Entity entity, BlockState state, Level world, BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
+    private static void arclight$emptyComposter(
+        Entity entity,
+        BlockState state,
+        Level world,
+        BlockPos pos,
+        CallbackInfoReturnable<BlockState> cir
+    ) {
         if (entity != null && !(entity instanceof Player)) {
-            BlockState blockState = empty(entity, state, DummyGeneratorAccess.INSTANCE, pos);
-            if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pos, blockState)) {
+            BlockState blockState = empty(
+                entity,
+                state,
+                DummyGeneratorAccess.INSTANCE,
+                pos
+            );
+            if (
+                !CraftEventFactory.callEntityChangeBlockEvent(
+                    entity,
+                    pos,
+                    blockState
+                )
+            ) {
                 cir.setReturnValue(state);
             }
         }
     }
 
-    private static BlockState addItem(Entity entity, BlockState state, LevelAccessor world, BlockPos pos, ItemStack stack, double rand) {
+    private static BlockState addItem(
+        Entity entity,
+        BlockState state,
+        LevelAccessor world,
+        BlockPos pos,
+        ItemStack stack,
+        double rand
+    ) {
         int i = state.getValue(LEVEL);
         float f = COMPOSTABLES.getFloat(stack.getItem());
         if ((i != 0 || !(f > 0.0F)) && !(rand < (double) f)) {
@@ -78,7 +126,11 @@ public abstract class ComposterBlockMixin {
             int j = i + 1;
             BlockState blockstate = state.setValue(LEVEL, j);
             world.setBlock(pos, blockstate, 3);
-            world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, blockstate));
+            world.gameEvent(
+                GameEvent.BLOCK_CHANGE,
+                pos,
+                GameEvent.Context.of(entity, blockstate)
+            );
             if (j == 7) {
                 world.scheduleTick(pos, state.getBlock(), 20);
             }
@@ -86,11 +138,31 @@ public abstract class ComposterBlockMixin {
         }
     }
 
-    @SuppressWarnings({"InvalidMemberReference", "UnresolvedMixinReference", "MixinAnnotationTarget", "InvalidInjectorMethodSignature"})
-    @Redirect(method = "getContainer", at = @At(value = "NEW", target = "()Lnet/minecraft/world/level/block/ComposterBlock$EmptyContainer;"))
-    public ComposterBlock.EmptyContainer arclight$newEmpty(BlockState blockState, LevelAccessor world, BlockPos blockPos) {
-        ComposterBlock.EmptyContainer inventory = new ComposterBlock.EmptyContainer();
-        ((IInventoryBridge) inventory).setOwner(new CraftBlockInventoryHolder(world, blockPos, inventory));
+    @SuppressWarnings(
+        {
+            "InvalidMemberReference",
+            "UnresolvedMixinReference",
+            "MixinAnnotationTarget",
+            "InvalidInjectorMethodSignature",
+        }
+    )
+    @Redirect(
+        method = "getContainer",
+        at = @At(
+            value = "NEW",
+            target = "()Lnet/minecraft/world/level/block/ComposterBlock$EmptyContainer;"
+        )
+    )
+    public ComposterBlock.EmptyContainer arclight$newEmpty(
+        BlockState blockState,
+        LevelAccessor world,
+        BlockPos blockPos
+    ) {
+        ComposterBlock.EmptyContainer inventory =
+            new ComposterBlock.EmptyContainer();
+        ((IInventoryBridge) inventory).setOwner(
+            new CraftBlockInventoryHolder(world, blockPos, inventory)
+        );
         return inventory;
     }
 }

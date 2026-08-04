@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 public abstract class StandardMessengerMixin implements Messenger {
 
     @ModifyConstant(
-            method = "validateAndCorrectChannel",
-            constant = @Constant(intValue = Messenger.MAX_CHANNEL_SIZE)
+        method = "validateAndCorrectChannel",
+        constant = @Constant(intValue = Messenger.MAX_CHANNEL_SIZE)
     )
     private static int modifyMaxChannelSize(int original) {
         return 256;

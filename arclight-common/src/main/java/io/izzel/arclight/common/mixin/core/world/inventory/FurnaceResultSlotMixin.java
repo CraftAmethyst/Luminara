@@ -15,10 +15,25 @@ public class FurnaceResultSlotMixin {
 
     // @formatter:off
     @Shadow private int removeCount;
+
     // @formatter:on
 
-    @Redirect(method = "checkTakeAchievements(Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;awardUsedRecipesAndPopExperience(Lnet/minecraft/server/level/ServerPlayer;)V"))
-    public void arclight$furnaceDropExp(AbstractFurnaceBlockEntity furnace, ServerPlayer player, ItemStack stack) {
-        ((AbstractFurnaceTileEntityBridge) furnace).bridge$dropExp(player, stack, this.removeCount);
+    @Redirect(
+        method = "checkTakeAchievements(Lnet/minecraft/world/item/ItemStack;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;awardUsedRecipesAndPopExperience(Lnet/minecraft/server/level/ServerPlayer;)V"
+        )
+    )
+    public void arclight$furnaceDropExp(
+        AbstractFurnaceBlockEntity furnace,
+        ServerPlayer player,
+        ItemStack stack
+    ) {
+        ((AbstractFurnaceTileEntityBridge) furnace).bridge$dropExp(
+            player,
+            stack,
+            this.removeCount
+        );
     }
 }

@@ -26,20 +26,61 @@ public abstract class EggItemMixin extends Item {
         super(properties);
     }
 
-    @Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
-    private void arclight$muteSound(Level world, Player player, double x, double y, double z, SoundEvent soundIn, SoundSource category, float volume, float pitch) {
-    }
+    @Redirect(
+        method = "use",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"
+        )
+    )
+    private void arclight$muteSound(
+        Level world,
+        Player player,
+        double x,
+        double y,
+        double z,
+        SoundEvent soundIn,
+        SoundSource category,
+        float volume,
+        float pitch
+    ) {}
 
-    @Eject(method = "m_7203_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z", remap = false))
-    private boolean arclight$updateIfFail(Level world, Entity entityIn, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir, Level worldIn, Player playerIn, @NotNull InteractionHand handIn) {
+    @Eject(
+        method = "m_7203_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z",
+            remap = false
+        )
+    )
+    private boolean arclight$updateIfFail(
+        Level world,
+        Entity entityIn,
+        CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
+        Level worldIn,
+        Player playerIn,
+        @NotNull InteractionHand handIn
+    ) {
         if (!worldIn.addFreshEntity(entityIn)) {
             if (playerIn instanceof ServerPlayerEntityBridge) {
                 ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().updateInventory();
             }
-            cir.setReturnValue(InteractionResultHolder.fail(playerIn.getItemInHand(handIn)));
+            cir.setReturnValue(
+                InteractionResultHolder.fail(playerIn.getItemInHand(handIn))
+            );
             return false;
         } else {
-            worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.EGG_THROW, SoundSource.PLAYERS, 0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
+            worldIn.playSound(
+                null,
+                playerIn.getX(),
+                playerIn.getY(),
+                playerIn.getZ(),
+                SoundEvents.EGG_THROW,
+                SoundSource.PLAYERS,
+                0.5F,
+                0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F)
+            );
             return true;
         }
     }

@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.inventory;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.ResultContainer;
@@ -14,14 +16,13 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(ResultContainer.class)
-public abstract class CraftResultInventoryMixin implements IInventoryBridge, Container {
+public abstract class CraftResultInventoryMixin
+    implements IInventoryBridge, Container {
 
     // @formatter:off
     @Shadow @Final private NonNullList<ItemStack> itemStacks;
+
     // @formatter:on
 
     private int maxStack = MAX_STACK;
@@ -32,12 +33,10 @@ public abstract class CraftResultInventoryMixin implements IInventoryBridge, Con
     }
 
     @Override
-    public void onOpen(CraftHumanEntity who) {
-    }
+    public void onOpen(CraftHumanEntity who) {}
 
     @Override
-    public void onClose(CraftHumanEntity who) {
-    }
+    public void onClose(CraftHumanEntity who) {}
 
     @Override
     public List<HumanEntity> getViewers() {
@@ -50,8 +49,7 @@ public abstract class CraftResultInventoryMixin implements IInventoryBridge, Con
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {
@@ -75,6 +73,5 @@ public abstract class CraftResultInventoryMixin implements IInventoryBridge, Con
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-    }
+    public void setCurrentRecipe(Recipe<?> recipe) {}
 }

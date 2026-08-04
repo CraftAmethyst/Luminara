@@ -1,29 +1,36 @@
 package com.destroystokyo.paper.util.pooled;
 
 import io.papermc.paper.util.MCUtil;
-import org.apache.commons.lang3.mutable.MutableInt;
-
 import java.util.ArrayDeque;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 public final class PooledObjects<E> {
 
-    public static final PooledObjects<MutableInt> POOLED_MUTABLE_INTEGERS = new PooledObjects<>(MutableInt::new, 1024);
+    public static final PooledObjects<MutableInt> POOLED_MUTABLE_INTEGERS =
+        new PooledObjects<>(MutableInt::new, 1024);
     private final Supplier<E> creator;
     private final Consumer<E> releaser;
     private final int maxPoolSize;
     private final ArrayDeque<E> queue;
+
     public PooledObjects(final Supplier<E> creator, int maxPoolSize) {
         this(creator, maxPoolSize, null);
     }
 
-    public PooledObjects(final Supplier<E> creator, int maxPoolSize, Consumer<E> releaser) {
+    public PooledObjects(
+        final Supplier<E> creator,
+        int maxPoolSize,
+        Consumer<E> releaser
+    ) {
         if (creator == null) {
             throw new NullPointerException("Creator must not be null");
         }
         if (maxPoolSize <= 0) {
-            throw new IllegalArgumentException("Max pool size must be greater-than 0");
+            throw new IllegalArgumentException(
+                "Max pool size must be greater-than 0"
+            );
         }
 
         this.queue = new ArrayDeque<>(maxPoolSize);
@@ -65,6 +72,7 @@ public final class PooledObjects<E> {
      * Wrapper for an object that will be have a cleaner registered for it, and may be automatically returned to pool.
      */
     public class AutoReleased {
+
         private final E object;
         private final Runnable cleaner;
 

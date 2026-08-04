@@ -13,6 +13,9 @@ public class OwnerHurtByTargetGoalMixin extends TargetGoalMixin {
 
     @Inject(method = "start", at = @At("HEAD"))
     public void arclight$reason(CallbackInfo ci) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true);
+        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
+            EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER,
+            true
+        );
     }
 }

@@ -26,23 +26,48 @@ public abstract class AbstractHorseMixin extends AnimalMixin {
     public int maxDomestication;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(EntityType<? extends AbstractHorse> type, Level worldIn, CallbackInfo ci) {
+    private void arclight$init(
+        EntityType<? extends AbstractHorse> type,
+        Level worldIn,
+        CallbackInfo ci
+    ) {
         this.maxDomestication = 100;
     }
 
-    @Redirect(method = "createInventory", at = @At(value = "NEW", target = "net/minecraft/world/SimpleContainer"))
+    @Redirect(
+        method = "createInventory",
+        at = @At(value = "NEW", target = "net/minecraft/world/SimpleContainer")
+    )
     private SimpleContainer arclight$createInv(int slots) {
         SimpleContainer inventory = new SimpleContainer(slots);
-        ((IInventoryBridge) inventory).setOwner((InventoryHolder) this.getBukkitEntity());
+        ((IInventoryBridge) inventory).setOwner(
+            (InventoryHolder) this.getBukkitEntity()
+        );
         return inventory;
     }
 
-    @Inject(method = "handleEating", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"))
-    private void arclight$healByEating(Player player, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(
+        method = "handleEating",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"
+        )
+    )
+    private void arclight$healByEating(
+        Player player,
+        ItemStack stack,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.EATING);
     }
 
-    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"))
+    @Inject(
+        method = "aiStep",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"
+        )
+    )
     private void arclight$healByRegen(CallbackInfo ci) {
         bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
     }
@@ -65,9 +90,14 @@ public abstract class AbstractHorseMixin extends AnimalMixin {
         if (i >= 90) {
             power = 1.0F;
         } else {
-            power = 0.4F + 0.4F * (float) i / 90.0F;
+            power = 0.4F + (0.4F * (float) i) / 90.0F;
         }
-        if (!CraftEventFactory.callHorseJumpEvent((AbstractHorse) (Object) this, power)) {
+        if (
+            !CraftEventFactory.callHorseJumpEvent(
+                (AbstractHorse) (Object) this,
+                power
+            )
+        ) {
             ci.cancel();
         }
     }

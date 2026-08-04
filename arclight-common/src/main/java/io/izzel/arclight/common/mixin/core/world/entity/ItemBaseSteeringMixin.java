@@ -12,9 +12,13 @@ public class ItemBaseSteeringMixin {
 
     // @formatter:off
     @Shadow public boolean boosting;
+
     @Shadow public int boostTime;
+
     @Shadow @Final private SynchedEntityData entityData;
+
     @Shadow @Final private EntityDataAccessor<Integer> boostTimeAccessor;
+
     // @formatter:on
 
     public void setBoostTicks(int ticks) {

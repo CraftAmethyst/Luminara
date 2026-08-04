@@ -15,18 +15,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(StructureTemplate.class)
 public class StructureTemplateMixin {
 
-    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
-    public CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
+    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY =
+        new CraftPersistentDataTypeRegistry();
+    public CraftPersistentDataContainer persistentDataContainer =
+        new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 
     @Inject(method = "save", at = @At("RETURN"))
-    private void arclight$savePdc(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+    private void arclight$savePdc(
+        CompoundTag tag,
+        CallbackInfoReturnable<CompoundTag> cir
+    ) {
         if (!this.persistentDataContainer.isEmpty()) {
-            tag.put("BukkitValues", this.persistentDataContainer.toTagCompound());
+            tag.put(
+                "BukkitValues",
+                this.persistentDataContainer.toTagCompound()
+            );
         }
     }
 
     @Inject(method = "load", at = @At("RETURN"))
-    private void arclight$loadPdc(HolderGetter<Block> reg, CompoundTag tag, CallbackInfo ci) {
+    private void arclight$loadPdc(
+        HolderGetter<Block> reg,
+        CompoundTag tag,
+        CallbackInfo ci
+    ) {
         var base = tag.get("BukkitValues");
         if (base instanceof CompoundTag compoundTag) {
             this.persistentDataContainer.putAll(compoundTag);

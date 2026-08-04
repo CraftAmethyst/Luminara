@@ -1,9 +1,8 @@
 package io.izzel.arclight.common.mod.server.block;
 
 import io.izzel.arclight.api.Unsafe;
-import net.minecraft.world.CompoundContainer;
-
 import java.lang.reflect.Field;
+import net.minecraft.world.CompoundContainer;
 
 public class ChestBlockDoubleInventoryHacks {
 
@@ -12,7 +11,9 @@ public class ChestBlockDoubleInventoryHacks {
 
     static {
         try {
-            cl = Class.forName("net.minecraft.world.level.block.ChestBlock$2$1");
+            cl = Class.forName(
+                "net.minecraft.world.level.block.ChestBlock$2$1"
+            );
             Field field = cl.getDeclaredField("inventorylargechest");
             offset = Unsafe.objectFieldOffset(field);
         } catch (Exception e) {

@@ -5,6 +5,8 @@ import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.mixin.core.world.level.block.state.BlockBehaviourMixin;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,24 +35,38 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 @Mixin(Block.class)
-public abstract class BlockMixin extends BlockBehaviourMixin implements BlockBridge {
+public abstract class BlockMixin
+    extends BlockBehaviourMixin
+    implements BlockBridge {
 
     /**
      * @author IzzelAliz
      * @reason
      */
     @Overwrite
-    public static void popResource(Level worldIn, BlockPos pos, ItemStack stack) {
-        if (!worldIn.isClientSide && !stack.isEmpty() && worldIn.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !worldIn.restoringBlockSnapshots) {
+    public static void popResource(
+        Level worldIn,
+        BlockPos pos,
+        ItemStack stack
+    ) {
+        if (
+            !worldIn.isClientSide &&
+            !stack.isEmpty() &&
+            worldIn.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) &&
+            !worldIn.restoringBlockSnapshots
+        ) {
             float f = 0.5F;
             double d0 = (double) (worldIn.random.nextFloat() * 0.5F) + 0.25D;
             double d1 = (double) (worldIn.random.nextFloat() * 0.5F) + 0.25D;
             double d2 = (double) (worldIn.random.nextFloat() * 0.5F) + 0.25D;
-            ItemEntity itemEntity = new ItemEntity(worldIn, (double) pos.getX() + d0, (double) pos.getY() + d1, (double) pos.getZ() + d2, stack);
+            ItemEntity itemEntity = new ItemEntity(
+                worldIn,
+                (double) pos.getX() + d0,
+                (double) pos.getY() + d1,
+                (double) pos.getZ() + d2,
+                stack
+            );
             itemEntity.setDefaultPickUpDelay();
             List<ItemEntity> blockDrops = ArclightCaptures.getBlockDrops();
             if (blockDrops == null) {
@@ -63,6 +79,7 @@ public abstract class BlockMixin extends BlockBehaviourMixin implements BlockBri
 
     // @formatter:off
     @Shadow public abstract BlockState defaultBlockState();
+
     // @formatter:on
 
     @Shadow
@@ -71,14 +88,38 @@ public abstract class BlockMixin extends BlockBehaviourMixin implements BlockBri
         return null;
     }
 
-    public int getExpDrop(BlockState blockState, ServerLevel world, BlockPos blockPos, ItemStack itemStack, boolean flag) {
+    public int getExpDrop(
+        BlockState blockState,
+        ServerLevel world,
+        BlockPos blockPos,
+        ItemStack itemStack,
+        boolean flag
+    ) {
         int silkTouch = itemStack.getEnchantmentLevel(Enchantments.SILK_TOUCH);
         int fortune = itemStack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
-        return ((IForgeBlock) this).getExpDrop(blockState, world, world.random, blockPos, fortune, silkTouch);
+        return ((IForgeBlock) this).getExpDrop(
+            blockState,
+            world,
+            world.random,
+            blockPos,
+            fortune,
+            silkTouch
+        );
     }
 
-    protected int tryDropExperience(ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, IntProvider intprovider) {
-        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, itemstack) == 0) {
+    protected int tryDropExperience(
+        ServerLevel worldserver,
+        BlockPos blockposition,
+        ItemStack itemstack,
+        IntProvider intprovider
+    ) {
+        if (
+            EnchantmentHelper.getItemEnchantmentLevel(
+                Enchantments.SILK_TOUCH,
+                itemstack
+            ) ==
+            0
+        ) {
             int i = intprovider.sample(worldserver.random);
             if (i > 0) {
                 return i;
@@ -88,28 +129,71 @@ public abstract class BlockMixin extends BlockBehaviourMixin implements BlockBri
     }
 
     @Override
-    public int bridge$getExpDrop(BlockState blockState, ServerLevel world, BlockPos blockPos, ItemStack itemStack) {
+    public int bridge$getExpDrop(
+        BlockState blockState,
+        ServerLevel world,
+        BlockPos blockPos,
+        ItemStack itemStack
+    ) {
         return getExpDrop(blockState, world, blockPos, itemStack, true);
     }
 
-    @Inject(method = "playerDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$reason(Level p_49827_, Player player, BlockPos p_49829_, BlockState p_49830_, BlockEntity p_49831_, ItemStack p_49832_, CallbackInfo ci) {
-        ((PlayerEntityBridge) player).bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED);
+    @Inject(
+        method = "playerDestroy",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"
+        )
+    )
+    private void arclight$reason(
+        Level p_49827_,
+        Player player,
+        BlockPos p_49829_,
+        BlockState p_49830_,
+        BlockEntity p_49831_,
+        ItemStack p_49832_,
+        CallbackInfo ci
+    ) {
+        ((PlayerEntityBridge) player).bridge$pushExhaustReason(
+            EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED
+        );
     }
 
     @Inject(method = "playerDestroy", at = @At("RETURN"))
-    private void arclight$handleBlockDrops(Level worldIn, Player player, BlockPos pos, BlockState blockState, BlockEntity te, ItemStack stack, CallbackInfo ci) {
-        ArclightCaptures.BlockBreakEventContext breakEventContext = ArclightCaptures.popPrimaryBlockBreakEvent();
+    private void arclight$handleBlockDrops(
+        Level worldIn,
+        Player player,
+        BlockPos pos,
+        BlockState blockState,
+        BlockEntity te,
+        ItemStack stack,
+        CallbackInfo ci
+    ) {
+        ArclightCaptures.BlockBreakEventContext breakEventContext =
+            ArclightCaptures.popPrimaryBlockBreakEvent();
 
         if (breakEventContext != null) {
             BlockBreakEvent breakEvent = breakEventContext.getEvent();
             List<ItemEntity> blockDrops = breakEventContext.getBlockDrops();
-            org.bukkit.block.BlockState state = breakEventContext.getBlockBreakPlayerState();
+            org.bukkit.block.BlockState state =
+                breakEventContext.getBlockBreakPlayerState();
 
-            if (player instanceof ServerPlayer && blockDrops != null && (breakEvent == null || breakEvent.isDropItems())
-                    && DistValidate.isValid(worldIn)) {
-                CraftBlock craftBlock = CraftBlock.at(((CraftWorld) state.getWorld()).getHandle(), pos);
-                CraftEventFactory.handleBlockDropItemEvent(craftBlock, state, ((ServerPlayer) player), blockDrops);
+            if (
+                player instanceof ServerPlayer &&
+                blockDrops != null &&
+                (breakEvent == null || breakEvent.isDropItems()) &&
+                DistValidate.isValid(worldIn)
+            ) {
+                CraftBlock craftBlock = CraftBlock.at(
+                    ((CraftWorld) state.getWorld()).getHandle(),
+                    pos
+                );
+                CraftEventFactory.handleBlockDropItemEvent(
+                    craftBlock,
+                    state,
+                    ((ServerPlayer) player),
+                    blockDrops
+                );
             }
         }
     }

@@ -16,22 +16,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ShulkerBoxMenu.class)
-public abstract class ShulkerBoxContainerMixin extends AbstractContainerMenuMixin {
+public abstract class ShulkerBoxContainerMixin
+    extends AbstractContainerMenuMixin {
 
     // @formatter:off
     @Shadow @Final private Container container;
+
     // @formatter:on
 
     private CraftInventoryView bukkitEntity;
     private Inventory playerInventory;
 
-    @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;)V", at = @At("RETURN"))
-    public void arclight$init(int id, Inventory playerInventory, Container inventory, CallbackInfo ci) {
+    @Inject(
+        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;)V",
+        at = @At("RETURN")
+    )
+    public void arclight$init(
+        int id,
+        Inventory playerInventory,
+        Container inventory,
+        CallbackInfo ci
+    ) {
         this.playerInventory = playerInventory;
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(net.minecraft.world.entity.player.Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    public void arclight$unreachable(
+        net.minecraft.world.entity.player.Player playerIn,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (!bridge$isCheckReachable()) cir.setReturnValue(true);
     }
 
@@ -41,7 +54,11 @@ public abstract class ShulkerBoxContainerMixin extends AbstractContainerMenuMixi
             return bukkitEntity;
         }
 
-        bukkitEntity = new CraftInventoryView(((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(), new CraftInventory(this.container), (AbstractContainerMenu) (Object) this);
+        bukkitEntity = new CraftInventoryView(
+            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            new CraftInventory(this.container),
+            (AbstractContainerMenu) (Object) this
+        );
         return bukkitEntity;
     }
 }

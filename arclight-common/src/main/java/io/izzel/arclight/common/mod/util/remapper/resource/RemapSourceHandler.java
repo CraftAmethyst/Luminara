@@ -6,8 +6,6 @@ import cpw.mods.modlauncher.TransformingClassLoader;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.mod.util.remapper.ArclightRemapper;
 import io.izzel.arclight.common.mod.util.remapper.GlobalClassRepo;
-import org.objectweb.asm.ClassReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,6 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.Hashtable;
+import org.objectweb.asm.ClassReader;
 
 public class RemapSourceHandler extends URLStreamHandler {
 
@@ -26,8 +25,15 @@ public class RemapSourceHandler extends URLStreamHandler {
     public static void register() {
         try {
             Unsafe.ensureClassInitialized(URL.class);
-            MethodHandle getter = Unsafe.lookup().findStaticGetter(URL.class, "handlers", Hashtable.class);
-            Hashtable<String, URLStreamHandler> handlers = (Hashtable<String, URLStreamHandler>) getter.invokeExact();
+            MethodHandle getter = Unsafe.lookup().findStaticGetter(
+                URL.class,
+                "handlers",
+                Hashtable.class
+            );
+            Hashtable<String, URLStreamHandler> handlers = (Hashtable<
+                String,
+                URLStreamHandler
+            >) getter.invokeExact();
             handlers.put("remap", new RemapSourceHandler());
         } catch (Throwable e) {
             throw new RuntimeException(e);
@@ -45,14 +51,31 @@ public class RemapSourceHandler extends URLStreamHandler {
 
         static {
             try {
-                ClassLoader classLoader = RemapSourceConnection.class.getClassLoader();
-                Field classTransformer = TransformingClassLoader.class.getDeclaredField("classTransformer");
+                ClassLoader classLoader =
+                    RemapSourceConnection.class.getClassLoader();
+                Field classTransformer =
+                    TransformingClassLoader.class.getDeclaredField(
+                        "classTransformer"
+                    );
                 classTransformer.setAccessible(true);
-                ClassTransformer tranformer = (ClassTransformer) classTransformer.get(classLoader);
-                Method transform = tranformer.getClass().getDeclaredMethod("transform", byte[].class, String.class, String.class);
-                MH_TRANSFORM = Unsafe.lookup().unreflect(transform).bindTo(tranformer);
+                ClassTransformer tranformer =
+                    (ClassTransformer) classTransformer.get(classLoader);
+                Method transform = tranformer
+                    .getClass()
+                    .getDeclaredMethod(
+                        "transform",
+                        byte[].class,
+                        String.class,
+                        String.class
+                    );
+                MH_TRANSFORM = Unsafe.lookup()
+                    .unreflect(transform)
+                    .bindTo(tranformer);
             } catch (Throwable t) {
-                throw new IllegalStateException("Unknown modlauncher version", t);
+                throw new IllegalStateException(
+                    "Unknown modlauncher version",
+                    t
+                );
             }
         }
 
@@ -66,14 +89,24 @@ public class RemapSourceHandler extends URLStreamHandler {
         public void connect() throws IOException {
             byte[] bytes = ByteStreams.toByteArray(url.openStream());
             String className = new ClassReader(bytes).getClassName();
-            if (className.startsWith("net/minecraft/") || className.equals("com/mojang/brigadier/tree/CommandNode")) {
+            if (
+                className.startsWith("net/minecraft/") ||
+                className.equals("com/mojang/brigadier/tree/CommandNode")
+            ) {
                 try {
-                    bytes = (byte[]) MH_TRANSFORM.invokeExact(bytes, className.replace('/', '.'), "source");
+                    bytes = (byte[]) MH_TRANSFORM.invokeExact(
+                        bytes,
+                        className.replace('/', '.'),
+                        "source"
+                    );
                 } catch (Throwable e) {
                     throw new IOException(e);
                 }
             }
-            this.array = ArclightRemapper.getResourceMapper().remapClassFile(bytes, GlobalClassRepo.INSTANCE);
+            this.array = ArclightRemapper.getResourceMapper().remapClassFile(
+                bytes,
+                GlobalClassRepo.INSTANCE
+            );
         }
 
         @Override

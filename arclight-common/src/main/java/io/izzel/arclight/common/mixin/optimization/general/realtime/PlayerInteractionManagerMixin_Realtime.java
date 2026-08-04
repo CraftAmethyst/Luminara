@@ -16,8 +16,18 @@ public class PlayerInteractionManagerMixin_Realtime {
 
     private int lastTick = ArclightConstants.currentTick - 1;
 
-    @Redirect(method = "tick", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/server/level/ServerPlayerGameMode;gameTicks:I"))
-    private void arclight$useWallTime(ServerPlayerGameMode playerInteractionManager, int value) {
+    @Redirect(
+        method = "tick",
+        at = @At(
+            value = "FIELD",
+            opcode = Opcodes.PUTFIELD,
+            target = "Lnet/minecraft/server/level/ServerPlayerGameMode;gameTicks:I"
+        )
+    )
+    private void arclight$useWallTime(
+        ServerPlayerGameMode playerInteractionManager,
+        int value
+    ) {
         int elapsedTicks = ArclightConstants.currentTick - this.lastTick;
         if (elapsedTicks < 1) {
             elapsedTicks = 1;

@@ -21,15 +21,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "net/minecraft/server/level/ServerLevel$EntityCallbacks")
 public class ServerLevel_EntityCallbacksMixin {
 
-    @Shadow(aliases = {"f_143351_", "this$0"})
+    @Shadow(aliases = { "f_143351_", "this$0" })
     private ServerLevel outerThis;
 
-    @Inject(method = "onTrackingStart(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
+    @Inject(
+        method = "onTrackingStart(Lnet/minecraft/world/entity/Entity;)V",
+        at = @At("RETURN")
+    )
     private void arclight$valid(Entity entity, CallbackInfo ci) {
         ((EntityBridge) entity).bridge$setValid(true);
     }
 
-    @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
+    @Inject(
+        method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V",
+        at = @At("HEAD")
+    )
     private void arclight$entityCleanup(Entity entity, CallbackInfo ci) {
         if (entity instanceof Player player) {
             for (ServerLevel serverLevel : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {
@@ -37,24 +43,36 @@ public class ServerLevel_EntityCallbacksMixin {
                 for (Object o : worldData.cache.values()) {
                     if (o instanceof MapItemSavedData map) {
                         map.carriedByPlayers.remove(player);
-                        ((MapDataBridge) map).bridge$getCarriedBy().removeIf(holdingPlayer -> holdingPlayer.player == entity);
+                        ((MapDataBridge) map).bridge$getCarriedBy().removeIf(
+                            holdingPlayer -> holdingPlayer.player == entity
+                        );
                     }
                 }
             }
         }
-        if (((EntityBridge) entity).bridge$getBukkitEntity() instanceof InventoryHolder holder) {
-            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(holder.getInventory().getViewers())) {
+        if (
+            ((EntityBridge) entity).bridge$getBukkitEntity() instanceof
+                InventoryHolder holder
+        ) {
+            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(
+                holder.getInventory().getViewers()
+            )) {
                 h.closeInventory();
             }
         }
     }
 
-    @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
+    @Inject(
+        method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V",
+        at = @At("RETURN")
+    )
     private void arclight$invalid(Entity entity, CallbackInfo ci) {
         ((EntityBridge) entity).bridge$setValid(false);
         if (!(entity instanceof ServerPlayer)) {
             for (var player : outerThis.players()) {
-                ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().onEntityRemove(entity);
+                ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().onEntityRemove(
+                    entity
+                );
             }
         }
     }

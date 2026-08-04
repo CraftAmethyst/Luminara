@@ -12,6 +12,14 @@ import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.BukkitOptionParser;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.longs.LongIterator;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.net.Proxy;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.function.BooleanSupplier;
+import javax.annotation.Nullable;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.minecraft.CrashReport;
@@ -72,73 +80,97 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.annotation.Nullable;
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.Proxy;
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.function.BooleanSupplier;
-
 @Mixin(MinecraftServer.class)
-public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<TickTask> implements MinecraftServerBridge, ICommandSourceBridge {
+public abstract class MinecraftServerMixin
+    extends ReentrantBlockableEventLoop<TickTask>
+    implements MinecraftServerBridge, ICommandSourceBridge {
 
     private static final int TPS = 20;
     private static final int TICK_TIME = 1000000000 / TPS;
     private static final int SAMPLE_INTERVAL = 100;
-    private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger("MinecraftServer");
+    private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER =
+        ArclightI18nLogger.getLogger("MinecraftServer");
+
     @Shadow
     @Final
     static Logger LOGGER;
+
     private static int currentTick = (int) (System.currentTimeMillis() / 50);
     public final double[] recentTps = new double[3];
     private final Object stopLock = new Object();
+
     @Shadow
     @Final
     public Map<ResourceKey<Level>, ServerLevel> levels;
+
     @Shadow
     @Final
     public Executor executor;
+
     @Shadow
     public MinecraftServer.ReloadableResources resources;
+
     public WorldLoader.DataLoadContext worldLoader;
     public CraftServer server;
     public OptionSet options;
     public ConsoleCommandSender console;
     public RemoteConsoleCommandSender remoteConsole;
-    public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<>();
+    public java.util.Queue<Runnable> processQueue =
+        new java.util.concurrent.ConcurrentLinkedQueue<>();
     public int autosavePeriod;
     public Commands vanillaCommandDispatcher;
+
     @Shadow
     protected long nextTickTime;
+
     @Shadow
     protected WorldData worldData;
+
     @Shadow
     @Final
     protected Services services;
+
     // @formatter:off
     @Shadow private int tickCount;
+
     @Shadow private ServerStatus status;
+
     @Shadow @Nullable private String motd;
+
     @Shadow private volatile boolean running;
+
     @Shadow private long lastOverloadWarning;
+
     @Shadow private boolean mayHaveDelayedTasks;
+
     @Shadow private long delayedTasksMaxNextTickTime;
+
     @Shadow private volatile boolean isReady;
+
     @Shadow private boolean stopped;
+
     @Shadow private ProfilerFiller profiler;
+
     @Shadow private float averageTickTime;
+
     @Shadow @Final private PackRepository packRepository;
+
     @Shadow @Final private ServerFunctionManager functionManager;
+
     @Shadow @Final private StructureTemplateManager structureTemplateManager;
+
     @Shadow private boolean debugCommandProfilerDelayStart;
+
     @Shadow @Nullable private MinecraftServer.TimeProfiler debugCommandProfiler;
+
     @Shadow @Nullable private ServerStatus.Favicon statusIcon;
+
     private boolean forceTicks;
     private boolean hasStopped = false;
+
     @Unique
     private transient ServerLevel arclight$capturedLevel;
+
     public MinecraftServerMixin(String name) {
         super(name);
     }
@@ -166,6 +198,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     @Shadow protected abstract void waitUntilNextTick();
 
     @Shadow protected abstract void onServerCrash(CrashReport report);
+
     // @formatter:on
 
     @Shadow
@@ -244,15 +277,29 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void arclight$loadOptions(Thread p_236723_, LevelStorageSource.LevelStorageAccess p_236724_, PackRepository p_236725_, WorldStem worldStem, Proxy p_236727_, DataFixer p_236728_, Services p_236729_, ChunkProgressListenerFactory p_236730_, CallbackInfo ci) {
-        String[] arguments = ManagementFactory.getRuntimeMXBean().getInputArguments().toArray(new String[0]);
+    public void arclight$loadOptions(
+        Thread p_236723_,
+        LevelStorageSource.LevelStorageAccess p_236724_,
+        PackRepository p_236725_,
+        WorldStem worldStem,
+        Proxy p_236727_,
+        DataFixer p_236728_,
+        Services p_236729_,
+        ChunkProgressListenerFactory p_236730_,
+        CallbackInfo ci
+    ) {
+        String[] arguments = ManagementFactory.getRuntimeMXBean()
+            .getInputArguments()
+            .toArray(new String[0]);
         OptionParser parser = new BukkitOptionParser();
         try {
             options = parser.parse(arguments);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.vanillaCommandDispatcher = worldStem.dataPackResources().getCommands();
+        this.vanillaCommandDispatcher = worldStem
+            .dataPackResources()
+            .getCommands();
         this.worldLoader = ArclightCaptures.getDataLoadContext();
     }
 
@@ -267,18 +314,25 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
             if (!this.initServer()) {
                 throw new IllegalStateException("Failed to initialize server");
             }
-            ServerLifecycleHooks.handleServerStarted((MinecraftServer) (Object) this);
+            ServerLifecycleHooks.handleServerStarted(
+                (MinecraftServer) (Object) this
+            );
             long endTime = Util.getMillis();
             this.nextTickTime = endTime;
             this.statusIcon = this.loadStatusIcon().orElse(null);
             this.status = this.buildServerStatus();
 
             Arrays.fill(recentTps, 20);
-            long curTime, tickSection = Util.getMillis(), tickCount = 1;
+            long curTime,
+                tickSection = Util.getMillis(),
+                tickCount = 1;
 
             while (this.running) {
                 long i = (curTime = Util.getMillis()) - this.nextTickTime;
-                if (i > 2000L && this.nextTickTime - this.lastOverloadWarning >= 15000L) {
+                if (
+                    i > 2000L &&
+                    this.nextTickTime - this.lastOverloadWarning >= 15000L
+                ) {
                     long j = i / 50L;
 
                     if (server.getWarnOnOverload()) {
@@ -290,7 +344,8 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                 }
 
                 if (tickCount++ % SAMPLE_INTERVAL == 0) {
-                    double currentTps = 1E3 / (curTime - tickSection) * SAMPLE_INTERVAL;
+                    double currentTps =
+                        (1E3 / (curTime - tickSection)) * SAMPLE_INTERVAL;
                     recentTps[0] = calcTps(recentTps[0], 0.92, currentTps); // 1/exp(5sec/1min)
                     recentTps[1] = calcTps(recentTps[1], 0.9835, currentTps); // 1/exp(5sec/5min)
                     recentTps[2] = calcTps(recentTps[2], 0.9945, currentTps); // 1/exp(5sec/15min)
@@ -301,7 +356,11 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
                 if (this.debugCommandProfilerDelayStart) {
                     this.debugCommandProfilerDelayStart = false;
-                    this.debugCommandProfiler = new MinecraftServer.TimeProfiler(Util.getNanos(), this.tickCount);
+                    this.debugCommandProfiler =
+                        new MinecraftServer.TimeProfiler(
+                            Util.getNanos(),
+                            this.tickCount
+                        );
                 }
 
                 this.nextTickTime += 50L;
@@ -310,7 +369,10 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                 this.tickServer(this::haveTime);
                 this.profiler.popPush("nextTickWait");
                 this.mayHaveDelayedTasks = true;
-                this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
+                this.delayedTasksMaxNextTickTime = Math.max(
+                    Util.getMillis() + 50L,
+                    this.nextTickTime
+                );
                 this.waitUntilNextTick();
                 this.profiler.pop();
                 this.endMetricsRecordingTick();
@@ -318,7 +380,9 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                 JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
             }
             ARCLIGHT_LOGGER.info("server.stopping");
-            ServerLifecycleHooks.handleServerStopping((MinecraftServer) (Object) this);
+            ServerLifecycleHooks.handleServerStopping(
+                (MinecraftServer) (Object) this
+            );
             ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
         } catch (Throwable throwable1) {
             ARCLIGHT_LOGGER.error("server.unexpected-exception", throwable1);
@@ -326,15 +390,26 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
             this.fillSystemReport(crashreport.getSystemReport());
 
             // Use the new crash handler to determine if we should continue
-            boolean shouldContinue = io.izzel.arclight.common.mod.util.ArclightCrashHandler.handleCrash(
-                    throwable1, crashreport, this.getServerDirectory()
-            );
+            boolean shouldContinue =
+                io.izzel.arclight.common.mod.util.ArclightCrashHandler.handleCrash(
+                    throwable1,
+                    crashreport,
+                    this.getServerDirectory()
+                );
 
             if (!shouldContinue) {
                 // Original behavior - stop the server
-                File file1 = new File(new File(this.getServerDirectory(), "crash-reports"), "crash-" + Util.getFilenameFormattedDateTime() + "-server.txt");
+                File file1 = new File(
+                    new File(this.getServerDirectory(), "crash-reports"),
+                    "crash-" +
+                        Util.getFilenameFormattedDateTime() +
+                        "-server.txt"
+                );
                 if (crashreport.saveToFile(file1)) {
-                    ARCLIGHT_LOGGER.error("server.crash-report-saved", file1.getAbsolutePath());
+                    ARCLIGHT_LOGGER.error(
+                        "server.crash-report-saved",
+                        file1.getAbsolutePath()
+                    );
                 } else {
                     ARCLIGHT_LOGGER.error("server.crash-report-failed");
                 }
@@ -357,7 +432,9 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
                     this.services.profileCache().clearExecutor();
                 }
                 WatchdogThread.doStop();
-                ServerLifecycleHooks.handleServerStopped((MinecraftServer) (Object) this);
+                ServerLifecycleHooks.handleServerStopped(
+                    (MinecraftServer) (Object) this
+                );
                 ARCLIGHT_LOGGER.info("server.stopped");
                 this.onServerExit();
             }
@@ -375,7 +452,16 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         }
     }
 
-    @Inject(method = "stopServer", at = @At(value = "INVOKE", remap = false, ordinal = 0, shift = At.Shift.AFTER, target = "Lorg/slf4j/Logger;info(Ljava/lang/String;)V"))
+    @Inject(
+        method = "stopServer",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            ordinal = 0,
+            shift = At.Shift.AFTER,
+            target = "Lorg/slf4j/Logger;info(Ljava/lang/String;)V"
+        )
+    )
     public void arclight$unloadPlugins(CallbackInfo ci) {
         if (this.server != null) {
             this.server.disablePlugins();
@@ -383,18 +469,22 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         MetricsManager.shutdown();
     }
 
-
     @Inject(method = "createLevels", at = @At("RETURN"))
-    public void arclight$enablePlugins(ChunkProgressListener p_240787_1_, CallbackInfo ci) {
+    public void arclight$enablePlugins(
+        ChunkProgressListener p_240787_1_,
+        CallbackInfo ci
+    ) {
         BukkitRegistry.unlockRegistries();
         this.server.enablePlugins(PluginLoadOrder.POSTWORLD);
         BukkitRegistry.lockRegistries();
-        this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
+        this.server.getPluginManager().callEvent(
+            new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP)
+        );
 
         try {
             MetricsManager.initialize(
-                    ArclightVersion.current().getReleaseName(),
-                    this.getServerDirectory()
+                ArclightVersion.current().getReleaseName(),
+                this.getServerDirectory()
             );
         } catch (Exception e) {
             ARCLIGHT_LOGGER.error("Failed to initialize metrics", e);
@@ -404,7 +494,10 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     private void executeModerately() {
         this.runAllTasks();
         this.bridge$drainQueuedTasks();
-        java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
+        java.util.concurrent.locks.LockSupport.parkNanos(
+            "executing tasks",
+            1000L
+        );
     }
 
     @Override
@@ -415,37 +508,81 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "haveTime", cancellable = true, at = @At("HEAD"))
-    private void arclight$forceAheadOfTime(CallbackInfoReturnable<Boolean> cir) {
+    private void arclight$forceAheadOfTime(
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (this.forceTicks) cir.setReturnValue(true);
     }
 
-    @Inject(method = "createLevels", at = @At(value = "NEW", ordinal = 0, target = "net/minecraft/server/level/ServerLevel"))
-    private void arclight$registerEnv(ChunkProgressListener p_240787_1_, CallbackInfo ci) {
-        BukkitRegistry.registerEnvironments(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM));
+    @Inject(
+        method = "createLevels",
+        at = @At(
+            value = "NEW",
+            ordinal = 0,
+            target = "net/minecraft/server/level/ServerLevel"
+        )
+    )
+    private void arclight$registerEnv(
+        ChunkProgressListener p_240787_1_,
+        CallbackInfo ci
+    ) {
+        BukkitRegistry.registerEnvironments(
+            this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)
+        );
     }
 
-    @ModifyArg(method = "createLevels", index = 1, at = @At(value = "INVOKE", remap = false, target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
+    @ModifyArg(
+        method = "createLevels",
+        index = 1,
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
+        )
+    )
     private Object arclight$worldInitCapture(Object value) {
         arclight$capturedLevel = (ServerLevel) value;
         return value;
     }
 
-    @Inject(method = "createLevels", at = @At(value = "INVOKE", remap = false, target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"))
-    private void arclight$worldInit(ChunkProgressListener chunkProgressListener, CallbackInfo ci) {
+    @Inject(
+        method = "createLevels",
+        at = @At(
+            value = "INVOKE",
+            remap = false,
+            target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
+        )
+    )
+    private void arclight$worldInit(
+        ChunkProgressListener chunkProgressListener,
+        CallbackInfo ci
+    ) {
         ServerLevel serverWorld = arclight$capturedLevel;
         arclight$capturedLevel = null;
         if (serverWorld != null) {
             this.levels.put(serverWorld.dimension(), serverWorld);
 
             if (((CraftServer) Bukkit.getServer()).scoreboardManager == null) {
-                ((CraftServer) Bukkit.getServer()).scoreboardManager = new CraftScoreboardManager((MinecraftServer) (Object) this, serverWorld.getScoreboard());
+                ((CraftServer) Bukkit.getServer()).scoreboardManager =
+                    new CraftScoreboardManager(
+                        (MinecraftServer) (Object) this,
+                        serverWorld.getScoreboard()
+                    );
             }
             if (((WorldBridge) serverWorld).bridge$getGenerator() != null) {
-                ((WorldBridge) serverWorld).bridge$getWorld().getPopulators().addAll(
+                ((WorldBridge) serverWorld).bridge$getWorld()
+                    .getPopulators()
+                    .addAll(
                         ((WorldBridge) serverWorld).bridge$getGenerator().getDefaultPopulators(
-                                ((WorldBridge) serverWorld).bridge$getWorld()));
+                            ((WorldBridge) serverWorld).bridge$getWorld()
+                        )
+                    );
             }
-            Bukkit.getPluginManager().callEvent(new WorldInitEvent(((WorldBridge) serverWorld).bridge$getWorld()));
+            Bukkit.getPluginManager().callEvent(
+                new WorldInitEvent(
+                    ((WorldBridge) serverWorld).bridge$getWorld()
+                )
+            );
         }
     }
 
@@ -455,17 +592,27 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
      */
     @Overwrite
     public void prepareLevels(ChunkProgressListener listener) {
-
         ServerLevel serverworld = this.overworld();
         this.forceTicks = true;
-        ARCLIGHT_LOGGER.info("world.loading", serverworld.dimension().location());
-        ARCLIGHT_LOGGER.info("server.preparing-start-region", serverworld.dimension().location());
+        ARCLIGHT_LOGGER.info(
+            "world.loading",
+            serverworld.dimension().location()
+        );
+        ARCLIGHT_LOGGER.info(
+            "server.preparing-start-region",
+            serverworld.dimension().location()
+        );
         BlockPos blockpos = serverworld.getSharedSpawnPos();
         listener.updateSpawnPos(new ChunkPos(blockpos));
         ServerChunkCache serverchunkprovider = serverworld.getChunkSource();
         this.nextTickTime = Util.getMillis();
 
-        serverchunkprovider.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+        serverchunkprovider.addRegionTicket(
+            TicketType.START,
+            new ChunkPos(blockpos),
+            11,
+            Unit.INSTANCE
+        );
         while (serverchunkprovider.getTickingGenerated() < 441) {
             this.executeModerately();
         }
@@ -473,21 +620,39 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         this.executeModerately();
 
         for (ServerLevel serverWorld : this.levels.values()) {
-            if (((WorldBridge) serverWorld).bridge$getWorld().getKeepSpawnInMemory()) {
-                ForcedChunksSavedData forcedchunkssavedata = serverWorld.getDataStorage().get(ForcedChunksSavedData::load, "chunks");
+            if (
+                ((WorldBridge) serverWorld).bridge$getWorld().getKeepSpawnInMemory()
+            ) {
+                ForcedChunksSavedData forcedchunkssavedata = serverWorld
+                    .getDataStorage()
+                    .get(ForcedChunksSavedData::load, "chunks");
                 if (forcedchunkssavedata != null) {
-                    LongIterator longiterator = forcedchunkssavedata.getChunks().iterator();
+                    LongIterator longiterator = forcedchunkssavedata
+                        .getChunks()
+                        .iterator();
 
                     while (longiterator.hasNext()) {
                         long i = longiterator.nextLong();
                         ChunkPos chunkpos = new ChunkPos(i);
-                        serverWorld.getChunkSource().updateChunkForced(chunkpos, true);
+                        serverWorld
+                            .getChunkSource()
+                            .updateChunkForced(chunkpos, true);
                     }
-                    net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverWorld, forcedchunkssavedata);
+                    net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(
+                        serverWorld,
+                        forcedchunkssavedata
+                    );
                 }
             }
-            Bukkit.getPluginManager().callEvent(new WorldLoadEvent(((WorldBridge) serverWorld).bridge$getWorld()));
-            ARCLIGHT_LOGGER.info("world.loaded", ((WorldBridge) serverWorld).bridge$getWorld().getName());
+            Bukkit.getPluginManager().callEvent(
+                new WorldLoadEvent(
+                    ((WorldBridge) serverWorld).bridge$getWorld()
+                )
+            );
+            ARCLIGHT_LOGGER.info(
+                "world.loaded",
+                ((WorldBridge) serverWorld).bridge$getWorld().getName()
+            );
         }
 
         this.executeModerately();
@@ -497,15 +662,26 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     }
 
     // bukkit methods
-    public void initWorld(ServerLevel serverWorld, ServerLevelData worldInfo, WorldData saveData, WorldOptions worldOptions) {
-
-        ARCLIGHT_LOGGER.info("world.creating", ((WorldBridge) serverWorld).bridge$getWorld().getName());
+    public void initWorld(
+        ServerLevel serverWorld,
+        ServerLevelData worldInfo,
+        WorldData saveData,
+        WorldOptions worldOptions
+    ) {
+        ARCLIGHT_LOGGER.info(
+            "world.creating",
+            ((WorldBridge) serverWorld).bridge$getWorld().getName()
+        );
 
         boolean flag = saveData.isDebugWorld();
         if (((WorldBridge) serverWorld).bridge$getGenerator() != null) {
-            ((WorldBridge) serverWorld).bridge$getWorld().getPopulators().addAll(
+            ((WorldBridge) serverWorld).bridge$getWorld()
+                .getPopulators()
+                .addAll(
                     ((WorldBridge) serverWorld).bridge$getGenerator().getDefaultPopulators(
-                            ((WorldBridge) serverWorld).bridge$getWorld()));
+                        ((WorldBridge) serverWorld).bridge$getWorld()
+                    )
+                );
         }
 
         WorldBorder worldborder = serverWorld.getWorldBorder();
@@ -513,13 +689,21 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
         if (!worldInfo.isInitialized()) {
             try {
-                setInitialSpawn(serverWorld, worldInfo, worldOptions.generateBonusChest(), flag);
+                setInitialSpawn(
+                    serverWorld,
+                    worldInfo,
+                    worldOptions.generateBonusChest(),
+                    flag
+                );
                 worldInfo.setInitialized(true);
                 if (flag) {
                     this.setupDebugLevel(this.worldData);
                 }
             } catch (Throwable throwable) {
-                CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception initializing level");
+                CrashReport crashreport = CrashReport.forThrowable(
+                    throwable,
+                    "Exception initializing level"
+                );
                 try {
                     serverWorld.fillReportDetails(crashreport);
                 } catch (Throwable throwable2) {
@@ -530,23 +714,39 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
             worldInfo.setInitialized(true);
         }
 
-        ARCLIGHT_LOGGER.info("world.created", ((WorldBridge) serverWorld).bridge$getWorld().getName());
+        ARCLIGHT_LOGGER.info(
+            "world.created",
+            ((WorldBridge) serverWorld).bridge$getWorld().getName()
+        );
     }
 
     // bukkit methods
-    public void prepareLevels(ChunkProgressListener listener, ServerLevel serverWorld) {
+    public void prepareLevels(
+        ChunkProgressListener listener,
+        ServerLevel serverWorld
+    ) {
         this.markWorldsDirty();
         MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(serverWorld));
-        if (!((WorldBridge) serverWorld).bridge$getWorld().getKeepSpawnInMemory()) {
+        if (
+            !((WorldBridge) serverWorld).bridge$getWorld().getKeepSpawnInMemory()
+        ) {
             return;
         }
         this.forceTicks = true;
-        ARCLIGHT_LOGGER.info("server.preparing-start-region", serverWorld.dimension().location());
+        ARCLIGHT_LOGGER.info(
+            "server.preparing-start-region",
+            serverWorld.dimension().location()
+        );
         BlockPos blockpos = serverWorld.getSharedSpawnPos();
         listener.updateSpawnPos(new ChunkPos(blockpos));
         ServerChunkCache serverchunkprovider = serverWorld.getChunkSource();
         this.nextTickTime = Util.getMillis();
-        serverchunkprovider.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+        serverchunkprovider.addRegionTicket(
+            TicketType.START,
+            new ChunkPos(blockpos),
+            11,
+            Unit.INSTANCE
+        );
 
         while (serverchunkprovider.getTickingGenerated() < 441) {
             this.executeModerately();
@@ -554,21 +754,31 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
         this.executeModerately();
 
-        ForcedChunksSavedData forcedchunkssavedata = serverWorld.getDataStorage().get(ForcedChunksSavedData::load, "chunks");
+        ForcedChunksSavedData forcedchunkssavedata = serverWorld
+            .getDataStorage()
+            .get(ForcedChunksSavedData::load, "chunks");
         if (forcedchunkssavedata != null) {
-            LongIterator longiterator = forcedchunkssavedata.getChunks().iterator();
+            LongIterator longiterator = forcedchunkssavedata
+                .getChunks()
+                .iterator();
 
             while (longiterator.hasNext()) {
                 long i = longiterator.nextLong();
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverWorld.getChunkSource().updateChunkForced(chunkpos, true);
             }
-            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverWorld, forcedchunkssavedata);
+            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(
+                serverWorld,
+                forcedchunkssavedata
+            );
         }
         this.executeModerately();
         listener.stop();
         // this.updateMobSpawningFlags();
-        serverWorld.setSpawnSettings(this.isSpawningMonsters(), this.isSpawningAnimals());
+        serverWorld.setSpawnSettings(
+            this.isSpawningMonsters(),
+            this.isSpawningAnimals()
+        );
         this.forceTicks = false;
     }
 
@@ -585,14 +795,22 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     }
 
     @Inject(method = "tickChildren", at = @At("HEAD"))
-    public void arclight$runScheduler(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
+    public void arclight$runScheduler(
+        BooleanSupplier hasTimeLeft,
+        CallbackInfo ci
+    ) {
         ArclightConstants.currentTick = (int) (System.currentTimeMillis() / 50);
         this.server.getScheduler().mainThreadHeartbeat(this.tickCount);
         this.bridge$drainQueuedTasks();
     }
 
-
-    @Inject(method = "desc=/V$/", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;setSelected(Ljava/util/Collection;)V"))
+    @Inject(
+        method = "desc=/V$/",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/packs/repository/PackRepository;setSelected(Ljava/util/Collection;)V"
+        )
+    )
     private void arclight$syncCommand(CallbackInfo ci) {
         this.server.syncCommands();
     }
@@ -604,7 +822,11 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     @DontObfuscate
     @Overwrite
     public String getServerModName() {
-        return BrandingControl.getServerBranding() + " luminara/" + ArclightVersion.current().getReleaseName();
+        return (
+            BrandingControl.getServerBranding() +
+            " luminara/" +
+            ArclightVersion.current().getReleaseName()
+        );
     }
 
     @Override
@@ -654,7 +876,4 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     public boolean isDebugging() {
         return false;
     }
-
-
 }
-

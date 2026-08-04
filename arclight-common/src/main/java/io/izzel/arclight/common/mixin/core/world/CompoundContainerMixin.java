@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -13,18 +15,18 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(CompoundContainer.class)
-public abstract class CompoundContainerMixin implements IInventoryBridge, Container {
+public abstract class CompoundContainerMixin
+    implements IInventoryBridge, Container {
 
     @Shadow
     @Final
     public Container container1;
+
     @Shadow
     @Final
     public Container container2;
+
     private List<HumanEntity> transactions = new ArrayList<>();
 
     @Override
@@ -62,12 +64,14 @@ public abstract class CompoundContainerMixin implements IInventoryBridge, Contai
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+    public void setOwner(InventoryHolder owner) {}
 
     @Override
     public int getMaxStackSize() {
-        return Math.min(this.container1.getMaxStackSize(), this.container2.getMaxStackSize());
+        return Math.min(
+            this.container1.getMaxStackSize(),
+            this.container2.getMaxStackSize()
+        );
     }
 
     @Override
@@ -87,6 +91,5 @@ public abstract class CompoundContainerMixin implements IInventoryBridge, Contai
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-    }
+    public void setCurrentRecipe(Recipe<?> recipe) {}
 }

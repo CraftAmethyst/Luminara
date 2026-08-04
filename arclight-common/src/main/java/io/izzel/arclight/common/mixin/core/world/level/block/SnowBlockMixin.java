@@ -15,9 +15,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SnowLayerBlock.class)
 public class SnowBlockMixin {
 
-    @Inject(method = "randomTick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SnowLayerBlock;dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
-    public void arclight$blockFade(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (CraftEventFactory.callBlockFadeEvent(worldIn, pos, Blocks.AIR.defaultBlockState()).isCancelled()) {
+    @Inject(
+        method = "randomTick",
+        cancellable = true,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/SnowLayerBlock;dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"
+        )
+    )
+    public void arclight$blockFade(
+        BlockState state,
+        ServerLevel worldIn,
+        BlockPos pos,
+        RandomSource random,
+        CallbackInfo ci
+    ) {
+        if (
+            CraftEventFactory.callBlockFadeEvent(
+                worldIn,
+                pos,
+                Blocks.AIR.defaultBlockState()
+            ).isCancelled()
+        ) {
             ci.cancel();
         }
     }

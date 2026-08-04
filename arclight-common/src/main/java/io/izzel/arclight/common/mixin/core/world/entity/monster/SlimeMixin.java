@@ -2,6 +2,8 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.MobMixin;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -16,9 +18,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(net.minecraft.world.entity.monster.Slime.class)
 public abstract class SlimeMixin extends MobMixin {
 
@@ -26,10 +25,13 @@ public abstract class SlimeMixin extends MobMixin {
 
     // @formatter:off
     @Shadow public abstract int getSize();
+
     // @formatter:on
 
     @Shadow
-    public abstract EntityType<? extends net.minecraft.world.entity.monster.Slime> getType();
+    public abstract EntityType<
+        ? extends net.minecraft.world.entity.monster.Slime
+    > getType();
 
     /**
      * @author IzzelAliz
@@ -47,7 +49,10 @@ public abstract class SlimeMixin extends MobMixin {
             int k = 2 + this.random.nextInt(3);
 
             {
-                SlimeSplitEvent event = new SlimeSplitEvent((Slime) this.getBukkitEntity(), k);
+                SlimeSplitEvent event = new SlimeSplitEvent(
+                    (Slime) this.getBukkitEntity(),
+                    k
+                );
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled() || event.getCount() <= 0) {
                     super.remove(p_149847_);
@@ -60,7 +65,8 @@ public abstract class SlimeMixin extends MobMixin {
             for (int l = 0; l < k; ++l) {
                 float f1 = ((float) (l % 2) - 0.5F) * f;
                 float f2 = ((float) (l / 2) - 0.5F) * f;
-                net.minecraft.world.entity.monster.Slime slimeentity = this.getType().create(this.level());
+                net.minecraft.world.entity.monster.Slime slimeentity =
+                    this.getType().create(this.level());
                 if (slimeentity == null) continue;
                 if (this.isPersistenceRequired()) {
                     slimeentity.setPersistenceRequired();
@@ -70,10 +76,22 @@ public abstract class SlimeMixin extends MobMixin {
                 slimeentity.setNoAi(flag);
                 slimeentity.setInvulnerable(this.isInvulnerable());
                 slimeentity.setSize(j, true);
-                slimeentity.moveTo(this.getX() + (double) f1, this.getY() + 0.5D, this.getZ() + (double) f2, this.random.nextFloat() * 360.0F, 0.0F);
+                slimeentity.moveTo(
+                    this.getX() + (double) f1,
+                    this.getY() + 0.5D,
+                    this.getZ() + (double) f2,
+                    this.random.nextFloat() * 360.0F,
+                    0.0F
+                );
                 arclight$slimes.add(slimeentity);
             }
-            if (CraftEventFactory.callEntityTransformEvent((net.minecraft.world.entity.monster.Slime) (Object) this, arclight$slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
+            if (
+                CraftEventFactory.callEntityTransformEvent(
+                    (net.minecraft.world.entity.monster.Slime) (Object) this,
+                    arclight$slimes,
+                    EntityTransformEvent.TransformReason.SPLIT
+                ).isCancelled()
+            ) {
                 super.remove(p_149847_);
                 arclight$slimes = null;
                 return;
@@ -82,8 +100,13 @@ public abstract class SlimeMixin extends MobMixin {
                 // Apotheosis compat, see https://github.com/IzzelAliz/Arclight/issues/1078
                 float f1 = ((float) (l % 2) - 0.5F) * f;
                 float f2 = ((float) (l / 2) - 0.5F) * f;
-                net.minecraft.world.entity.monster.Slime living = (net.minecraft.world.entity.monster.Slime) arclight$slimes.get(l);
-                ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
+                net.minecraft.world.entity.monster.Slime living =
+                    (net.minecraft.world.entity.monster.Slime) arclight$slimes.get(
+                        l
+                    );
+                ((WorldBridge) this.level()).bridge$pushAddEntityReason(
+                    CreatureSpawnEvent.SpawnReason.SLIME_SPLIT
+                );
                 this.level().addFreshEntity(living);
             }
             arclight$slimes = null;

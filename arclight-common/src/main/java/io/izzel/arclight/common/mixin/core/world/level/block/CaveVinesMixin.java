@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
+import java.util.Collections;
 import jline.internal.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -22,41 +23,77 @@ import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.Collections;
-
 @Mixin(CaveVines.class)
 public interface CaveVinesMixin {
-
     /**
      * @author IzzelAliz
      * @reason
      */
     @Overwrite
-    static InteractionResult use(@Nullable Entity entity, BlockState state, Level level, BlockPos pos) {
+    static InteractionResult use(
+        @Nullable Entity entity,
+        BlockState state,
+        Level level,
+        BlockPos pos
+    ) {
         if (state.getValue(CaveVines.BERRIES)) {
             if (entity != null) {
-                if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state.setValue(CaveVines.BERRIES, false))) {
+                if (
+                    !CraftEventFactory.callEntityChangeBlockEvent(
+                        entity,
+                        pos,
+                        state.setValue(CaveVines.BERRIES, false)
+                    )
+                ) {
                     return InteractionResult.SUCCESS;
                 }
 
                 if (entity instanceof Player) {
-                    PlayerHarvestBlockEvent event = CraftEventFactory.callPlayerHarvestBlockEvent(level, pos, (Player) entity, InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.GLOW_BERRIES, 1)));
+                    PlayerHarvestBlockEvent event =
+                        CraftEventFactory.callPlayerHarvestBlockEvent(
+                            level,
+                            pos,
+                            (Player) entity,
+                            InteractionHand.MAIN_HAND,
+                            Collections.singletonList(
+                                new ItemStack(Items.GLOW_BERRIES, 1)
+                            )
+                        );
                     if (event.isCancelled()) {
                         return InteractionResult.SUCCESS; // We need to return a success either way, because making it PASS or FAIL will result in a bug where cancelling while harvesting w/ block in hand places block
                     }
                     for (org.bukkit.inventory.ItemStack itemStack : event.getItemsHarvested()) {
-                        Block.popResource(level, pos, CraftItemStack.asNMSCopy(itemStack));
+                        Block.popResource(
+                            level,
+                            pos,
+                            CraftItemStack.asNMSCopy(itemStack)
+                        );
                     }
                 } else {
-                    Block.popResource(level, pos, new ItemStack(Items.GLOW_BERRIES, 1));
+                    Block.popResource(
+                        level,
+                        pos,
+                        new ItemStack(Items.GLOW_BERRIES, 1)
+                    );
                 }
             }
             Block.popResource(level, pos, new ItemStack(Items.GLOW_BERRIES, 1));
             float f = Mth.randomBetween(level.random, 0.8F, 1.2F);
-            level.playSound(null, pos, SoundEvents.CAVE_VINES_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, f);
+            level.playSound(
+                null,
+                pos,
+                SoundEvents.CAVE_VINES_PICK_BERRIES,
+                SoundSource.BLOCKS,
+                1.0F,
+                f
+            );
             var newState = state.setValue(CaveVines.BERRIES, Boolean.FALSE);
             level.setBlock(pos, newState, 2);
-            level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, newState));
+            level.gameEvent(
+                GameEvent.BLOCK_CHANGE,
+                pos,
+                GameEvent.Context.of(entity, newState)
+            );
             return InteractionResult.sidedSuccess(level.isClientSide);
         } else {
             return InteractionResult.PASS;

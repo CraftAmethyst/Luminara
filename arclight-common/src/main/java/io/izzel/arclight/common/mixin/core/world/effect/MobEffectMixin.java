@@ -24,36 +24,108 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MobEffect.class)
 public class MobEffectMixin {
 
-    @Inject(method = "applyEffectTick", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/entity/LivingEntity;heal(F)V"))
-    public void arclight$healReason1(LivingEntity livingEntity, int amplifier, CallbackInfo ci) {
-        ((LivingEntityBridge) livingEntity).bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.MAGIC_REGEN);
+    @Inject(
+        method = "applyEffectTick",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 0,
+            target = "Lnet/minecraft/world/entity/LivingEntity;heal(F)V"
+        )
+    )
+    public void arclight$healReason1(
+        LivingEntity livingEntity,
+        int amplifier,
+        CallbackInfo ci
+    ) {
+        ((LivingEntityBridge) livingEntity).bridge$pushHealReason(
+            EntityRegainHealthEvent.RegainReason.MAGIC_REGEN
+        );
     }
 
-    @Inject(method = "applyEffectTick", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/entity/LivingEntity;heal(F)V"))
-    public void arclight$healReason2(LivingEntity livingEntity, int amplifier, CallbackInfo ci) {
-        ((LivingEntityBridge) livingEntity).bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.MAGIC);
+    @Inject(
+        method = "applyEffectTick",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 1,
+            target = "Lnet/minecraft/world/entity/LivingEntity;heal(F)V"
+        )
+    )
+    public void arclight$healReason2(
+        LivingEntity livingEntity,
+        int amplifier,
+        CallbackInfo ci
+    ) {
+        ((LivingEntityBridge) livingEntity).bridge$pushHealReason(
+            EntityRegainHealthEvent.RegainReason.MAGIC
+        );
     }
 
-    @Inject(method = "applyInstantenousEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;heal(F)V"))
-    public void arclight$healReason3(Entity source, Entity indirectSource, LivingEntity livingEntity, int amplifier, double health, CallbackInfo ci) {
-        ((LivingEntityBridge) livingEntity).bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.MAGIC);
+    @Inject(
+        method = "applyInstantenousEffect",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/LivingEntity;heal(F)V"
+        )
+    )
+    public void arclight$healReason3(
+        Entity source,
+        Entity indirectSource,
+        LivingEntity livingEntity,
+        int amplifier,
+        double health,
+        CallbackInfo ci
+    ) {
+        ((LivingEntityBridge) livingEntity).bridge$pushHealReason(
+            EntityRegainHealthEvent.RegainReason.MAGIC
+        );
     }
 
-    @Redirect(method = "applyEffectTick", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"))
+    @Redirect(
+        method = "applyEffectTick",
+        at = @At(
+            value = "INVOKE",
+            ordinal = 0,
+            target = "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"
+        )
+    )
     private DamageSource arclight$redirectPoison(DamageSources instance) {
         return ((DamageSourcesBridge) instance).bridge$poison();
     }
 
-    @Redirect(method = "applyEffectTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;eat(IF)V"))
-    public void arclight$foodLevelChange(FoodData foodStats, int foodLevelIn, float foodSaturationModifier, LivingEntity livingEntity, int amplifier) {
+    @Redirect(
+        method = "applyEffectTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/food/FoodData;eat(IF)V"
+        )
+    )
+    public void arclight$foodLevelChange(
+        FoodData foodStats,
+        int foodLevelIn,
+        float foodSaturationModifier,
+        LivingEntity livingEntity,
+        int amplifier
+    ) {
         Player playerEntity = ((Player) livingEntity);
         int oldFoodLevel = playerEntity.getFoodData().getFoodLevel();
-        FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(playerEntity, foodLevelIn + oldFoodLevel);
+        FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(
+            playerEntity,
+            foodLevelIn + oldFoodLevel
+        );
         if (!event.isCancelled()) {
-            playerEntity.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, foodSaturationModifier);
+            playerEntity
+                .getFoodData()
+                .eat(
+                    event.getFoodLevel() - oldFoodLevel,
+                    foodSaturationModifier
+                );
         }
-        ((ServerPlayer) playerEntity).connection.send(new ClientboundSetHealthPacket(((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity().getScaledHealth(),
-                playerEntity.getFoodData().getFoodLevel(), playerEntity.getFoodData().getSaturationLevel()));
-
+        ((ServerPlayer) playerEntity).connection.send(
+            new ClientboundSetHealthPacket(
+                ((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity().getScaledHealth(),
+                playerEntity.getFoodData().getFoodLevel(),
+                playerEntity.getFoodData().getSaturationLevel()
+            )
+        );
     }
 }

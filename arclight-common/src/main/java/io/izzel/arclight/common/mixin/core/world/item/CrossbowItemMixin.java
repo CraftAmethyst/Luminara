@@ -25,23 +25,68 @@ public class CrossbowItemMixin {
 
     private static transient boolean arclight$capturedBoolean;
 
-    @Inject(method = "shootProjectile", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;hurtAndBreak(ILnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V"))
-    private static void arclight$entityShoot(Level worldIn, LivingEntity shooter, InteractionHand handIn, ItemStack crossbow, ItemStack projectile, float soundPitch, boolean isCreativeMode, float velocity, float inaccuracy, float projectileAngle, CallbackInfo ci,
-                                             boolean flag, Projectile proj) {
+    @Inject(
+        method = "shootProjectile",
+        cancellable = true,
+        locals = LocalCapture.CAPTURE_FAILHARD,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/item/ItemStack;hurtAndBreak(ILnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V"
+        )
+    )
+    private static void arclight$entityShoot(
+        Level worldIn,
+        LivingEntity shooter,
+        InteractionHand handIn,
+        ItemStack crossbow,
+        ItemStack projectile,
+        float soundPitch,
+        boolean isCreativeMode,
+        float velocity,
+        float inaccuracy,
+        float projectileAngle,
+        CallbackInfo ci,
+        boolean flag,
+        Projectile proj
+    ) {
         if (!DistValidate.isValid(worldIn)) {
             arclight$capturedBoolean = true;
             return;
         }
-        EntityShootBowEvent event = CraftEventFactory.callEntityShootBowEvent(shooter, crossbow, projectile, proj, shooter.getUsedItemHand(), soundPitch, true);
+        EntityShootBowEvent event = CraftEventFactory.callEntityShootBowEvent(
+            shooter,
+            crossbow,
+            projectile,
+            proj,
+            shooter.getUsedItemHand(),
+            soundPitch,
+            true
+        );
         if (event.isCancelled()) {
             event.getProjectile().remove();
             ci.cancel();
         }
-        arclight$capturedBoolean = event.getProjectile() == ((EntityBridge) proj).bridge$getBukkitEntity();
+        arclight$capturedBoolean =
+            event.getProjectile() ==
+            ((EntityBridge) proj).bridge$getBukkitEntity();
     }
 
-    @Eject(method = "m_40894_", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z", remap = false))
-    private static boolean arclight$addEntity(Level world, Entity entityIn, CallbackInfo ci, Level worldIn, LivingEntity shooter) {
+    @Eject(
+        method = "m_40894_",
+        remap = false,
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;m_7967_(Lnet/minecraft/world/entity/Entity;)Z",
+            remap = false
+        )
+    )
+    private static boolean arclight$addEntity(
+        Level world,
+        Entity entityIn,
+        CallbackInfo ci,
+        Level worldIn,
+        LivingEntity shooter
+    ) {
         if (arclight$capturedBoolean) {
             if (!world.addFreshEntity(entityIn)) {
                 if (shooter instanceof ServerPlayer) {

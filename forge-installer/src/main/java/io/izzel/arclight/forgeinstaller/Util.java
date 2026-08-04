@@ -22,10 +22,27 @@ class Util {
         String[] arr = maven.split(":");
         if (arr.length == 3) {
             String pkg = arr[0].replace('.', '/');
-            return String.format("%s/%s/%s/%s-%s.%s", pkg, arr[1], arr[2], arr[1], arr[2], type);
+            return String.format(
+                "%s/%s/%s/%s-%s.%s",
+                pkg,
+                arr[1],
+                arr[2],
+                arr[1],
+                arr[2],
+                type
+            );
         } else if (arr.length == 4) {
             String pkg = arr[0].replace('.', '/');
-            return String.format("%s/%s/%s/%s-%s-%s.%s", pkg, arr[1], arr[2], arr[1], arr[2], arr[3], type);
+            return String.format(
+                "%s/%s/%s/%s-%s-%s.%s",
+                pkg,
+                arr[1],
+                arr[2],
+                arr[1],
+                arr[2],
+                arr[3],
+                type
+            );
         } else throw new RuntimeException("Wrong maven coordinate " + maven);
     }
 
@@ -39,8 +56,10 @@ class Util {
 
     public static String hash(Path path) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
-        String hash = new BigInteger(1, digest.digest(Files.readAllBytes(path))).toString(16);
+        String hash = new BigInteger(
+            1,
+            digest.digest(Files.readAllBytes(path))
+        ).toString(16);
         return (SHA_PAD + hash).substring(hash.length());
     }
-
 }

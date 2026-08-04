@@ -11,6 +11,8 @@ public class MobMixin_Optimization {
 
     @ModifyConstant(method = "serverAiStep", constant = @Constant(intValue = 2))
     private int arclight$goalUpdateInterval(int orig) {
-        return ArclightConfig.spec().getOptimization().getGoalSelectorInterval();
+        return ArclightConfig.spec()
+            .getOptimization()
+            .getGoalSelectorInterval();
     }
 }

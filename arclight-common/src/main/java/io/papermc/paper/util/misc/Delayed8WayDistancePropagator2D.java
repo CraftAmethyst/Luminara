@@ -273,11 +273,15 @@ public final class Delayed8WayDistancePropagator2D {
     private final LevelMap levels = new LevelMap(8192 * 2, 0.6f);
 
     // this map is never stale
-    private final Long2ByteOpenHashMap sources = new Long2ByteOpenHashMap(4096, 0.6f);
+    private final Long2ByteOpenHashMap sources = new Long2ByteOpenHashMap(
+        4096,
+        0.6f
+    );
 
     // Generally updates to positions are made close to other updates, so we link to decrease cache misses when
     // propagating updates
-    private final LongLinkedOpenHashSet updatedSources = new LongLinkedOpenHashSet();
+    private final LongLinkedOpenHashSet updatedSources =
+        new LongLinkedOpenHashSet();
     private final LevelChangeCallback changeCallback;
     // queues used for BFS propagating levels
     private final WorkQueue[] levelIncreaseWorkQueues = new WorkQueue[64];
@@ -301,7 +305,9 @@ public final class Delayed8WayDistancePropagator2D {
         this(null);
     }
 
-    public Delayed8WayDistancePropagator2D(final LevelChangeCallback changeCallback) {
+    public Delayed8WayDistancePropagator2D(
+        final LevelChangeCallback changeCallback
+    ) {
         this.changeCallback = changeCallback;
     }
 
@@ -319,7 +325,9 @@ public final class Delayed8WayDistancePropagator2D {
 
     public void setSource(final long coordinate, final int level) {
         if ((level & 63) != level || level == 0) {
-            throw new IllegalArgumentException("Level must be in (0, 63], not " + level);
+            throw new IllegalArgumentException(
+                "Level must be in (0, 63], not " + level
+            );
         }
 
         final byte byteLevel = (byte) level;
@@ -343,7 +351,10 @@ public final class Delayed8WayDistancePropagator2D {
         }
     }
 
-    private void addToIncreaseWorkQueue(final long coordinate, final byte level) {
+    private void addToIncreaseWorkQueue(
+        final long coordinate,
+        final byte level
+    ) {
         final WorkQueue queue = this.levelIncreaseWorkQueues[level];
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
@@ -351,7 +362,11 @@ public final class Delayed8WayDistancePropagator2D {
         this.levelIncreaseWorkQueueBitset |= (1L << level);
     }
 
-    private void addToIncreaseWorkQueue(final long coordinate, final byte index, final byte level) {
+    private void addToIncreaseWorkQueue(
+        final long coordinate,
+        final byte index,
+        final byte level
+    ) {
         final WorkQueue queue = this.levelIncreaseWorkQueues[index];
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
@@ -374,7 +389,11 @@ public final class Delayed8WayDistancePropagator2D {
 
         boolean ret = false;
 
-        for (final LongIterator iterator = this.updatedSources.iterator(); iterator.hasNext(); ) {
+        for (
+            final LongIterator iterator = this.updatedSources.iterator();
+            iterator.hasNext();
+
+        ) {
             final long coordinate = iterator.nextLong();
 
             final byte currentLevel = this.levels.get(coordinate);
@@ -409,13 +428,20 @@ public final class Delayed8WayDistancePropagator2D {
     }
 
     private void propagateIncreases() {
-        for (int queueIndex = 63 ^ Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset);
-             this.levelIncreaseWorkQueueBitset != 0L;
-             this.levelIncreaseWorkQueueBitset ^= (1L << queueIndex), queueIndex = 63 ^ Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)) {
-
+        for (
+            int queueIndex =
+                63 ^
+                Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset);
+            this.levelIncreaseWorkQueueBitset != 0L;
+            this.levelIncreaseWorkQueueBitset ^= (1L << queueIndex),
+                queueIndex =
+                    63 ^
+                    Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)
+        ) {
             final WorkQueue queue = this.levelIncreaseWorkQueues[queueIndex];
             while (!queue.queuedLevels.isEmpty()) {
-                final long coordinate = queue.queuedCoordinates.removeFirstLong();
+                final long coordinate =
+                    queue.queuedCoordinates.removeFirstLong();
                 byte level = queue.queuedLevels.removeFirstByte();
 
                 final boolean neighbourCheck = level < 0;
@@ -443,7 +469,11 @@ public final class Delayed8WayDistancePropagator2D {
                     continue;
                 }
                 if (this.changeCallback != null) {
-                    this.changeCallback.onLevelUpdate(coordinate, currentLevel, level);
+                    this.changeCallback.onLevelUpdate(
+                        coordinate,
+                        currentLevel,
+                        level
+                    );
                 }
 
                 if (level == 1) {
@@ -466,8 +496,12 @@ public final class Delayed8WayDistancePropagator2D {
                         // sure we can check the neighbour level in the map right now and avoid a propagation,
                         // but then we would still have to recheck it when popping the value off of the queue!
                         // so just avoid the double lookup
-                        final long neighbourCoordinate = MCUtil.getCoordinateKey(x + dx, z + dz);
-                        this.addToIncreaseWorkQueue(neighbourCoordinate, neighbourLevel);
+                        final long neighbourCoordinate =
+                            MCUtil.getCoordinateKey(x + dx, z + dz);
+                        this.addToIncreaseWorkQueue(
+                            neighbourCoordinate,
+                            neighbourLevel
+                        );
                     }
                 }
             }
@@ -475,16 +509,25 @@ public final class Delayed8WayDistancePropagator2D {
     }
 
     private void propagateDecreases() {
-        for (int queueIndex = 63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
-             this.levelRemoveWorkQueueBitset != 0L;
-             this.levelRemoveWorkQueueBitset ^= (1L << queueIndex), queueIndex = 63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)) {
-
+        for (
+            int queueIndex =
+                63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
+            this.levelRemoveWorkQueueBitset != 0L;
+            this.levelRemoveWorkQueueBitset ^= (1L << queueIndex),
+                queueIndex =
+                    63 ^
+                    Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)
+        ) {
             final WorkQueue queue = this.levelRemoveWorkQueues[queueIndex];
             while (!queue.queuedLevels.isEmpty()) {
-                final long coordinate = queue.queuedCoordinates.removeFirstLong();
+                final long coordinate =
+                    queue.queuedCoordinates.removeFirstLong();
                 final byte level = queue.queuedLevels.removeFirstByte();
 
-                final byte currentLevel = this.levels.removeIfGreaterOrEqual(coordinate, level);
+                final byte currentLevel = this.levels.removeIfGreaterOrEqual(
+                    coordinate,
+                    level
+                );
                 if (currentLevel == 0) {
                     // something else removed
                     continue;
@@ -494,12 +537,20 @@ public final class Delayed8WayDistancePropagator2D {
                     // something higher propagated here or we hit the propagation of another source
                     // in the second case we need to re-propagate because we could have just clobbered another source's
                     // propagation
-                    this.addToIncreaseWorkQueue(coordinate, currentLevel, (byte) -currentLevel); // indicate to the increase code that the level's neighbours need checking
+                    this.addToIncreaseWorkQueue(
+                        coordinate,
+                        currentLevel,
+                        (byte) -currentLevel
+                    ); // indicate to the increase code that the level's neighbours need checking
                     continue;
                 }
 
                 if (this.changeCallback != null) {
-                    this.changeCallback.onLevelUpdate(coordinate, currentLevel, (byte) 0);
+                    this.changeCallback.onLevelUpdate(
+                        coordinate,
+                        currentLevel,
+                        (byte) 0
+                    );
                 }
 
                 final byte source = this.sources.get(coordinate);
@@ -529,8 +580,12 @@ public final class Delayed8WayDistancePropagator2D {
                         // sure we can check the neighbour level in the map right now and avoid a propagation,
                         // but then we would still have to recheck it when popping the value off of the queue!
                         // so just avoid the double lookup
-                        final long neighbourCoordinate = MCUtil.getCoordinateKey(x + dx, z + dz);
-                        this.addToRemoveWorkQueue(neighbourCoordinate, neighbourLevel);
+                        final long neighbourCoordinate =
+                            MCUtil.getCoordinateKey(x + dx, z + dz);
+                        this.addToRemoveWorkQueue(
+                            neighbourCoordinate,
+                            neighbourLevel
+                        );
                     }
                 }
             }
@@ -542,16 +597,19 @@ public final class Delayed8WayDistancePropagator2D {
 
     @FunctionalInterface
     public interface LevelChangeCallback {
-
         /**
          * This can be called for intermediate updates. So do not rely on newLevel being close to or
          * the exact level that is expected after a full propagation has occured.
          */
-        void onLevelUpdate(final long coordinate, final byte oldLevel, final byte newLevel);
-
+        void onLevelUpdate(
+            final long coordinate,
+            final byte oldLevel,
+            final byte newLevel
+        );
     }
 
     protected static final class LevelMap extends Long2ByteOpenHashMap {
+
         public LevelMap() {
             super();
         }
@@ -568,12 +626,15 @@ public final class Delayed8WayDistancePropagator2D {
                 final long[] key = this.key;
                 long curr;
                 int pos;
-                if ((curr = key[pos = (int) HashCommon.mix(k) & this.mask]) == 0L) {
+                if (
+                    (curr = key[pos = (int) HashCommon.mix(k) & this.mask]) ==
+                    0L
+                ) {
                     return -(pos + 1);
                 } else if (k == curr) {
                     return pos;
                 } else {
-                    while ((curr = key[pos = pos + 1 & this.mask]) != 0L) {
+                    while ((curr = key[pos = (pos + 1) & this.mask]) != 0L) {
                         if (k == curr) {
                             return pos;
                         }
@@ -619,7 +680,11 @@ public final class Delayed8WayDistancePropagator2D {
         private void removeEntry(final int pos) {
             --this.size;
             this.shiftKeys(pos);
-            if (this.n > this.minN && this.size < this.maxFill / 4 && this.n > 16) {
+            if (
+                this.n > this.minN &&
+                this.size < this.maxFill / 4 &&
+                this.n > 16
+            ) {
                 this.rehash(this.n / 2);
             }
         }
@@ -628,7 +693,11 @@ public final class Delayed8WayDistancePropagator2D {
         private void removeNullEntry() {
             this.containsNullKey = false;
             --this.size;
-            if (this.n > this.minN && this.size < this.maxFill / 4 && this.n > 16) {
+            if (
+                this.n > this.minN &&
+                this.size < this.maxFill / 4 &&
+                this.n > 16
+            ) {
                 this.rehash(this.n / 2);
             }
         }
@@ -650,7 +719,11 @@ public final class Delayed8WayDistancePropagator2D {
                 byte[] values = this.value;
                 long curr;
                 int pos;
-                if ((curr = keys[pos = (int) HashCommon.mix(key) & this.mask]) == 0L) {
+                if (
+                    (curr = keys[pos =
+                            (int) HashCommon.mix(key) & this.mask]) ==
+                    0L
+                ) {
                     return this.defRetValue;
                 } else if (key == curr) {
                     final byte current = values[pos];
@@ -660,7 +733,7 @@ public final class Delayed8WayDistancePropagator2D {
                     }
                     return current;
                 } else {
-                    while ((curr = keys[pos = pos + 1 & this.mask]) != 0L) {
+                    while ((curr = keys[pos = (pos + 1) & this.mask]) != 0L) {
                         if (key == curr) {
                             final byte current = values[pos];
                             if (value >= current) {
@@ -679,12 +752,14 @@ public final class Delayed8WayDistancePropagator2D {
 
     protected static final class WorkQueue {
 
-        public final NoResizeLongArrayFIFODeque queuedCoordinates = new NoResizeLongArrayFIFODeque();
-        public final NoResizeByteArrayFIFODeque queuedLevels = new NoResizeByteArrayFIFODeque();
-
+        public final NoResizeLongArrayFIFODeque queuedCoordinates =
+            new NoResizeLongArrayFIFODeque();
+        public final NoResizeByteArrayFIFODeque queuedLevels =
+            new NoResizeByteArrayFIFODeque();
     }
 
-    protected static final class NoResizeLongArrayFIFODeque extends LongArrayFIFOQueue {
+    protected static final class NoResizeLongArrayFIFODeque
+        extends LongArrayFIFOQueue {
 
         /**
          * Assumes non-empty. If empty, undefined behaviour.
@@ -700,7 +775,8 @@ public final class Delayed8WayDistancePropagator2D {
         }
     }
 
-    protected static final class NoResizeByteArrayFIFODeque extends ByteArrayFIFOQueue {
+    protected static final class NoResizeByteArrayFIFODeque
+        extends ByteArrayFIFOQueue {
 
         /**
          * Assumes non-empty. If empty, undefined behaviour.
