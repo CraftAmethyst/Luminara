@@ -482,6 +482,7 @@
     "world.level.levelgen.structure.templatesystem.StructurePlaceSettingsMixin",
     "world.level.levelgen.structure.templatesystem.StructureTemplateMixin",
     "world.level.portal.PortalForcerMixin",
+    "world.level.portal.PortalForcerMixin$SearchRadiusMixin",
     "world.level.redstone.NeighborUpdaterMixin",
     "world.level.saveddata.maps.MapDataMixin",
     "world.level.saveddata.maps.MapItemSavedData_HoldingPlayerMixin",
