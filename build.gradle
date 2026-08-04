@@ -1,5 +1,6 @@
 import groovy.json.JsonSlurper
 import java.security.MessageDigest
+import org.gradle.api.artifacts.dsl.LockMode
 import io.izzel.arclight.gradle.tasks.SmokeServerTask
 import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
 import io.izzel.arclight.gradle.tasks.VerifyReproducibleBuildTask
@@ -61,6 +62,9 @@ allprojects {
     }
 
     dependencyLocking {
+        // ForgeGradle's Minecraft graph is OS-specific (for example, Netty epoll is Linux-only).
+        // Keep locked versions as constraints without requiring every platform's optional modules.
+        lockMode = LockMode.LENIENT
         lockAllConfigurations()
     }
 
