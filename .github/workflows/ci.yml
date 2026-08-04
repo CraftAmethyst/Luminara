@@ -40,8 +40,8 @@ jobs:
           retention-days: 7
           if-no-files-found: error
           path: |
-            build/distributions/luminara-1.20.1-1.0.14.jar
-            build/distributions/luminara-1.20.1-1.0.14.jar.sha256
+            build/distributions/luminara-*.jar
+            build/distributions/luminara-*.jar.sha256
             **/build/test-results/**
             **/build/reports/tests/**
 
@@ -64,7 +64,11 @@ jobs:
       - name: Smoke test launcher EULA boundary
         shell: pwsh
         run: |
-          $jar = (Resolve-Path 'build/distributions/luminara-1.20.1-1.0.14.jar').Path
+          $jars = @(Get-ChildItem 'build/distributions' -Filter 'luminara-*.jar' -File)
+          if ($jars.Count -ne 1) {
+            throw "Expected exactly one Luminara distribution JAR, found $($jars.Count): $($jars.FullName -join ', ')"
+          }
+          $jar = $jars[0].FullName
           $work = Join-Path $env:RUNNER_TEMP 'luminara-launcher-smoke'
           New-Item -ItemType Directory -Force -Path $work | Out-Null
           Push-Location $work
