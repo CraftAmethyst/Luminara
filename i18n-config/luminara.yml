@@ -1,0 +1,37 @@
+# Luminara Configuration File
+# This is the YAML version of the configuration
+
+_v: 2
+locale: { fallback: zh_cn }
+optimization:
+  {
+    cache-plugin-class: true,
+    goal-selector-update-interval: 1,
+    use-activation-and-tracking-range: false,
+  }
+compatibility:
+  material-property-overrides: {}
+  entity-property-overrides: {}
+  symlink-world: false
+  extra-logic-worlds:
+    [com.example.mod.ExtraLogicWorld, xyz.nucleoid.fantasy.RuntimeWorld]
+  permission-forwarding: FORGE_TO_BUKKIT
+  valid-username-regex: ""
+  lenient-item-tag-match: true
+  preload-bungee-chat-classes: true
+  enable-bukkit-reload-command: true
+async-catcher:
+  dump: true
+  warn: true
+  defaultOperation: block
+  overrides: {}
+velocity:
+  {
+    enabled: false,
+    online-mode: false,
+    forwarding-secret: "",
+    debug-logging: false,
+  }
+error-handling:
+  { continue-on-crash: false, crash-report-directory: crash-reports }
+logging: { use-simple-format: false }
