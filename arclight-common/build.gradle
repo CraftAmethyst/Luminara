@@ -188,6 +188,11 @@ processResources {
         expand 'version': "$minecraftVersion-${project.version}-$gitHash"
     }
 }
+processSmokeModResources {
+    filesMatching("META-INF/mods.toml") {
+        expand 'forgeVersion': forgeVersion
+    }
+}
 
 def smokePluginJar = tasks.register('smokePluginJar', Jar) {
     archiveFileName.set('luminara-smoke-plugin.jar')

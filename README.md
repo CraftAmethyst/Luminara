@@ -7,7 +7,7 @@ Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://
 | Component | Supported version |
 | --- | --- |
 | Minecraft | `1.20.1` |
-| Forge | `47.4.22` |
+| Forge | latest Forge promotion for Minecraft `1.20.1` |
 | CraftBukkit package | `v1_20_R1` |
 | Java | `17` (64-bit) |
 | Luminara | `1.0.14` |
@@ -25,6 +25,7 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 ## Build from source
 
 Use a 64-bit JDK 17 and the checked-in Gradle wrapper. An empty-cache build requires network access to the dependency repositories and to Mojang, Forge, and Spigot build services.
+The build resolves the latest Forge promotion for Minecraft `1.20.1` at configuration time. Use `-PforgeVersion=<version>` to reproduce a specific Forge build or to work offline with a previously resolved version.
 
 ```bash
 ./gradlew check

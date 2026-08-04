@@ -1,6 +1,6 @@
 # Contributing
 
-Development targets the `stable/Trials` branch of [CraftAmethyst/Luminara](https://github.com/CraftAmethyst/Luminara). Changes must preserve the supported matrix: Minecraft `1.20.1`, Forge `47.4.22`, CraftBukkit `v1_20_R1`, and 64-bit Java 17.
+Development targets the `stable/Trials` branch of [CraftAmethyst/Luminara](https://github.com/CraftAmethyst/Luminara). Changes must preserve Minecraft `1.20.1`, CraftBukkit `v1_20_R1`, and 64-bit Java 17; Forge resolves to the latest promotion unless `-PforgeVersion` is explicitly supplied.
 
 ## Before opening a change
 
@@ -19,7 +19,7 @@ Select a 64-bit JDK 17 through `JAVA_HOME`, then run from the repository root:
 ./gradlew smokeServer
 ```
 
-The first command must produce `build/distributions/luminara-1.20.1-1.0.14.jar` and its `.jar.sha256` file. A second build invocation is not a repair strategy: do not use the old double-build sequence or `--refresh-dependencies`.
+The first command must produce `build/distributions/luminara-1.20.1-1.0.14.jar` and its `.jar.sha256` file. Forge resolves to the latest promotion by default. A second build invocation is not a repair strategy: do not use the old double-build sequence or `--refresh-dependencies`.
 
 Changes to archive metadata, dependency resolution, or build inputs must also pass:
 

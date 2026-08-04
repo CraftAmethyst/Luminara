@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         请使用 `CraftAmethyst/Luminara` 的 `stable/Trials` 分支构建。
-        受支持的版本为 Luminara `1.0.14`、Minecraft `1.20.1`、Forge `47.4.22` 和 64 位 Java 17。
+        受支持的版本为 Luminara `1.0.14`、Minecraft `1.20.1`、该 Minecraft 版本的最新 Forge promotion 和 64 位 Java 17。
         提交前请搜索现有问题。除非问题也能在 Arclight 中复现，否则请勿向上游 Arclight 报告 Luminara 缺陷。
 
   - type: checkboxes
@@ -19,7 +19,7 @@ body:
       options:
         - label: 我已搜索现有 Luminara 问题，未发现重复报告。
           required: true
-        - label: 我已在 Minecraft `1.20.1`、Forge `47.4.22`、Java 17 和 `stable/Trials` 分支构建中复现此问题。
+        - label: 我已在 Minecraft `1.20.1`、最新 Forge promotion、Java 17 和 `stable/Trials` 分支构建中复现此问题。
           required: true
         - label: 我已移除无关 Mod 和插件，并找到了仍会失败的最小组合。
           required: true
@@ -40,7 +40,7 @@ body:
     attributes:
       label: 运行环境
       description: 请包含操作系统、架构、Java、Minecraft 和 Forge 的版本。
-      placeholder: "Ubuntu 24.04 x86_64；Temurin 17.0.x；Minecraft 1.20.1；Forge 47.4.22"
+      placeholder: "Ubuntu 24.04 x86_64；Temurin 17.0.x；Minecraft 1.20.1；latest Forge promotion"
     validations:
       required: true
 

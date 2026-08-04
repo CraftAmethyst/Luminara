@@ -9,7 +9,7 @@
 ## Compatibility
 
 - Minecraft: `1.20.1`
-- Forge: `47.4.22`
+- Forge: latest promotion for Minecraft `1.20.1`
 - CraftBukkit package: `v1_20_R1`
 - Java: `17`
 

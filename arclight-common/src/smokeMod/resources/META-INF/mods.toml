@@ -11,7 +11,7 @@ description = '''Verifies Forge mod discovery and initialization during server s
 [[dependencies.luminara_smoke]]
 modId = "forge"
 mandatory = true
-versionRange = "[47.4.22,)"
+versionRange = "[${forgeVersion},)"
 ordering = "NONE"
 side = "BOTH"
 

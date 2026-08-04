@@ -1,7 +1,29 @@
+import groovy.json.JsonSlurper
 import java.security.MessageDigest
 import io.izzel.arclight.gradle.tasks.SmokeServerTask
 import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
 import io.izzel.arclight.gradle.tasks.VerifyReproducibleBuildTask
+
+def resolveForgeVersion = {
+    def override = providers.gradleProperty('forgeVersion').orNull
+    if (override != null && !override.isBlank()) return override
+
+    def minecraftVersion = libs.versions.minecraft.get()
+    def connection = URI.create('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json').toURL().openConnection()
+    connection.connectTimeout = 10000
+    connection.readTimeout = 10000
+    def promotions
+    connection.inputStream.withCloseable { input ->
+        promotions = new JsonSlurper().parse(input)
+    }
+    def latest = promotions.promos["${minecraftVersion}-latest"]
+    if (!(latest instanceof String) || !(latest ==~ /\d+(?:\.\d+)+/)) {
+        throw new GradleException("Forge promotions has no valid latest version for Minecraft ${minecraftVersion}")
+    }
+    return latest
+}
+
+def resolvedForgeVersion = resolveForgeVersion()
 
 allprojects {
     group 'io.izzel.luminara'
@@ -30,7 +52,7 @@ allprojects {
     ext {
         agpVersion = libs.versions.arclight.gradle.plugin.get()
         minecraftVersion = libs.versions.minecraft.get()
-        forgeVersion = libs.versions.forge.get()
+        forgeVersion = resolvedForgeVersion
         apiVersion = libs.versions.arclight.api.get()
         toolsVersion = libs.versions.tools.get()
         mixinVersion = libs.versions.mixin.runtime.get()
@@ -131,7 +153,7 @@ tasks.register('smokeServer', SmokeServerTask) {
             '1.0.14',
             project.ext.gitHash,
             'Minecraft / Forge / Java: ',
-            '1.20.1 / 47.4.22 / 17',
+            "${project.ext.minecraftVersion} / ${project.ext.forgeVersion} / ${libs.versions.java.get()}",
             'CraftBukkit Package: ',
             'v1_20_R1'
     ])

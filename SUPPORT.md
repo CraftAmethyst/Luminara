@@ -2,7 +2,7 @@
 
 ## Supported environment
 
-Support is limited to the current `stable/Trials` branch with Minecraft `1.20.1`, Forge `47.4.22`, CraftBukkit package `v1_20_R1`, Luminara `1.0.14`, and 64-bit Java 17.
+Support is limited to the current `stable/Trials` branch with Minecraft `1.20.1`, the latest Forge promotion for that Minecraft version, CraftBukkit package `v1_20_R1`, Luminara `1.0.14`, and 64-bit Java 17.
 
 Other Minecraft versions, Fabric, NeoForge, modified forks, and experimental asynchronous world or persistence behavior are outside the supported scope. The project does not publish release binaries; build the distribution from the reviewed source using [README.md](README.md).
 

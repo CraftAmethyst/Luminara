@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         Use a build from the `stable/Trials` branch of `CraftAmethyst/Luminara`.
-        The supported matrix is Luminara `1.0.14`, Minecraft `1.20.1`, Forge `47.4.22`, and 64-bit Java 17.
+        The supported matrix is Luminara `1.0.14`, Minecraft `1.20.1`, the latest Forge promotion for that Minecraft version, and 64-bit Java 17.
         Search existing issues first. Do not report Luminara defects to upstream Arclight unless they also reproduce there.
 
   - type: checkboxes
@@ -19,7 +19,7 @@ body:
       options:
         - label: I searched existing Luminara issues and found no duplicate.
           required: true
-        - label: I reproduced this on `stable/Trials` with Minecraft `1.20.1`, Forge `47.4.22`, and Java 17.
+        - label: I reproduced this on `stable/Trials` with Minecraft `1.20.1`, the latest Forge promotion, and Java 17.
           required: true
         - label: I removed unrelated mods and plugins and identified the smallest failing set.
           required: true
@@ -40,7 +40,7 @@ body:
     attributes:
       label: Runtime environment
       description: Include the operating system, architecture, Java version, Minecraft version, and Forge version.
-      placeholder: "Ubuntu 24.04 x86_64; Temurin 17.0.x; Minecraft 1.20.1; Forge 47.4.22"
+      placeholder: "Ubuntu 24.04 x86_64; Temurin 17.0.x; Minecraft 1.20.1; latest Forge promotion"
     validations:
       required: true
 
