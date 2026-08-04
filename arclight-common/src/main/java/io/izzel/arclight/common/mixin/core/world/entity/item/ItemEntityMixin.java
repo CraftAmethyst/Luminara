@@ -20,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.entity.Item;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -122,6 +123,21 @@ public abstract class ItemEntityMixin extends EntityMixin {
                     itemstack
                 );
             final int remaining = itemstack.getCount() - canHold;
+            if (this.pickupDelay <= 0) {
+                final PlayerAttemptPickupItemEvent attemptEvent =
+                    new PlayerAttemptPickupItemEvent(
+                        ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity(),
+                        (Item) this.getBukkitEntity(),
+                        remaining
+                    );
+                Bukkit.getPluginManager().callEvent(attemptEvent);
+                if (attemptEvent.isCancelled()) {
+                    if (attemptEvent.getFlyAtPlayer()) {
+                        entity.take((ItemEntity) (Object) this, i);
+                    }
+                    return;
+                }
+            }
             if (this.pickupDelay <= 0 && canHold > 0) {
                 itemstack.setCount(canHold);
                 final PlayerPickupItemEvent playerEvent =
