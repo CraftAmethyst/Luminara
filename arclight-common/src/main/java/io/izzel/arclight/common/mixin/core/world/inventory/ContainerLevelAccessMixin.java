@@ -19,7 +19,8 @@ public interface ContainerLevelAccessMixin extends IWorldPosCallableBridge {
     @Overwrite
     static ContainerLevelAccess create(final Level world, final BlockPos pos) {
         class Anonymous
-            implements ContainerLevelAccess, IWorldPosCallableBridge {
+            implements ContainerLevelAccess, IWorldPosCallableBridge
+        {
 
             @Override
             public <T> Optional<T> evaluate(

@@ -67,14 +67,15 @@ public class ServerHandshakeNetHandlerMixin {
                     long currentTime = System.currentTimeMillis();
                     long connectionThrottle =
                         Bukkit.getServer().getConnectionThrottle();
-                    InetAddress address =
-                        ((InetSocketAddress) this.connection.getRemoteAddress()).getAddress();
+                    InetAddress address = (
+                        (InetSocketAddress) this.connection.getRemoteAddress()
+                    ).getAddress();
                     synchronized (throttleTracker) {
                         if (
                             throttleTracker.containsKey(address) &&
                             !"127.0.0.1".equals(address.getHostAddress()) &&
                             currentTime - throttleTracker.get(address) <
-                            connectionThrottle
+                                connectionThrottle
                         ) {
                             throttleTracker.put(address, currentTime);
                             var component = Component.translatable(
@@ -156,9 +157,13 @@ public class ServerHandshakeNetHandlerMixin {
                         packetIn.hostName = split[0];
                         this.connection.address = new InetSocketAddress(
                             split[1],
-                            ((InetSocketAddress) this.connection.getRemoteAddress()).getPort()
+                            (
+                                (InetSocketAddress) this.connection.getRemoteAddress()
+                            ).getPort()
                         );
-                        ((NetworkManagerBridge) this.connection).bridge$setSpoofedUUID(
+                        (
+                            (NetworkManagerBridge) this.connection
+                        ).bridge$setSpoofedUUID(
                             UUIDTypeAdapter.fromString(split[2])
                         );
                     } else {
@@ -172,7 +177,9 @@ public class ServerHandshakeNetHandlerMixin {
                         return;
                     }
                     if (split.length == 4) {
-                        ((NetworkManagerBridge) this.connection).bridge$setSpoofedProfile(
+                        (
+                            (NetworkManagerBridge) this.connection
+                        ).bridge$setSpoofedProfile(
                             gson.fromJson(split[3], Property[].class)
                         );
                     }

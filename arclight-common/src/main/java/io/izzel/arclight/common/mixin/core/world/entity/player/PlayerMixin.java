@@ -79,7 +79,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(net.minecraft.world.entity.player.Player.class)
 public abstract class PlayerMixin
     extends LivingEntityMixin
-    implements PlayerEntityBridge, IForgePlayer {
+    implements PlayerEntityBridge, IForgePlayer
+{
 
     @Shadow
     public int experienceLevel;
@@ -303,12 +304,14 @@ public abstract class PlayerMixin
     ) {
         Team team;
         if (entityhuman instanceof ServerPlayer thatPlayer) {
-            team =
-                ((ServerPlayerEntityBridge) thatPlayer).bridge$getBukkitEntity()
-                    .getScoreboard()
-                    .getPlayerTeam(
-                        ((ServerPlayerEntityBridge) thatPlayer).bridge$getBukkitEntity()
-                    );
+            team = ((ServerPlayerEntityBridge) thatPlayer)
+                .bridge$getBukkitEntity()
+                .getScoreboard()
+                .getPlayerTeam(
+                    (
+                        (ServerPlayerEntityBridge) thatPlayer
+                    ).bridge$getBukkitEntity()
+                );
             if (team == null || team.allowFriendlyFire()) {
                 return true;
             }
@@ -450,7 +453,9 @@ public abstract class PlayerMixin
                         final EntityCombustByEntityEvent combustEvent =
                             new EntityCombustByEntityEvent(
                                 this.getBukkitEntity(),
-                                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                                (
+                                    (EntityBridge) entity
+                                ).bridge$getBukkitEntity(),
                                 1
                             );
                         Bukkit.getPluginManager().callEvent(combustEvent);
@@ -500,7 +505,7 @@ public abstract class PlayerMixin
                             EnchantmentHelper.getSweepingDamageRatio(
                                 (net.minecraft.world.entity.player.Player) (Object) this
                             ) *
-                            f;
+                                f;
                         final List<LivingEntity> list =
                             this.level().getEntitiesOfClass(
                                 LivingEntity.class,
@@ -522,11 +527,13 @@ public abstract class PlayerMixin
                                 (!(entityliving instanceof ArmorStand) ||
                                     !((ArmorStand) entityliving).isMarker()) &&
                                 this.distanceToSqr(entityliving) <
-                                entityReachSq &&
+                                    entityReachSq &&
                                 entityliving.hurt(
-                                    ((DamageSourceBridge) this.damageSources().playerAttack(
+                                    (
+                                        (DamageSourceBridge) this.damageSources().playerAttack(
                                             (net.minecraft.world.entity.player.Player) (Object) this
-                                        )).bridge$sweep(),
+                                        )
+                                    ).bridge$sweep(),
                                     f5
                                 )
                             ) {
@@ -551,8 +558,9 @@ public abstract class PlayerMixin
                     }
                     if (entity instanceof ServerPlayer && entity.hurtMarked) {
                         boolean cancelled = false;
-                        final Player player =
-                            ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity();
+                        final Player player = (
+                            (ServerPlayerEntityBridge) entity
+                        ).bridge$getBukkitEntity();
                         final Vector velocity = CraftVector.toBukkit(vec3d);
                         final PlayerVelocityEvent event =
                             new PlayerVelocityEvent(player, velocity.clone());
@@ -660,7 +668,9 @@ public abstract class PlayerMixin
                             final EntityCombustByEntityEvent combustEvent2 =
                                 new EntityCombustByEntityEvent(
                                     this.getBukkitEntity(),
-                                    ((EntityBridge) entity).bridge$getBukkitEntity(),
+                                    (
+                                        (EntityBridge) entity
+                                    ).bridge$getBukkitEntity(),
                                     j * 4
                                 );
                             Bukkit.getPluginManager().callEvent(combustEvent2);
@@ -690,7 +700,9 @@ public abstract class PlayerMixin
                         EntityExhaustionEvent.ExhaustionReason.ATTACK
                     );
                     this.causeFoodExhaustion(
-                        ((WorldBridge) level()).bridge$spigotConfig().combatExhaustion
+                        ((WorldBridge) level())
+                            .bridge$spigotConfig()
+                            .combatExhaustion
                     );
                 } else {
                     this.level().playSound(
@@ -707,7 +719,9 @@ public abstract class PlayerMixin
                         entity.clearFire();
                     }
                     if (this instanceof ServerPlayerEntityBridge) {
-                        ((ServerPlayerEntityBridge) this).bridge$getBukkitEntity().updateInventory();
+                        ((ServerPlayerEntityBridge) this)
+                            .bridge$getBukkitEntity()
+                            .updateInventory();
                     }
                 }
             }
@@ -748,9 +762,9 @@ public abstract class PlayerMixin
             if (blockPos != null) {
                 bed = CraftBlock.at(this.level(), blockPos);
             } else {
-                bed = ((WorldBridge) this.level()).bridge$getWorld().getBlockAt(
-                    player.getLocation()
-                );
+                bed = ((WorldBridge) this.level())
+                    .bridge$getWorld()
+                    .getBlockAt(player.getLocation());
             }
             PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(
                 player,
@@ -770,8 +784,9 @@ public abstract class PlayerMixin
         )
     )
     private float arclight$exhaustInfo(float f) {
-        SpigotWorldConfig config =
-            ((WorldBridge) level()).bridge$spigotConfig();
+        SpigotWorldConfig config = (
+            (WorldBridge) level()
+        ).bridge$spigotConfig();
         if (config != null) {
             if (this.isSprinting()) {
                 f = config.jumpSprintExhaustion;
@@ -1077,16 +1092,17 @@ public abstract class PlayerMixin
     public org.bukkit.Location bridge$getCompassTarget() {
         if ((Object) this instanceof ServerPlayer serverPlayer) {
             BlockPos respawnPos = serverPlayer.getRespawnPosition();
-            net.minecraft.resources.ResourceKey<
-                net.minecraft.world.level.Level
-            > respawnDim = serverPlayer.getRespawnDimension();
+            net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> respawnDim =
+                serverPlayer.getRespawnDimension();
             if (respawnPos != null && respawnDim != null) {
                 ServerLevel world = serverPlayer
                     .getServer()
                     .getLevel(respawnDim);
                 if (world != null) {
                     return new org.bukkit.Location(
-                        ((io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge) world).bridge$getWorld(),
+                        (
+                            (io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge) world
+                        ).bridge$getWorld(),
                         respawnPos.getX(),
                         respawnPos.getY(),
                         respawnPos.getZ()

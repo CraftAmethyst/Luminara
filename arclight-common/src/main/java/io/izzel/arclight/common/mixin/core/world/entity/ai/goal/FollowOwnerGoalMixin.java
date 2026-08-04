@@ -40,8 +40,9 @@ public class FollowOwnerGoalMixin {
         float yaw,
         float pitch
     ) {
-        CraftEntity craftEntity =
-            ((EntityBridge) this.tamable).bridge$getBukkitEntity();
+        CraftEntity craftEntity = (
+            (EntityBridge) this.tamable
+        ).bridge$getBukkitEntity();
         Location location = new Location(
             craftEntity.getWorld(),
             x,

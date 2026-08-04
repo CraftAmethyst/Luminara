@@ -83,13 +83,14 @@ public abstract class GoToWantedItemMixin<E extends LivingEntity> {
                                     }
                                     if (
                                         !(event.getTarget() instanceof
-                                                ItemEntity)
+                                            ItemEntity)
                                     ) {
                                         p_258389_.erase();
                                     }
 
-                                    itementity =
-                                        (ItemEntity) ((CraftEntity) event.getTarget()).getHandle();
+                                    itementity = (ItemEntity) (
+                                        (CraftEntity) event.getTarget()
+                                    ).getHandle();
                                 }
                                 // CraftBukkit end
 

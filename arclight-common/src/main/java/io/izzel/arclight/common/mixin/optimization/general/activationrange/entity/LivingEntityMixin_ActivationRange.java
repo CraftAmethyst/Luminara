@@ -7,7 +7,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange {
+    extends EntityMixin_ActivationRange
+{
 
     // @formatter:off
     @Shadow protected int noActionTime;

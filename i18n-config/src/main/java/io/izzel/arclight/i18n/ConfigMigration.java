@@ -54,9 +54,10 @@ final class ConfigMigration {
                 ? PermissionForwarding.FORGE_TO_BUKKIT
                 : PermissionForwarding.DISABLED;
         } else {
-            String value = raw == null
-                ? ""
-                : raw.toString().trim().toLowerCase(Locale.ROOT);
+            String value =
+                raw == null
+                    ? ""
+                    : raw.toString().trim().toLowerCase(Locale.ROOT);
             forwarding = switch (value) {
                 case "true" -> PermissionForwarding.FORGE_TO_BUKKIT;
                 case "reverse" -> PermissionForwarding.BUKKIT_TO_FORGE;

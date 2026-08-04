@@ -189,9 +189,7 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
         Component tooltip();
 
         @Override
-        default @NotNull Stream<
-            ? extends ExaminableProperty
-        > examinableProperties() {
+        default @NotNull Stream<? extends ExaminableProperty> examinableProperties() {
             return Stream.of(
                 ExaminableProperty.of("suggestion", this.suggestion()),
                 ExaminableProperty.of("tooltip", this.tooltip())
@@ -199,8 +197,10 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
         }
     }
 
-    record CompletionImpl(String suggestion, Component tooltip) implements
-        Completion {
+    record CompletionImpl(
+        String suggestion,
+        Component tooltip
+    ) implements Completion {
         CompletionImpl(
             final @NotNull String suggestion,
             final @Nullable Component tooltip

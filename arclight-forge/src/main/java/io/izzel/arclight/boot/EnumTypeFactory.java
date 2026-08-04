@@ -29,8 +29,7 @@ public class EnumTypeFactory implements TypeAdapterFactory {
         return (TypeAdapter<T>) new EnumTypeAdapter(rawType);
     }
 
-    private static final class EnumTypeAdapter<T extends Enum<T>>
-        extends TypeAdapter<T> {
+    private static final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
 
         private final Map<String, T> nameToConstant = new HashMap<String, T>();
         private final Map<T, String> constantToName = new HashMap<T, String>();

@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(RconConsoleSource.class)
 public class RConConsoleSourceMixin
-    implements ICommandSourceBridge, RConConsoleSourceBridge {
+    implements ICommandSourceBridge, RConConsoleSourceBridge
+{
 
     // @formatter:off
     @Shadow @Final private StringBuffer buffer;

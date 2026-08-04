@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ResultContainer.class)
 public abstract class CraftResultInventoryMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     // @formatter:off
     @Shadow @Final private NonNullList<ItemStack> itemStacks;

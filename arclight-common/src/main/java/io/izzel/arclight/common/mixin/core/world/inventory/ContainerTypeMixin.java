@@ -20,9 +20,7 @@ public class ContainerTypeMixin {
         cancellable = true,
         at = @At("HEAD")
     )
-    private static <
-        T extends AbstractContainerMenu
-    > void arclight$replaceLectern(
+    private static <T extends AbstractContainerMenu> void arclight$replaceLectern(
         String key,
         MenuType.MenuSupplier<T> factory,
         CallbackInfoReturnable<MenuType<T>> cir
@@ -32,16 +30,13 @@ public class ContainerTypeMixin {
                 Registry.register(
                     BuiltInRegistries.MENU,
                     key,
-                    new MenuType<>(
-                        (i, inv) -> {
-                            LecternMenu container = new LecternMenu(i);
-                            ((LecternContainerBridge) container).bridge$setPlayerInventory(
-                                inv
-                            );
-                            return (T) container;
-                        },
-                        FeatureFlags.VANILLA_SET
-                    )
+                    new MenuType<>((i, inv) -> {
+                        LecternMenu container = new LecternMenu(i);
+                        (
+                            (LecternContainerBridge) container
+                        ).bridge$setPlayerInventory(inv);
+                        return (T) container;
+                    }, FeatureFlags.VANILLA_SET)
                 )
             );
         }

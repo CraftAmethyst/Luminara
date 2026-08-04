@@ -18,9 +18,9 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
         String,
         Map.Entry<List<FieldNode>, List<MethodNode>>
     > accessTransformer = ImmutableMap.<
-            String,
-            Map.Entry<List<FieldNode>, List<MethodNode>>
-        >builder()
+        String,
+        Map.Entry<List<FieldNode>, List<MethodNode>>
+    >builder()
         .put(
             "net.minecraft.world.level.Level",
             Maps.immutableEntry(

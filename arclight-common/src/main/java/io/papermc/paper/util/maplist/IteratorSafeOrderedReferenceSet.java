@@ -100,7 +100,7 @@ public final class IteratorSafeOrderedReferenceSet<E> {
     }
 
     private double getFragFactor() {
-        return 1.0 - ((double) this.indexMap.size() / (double) this.listSize);
+        return 1.0 - (double) this.indexMap.size() / (double) this.listSize;
     }
 
     public int createRawIterator() {
@@ -286,8 +286,8 @@ public final class IteratorSafeOrderedReferenceSet<E> {
         void finishedIterating();
     }
 
-    protected static final class BaseIterator<E>
-        implements IteratorSafeOrderedReferenceSet.Iterator<E> {
+    protected static final class BaseIterator<E> implements
+        IteratorSafeOrderedReferenceSet.Iterator<E> {
 
         protected final IteratorSafeOrderedReferenceSet<E> set;
         protected final boolean canFinish;

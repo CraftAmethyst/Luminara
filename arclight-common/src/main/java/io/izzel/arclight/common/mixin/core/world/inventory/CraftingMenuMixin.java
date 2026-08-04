@@ -31,7 +31,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CraftingMenu.class)
 public abstract class CraftingMenuMixin
     extends AbstractContainerMenuMixin
-    implements PosContainerBridge {
+    implements PosContainerBridge
+{
 
     private static transient boolean arclight$isRepair;
 
@@ -130,7 +131,9 @@ public abstract class CraftingMenuMixin
             this.resultSlots
         );
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

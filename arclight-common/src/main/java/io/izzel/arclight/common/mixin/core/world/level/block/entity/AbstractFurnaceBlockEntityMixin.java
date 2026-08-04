@@ -51,7 +51,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin
     extends LockableBlockEntityMixin
-    implements AbstractFurnaceTileEntityBridge {
+    implements AbstractFurnaceTileEntityBridge
+{
 
     private static AbstractFurnaceBlockEntity arclight$captureFurnace;
     private static Player arclight$capturePlayer;
@@ -170,7 +171,9 @@ public abstract class AbstractFurnaceBlockEntityMixin
     ) {
         if (arclight$capturePlayer != null && arclight$captureAmount != 0) {
             FurnaceExtractEvent event = new FurnaceExtractEvent(
-                ((ServerPlayerEntityBridge) arclight$capturePlayer).bridge$getBukkitEntity(),
+                (
+                    (ServerPlayerEntityBridge) arclight$capturePlayer
+                ).bridge$getBukkitEntity(),
                 CraftBlock.at(level, arclight$captureFurnace.getBlockPos()),
                 CraftMagicNumbers.getMaterial(arclight$item.getItem()),
                 arclight$captureAmount,

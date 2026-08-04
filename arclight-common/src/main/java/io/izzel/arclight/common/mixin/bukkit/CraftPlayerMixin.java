@@ -35,12 +35,14 @@ public abstract class CraftPlayerMixin extends CraftEntityMixin {
         );
         channel = StandardMessenger.validateAndCorrectChannel(channel);
         if (this.channels.add(channel)) {
-            this.server.getPluginManager().callEvent(
-                new PlayerRegisterChannelEvent(
-                    (CraftPlayer) (Object) this,
-                    channel
-                )
-            );
+            this.server
+                .getPluginManager()
+                .callEvent(
+                    new PlayerRegisterChannelEvent(
+                        (CraftPlayer) (Object) this,
+                        channel
+                    )
+                );
         }
     }
 }

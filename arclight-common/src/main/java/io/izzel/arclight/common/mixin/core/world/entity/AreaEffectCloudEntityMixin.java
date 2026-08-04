@@ -29,7 +29,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(AreaEffectCloud.class)
 public abstract class AreaEffectCloudEntityMixin
     extends EntityMixin
-    implements AreaEffectCloudEntityBridge {
+    implements AreaEffectCloudEntityBridge
+{
 
     @Shadow
     @Final
@@ -125,9 +126,10 @@ public abstract class AreaEffectCloudEntityMixin
                         d7 = (0.5D - this.random.nextDouble()) * 0.15D;
                     }
                 } else {
-                    int k = flag && this.random.nextBoolean()
-                        ? 16777215
-                        : this.getColor();
+                    int k =
+                        flag && this.random.nextBoolean()
+                            ? 16777215
+                            : this.getColor();
                     d5 = (float) ((k >> 16) & 255) / 255.0F;
                     d6 = (float) ((k >> 8) & 255) / 255.0F;
                     d7 = (float) (k & 255) / 255.0F;
@@ -196,9 +198,7 @@ public abstract class AreaEffectCloudEntityMixin
                     );
                     if (!list1.isEmpty()) {
                         List<org.bukkit.entity.LivingEntity> entities =
-                            new java.util.ArrayList<
-                                org.bukkit.entity.LivingEntity
-                            >(); // CraftBukkit
+                            new java.util.ArrayList<org.bukkit.entity.LivingEntity>(); // CraftBukkit
                         for (LivingEntity livingentity : list1) {
                             if (
                                 !this.victims.containsKey(livingentity) &&
@@ -209,7 +209,9 @@ public abstract class AreaEffectCloudEntityMixin
                                 double d3 = d8 * d8 + d1 * d1;
                                 if (d3 <= (double) (f * f)) {
                                     entities.add(
-                                        ((LivingEntityBridge) livingentity).bridge$getBukkitEntity()
+                                        (
+                                            (LivingEntityBridge) livingentity
+                                        ).bridge$getBukkitEntity()
                                     );
                                 }
                             }
@@ -223,7 +225,9 @@ public abstract class AreaEffectCloudEntityMixin
                             for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
                                 if (entity instanceof CraftLivingEntity) {
                                     net.minecraft.world.entity.LivingEntity livingentity =
-                                        ((CraftLivingEntity) entity).getHandle();
+                                        (
+                                            (CraftLivingEntity) entity
+                                        ).getHandle();
 
                                     this.victims.put(
                                         livingentity,

@@ -143,7 +143,9 @@ public class BukkitRegistry {
                             value instanceof
                                 org.bukkit.Registry.SimpleRegistry<?> registry
                         ) {
-                            ((SimpleRegistryBridge) (Object) registry).bridge$reload();
+                            (
+                                (SimpleRegistryBridge) (Object) registry
+                            ).bridge$reload();
                         }
                     })
                 );
@@ -192,9 +194,8 @@ public class BukkitRegistry {
 
     private static void loadCookingBookCategory() {
         var id = CookingBookCategory.values().length;
-        var newTypes = new ArrayList<
-            org.bukkit.inventory.recipe.CookingBookCategory
-        >();
+        var newTypes =
+            new ArrayList<org.bukkit.inventory.recipe.CookingBookCategory>();
         for (CookingBookCategory category : CookingBookCategory.values()) {
             try {
                 CraftRecipe.getCategory(category);
@@ -520,9 +521,7 @@ public class BukkitRegistry {
         List<EntityType> newTypes = new ArrayList<>(
             ForgeRegistries.ENTITY_TYPES.getEntries().size() - origin + 1
         ); // UNKNOWN
-        for (net.minecraft.world.entity.EntityType<
-            ?
-        > type : ForgeRegistries.ENTITY_TYPES) {
+        for (net.minecraft.world.entity.EntityType<?> type : ForgeRegistries.ENTITY_TYPES) {
             ResourceLocation location = ForgeRegistries.ENTITY_TYPES.getKey(
                 type
             );

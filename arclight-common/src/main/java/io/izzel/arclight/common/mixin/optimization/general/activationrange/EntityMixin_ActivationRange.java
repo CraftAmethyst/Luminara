@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin_ActivationRange
-    implements EntityBridge_ActivationRange {
+    implements EntityBridge_ActivationRange
+{
 
     @Shadow
     public int tickCount;
@@ -78,9 +79,9 @@ public abstract class EntityMixin_ActivationRange
             if (this.defaultActivationState) {
                 this.activatedTick = ArclightConstants.currentTick;
             } else if (
-                ((ActivationTypeAccessor) (Object) this.activationType).arclight$getBoundingBox().intersects(
-                    this.getBoundingBox()
-                )
+                ((ActivationTypeAccessor) (Object) this.activationType)
+                    .arclight$getBoundingBox()
+                    .intersects(this.getBoundingBox())
             ) {
                 this.activatedTick = ArclightConstants.currentTick;
             }

@@ -11,7 +11,8 @@ import java.util.function.Consumer;
 
 public class ApplicationBootstrap
     extends AbstractBootstrap
-    implements Consumer<String[]> {
+    implements Consumer<String[]>
+{
 
     private static final int MIN_DEPRECATED_VERSION = 60;
     private static final int MIN_DEPRECATED_JAVA_VERSION = 16;

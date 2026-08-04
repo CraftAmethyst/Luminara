@@ -123,7 +123,7 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                         insnNode.getOpcode() == Opcodes.GETSTATIC &&
                         ((FieldInsnNode) insnNode).desc.equals("[I")
                     ) {
-                        fieldInsnNode = ((FieldInsnNode) insnNode);
+                        fieldInsnNode = (FieldInsnNode) insnNode;
                     }
                     if (
                         insnNode.getOpcode() == Opcodes.INVOKESTATIC &&
@@ -148,7 +148,7 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                                         newArray.getOpcode() ==
                                             Opcodes.NEWARRAY &&
                                         ((IntInsnNode) newArray).operand ==
-                                        Opcodes.T_INT
+                                            Opcodes.T_INT
                                     ) {
                                         enumType = retType;
                                     }
@@ -253,20 +253,20 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                                         newArray.getOpcode() ==
                                             Opcodes.NEWARRAY &&
                                         ((IntInsnNode) newArray).operand ==
-                                        Opcodes.T_INT
+                                            Opcodes.T_INT
                                     ) {
                                         AbstractInsnNode putStatic =
                                             newArray.getNext();
                                         if (
                                             putStatic.getOpcode() ==
                                                 Opcodes.PUTSTATIC &&
-                                            ((FieldInsnNode) putStatic).desc.equals(
-                                                "[I"
-                                            )
+                                            (
+                                                (FieldInsnNode) putStatic
+                                            ).desc.equals("[I")
                                         ) {
                                             enumType = retType;
                                             fieldInsnNode =
-                                                ((FieldInsnNode) putStatic);
+                                                (FieldInsnNode) putStatic;
                                             break;
                                         }
                                     }

@@ -35,8 +35,8 @@ public class ArclightSpecialRecipe extends CraftComplexRecipe {
 
     @Override
     public void addToCraftingManager() {
-        ((RecipeManagerBridge) ServerLifecycleHooks.getCurrentServer().getRecipeManager()).bridge$addRecipe(
-            this.recipe
-        );
+        (
+            (RecipeManagerBridge) ServerLifecycleHooks.getCurrentServer().getRecipeManager()
+        ).bridge$addRecipe(this.recipe);
     }
 }

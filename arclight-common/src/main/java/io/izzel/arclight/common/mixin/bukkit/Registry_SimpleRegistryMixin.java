@@ -16,8 +16,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Registry.SimpleRegistry.class, remap = false)
-public class Registry_SimpleRegistryMixin<T extends Enum<T> & Keyed>
-    implements SimpleRegistryBridge {
+public class Registry_SimpleRegistryMixin<
+    T extends Enum<T> & Keyed
+> implements SimpleRegistryBridge {
 
     @Shadow
     @Final

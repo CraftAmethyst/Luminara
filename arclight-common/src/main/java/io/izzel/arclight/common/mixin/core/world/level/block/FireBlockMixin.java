@@ -33,7 +33,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FireBlock.class)
 public abstract class FireBlockMixin
     extends BaseFireBlockMixin
-    implements FireBlockBridge {
+    implements FireBlockBridge
+{
 
     @Shadow
     @Final

@@ -87,7 +87,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin
     extends LevelMixin
-    implements ServerWorldBridge {
+    implements ServerWorldBridge
+{
 
     @Shadow
     @Final

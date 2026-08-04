@@ -61,7 +61,9 @@ public class TridentItemMixin {
     ) {
         if (!world.addFreshEntity(entityIn)) {
             if (entityLiving instanceof ServerPlayer) {
-                ((ServerPlayerEntityBridge) entityLiving).bridge$getBukkitEntity().updateInventory();
+                ((ServerPlayerEntityBridge) entityLiving)
+                    .bridge$getBukkitEntity()
+                    .updateInventory();
             }
             ci.cancel();
             return false;

@@ -10,8 +10,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(StoredUserList.class)
-public class UserListMixin<K, V extends StoredUserEntry<K>>
-    implements UserListBridge<V> {
+public class UserListMixin<
+    K,
+    V extends StoredUserEntry<K>
+> implements UserListBridge<V> {
 
     // @formatter:off
     @Shadow @Final private Map<String, V> map;

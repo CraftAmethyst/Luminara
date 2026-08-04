@@ -43,7 +43,8 @@ public class CoralWallFanBlockMixin {
             CraftEventFactory.callBlockFadeEvent(
                 worldIn,
                 pos,
-                this.deadBlock.defaultBlockState()
+                this.deadBlock
+                    .defaultBlockState()
                     .setValue(
                         BaseCoralPlantTypeBlock.WATERLOGGED,
                         Boolean.FALSE

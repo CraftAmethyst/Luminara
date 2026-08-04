@@ -89,23 +89,28 @@ public abstract class BaseSpawnerMixin {
 
                     ListTag listtag = compoundtag.getList("Pos", 6);
                     int j = listtag.size();
-                    double d0 = j >= 1
-                        ? listtag.getDouble(0)
-                        : (double) pos.getX() +
-                          (level.random.nextDouble() -
-                              level.random.nextDouble()) *
-                          (double) this.spawnRange +
-                          0.5D;
-                    double d1 = j >= 2
-                        ? listtag.getDouble(1)
-                        : (double) (pos.getY() + level.random.nextInt(3) - 1);
-                    double d2 = j >= 3
-                        ? listtag.getDouble(2)
-                        : (double) pos.getZ() +
-                          (level.random.nextDouble() -
-                              level.random.nextDouble()) *
-                          (double) this.spawnRange +
-                          0.5D;
+                    double d0 =
+                        j >= 1
+                            ? listtag.getDouble(0)
+                            : (double) pos.getX() +
+                              (level.random.nextDouble() -
+                                  level.random.nextDouble()) *
+                                  (double) this.spawnRange +
+                              0.5D;
+                    double d1 =
+                        j >= 2
+                            ? listtag.getDouble(1)
+                            : (double) (pos.getY() +
+                                  level.random.nextInt(3) -
+                                  1);
+                    double d2 =
+                        j >= 3
+                            ? listtag.getDouble(2)
+                            : (double) pos.getZ() +
+                              (level.random.nextDouble() -
+                                  level.random.nextDouble()) *
+                                  (double) this.spawnRange +
+                              0.5D;
                     if (level.noCollision(optional.get().getAABB(d0, d1, d2))) {
                         BlockPos blockpos = BlockPos.containing(d0, d1, d2);
                         if (spawnData.getCustomSpawnRules().isPresent()) {
@@ -172,14 +177,14 @@ public abstract class BaseSpawnerMixin {
                         int k = level
                             .getEntitiesOfClass(
                                 entity.getClass(),
-                                (new AABB(
-                                        pos.getX(),
-                                        pos.getY(),
-                                        pos.getZ(),
-                                        pos.getX() + 1,
-                                        pos.getY() + 1,
-                                        pos.getZ() + 1
-                                    )).inflate(this.spawnRange)
+                                new AABB(
+                                    pos.getX(),
+                                    pos.getY(),
+                                    pos.getZ(),
+                                    pos.getX() + 1,
+                                    pos.getY() + 1,
+                                    pos.getZ() + 1
+                                ).inflate(this.spawnRange)
                             )
                             .size();
                         if (k >= this.maxNearbyEntities) {
@@ -232,7 +237,9 @@ public abstract class BaseSpawnerMixin {
                                 );
                             }
                             if (
-                                ((WorldBridge) mob.level()).bridge$spigotConfig().nerfSpawnerMobs
+                                ((WorldBridge) mob.level())
+                                    .bridge$spigotConfig()
+                                    .nerfSpawnerMobs
                             ) {
                                 ((MobEntityBridge) mob).bridge$setAware(false);
                             }

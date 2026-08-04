@@ -8,7 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 sealed class ViewerUnawareImpl
     implements ChatRenderer, ChatRenderer.ViewerUnaware
-    permits ViewerUnawareImpl.Default {
+    permits ViewerUnawareImpl.Default
+{
 
     private final ViewerUnaware unaware;
     private @Nullable Component message;
@@ -45,7 +46,8 @@ sealed class ViewerUnawareImpl
 
     static final class Default
         extends ViewerUnawareImpl
-        implements ChatRenderer.Default {
+        implements ChatRenderer.Default
+    {
 
         Default(final ViewerUnaware unaware) {
             super(unaware);

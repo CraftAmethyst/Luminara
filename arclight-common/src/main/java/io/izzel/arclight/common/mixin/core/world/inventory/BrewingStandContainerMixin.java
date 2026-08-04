@@ -19,7 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BrewingStandMenu.class)
 public abstract class BrewingStandContainerMixin
-    extends AbstractContainerMenuMixin {
+    extends AbstractContainerMenuMixin
+{
 
     // @formatter:off
     @Shadow @Final private Container brewingStand;
@@ -61,7 +62,9 @@ public abstract class BrewingStandContainerMixin
             this.brewingStand
         );
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

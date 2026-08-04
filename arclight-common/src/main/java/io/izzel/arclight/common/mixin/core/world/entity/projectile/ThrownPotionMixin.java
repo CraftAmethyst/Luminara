@@ -77,7 +77,9 @@ public abstract class ThrownPotionMixin extends ThrowableItemProjectileMixin {
                         d2 = 1.0;
                     }
                     affected.put(
-                        ((LivingEntityBridge) entityliving).bridge$getBukkitEntity(),
+                        (
+                            (LivingEntityBridge) entityliving
+                        ).bridge$getBukkitEntity(),
                         d2
                     );
                 }
@@ -92,8 +94,9 @@ public abstract class ThrownPotionMixin extends ThrowableItemProjectileMixin {
                 if (!(victim instanceof CraftLivingEntity)) {
                     continue;
                 }
-                LivingEntity entityliving2 =
-                    ((CraftLivingEntity) victim).getHandle();
+                LivingEntity entityliving2 = (
+                    (CraftLivingEntity) victim
+                ).getHandle();
                 double d2 = event.getIntensity(victim);
                 for (MobEffectInstance mobeffect : list) {
                     MobEffect mobeffectlist = mobeffect.getEffect();
@@ -131,7 +134,9 @@ public abstract class ThrownPotionMixin extends ThrowableItemProjectileMixin {
                         if (i <= 20) {
                             continue;
                         }
-                        ((LivingEntityBridge) entityliving2).bridge$pushEffectCause(
+                        (
+                            (LivingEntityBridge) entityliving2
+                        ).bridge$pushEffectCause(
                             EntityPotionEffectEvent.Cause.POTION_SPLASH
                         );
                         entityliving2.addEffect(

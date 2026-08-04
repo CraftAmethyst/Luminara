@@ -47,8 +47,9 @@ public class PlayerDataMixin implements PlayerDataBridge {
         CallbackInfoReturnable<CompoundTag> cir
     ) {
         if (player instanceof ServerPlayer) {
-            CraftPlayer craftPlayer =
-                ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity();
+            CraftPlayer craftPlayer = (
+                (ServerPlayerEntityBridge) player
+            ).bridge$getBukkitEntity();
             // Only update first played if it is older than the one we have
             long modified = new File(
                 this.playerDir,

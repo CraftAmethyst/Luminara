@@ -190,12 +190,13 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
                     for (ServerPlayerConnection connection : this.trackedPlayers) {
                         var serverplayerentity = connection.getPlayer();
                         mapdata.tickCarriedBy(serverplayerentity, itemstack);
-                        Packet<?> ipacket =
-                            ((MapItem) itemstack.getItem()).getUpdatePacket(
-                                itemstack,
-                                this.level,
-                                serverplayerentity
-                            );
+                        Packet<?> ipacket = (
+                            (MapItem) itemstack.getItem()
+                        ).getUpdatePacket(
+                            itemstack,
+                            this.level,
+                            serverplayerentity
+                        );
                         if (ipacket != null) {
                             serverplayerentity.connection.send(ipacket);
                         }
@@ -272,9 +273,9 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
                             if (flag4) {
                                 ipacket1 = new ClientboundMoveEntityPacket.Pos(
                                     this.entity.getId(),
-                                    (short) ((int) i),
-                                    (short) ((int) j),
-                                    (short) ((int) k),
+                                    (short) (int) i,
+                                    (short) (int) j,
+                                    (short) (int) k,
                                     this.entity.onGround()
                                 );
                                 pos = true;
@@ -290,9 +291,9 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
                         } else {
                             ipacket1 = new ClientboundMoveEntityPacket.PosRot(
                                 this.entity.getId(),
-                                (short) ((int) i),
-                                (short) ((int) j),
-                                (short) ((int) k),
+                                (short) (int) i,
+                                (short) (int) j,
+                                (short) (int) k,
                                 (byte) l,
                                 (byte) k1,
                                 this.entity.onGround()
@@ -359,8 +360,9 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
         if (this.entity.hurtMarked) {
             boolean cancelled = false;
             if (this.entity instanceof ServerPlayer) {
-                Player player =
-                    ((ServerPlayerEntityBridge) this.entity).bridge$getBukkitEntity();
+                Player player = (
+                    (ServerPlayerEntityBridge) this.entity
+                ).bridge$getBukkitEntity();
                 Vector velocity = player.getVelocity();
                 PlayerVelocityEvent event = new PlayerVelocityEvent(
                     player,
@@ -414,10 +416,9 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
                 .getAttributes()
                 .getSyncableAttributes();
             if (this.entity.getId() == player.getId()) {
-                ((ServerPlayerEntityBridge) this.entity).bridge$getBukkitEntity().injectScaledMaxHealth(
-                    collection,
-                    false
-                );
+                ((ServerPlayerEntityBridge) this.entity)
+                    .bridge$getBukkitEntity()
+                    .injectScaledMaxHealth(collection, false);
             }
             if (!collection.isEmpty()) {
                 consumer.accept(
@@ -444,8 +445,9 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
             ArrayList<Pair<EquipmentSlot, ItemStack>> list =
                 Lists.newArrayList();
             for (EquipmentSlot enumitemslot : EquipmentSlot.values()) {
-                ItemStack itemstack =
-                    ((LivingEntity) this.entity).getItemBySlot(enumitemslot);
+                ItemStack itemstack = (
+                    (LivingEntity) this.entity
+                ).getItemBySlot(enumitemslot);
                 if (itemstack.isEmpty()) continue;
                 list.add(Pair.of(enumitemslot, itemstack.copy()));
             }

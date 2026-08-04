@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ShulkerBoxBlockEntity.class)
 public abstract class ShulkerBoxBlockEntityMixin
-    extends LockableBlockEntityMixin {
+    extends LockableBlockEntityMixin
+{
 
     public List<HumanEntity> transaction = new ArrayList<>();
     // @formatter:on

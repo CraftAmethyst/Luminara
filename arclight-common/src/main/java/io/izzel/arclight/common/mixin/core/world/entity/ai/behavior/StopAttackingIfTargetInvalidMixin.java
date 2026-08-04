@@ -67,7 +67,7 @@ public abstract class StopAttackingIfTargetInvalidMixin {
                                 CraftEventFactory.callEntityTargetLivingEvent(
                                     p_258796_,
                                     null,
-                                    (old != null && !old.isAlive())
+                                    old != null && !old.isAlive()
                                         ? EntityTargetEvent.TargetReason.TARGET_DIED
                                         : EntityTargetEvent.TargetReason.FORGOT_TARGET
                                 );
@@ -78,8 +78,9 @@ public abstract class StopAttackingIfTargetInvalidMixin {
                                 p_258787_.erase();
                                 return true;
                             }
-                            livingentity =
-                                ((CraftLivingEntity) event.getTarget()).getHandle();
+                            livingentity = (
+                                (CraftLivingEntity) event.getTarget()
+                            ).getHandle();
                             // CraftBukkit end
                             p_259568_.accept(p_258796_, livingentity);
                             p_258787_.erase();

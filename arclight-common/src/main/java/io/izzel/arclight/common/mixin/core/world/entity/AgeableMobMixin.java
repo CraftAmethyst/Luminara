@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AgeableMob.class)
 public abstract class AgeableMobMixin
     extends PathfinderMobMixin
-    implements AgeableEntityBridge {
+    implements AgeableEntityBridge
+{
 
     public boolean ageLocked;
 

@@ -45,7 +45,9 @@ public abstract class ZombifiedPiglinMixin extends ZombieMixin {
             if (piglinEntity != (Object) this) {
                 if (piglinEntity.getTarget() == null) {
                     if (!piglinEntity.isAlliedTo(this.getTarget())) {
-                        ((MobEntityBridge) piglinEntity).bridge$pushGoalTargetReason(
+                        (
+                            (MobEntityBridge) piglinEntity
+                        ).bridge$pushGoalTargetReason(
                             EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY,
                             true
                         );

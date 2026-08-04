@@ -19,9 +19,9 @@ public class ClassLoaderAdapter implements PluginTransformer {
     private static final String CLASSLOADER = "java/lang/ClassLoader";
 
     private final Map<String, String> classLoaderTypes = ImmutableMap.<
-            String,
-            String
-        >builder()
+        String,
+        String
+    >builder()
         .put(
             Type.getInternalName(URLClassLoader.class),
             Type.getInternalName(RemappingURLClassLoader.class)

@@ -15,7 +15,8 @@ public class ResourceLocationUtil {
             location.getNamespace().equals(NamespacedKey.MINECRAFT)
                 ? location.getPath()
                 : location.toString()
-        ).replace(':', '_')
+        )
+            .replace(':', '_')
             .replaceAll("\\s+", "_")
             .replaceAll("\\W", "")
             .toUpperCase(Locale.ENGLISH);
@@ -26,7 +27,8 @@ public class ResourceLocationUtil {
             location.getNamespace().equals(NamespacedKey.MINECRAFT)
                 ? location.getPath()
                 : location.toString()
-        ).replace(':', '_')
+        )
+            .replace(':', '_')
             .replaceAll("\\s+", "_")
             .replaceAll("\\W", "")
             .toLowerCase(Locale.ENGLISH);

@@ -62,7 +62,7 @@ public class ServerStatusNetHandlerMixin {
         ServerStatus.Players playerSample = new ServerStatus.Players(
             event.getMaxPlayers(),
             profiles.size(),
-            (server.hidesOnlinePlayers()) ? Collections.emptyList() : profiles
+            server.hidesOnlinePlayers() ? Collections.emptyList() : profiles
         );
         ServerStatus ping = new ServerStatus(
             CraftChatMessage.fromString(event.getMotd(), true)[0],
@@ -73,7 +73,7 @@ public class ServerStatusNetHandlerMixin {
                     SharedConstants.getCurrentVersion().getProtocolVersion()
                 )
             ),
-            (event.icon.value != null)
+            event.icon.value != null
                 ? Optional.of(new ServerStatus.Favicon(event.icon.value))
                 : Optional.empty(),
             server.enforceSecureProfile(),

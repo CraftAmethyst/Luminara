@@ -50,9 +50,12 @@ public class HangingEntityItemMixin {
         HangingEntity hangingEntity
     ) {
         if (!DistValidate.isValid(context)) return;
-        Player who = (context.getPlayer() == null)
-            ? null
-            : (Player) ((PlayerEntityBridge) context.getPlayer()).bridge$getBukkitEntity();
+        Player who =
+            context.getPlayer() == null
+                ? null
+                : (Player) (
+                      (PlayerEntityBridge) context.getPlayer()
+                  ).bridge$getBukkitEntity();
         Block blockClicked = CraftBlock.at(world, blockPos);
         BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
 

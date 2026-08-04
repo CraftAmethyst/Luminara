@@ -11,7 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(BaseContainerBlockEntity.class)
 public abstract class LockableBlockEntityMixin
     extends BlockEntityMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     @Override
     public Location getLocation() {

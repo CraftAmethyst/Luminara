@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
     targets = "net.minecraft.world.entity.monster.Silverfish$SilverfishMergeWithStoneGoal"
 )
 public abstract class Silverfish_MergeWithStoneGoalMixin
-    extends RandomStrollGoal {
+    extends RandomStrollGoal
+{
 
     public Silverfish_MergeWithStoneGoalMixin(
         PathfinderMob creatureIn,

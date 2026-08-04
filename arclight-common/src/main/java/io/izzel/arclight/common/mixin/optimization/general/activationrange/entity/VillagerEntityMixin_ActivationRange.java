@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Villager.class)
 public abstract class VillagerEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange {
+    extends EntityMixin_ActivationRange
+{
 
     // @formatter:off
     @Shadow protected abstract void customServerAiStep();
@@ -18,7 +19,9 @@ public abstract class VillagerEntityMixin_ActivationRange
     @Override
     public void inactiveTick() {
         if (
-            ((WorldBridge) this.level()).bridge$spigotConfig().tickInactiveVillagers &&
+            ((WorldBridge) this.level())
+                .bridge$spigotConfig()
+                .tickInactiveVillagers &&
             ((Villager) (Object) this).isEffectiveAi()
         ) {
             this.customServerAiStep();

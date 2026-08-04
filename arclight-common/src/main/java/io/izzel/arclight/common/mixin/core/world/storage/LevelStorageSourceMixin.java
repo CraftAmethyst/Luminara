@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(LevelStorageSource.class)
 public abstract class LevelStorageSourceMixin
-    implements LevelStorageSourceBridge {
+    implements LevelStorageSourceBridge
+{
 
     // pdc implemented as WorldSavedData
 

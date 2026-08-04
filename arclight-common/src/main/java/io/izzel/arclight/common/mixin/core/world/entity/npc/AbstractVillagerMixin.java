@@ -26,7 +26,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(net.minecraft.world.entity.npc.AbstractVillager.class)
 public abstract class AbstractVillagerMixin
     extends PathfinderMobMixin
-    implements IMerchantBridge {
+    implements IMerchantBridge
+{
 
     @Shadow
     @Final
@@ -36,9 +37,7 @@ public abstract class AbstractVillagerMixin
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void arclight$init(
-        EntityType<
-            ? extends net.minecraft.world.entity.npc.AbstractVillager
-        > type,
+        EntityType<? extends net.minecraft.world.entity.npc.AbstractVillager> type,
         Level worldIn,
         CallbackInfo ci
     ) {
@@ -49,10 +48,10 @@ public abstract class AbstractVillagerMixin
 
     @Override
     public CraftMerchant bridge$getCraftMerchant() {
-        return (craftMerchant == null)
-            ? craftMerchant = new CraftMerchant(
+        return craftMerchant == null
+            ? (craftMerchant = new CraftMerchant(
                   (net.minecraft.world.entity.npc.AbstractVillager) (Object) this
-              )
+              ))
             : craftMerchant;
     }
 

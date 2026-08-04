@@ -144,15 +144,13 @@ public abstract class VerifyDistributionTask extends DefaultTask {
             root.has("runtimeLibraries"),
             "Missing runtime library metadata"
         );
-        root
-            .getAsJsonArray("runtimeLibraries")
-            .forEach(coordinate ->
-                require(
-                    libraries.has(coordinate.getAsString()),
-                    "Runtime library lacks download metadata: " +
-                        coordinate.getAsString()
-                )
-            );
+        root.getAsJsonArray("runtimeLibraries").forEach(coordinate ->
+            require(
+                libraries.has(coordinate.getAsString()),
+                "Runtime library lacks download metadata: " +
+                    coordinate.getAsString()
+            )
+        );
     }
 
     private static void ensureUniqueCoordinates(JsonObject libraries) {
@@ -233,11 +231,8 @@ public abstract class VerifyDistributionTask extends DefaultTask {
         try (var input = Files.newInputStream(path)) {
             byte[] buffer = new byte[8192];
             int length;
-            while ((length = input.read(buffer)) >= 0) digest.update(
-                buffer,
-                0,
-                length
-            );
+            while ((length = input.read(buffer)) >= 0)
+                digest.update(buffer, 0, length);
         }
         return java.util.HexFormat.of().formatHex(digest.digest());
     }

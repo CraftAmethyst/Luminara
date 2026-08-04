@@ -145,11 +145,9 @@ public class SpongeBlockMixin {
                 if (fluid.is(FluidTags.WATER)) {
                     if (
                         iblockdata.getBlock() instanceof BucketPickup &&
-                        !((BucketPickup) iblockdata.getBlock()).pickupBlock(
-                            blockList,
-                            blockposition1,
-                            iblockdata
-                        ).isEmpty()
+                        !((BucketPickup) iblockdata.getBlock())
+                            .pickupBlock(blockList, blockposition1, iblockdata)
+                            .isEmpty()
                     ) {
                         // NOP
                     } else if (iblockdata.getBlock() instanceof LiquidBlock) {

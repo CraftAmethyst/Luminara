@@ -127,9 +127,9 @@ public class CraftEventFactoryMixin {
         event.setCancelled(cancelled);
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            ((EntityBridge) entity).bridge$getBukkitEntity().setLastDamageCause(
-                event
-            );
+            ((EntityBridge) entity)
+                .bridge$getBukkitEntity()
+                .setLastDamageCause(event);
         }
         cir.setReturnValue(event);
     }
@@ -188,11 +188,9 @@ public class CraftEventFactoryMixin {
             world.setBlock(pos, newData, flag);
             return true;
         }
-        Block block = ((WorldBridge) world).bridge$getWorld().getBlockAt(
-            pos.getX(),
-            pos.getY(),
-            pos.getZ()
-        );
+        Block block = ((WorldBridge) world)
+            .bridge$getWorld()
+            .getBlockAt(pos.getX(), pos.getY(), pos.getZ());
         CraftBlockState state = (CraftBlockState) block.getState();
         state.setData(newData);
 
@@ -230,13 +228,14 @@ public class CraftEventFactoryMixin {
         );
         blockState.setData(block);
 
-        BlockFormEvent event = (entity == null)
-            ? new BlockFormEvent(blockState.getBlock(), blockState)
-            : new EntityBlockFormEvent(
-                  ((EntityBridge) entity).bridge$getBukkitEntity(),
-                  blockState.getBlock(),
-                  blockState
-              );
+        BlockFormEvent event =
+            entity == null
+                ? new BlockFormEvent(blockState.getBlock(), blockState)
+                : new EntityBlockFormEvent(
+                      ((EntityBridge) entity).bridge$getBukkitEntity(),
+                      blockState.getBlock(),
+                      blockState
+                  );
         Bukkit.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
@@ -372,8 +371,9 @@ public class CraftEventFactoryMixin {
         CallbackInfoReturnable<ItemSpawnEvent> cir
     ) {
         if (itemEntity.getItem().isEmpty()) {
-            Item entity =
-                (Item) ((EntityBridge) itemEntity).bridge$getBukkitEntity();
+            Item entity = (Item) (
+                (EntityBridge) itemEntity
+            ).bridge$getBukkitEntity();
             ItemSpawnEvent event = new ItemSpawnEvent(entity);
             event.setCancelled(true);
             cir.setReturnValue(event);

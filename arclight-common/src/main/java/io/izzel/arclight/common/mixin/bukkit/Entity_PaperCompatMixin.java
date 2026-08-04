@@ -123,8 +123,8 @@ public interface Entity_PaperCompatMixin {
         Objects.requireNonNull(cause, "cause");
         World world = Objects.requireNonNull(loc.getWorld(), "loc.world");
         Location target = loc.clone();
-        int chunkX = ((int) Math.floor(target.getX())) >> 4;
-        int chunkZ = ((int) Math.floor(target.getZ())) >> 4;
+        int chunkX = (int) Math.floor(target.getX()) >> 4;
+        int chunkZ = (int) Math.floor(target.getZ()) >> 4;
 
         CompletableFuture<Boolean> urgentFuture =
             PaperCompatSupport.tryUrgentChunkTeleport(world, target, () ->
@@ -142,8 +142,9 @@ public interface Entity_PaperCompatMixin {
         }
 
         if (world instanceof CraftWorld craftWorld) {
-            Object minecraftServer =
-                ((CraftServer) Bukkit.getServer()).getServer();
+            Object minecraftServer = (
+                (CraftServer) Bukkit.getServer()
+            ).getServer();
             if (
                 minecraftServer instanceof
                     java.util.concurrent.Executor executor

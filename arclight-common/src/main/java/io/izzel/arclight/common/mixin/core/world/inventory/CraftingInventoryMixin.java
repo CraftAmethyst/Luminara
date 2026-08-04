@@ -24,7 +24,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(TransientCraftingContainer.class)
 public abstract class CraftingInventoryMixin
-    implements CraftingInventoryBridge, Container {
+    implements CraftingInventoryBridge, Container
+{
 
     @Shadow
     @Final

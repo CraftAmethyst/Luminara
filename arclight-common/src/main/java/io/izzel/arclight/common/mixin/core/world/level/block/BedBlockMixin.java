@@ -78,41 +78,39 @@ public abstract class BedBlockMixin {
             } else {
                 var pos = p_49517_;
                 var state = p_49515_;
-                p_49518_
-                    .startSleepInBed(pos)
-                    .ifLeft(p_49477_ -> {
-                        if (!level.dimensionType().bedWorks()) {
-                            level.removeBlock(pos, false);
-                            BlockPos blockpos = pos.relative(
-                                state.getValue(FACING).getOpposite()
-                            );
-                            if (
-                                level
-                                    .getBlockState(blockpos)
-                                    .is((BedBlock) (Object) this)
-                            ) {
-                                level.removeBlock(blockpos, false);
-                            }
-
-                            Vec3 vec3d = pos.getCenter();
-                            level.explode(
-                                null,
-                                level
-                                    .damageSources()
-                                    .badRespawnPointExplosion(vec3d),
-                                null,
-                                vec3d,
-                                5.0F,
-                                true,
-                                Level.ExplosionInteraction.BLOCK
-                            );
-                        } else if (p_49477_.getMessage() != null) {
-                            p_49518_.displayClientMessage(
-                                p_49477_.getMessage(),
-                                true
-                            );
+                p_49518_.startSleepInBed(pos).ifLeft(p_49477_ -> {
+                    if (!level.dimensionType().bedWorks()) {
+                        level.removeBlock(pos, false);
+                        BlockPos blockpos = pos.relative(
+                            state.getValue(FACING).getOpposite()
+                        );
+                        if (
+                            level
+                                .getBlockState(blockpos)
+                                .is((BedBlock) (Object) this)
+                        ) {
+                            level.removeBlock(blockpos, false);
                         }
-                    });
+
+                        Vec3 vec3d = pos.getCenter();
+                        level.explode(
+                            null,
+                            level
+                                .damageSources()
+                                .badRespawnPointExplosion(vec3d),
+                            null,
+                            vec3d,
+                            5.0F,
+                            true,
+                            Level.ExplosionInteraction.BLOCK
+                        );
+                    } else if (p_49477_.getMessage() != null) {
+                        p_49518_.displayClientMessage(
+                            p_49477_.getMessage(),
+                            true
+                        );
+                    }
+                });
                 return InteractionResult.SUCCESS;
             }
         }

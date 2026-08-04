@@ -10,7 +10,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MinecartCommandBlock.MinecartCommandBase.class)
 public abstract class MinecartCommandBlock_MinecartCommandBaseMixin
-    implements ICommandSourceBridge {
+    implements ICommandSourceBridge
+{
 
     @SuppressWarnings("target")
     @Shadow(aliases = { "this$0", "f_38537_" }, remap = false)

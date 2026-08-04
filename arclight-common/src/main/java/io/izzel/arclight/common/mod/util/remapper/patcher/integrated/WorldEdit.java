@@ -218,7 +218,8 @@ public class WorldEdit {
                             new MethodInsnNode(
                                 Opcodes.INVOKEVIRTUAL,
                                 Type.getMethodType(method.desc)
-                                    .getArgumentTypes()[0].getInternalName(),
+                                    .getArgumentTypes()[0]
+                                    .getInternalName(),
                                 "getId",
                                 "()Ljava/lang/String;",
                                 false

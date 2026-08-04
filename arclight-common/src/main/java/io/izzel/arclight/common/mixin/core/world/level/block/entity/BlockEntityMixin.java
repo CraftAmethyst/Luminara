@@ -72,12 +72,10 @@ public abstract class BlockEntityMixin implements TileEntityBridge {
             this.persistentDataContainer != null &&
             !this.persistentDataContainer.isEmpty()
         ) {
-            cir
-                .getReturnValue()
-                .put(
-                    "PublicBukkitValues",
-                    this.persistentDataContainer.toTagCompound()
-                );
+            cir.getReturnValue().put(
+                "PublicBukkitValues",
+                this.persistentDataContainer.toTagCompound()
+            );
         }
     }
 

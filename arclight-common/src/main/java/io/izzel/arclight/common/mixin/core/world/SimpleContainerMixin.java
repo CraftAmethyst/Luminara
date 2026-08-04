@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(SimpleContainer.class)
 public abstract class SimpleContainerMixin
-    implements Container, IInventoryBridge {
+    implements Container, IInventoryBridge
+{
 
     private static final int MAX_STACK = 64;
 

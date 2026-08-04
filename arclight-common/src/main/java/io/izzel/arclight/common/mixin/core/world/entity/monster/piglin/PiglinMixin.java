@@ -24,7 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Piglin.class)
 public abstract class PiglinMixin
     extends PathfinderMobMixin
-    implements PiglinBridge {
+    implements PiglinBridge
+{
 
     public Set<Item> allowedBarterItems = new HashSet<>();
     public Set<Item> interestItems = new HashSet<>();

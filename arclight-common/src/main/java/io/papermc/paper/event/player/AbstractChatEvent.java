@@ -16,7 +16,8 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.NonExtendable
 public abstract class AbstractChatEvent
     extends PlayerEvent
-    implements Cancellable {
+    implements Cancellable
+{
 
     private final Set<Audience> viewers;
     private final Component originalMessage;

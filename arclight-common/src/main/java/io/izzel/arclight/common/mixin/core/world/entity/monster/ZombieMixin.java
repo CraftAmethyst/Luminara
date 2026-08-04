@@ -80,9 +80,7 @@ public abstract class ZombieMixin extends PathfinderMobMixin {
 
     @Inject(method = "convertToZombieType", at = @At("HEAD"))
     private void arclight$transformReason(
-        EntityType<
-            ? extends net.minecraft.world.entity.monster.Zombie
-        > entityType,
+        EntityType<? extends net.minecraft.world.entity.monster.Zombie> entityType,
         CallbackInfo ci
     ) {
         this.bridge$pushTransformReason(
@@ -99,9 +97,7 @@ public abstract class ZombieMixin extends PathfinderMobMixin {
         at = @At("RETURN")
     )
     private void arclight$stopConversion(
-        EntityType<
-            ? extends net.minecraft.world.entity.monster.Zombie
-        > entityType,
+        EntityType<? extends net.minecraft.world.entity.monster.Zombie> entityType,
         CallbackInfo ci,
         net.minecraft.world.entity.monster.Zombie zombieEntity
     ) {

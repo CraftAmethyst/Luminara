@@ -64,7 +64,9 @@ public abstract class EggItemMixin extends Item {
     ) {
         if (!worldIn.addFreshEntity(entityIn)) {
             if (playerIn instanceof ServerPlayerEntityBridge) {
-                ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().updateInventory();
+                ((ServerPlayerEntityBridge) playerIn)
+                    .bridge$getBukkitEntity()
+                    .updateInventory();
             }
             cir.setReturnValue(
                 InteractionResultHolder.fail(playerIn.getItemInHand(handIn))

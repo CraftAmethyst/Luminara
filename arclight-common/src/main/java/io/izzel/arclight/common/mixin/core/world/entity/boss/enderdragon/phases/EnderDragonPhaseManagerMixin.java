@@ -42,8 +42,10 @@ public abstract class EnderDragonPhaseManagerMixin {
             }
 
             EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
-                (CraftEnderDragon) ((EntityBridge) this.dragon).bridge$getBukkitEntity(),
-                (this.currentPhase == null)
+                (CraftEnderDragon) (
+                    (EntityBridge) this.dragon
+                ).bridge$getBukkitEntity(),
+                this.currentPhase == null
                     ? null
                     : CraftEnderDragon.getBukkitPhase(
                           this.currentPhase.getPhase()
@@ -58,10 +60,9 @@ public abstract class EnderDragonPhaseManagerMixin {
 
             this.currentPhase = this.getPhase(phaseIn);
             if (!this.dragon.level().isClientSide) {
-                this.dragon.getEntityData().set(
-                    EnderDragon.DATA_PHASE,
-                    phaseIn.getId()
-                );
+                this.dragon
+                    .getEntityData()
+                    .set(EnderDragon.DATA_PHASE, phaseIn.getId());
             }
 
             LOGGER.debug(

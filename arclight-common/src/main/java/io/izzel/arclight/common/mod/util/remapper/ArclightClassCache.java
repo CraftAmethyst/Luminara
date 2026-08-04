@@ -135,20 +135,17 @@ public abstract class ArclightClassCache implements AutoCloseable {
                     e
                 );
             }
-            Thread thread = new Thread(
-                () -> {
-                    try {
-                        this.close();
-                    } catch (Exception e) {
-                        ArclightMod.LOGGER.error(
-                            MARKER,
-                            "Failed to close class cache",
-                            e
-                        );
-                    }
-                },
-                "arclight class cache cleanup"
-            );
+            Thread thread = new Thread(() -> {
+                try {
+                    this.close();
+                } catch (Exception e) {
+                    ArclightMod.LOGGER.error(
+                        MARKER,
+                        "Failed to close class cache",
+                        e
+                    );
+                }
+            }, "arclight class cache cleanup");
             thread.setDaemon(true);
             Runtime.getRuntime().addShutdownHook(thread);
         }

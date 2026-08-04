@@ -22,9 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(PersistentEntitySectionManager.class)
-public abstract class PersistentEntitySectionManagerMixin<
-    T extends EntityAccess
-> {
+public abstract class PersistentEntitySectionManagerMixin<T extends EntityAccess> {
 
     @Shadow
     @Final
@@ -36,9 +34,7 @@ public abstract class PersistentEntitySectionManagerMixin<
 
     @Shadow
     @Final
-    private Long2ObjectMap<
-        PersistentEntitySectionManager.ChunkLoadStatus
-    > chunkLoadStatuses;
+    private Long2ObjectMap<PersistentEntitySectionManager.ChunkLoadStatus> chunkLoadStatuses;
 
     @Unique
     private boolean arclight$fireEvent = false;

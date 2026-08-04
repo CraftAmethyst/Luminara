@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Turtle.class)
 public abstract class TurtleMixin
     extends AnimalMixin
-    implements TurtleEntityBridge {
+    implements TurtleEntityBridge
+{
 
     // @formatter:off
     @Accessor("layEggCounter") public abstract int bridge$getDigging();

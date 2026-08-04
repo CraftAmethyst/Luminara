@@ -248,11 +248,8 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
         try (var input = Files.newInputStream(file)) {
             byte[] buffer = new byte[8192];
             int length;
-            while ((length = input.read(buffer)) >= 0) digest.update(
-                buffer,
-                0,
-                length
-            );
+            while ((length = input.read(buffer)) >= 0)
+                digest.update(buffer, 0, length);
         }
         return HexFormat.of().formatHex(digest.digest());
     }

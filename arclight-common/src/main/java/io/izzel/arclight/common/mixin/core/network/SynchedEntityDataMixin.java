@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SynchedEntityData.class)
 public abstract class SynchedEntityDataMixin
-    implements SynchedEntityDataBridge {
+    implements SynchedEntityDataBridge
+{
 
     @Shadow
     private boolean isDirty;
@@ -53,9 +54,10 @@ public abstract class SynchedEntityDataMixin
             this.entity instanceof ServerPlayerEntityBridge &&
             ((ServerPlayerEntityBridge) this.entity).bridge$initialized()
         ) {
-            CraftPlayer player =
-                ((ServerPlayerEntityBridge) this.entity).bridge$getBukkitEntity();
-            player.setRealHealth(((Float) value));
+            CraftPlayer player = (
+                (ServerPlayerEntityBridge) this.entity
+            ).bridge$getBukkitEntity();
+            player.setRealHealth((Float) value);
         }
     }
 

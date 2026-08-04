@@ -27,9 +27,9 @@ public interface BucketableMixin {
      * @reason
      */
     @Overwrite
-    static <T extends LivingEntity & Bucketable> Optional<
-        InteractionResult
-    > bucketMobPickup(
+    static <
+        T extends LivingEntity & Bucketable
+    > Optional<InteractionResult> bucketMobPickup(
         Player player,
         InteractionHand hand,
         LivingEntity livingEntity
@@ -55,9 +55,9 @@ public interface BucketableMixin {
                 ((ServerPlayer) player).connection.send(
                     new ClientboundAddEntityPacket(entity)
                 ); // We need to play out these packets as the client assumes the fish is gone
-                ((SynchedEntityDataBridge) livingEntity.getEntityData()).bridge$refresh(
-                    (ServerPlayer) player
-                ); // Need to send data such as the display name to client
+                (
+                    (SynchedEntityDataBridge) livingEntity.getEntityData()
+                ).bridge$refresh((ServerPlayer) player); // Need to send data such as the display name to client
                 return Optional.of(InteractionResult.FAIL);
             }
             entity.playSound(entity.getPickupSound(), 1.0F, 1.0F);

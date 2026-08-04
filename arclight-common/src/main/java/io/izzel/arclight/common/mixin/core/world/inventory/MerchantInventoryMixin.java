@@ -22,7 +22,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MerchantContainer.class)
 public abstract class MerchantInventoryMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     // @formatter:off
     @Shadow @Final private NonNullList<ItemStack> itemStacks;
@@ -58,7 +59,9 @@ public abstract class MerchantInventoryMixin
     @Override
     public InventoryHolder getOwner() {
         return this.merchant instanceof AbstractVillager
-            ? ((CraftAbstractVillager) ((EntityBridge) this.merchant).bridge$getBukkitEntity())
+            ? (CraftAbstractVillager) (
+                  (EntityBridge) this.merchant
+              ).bridge$getBukkitEntity()
             : null;
     }
 
@@ -79,7 +82,9 @@ public abstract class MerchantInventoryMixin
     @Override
     public Location getLocation() {
         return this.merchant instanceof AbstractVillager
-            ? ((EntityBridge) this.merchant).bridge$getBukkitEntity().getLocation()
+            ? ((EntityBridge) this.merchant)
+                  .bridge$getBukkitEntity()
+                  .getLocation()
             : null;
     }
 

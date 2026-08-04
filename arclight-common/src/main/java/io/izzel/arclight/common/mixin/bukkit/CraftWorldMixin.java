@@ -26,7 +26,8 @@ public abstract class CraftWorldMixin {
      */
     @Overwrite
     public File getWorldFolder() {
-        return ((ServerWorldBridge) this.world).bridge$getConvertable()
+        return ((ServerWorldBridge) this.world)
+            .bridge$getConvertable()
             .getDimensionPath(this.world.dimension())
             .toFile();
     }

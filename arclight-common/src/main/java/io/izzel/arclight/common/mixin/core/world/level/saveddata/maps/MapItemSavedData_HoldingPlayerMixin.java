@@ -53,9 +53,12 @@ public abstract class MapItemSavedData_HoldingPlayerMixin {
     @Overwrite
     @Nullable
     public Packet<?> nextUpdatePacket(int i) {
-        RenderData render =
-            ((MapDataBridge) outerThis).bridge$getMapView().render(
-                ((ServerPlayerEntityBridge) this.player).bridge$getBukkitEntity()
+        RenderData render = ((MapDataBridge) outerThis)
+            .bridge$getMapView()
+            .render(
+                (
+                    (ServerPlayerEntityBridge) this.player
+                ).bridge$getBukkitEntity()
             ); // CraftBukkit
         MapItemSavedData.MapPatch patch;
         if (this.dirtyData) {

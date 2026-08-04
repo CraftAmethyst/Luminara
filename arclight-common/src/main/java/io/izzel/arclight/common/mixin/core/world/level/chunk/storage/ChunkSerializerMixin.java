@@ -34,9 +34,11 @@ public class ChunkSerializerMixin {
     ) {
         net.minecraft.nbt.Tag persistentBase = tag.get("ChunkBukkitValues");
         if (persistentBase instanceof CompoundTag) {
-            ((CraftPersistentDataContainer) ((ChunkAccessBridge) instance).bridge$getPersistentDataContainer()).putAll(
-                (CompoundTag) persistentBase
-            );
+            (
+                (CraftPersistentDataContainer) (
+                    (ChunkAccessBridge) instance
+                ).bridge$getPersistentDataContainer()
+            ).putAll((CompoundTag) persistentBase);
         }
         instance.setLightCorrect(correct);
     }
@@ -47,12 +49,14 @@ public class ChunkSerializerMixin {
         ChunkAccess chunkAccess,
         CallbackInfoReturnable<CompoundTag> cir
     ) {
-        var container =
-            (CraftPersistentDataContainer) ((ChunkAccessBridge) chunkAccess).bridge$getPersistentDataContainer();
+        var container = (CraftPersistentDataContainer) (
+            (ChunkAccessBridge) chunkAccess
+        ).bridge$getPersistentDataContainer();
         if (!container.isEmpty()) {
-            cir
-                .getReturnValue()
-                .put("ChunkBukkitValues", container.toTagCompound());
+            cir.getReturnValue().put(
+                "ChunkBukkitValues",
+                container.toTagCompound()
+            );
         }
     }
 }

@@ -60,7 +60,9 @@ public abstract class BeaconContainerMixin extends AbstractContainerMenuMixin {
 
         CraftInventory inventory = new CraftInventoryBeacon(this.beacon);
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

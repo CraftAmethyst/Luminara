@@ -30,7 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Animal.class)
 public abstract class AnimalMixin
     extends AgeableMobMixin
-    implements AnimalEntityBridge {
+    implements AnimalEntityBridge
+{
 
     @Shadow
     public int inLove;

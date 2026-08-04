@@ -63,11 +63,11 @@ public class ArclightLocator_Forge implements IModLocator {
                 files
                     .peek(pathConsumer)
                     .map(status)
-                    .reduce((s1, s2) ->
-                        SecureJar.Status.values()[Math.min(
-                            s1.ordinal(),
-                            s2.ordinal()
-                        )]
+                    .reduce(
+                        (s1, s2) ->
+                            SecureJar.Status.values()[
+                                Math.min(s1.ordinal(), s2.ordinal())
+                            ]
                     )
                     .orElse(SecureJar.Status.INVALID)
             );

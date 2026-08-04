@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AgeableMob.class)
 public abstract class AgeableEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange {
+    extends EntityMixin_ActivationRange
+{
 
     // @formatter:off
     @Shadow public abstract int getAge();

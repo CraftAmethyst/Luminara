@@ -89,14 +89,14 @@ public abstract class BambooStalkBlockMixin extends BlockMixin {
             }
         }
 
-        int newAge = blockStateIn.getValue(AGE) != 1 &&
-            !blockstate1.is(Blocks.BAMBOO)
-            ? 0
-            : 1;
-        int newState = (height < 11 || !(rand.nextFloat() < 0.25F)) &&
-            height != 15
-            ? 0
-            : 1;
+        int newAge =
+            blockStateIn.getValue(AGE) != 1 && !blockstate1.is(Blocks.BAMBOO)
+                ? 0
+                : 1;
+        int newState =
+            (height < 11 || !(rand.nextFloat() < 0.25F)) && height != 15
+                ? 0
+                : 1;
 
         if (
             CraftEventFactory.handleBlockSpreadEvent(

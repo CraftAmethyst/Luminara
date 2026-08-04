@@ -86,7 +86,7 @@ public abstract class FlowingFluidMixin {
             )
         ) {
             if (!DistValidate.isValid(worldIn)) return true;
-            Block source = CraftBlock.at(((Level) worldIn), fromPos);
+            Block source = CraftBlock.at((Level) worldIn, fromPos);
             BlockFromToEvent event = new BlockFromToEvent(
                 source,
                 CraftBlock.notchToBlockFace(direction)

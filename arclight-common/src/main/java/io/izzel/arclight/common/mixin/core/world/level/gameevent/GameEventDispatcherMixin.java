@@ -44,7 +44,7 @@ public class GameEventDispatcherMixin {
                 vec3.y(),
                 vec3.z()
             ),
-            (entity == null)
+            entity == null
                 ? null
                 : ((EntityBridge) entity).bridge$getBukkitEntity(),
             i,

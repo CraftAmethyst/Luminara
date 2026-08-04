@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LevelStorageSource.LevelStorageAccess.class)
 public class LevelStorageSource_LevelStorageAccessMixin
-    implements LevelStorageSourceBridge.LevelStorageAccessBridge {
+    implements LevelStorageSourceBridge.LevelStorageAccessBridge
+{
 
     public ResourceKey<LevelStem> dimensionType;
 

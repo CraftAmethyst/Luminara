@@ -160,9 +160,9 @@ public class CraftMetaItemMixin implements ItemMetaBridge {
         CraftMetaItem clone
     ) {
         if (this.unhandledTags != null) {
-            ((ItemMetaBridge) clone).bridge$getUnhandledTags().putAll(
-                this.unhandledTags
-            );
+            ((ItemMetaBridge) clone)
+                .bridge$getUnhandledTags()
+                .putAll(this.unhandledTags);
         }
         if (this.forgeCaps != null) {
             ((ItemMetaBridge) clone).bridge$setForgeCaps(this.forgeCaps.copy());
@@ -193,9 +193,10 @@ public class CraftMetaItemMixin implements ItemMetaBridge {
         if (this.forgeCaps == null) {
             ret = forgeCaps != null && forgeCaps.size() != 0;
         } else {
-            ret = forgeCaps == null
-                ? this.forgeCaps.size() != 0
-                : !this.forgeCaps.equals(forgeCaps);
+            ret =
+                forgeCaps == null
+                    ? this.forgeCaps.size() != 0
+                    : !this.forgeCaps.equals(forgeCaps);
         }
         if (ret) {
             cir.setReturnValue(false);
@@ -223,8 +224,9 @@ public class CraftMetaItemMixin implements ItemMetaBridge {
     @Inject(method = "<init>*", at = @At("RETURN"))
     private void arclight$copyForgeCaps(CraftMetaItem meta, CallbackInfo ci) {
         if (meta != null) {
-            CompoundTag forgeCaps =
-                ((ItemMetaBridge) meta).bridge$getForgeCaps();
+            CompoundTag forgeCaps = (
+                (ItemMetaBridge) meta
+            ).bridge$getForgeCaps();
             if (forgeCaps != null) {
                 this.forgeCaps = forgeCaps.copy();
             }

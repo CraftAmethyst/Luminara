@@ -43,10 +43,10 @@ public abstract class SmithingTableContainerMixin extends ItemCombinerMixin {
             this.inputSlots,
             this.resultSlots
         );
-        return this.bukkitEntity = new CraftInventoryView(
+        return (this.bukkitEntity = new CraftInventoryView(
             ((PlayerEntityBridge) this.player).bridge$getBukkitEntity(),
             inventory,
             (SmithingMenu) (Object) this
-        );
+        ));
     }
 }

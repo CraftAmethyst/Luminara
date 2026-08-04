@@ -42,7 +42,9 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
             Entity shooter = this.getOwner();
             if (shooter instanceof ServerPlayer) {
                 PlayerEggThrowEvent event = new PlayerEggThrowEvent(
-                    ((ServerPlayerEntityBridge) shooter).bridge$getBukkitEntity(),
+                    (
+                        (ServerPlayerEntityBridge) shooter
+                    ).bridge$getBukkitEntity(),
                     (Egg) this.getBukkitEntity(),
                     hatching,
                     b0,
@@ -57,8 +59,9 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
                 for (int i = 0; i < b0; ++i) {
                     // TrickOrTreatMod compat https://github.com/IzzelAliz/Arclight/issues/1178
                     // https://github.com/MehVahdJukaar/TrickOrTreatMod/blob/020bc478b8f8de6bfec2191a9e667f423f45d7db/common/src/main/java/net/mehvahdjukaar/hauntedharvest/mixins/ThrownEggEntityMixin.java
-                    var entityType =
-                        ((EntityTypeBridge) (Object) hatchingType).bridge$getHandle();
+                    var entityType = (
+                        (EntityTypeBridge) (Object) hatchingType
+                    ).bridge$getHandle();
                     var entity = entityType.create(this.level());
                     // Let's do: Meadow mixin compatibility https://github.com/IzzelAliz/Arclight/issues/1149
                     if (entity instanceof Chicken) {
@@ -67,10 +70,16 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
                     }
                     if (entity != null) {
                         if (
-                            ((EntityBridge) entity).bridge$getBukkitEntity() instanceof
+                            (
+                                    (EntityBridge) entity
+                                ).bridge$getBukkitEntity() instanceof
                                 Ageable
                         ) {
-                            ((Ageable) ((EntityBridge) entity).bridge$getBukkitEntity()).setBaby();
+                            (
+                                (Ageable) (
+                                    (EntityBridge) entity
+                                ).bridge$getBukkitEntity()
+                            ).setBaby();
                         }
                         entity.moveTo(
                             this.getX(),

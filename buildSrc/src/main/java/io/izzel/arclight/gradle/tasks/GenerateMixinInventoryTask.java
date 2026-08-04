@@ -158,10 +158,10 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
                             List<String> selectors = strings(
                                 values.get("method")
                             );
-                            int require = values.get("require") instanceof
-                                    Number number
-                                ? number.intValue()
-                                : defaultRequire;
+                            int require =
+                                values.get("require") instanceof Number number
+                                    ? number.intValue()
+                                    : defaultRequire;
                             if (selectors.isEmpty()) selectors = List.of("");
                             addRows(
                                 rows,
@@ -419,12 +419,12 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
             int ownerEnd = value.startsWith("L") ? value.indexOf(';') : -1;
             if (ownerEnd >= 0) value = value.substring(ownerEnd + 1);
             int descriptorStart = value.indexOf('(');
-            String name = descriptorStart >= 0
-                ? value.substring(0, descriptorStart)
-                : value;
-            String descriptor = descriptorStart >= 0
-                ? value.substring(descriptorStart)
-                : "";
+            String name =
+                descriptorStart >= 0
+                    ? value.substring(0, descriptorStart)
+                    : value;
+            String descriptor =
+                descriptorStart >= 0 ? value.substring(descriptorStart) : "";
             return new TargetMethod(name, descriptor);
         }
 

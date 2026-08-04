@@ -30,8 +30,9 @@ public class ServerGamePacketListenerImplMixin_Optimize {
     ) {
         if (!packet.hasPosition()) {
             // do not update tracker when no position is updated
-            var old =
-                ((ServerPlayerEntityBridge) this.player).bridge$isTrackerDirty();
+            var old = (
+                (ServerPlayerEntityBridge) this.player
+            ).bridge$isTrackerDirty();
             instance.move(player);
             ((ServerPlayerEntityBridge) this.player).bridge$setTrackerDirty(
                 old

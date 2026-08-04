@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class TransformingRandomAccessList<F, T>
     extends AbstractList<T>
-    implements RandomAccess {
+    implements RandomAccess
+{
 
     private final List<F> fromList;
     private final Function<? super F, ? extends T> toFunction;
@@ -99,8 +100,10 @@ public final class TransformingRandomAccessList<F, T>
         this.fromList.add(index, this.fromFunction.apply(element));
     }
 
-    abstract static class TransformedListIterator<F, T>
-        implements ListIterator<T>, Iterator<T> {
+    abstract static class TransformedListIterator<
+        F,
+        T
+    > implements ListIterator<T>, Iterator<T> {
 
         final Iterator<F> backingIterator;
 

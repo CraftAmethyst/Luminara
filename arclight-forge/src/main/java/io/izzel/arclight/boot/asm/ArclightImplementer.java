@@ -38,7 +38,7 @@ public class ArclightImplementer implements ILaunchPluginService {
     private static boolean detectTransformLogger() {
         var transformLogger =
             !(java.util.logging.LogManager.getLogManager() instanceof
-                    org.apache.logging.log4j.jul.LogManager);
+                org.apache.logging.log4j.jul.LogManager);
         if (
             transformLogger &&
             !System.getProperties().contains("log4j.jul.LoggerAdapter")
@@ -135,9 +135,9 @@ public class ArclightImplementer implements ILaunchPluginService {
             }
         }
         if (this.auditAcceptor != null && !trails.isEmpty()) {
-            this.auditAcceptor.accept(
-                new String[] { String.join(",", trails) }
-            );
+            this.auditAcceptor.accept(new String[] {
+                String.join(",", trails),
+            });
         }
         return !trails.isEmpty();
     }

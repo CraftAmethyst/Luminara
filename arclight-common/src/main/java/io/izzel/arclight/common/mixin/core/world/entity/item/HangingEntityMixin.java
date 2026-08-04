@@ -111,7 +111,7 @@ public abstract class HangingEntityMixin extends EntityMixin {
         float amount,
         CallbackInfoReturnable<Boolean> cir
     ) {
-        Entity damager = (source.isIndirect())
+        Entity damager = source.isIndirect()
             ? source.getEntity()
             : source.getDirectEntity();
         HangingBreakEvent event;

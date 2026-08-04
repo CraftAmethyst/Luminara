@@ -22,7 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GrindstoneMenu.class)
 public abstract class GrindstoneContainerMixin
     extends AbstractContainerMenuMixin
-    implements PosContainerBridge {
+    implements PosContainerBridge
+{
 
     @Shadow
     @Final
@@ -93,7 +94,9 @@ public abstract class GrindstoneContainerMixin
             this.resultSlots
         );
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

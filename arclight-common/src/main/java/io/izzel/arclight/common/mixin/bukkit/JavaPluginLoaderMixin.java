@@ -50,12 +50,10 @@ public abstract class JavaPluginLoaderMixin implements JavaPluginLoaderBridge {
         .expireAfterAccess(1, TimeUnit.HOURS)
         .build();
     private static final AtomicInteger CMI_THREAD_COUNTER = new AtomicInteger();
-    private static final String HIDDEN_FORM = Float.parseFloat(
-            System.getProperty("java.class.version")
-        ) <
-        57
-        ? "Ljava/lang/invoke/LambdaForm$Hidden;"
-        : "Ljdk/internal/vm/annotation/Hidden;";
+    private static final String HIDDEN_FORM =
+        Float.parseFloat(System.getProperty("java.class.version")) < 57
+            ? "Ljava/lang/invoke/LambdaForm$Hidden;"
+            : "Ljdk/internal/vm/annotation/Hidden;";
 
     // @formatter:on
     // @formatter:off

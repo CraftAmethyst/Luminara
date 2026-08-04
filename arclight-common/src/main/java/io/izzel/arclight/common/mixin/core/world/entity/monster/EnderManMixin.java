@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EnderMan.class)
 public abstract class EnderManMixin
     extends PathfinderMobMixin
-    implements EndermanEntityBridge {
+    implements EndermanEntityBridge
+{
 
     @Shadow
     @Final

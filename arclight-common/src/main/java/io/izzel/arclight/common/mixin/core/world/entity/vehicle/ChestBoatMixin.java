@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ChestBoat.class)
 public abstract class ChestBoatMixin
     extends BoatMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     public List<HumanEntity> transaction = new ArrayList<>();
 

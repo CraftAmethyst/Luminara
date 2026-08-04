@@ -104,7 +104,9 @@ public abstract class FishingHookMixin extends ProjectileMixin {
     )
     private void arclight$attemptFail(BlockPos blockPos, CallbackInfo ci) {
         PlayerFishEvent event = new PlayerFishEvent(
-            ((ServerPlayerEntityBridge) this.getPlayerOwner()).bridge$getBukkitEntity(),
+            (
+                (ServerPlayerEntityBridge) this.getPlayerOwner()
+            ).bridge$getBukkitEntity(),
             null,
             (FishHook) this.getBukkitEntity(),
             PlayerFishEvent.State.FAILED_ATTEMPT
@@ -122,7 +124,9 @@ public abstract class FishingHookMixin extends ProjectileMixin {
     )
     private void arclight$fishBite(BlockPos blockPos, CallbackInfo ci) {
         PlayerFishEvent event = new PlayerFishEvent(
-            ((ServerPlayerEntityBridge) this.getPlayerOwner()).bridge$getBukkitEntity(),
+            (
+                (ServerPlayerEntityBridge) this.getPlayerOwner()
+            ).bridge$getBukkitEntity(),
             null,
             (FishHook) this.getBukkitEntity(),
             PlayerFishEvent.State.BITE
@@ -148,9 +152,7 @@ public abstract class FishingHookMixin extends ProjectileMixin {
                 this.minWaitTime,
                 this.maxWaitTime
             );
-            this.timeUntilLured -= (this.applyLure)
-                ? this.lureSpeed * 20 * 5
-                : 0;
+            this.timeUntilLured -= this.applyLure ? this.lureSpeed * 20 * 5 : 0;
         }
     }
 
@@ -220,7 +222,9 @@ public abstract class FishingHookMixin extends ProjectileMixin {
             ItemFishedEvent event = null;
             if (this.hookedIn != null) {
                 PlayerFishEvent fishEvent = new PlayerFishEvent(
-                    ((ServerPlayerEntityBridge) playerentity).bridge$getBukkitEntity(),
+                    (
+                        (ServerPlayerEntityBridge) playerentity
+                    ).bridge$getBukkitEntity(),
                     ((EntityBridge) this.hookedIn).bridge$getBukkitEntity(),
                     (FishHook) this.getBukkitEntity(),
                     PlayerFishEvent.State.CAUGHT_ENTITY
@@ -242,9 +246,10 @@ public abstract class FishingHookMixin extends ProjectileMixin {
                 );
                 i = this.hookedIn instanceof ItemEntity ? 3 : 5;
             } else if (this.nibble > 0) {
-                LootParams params = (new LootParams.Builder(
-                        (ServerLevel) this.level()
-                    )).withParameter(LootContextParams.ORIGIN, this.position())
+                LootParams params = new LootParams.Builder(
+                    (ServerLevel) this.level()
+                )
+                    .withParameter(LootContextParams.ORIGIN, this.position())
                     .withParameter(LootContextParams.TOOL, stack)
                     .withParameter(
                         LootContextParams.THIS_ENTITY,
@@ -283,7 +288,9 @@ public abstract class FishingHookMixin extends ProjectileMixin {
                         itemstack
                     );
                     PlayerFishEvent playerFishEvent = new PlayerFishEvent(
-                        ((ServerPlayerEntityBridge) playerentity).bridge$getBukkitEntity(),
+                        (
+                            (ServerPlayerEntityBridge) playerentity
+                        ).bridge$getBukkitEntity(),
                         ((EntityBridge) itementity).bridge$getBukkitEntity(),
                         (FishHook) this.getBukkitEntity(),
                         PlayerFishEvent.State.CAUGHT_FISH
@@ -302,7 +309,7 @@ public abstract class FishingHookMixin extends ProjectileMixin {
                         d0 * 0.1D,
                         d1 * 0.1D +
                             Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) *
-                            0.08D,
+                                0.08D,
                         d2 * 0.1D
                     );
                     this.level().addFreshEntity(itementity);
@@ -329,7 +336,9 @@ public abstract class FishingHookMixin extends ProjectileMixin {
 
             if (this.onGround) {
                 PlayerFishEvent playerFishEvent = new PlayerFishEvent(
-                    ((ServerPlayerEntityBridge) playerentity).bridge$getBukkitEntity(),
+                    (
+                        (ServerPlayerEntityBridge) playerentity
+                    ).bridge$getBukkitEntity(),
                     null,
                     (FishHook) this.getBukkitEntity(),
                     PlayerFishEvent.State.IN_GROUND
@@ -344,7 +353,9 @@ public abstract class FishingHookMixin extends ProjectileMixin {
 
             if (i == 0) {
                 PlayerFishEvent playerFishEvent = new PlayerFishEvent(
-                    ((ServerPlayerEntityBridge) playerentity).bridge$getBukkitEntity(),
+                    (
+                        (ServerPlayerEntityBridge) playerentity
+                    ).bridge$getBukkitEntity(),
                     null,
                     (FishHook) this.getBukkitEntity(),
                     PlayerFishEvent.State.REEL_IN

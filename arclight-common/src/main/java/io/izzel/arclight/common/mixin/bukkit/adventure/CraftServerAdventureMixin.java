@@ -23,7 +23,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = CraftServer.class, remap = false)
 public abstract class CraftServerAdventureMixin
-    implements net.kyori.adventure.audience.ForwardingAudience {
+    implements net.kyori.adventure.audience.ForwardingAudience
+{
 
     private static final String BROADCAST_CHANNEL_USERS =
         "bukkit.broadcast.user";

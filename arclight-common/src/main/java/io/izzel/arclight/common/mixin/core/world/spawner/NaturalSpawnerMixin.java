@@ -62,18 +62,17 @@ public abstract class NaturalSpawnerMixin {
             );
             if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
                 spawnThisTick =
-                    ((WorldBridge) world).bridge$ticksPerSpawnCategory().getLong(
-                            spawnCategory
-                        ) !=
-                        0 &&
+                    ((WorldBridge) world)
+                        .bridge$ticksPerSpawnCategory()
+                        .getLong(spawnCategory) != 0 &&
                     worldInfo.getGameTime() %
-                    ((WorldBridge) world).bridge$ticksPerSpawnCategory().getLong(
-                        spawnCategory
-                    ) ==
-                    0;
-                limit = ((WorldBridge) world).bridge$getWorld().getSpawnLimit(
-                    spawnCategory
-                );
+                        ((WorldBridge) world)
+                            .bridge$ticksPerSpawnCategory()
+                            .getLong(spawnCategory) ==
+                        0;
+                limit = ((WorldBridge) world)
+                    .bridge$getWorld()
+                    .getSpawnLimit(spawnCategory);
             }
             if (spawnThisTick) {
                 if (limit != 0) {
@@ -81,18 +80,20 @@ public abstract class NaturalSpawnerMixin {
                         (flag || !classification.isFriendly()) &&
                         (flag1 || classification.isFriendly()) &&
                         (flag2 || !classification.isPersistent()) &&
-                        ((WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager).bridge$canSpawn(
-                            classification,
-                            chunk.getPos(),
-                            limit
-                        )
+                        (
+                            (WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager
+                        ).bridge$canSpawn(classification, chunk.getPos(), limit)
                     ) {
                         spawnCategoryForChunk(
                             classification,
                             world,
                             chunk,
-                            ((WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager)::bridge$canSpawn,
-                            ((WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager)::bridge$updateDensity
+                            (
+                                (WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager
+                            )::bridge$canSpawn,
+                            (
+                                (WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager
+                            )::bridge$updateDensity
                         );
                     }
                 }

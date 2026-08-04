@@ -61,8 +61,9 @@ public class ChunkMapMixin_Optimize {
         );
 
         for (var trackedEntity : this.entityMap.values()) {
-            var entity =
-                ((ChunkMap_TrackedEntityBridge) trackedEntity).bridge$getEntity();
+            var entity = (
+                (ChunkMap_TrackedEntityBridge) trackedEntity
+            ).bridge$getEntity();
             if (
                 entity instanceof ServerPlayer player &&
                 ((ServerPlayerEntityBridge) player).bridge$isTrackerDirty()
@@ -72,22 +73,27 @@ public class ChunkMapMixin_Optimize {
                     false
                 );
             }
-            ((ChunkMap_TrackedEntityBridge) trackedEntity).bridge$getServerEntity().sendChanges();
+            ((ChunkMap_TrackedEntityBridge) trackedEntity)
+                .bridge$getServerEntity()
+                .sendChanges();
         }
 
         for (var trackedEntity : this.entityMap.values()) {
-            var entity =
-                ((ChunkMap_TrackedEntityBridge) trackedEntity).bridge$getEntity();
-            SectionPos lastSectionPos =
-                ((ChunkMap_TrackedEntityBridge) trackedEntity).bridge$getLastSectionPos();
+            var entity = (
+                (ChunkMap_TrackedEntityBridge) trackedEntity
+            ).bridge$getEntity();
+            SectionPos lastSectionPos = (
+                (ChunkMap_TrackedEntityBridge) trackedEntity
+            ).bridge$getLastSectionPos();
             SectionPos newSectionPos = SectionPos.of(entity);
-            ((ChunkMap_TrackedEntityBridge) trackedEntity).bridge$setLastSectionPos(
-                newSectionPos
-            );
+            (
+                (ChunkMap_TrackedEntityBridge) trackedEntity
+            ).bridge$setLastSectionPos(newSectionPos);
             if (entity instanceof ServerPlayer player) {
                 for (var otherTracker : list) {
-                    var other =
-                        (ServerPlayer) ((ChunkMap_TrackedEntityBridge) otherTracker).bridge$getEntity();
+                    var other = (ServerPlayer) (
+                        (ChunkMap_TrackedEntityBridge) otherTracker
+                    ).bridge$getEntity();
                     if (other.getId() > entity.getId()) {
                         trackedEntity.updatePlayer(other);
                         otherTracker.updatePlayer(player);
@@ -103,7 +109,9 @@ public class ChunkMapMixin_Optimize {
                 } else {
                     for (var other : list) {
                         trackedEntity.updatePlayer(
-                            (ServerPlayer) ((ChunkMap_TrackedEntityBridge) other).bridge$getEntity()
+                            (ServerPlayer) (
+                                (ChunkMap_TrackedEntityBridge) other
+                            ).bridge$getEntity()
                         );
                     }
                 }

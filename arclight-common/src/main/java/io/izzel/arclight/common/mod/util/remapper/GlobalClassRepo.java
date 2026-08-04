@@ -61,7 +61,8 @@ public class GlobalClassRepo implements ClassRepo, PluginPatcher.ClassRepo {
         if (parsingOptions == ClassReader.SKIP_CODE) {
             return findClass(internalName);
         } else {
-            return this.repos.parallelStream()
+            return this.repos
+                .parallelStream()
                 .filter(PluginPatcher.ClassRepo.class::isInstance)
                 .map(PluginPatcher.ClassRepo.class::cast)
                 .map(it -> it.findClass(internalName, parsingOptions))
@@ -72,7 +73,8 @@ public class GlobalClassRepo implements ClassRepo, PluginPatcher.ClassRepo {
     }
 
     private ClassNode findParallel(String internalName) {
-        return this.repos.parallelStream()
+        return this.repos
+            .parallelStream()
             .map(it -> it.findClass(internalName))
             .filter(Objects::nonNull)
             .findAny()

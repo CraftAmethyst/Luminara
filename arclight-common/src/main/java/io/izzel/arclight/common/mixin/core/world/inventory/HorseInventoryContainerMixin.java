@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HorseInventoryMenu.class)
 public abstract class HorseInventoryContainerMixin
-    extends AbstractContainerMenuMixin {
+    extends AbstractContainerMenuMixin
+{
 
     CraftInventoryView bukkitEntity;
     // @formatter:on

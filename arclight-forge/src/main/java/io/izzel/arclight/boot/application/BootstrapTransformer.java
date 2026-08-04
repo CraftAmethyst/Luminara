@@ -37,11 +37,10 @@ public class BootstrapTransformer extends ClassLoader {
         ModuleClassLoader moduleCl
     ) {
         try {
-            Class<ApplicationBootstrap> arclightBootClz = (Class<
-                ApplicationBootstrap
-            >) moduleCl.loadClass(
-                "io.izzel.arclight.boot.application.ApplicationBootstrap"
-            );
+            Class<ApplicationBootstrap> arclightBootClz =
+                (Class<ApplicationBootstrap>) moduleCl.loadClass(
+                    "io.izzel.arclight.boot.application.ApplicationBootstrap"
+                );
             Object instance = arclightBootClz.getConstructor().newInstance();
             arclightBootClz
                 .getMethod("accept", String[].class)
@@ -289,8 +288,8 @@ public class BootstrapTransformer extends ClassLoader {
     ) {
         if (instruction == null) return null;
         AbstractInsnNode previous = instruction.getPrevious();
-        while (previous != null && previous.getOpcode() < 0) previous =
-            previous.getPrevious();
+        while (previous != null && previous.getOpcode() < 0)
+            previous = previous.getPrevious();
         return previous;
     }
 

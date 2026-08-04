@@ -123,7 +123,7 @@ public final class ChunkList implements Iterable<LevelChunk> {
                 if (this.current >= ChunkList.this.count) {
                     throw new NoSuchElementException();
                 }
-                return this.lastRet = ChunkList.this.chunks[this.current++];
+                return (this.lastRet = ChunkList.this.chunks[this.current++]);
             }
 
             @Override

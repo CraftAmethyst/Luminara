@@ -6,13 +6,13 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 
 ## 支持的平台
 
-| 组件                | 支持的版本                                  |
-| ------------------- | ------------------------------------------- |
-| Minecraft           | `1.20.1`                                    |
-| Forge               | 适用于 Minecraft `1.20.1` 的最新 Forge 正式版 |
-| CraftBukkit 包      | `v1_20_R1`                                  |
-| Java                | `17`（64 位）                               |
-| Luminara            | `1.0.15`                                     |
+| 组件           | 支持的版本                                    |
+| -------------- | --------------------------------------------- |
+| Minecraft      | `1.20.1`                                      |
+| Forge          | 适用于 Minecraft `1.20.1` 的最新 Forge 正式版 |
+| CraftBukkit 包 | `v1_20_R1`                                    |
+| Java           | `17`（64 位）                                 |
+| Luminara       | `1.0.15`                                      |
 
 本仓库不支持其他 Minecraft 版本，也不支持 Fabric、NeoForge 或混合加载器等配置。
 
@@ -47,6 +47,7 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 ## 如何在此服务端上实现最大优化？
 
 - 如果你想要更激进性能优化，我们推荐我们的下游项目 [PRTS-SERVER](https://github.com/ElainAwa/PRTS-SERVER)
+
   > PRTS-SERVER 的目标是在尽可能保持兼容性的同时实现更多性能优化补丁。这些补丁来自 [ServerCore](https://modrinth.com/mod/servercore)、[Very Many Players](https://modrinth.com/mod/vmp-forge)、[Paper](https://papermc.io/)、[Mohist](https://www.mohistmc.com/) 等项目
   > 请注意，它只适合中小型整合包！对于像 ATM9 这样的大型整合包，我们建议继续使用本服务端，因为大型整合包往往需要更高的兼容性
   > ~~我最近才发现这破服务端还有下游~~

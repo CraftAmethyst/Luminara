@@ -20,9 +20,9 @@ public interface CommandSenderAdventureMixin extends Audience {
                 sender instanceof
                     io.izzel.arclight.common.mod.command.ArclightDummyCommandSender
             ) {
-                ((io.izzel.arclight.common.mod.command.ArclightDummyCommandSender) sender).sendMessage(
-                    message
-                );
+                (
+                    (io.izzel.arclight.common.mod.command.ArclightDummyCommandSender) sender
+                ).sendMessage(message);
                 return;
             }
             // Convert Adventure Component to legacy string and send

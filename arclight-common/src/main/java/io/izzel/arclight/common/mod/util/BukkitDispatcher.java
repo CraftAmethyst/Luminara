@@ -28,10 +28,9 @@ public class BukkitDispatcher extends CommandDispatcher<CommandSourceStack> {
                 this.commands,
                 node
             );
-            ((CraftServer) Bukkit.getServer()).getCommandMap().register(
-                "forge",
-                wrapper
-            );
+            ((CraftServer) Bukkit.getServer())
+                .getCommandMap()
+                .register("forge", wrapper);
         }
         getRoot().addChild(node);
         return node;

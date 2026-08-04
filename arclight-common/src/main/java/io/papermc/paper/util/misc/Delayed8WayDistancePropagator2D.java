@@ -359,7 +359,7 @@ public final class Delayed8WayDistancePropagator2D {
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
 
-        this.levelIncreaseWorkQueueBitset |= (1L << level);
+        this.levelIncreaseWorkQueueBitset |= 1L << level;
     }
 
     private void addToIncreaseWorkQueue(
@@ -371,7 +371,7 @@ public final class Delayed8WayDistancePropagator2D {
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
 
-        this.levelIncreaseWorkQueueBitset |= (1L << index);
+        this.levelIncreaseWorkQueueBitset |= 1L << index;
     }
 
     private void addToRemoveWorkQueue(final long coordinate, final byte level) {
@@ -379,7 +379,7 @@ public final class Delayed8WayDistancePropagator2D {
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
 
-        this.levelRemoveWorkQueueBitset |= (1L << level);
+        this.levelRemoveWorkQueueBitset |= 1L << level;
     }
 
     public boolean propagateUpdates() {
@@ -433,7 +433,7 @@ public final class Delayed8WayDistancePropagator2D {
                 63 ^
                 Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset);
             this.levelIncreaseWorkQueueBitset != 0L;
-            this.levelIncreaseWorkQueueBitset ^= (1L << queueIndex),
+            this.levelIncreaseWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
                     Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)
@@ -513,7 +513,7 @@ public final class Delayed8WayDistancePropagator2D {
             int queueIndex =
                 63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
             this.levelRemoveWorkQueueBitset != 0L;
-            this.levelRemoveWorkQueueBitset ^= (1L << queueIndex),
+            this.levelRemoveWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
                     Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)
@@ -627,14 +627,14 @@ public final class Delayed8WayDistancePropagator2D {
                 long curr;
                 int pos;
                 if (
-                    (curr = key[pos = (int) HashCommon.mix(k) & this.mask]) ==
+                    (curr = key[(pos = (int) HashCommon.mix(k) & this.mask)]) ==
                     0L
                 ) {
                     return -(pos + 1);
                 } else if (k == curr) {
                     return pos;
                 } else {
-                    while ((curr = key[pos = (pos + 1) & this.mask]) != 0L) {
+                    while ((curr = key[(pos = (pos + 1) & this.mask)]) != 0L) {
                         if (k == curr) {
                             return pos;
                         }
@@ -720,9 +720,9 @@ public final class Delayed8WayDistancePropagator2D {
                 long curr;
                 int pos;
                 if (
-                    (curr = keys[pos =
-                            (int) HashCommon.mix(key) & this.mask]) ==
-                    0L
+                    (curr = keys[
+                        (pos = (int) HashCommon.mix(key) & this.mask)
+                    ]) == 0L
                 ) {
                     return this.defRetValue;
                 } else if (key == curr) {
@@ -733,7 +733,7 @@ public final class Delayed8WayDistancePropagator2D {
                     }
                     return current;
                 } else {
-                    while ((curr = keys[pos = (pos + 1) & this.mask]) != 0L) {
+                    while ((curr = keys[(pos = (pos + 1) & this.mask)]) != 0L) {
                         if (key == curr) {
                             final byte current = values[pos];
                             if (value >= current) {
@@ -759,7 +759,8 @@ public final class Delayed8WayDistancePropagator2D {
     }
 
     protected static final class NoResizeLongArrayFIFODeque
-        extends LongArrayFIFOQueue {
+        extends LongArrayFIFOQueue
+    {
 
         /**
          * Assumes non-empty. If empty, undefined behaviour.
@@ -776,7 +777,8 @@ public final class Delayed8WayDistancePropagator2D {
     }
 
     protected static final class NoResizeByteArrayFIFODeque
-        extends ByteArrayFIFOQueue {
+        extends ByteArrayFIFOQueue
+    {
 
         /**
          * Assumes non-empty. If empty, undefined behaviour.

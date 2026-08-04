@@ -280,15 +280,13 @@ public class PluginEventHandler implements IEventListener {
 
         cw.visitSource(".dynamic", null);
         {
-            if (!isStatic) cw
-                .visitField(
-                    ACC_PUBLIC,
-                    "instance",
-                    "Ljava/lang/Object;",
-                    null,
-                    null
-                )
-                .visitEnd();
+            if (!isStatic) cw.visitField(
+                ACC_PUBLIC,
+                "instance",
+                "Ljava/lang/Object;",
+                null,
+                null
+            ).visitEnd();
         }
         {
             mv = cw.visitMethod(

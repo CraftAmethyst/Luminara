@@ -50,11 +50,8 @@ public class StemBlockMixin {
         BlockPos pos,
         BlockState state
     ) {
-        return this.arclight$fruitGrew = CraftEventFactory.handleBlockGrowEvent(
-            world,
-            pos,
-            state
-        );
+        return (this.arclight$fruitGrew =
+            CraftEventFactory.handleBlockGrowEvent(world, pos, state));
     }
 
     @Redirect(

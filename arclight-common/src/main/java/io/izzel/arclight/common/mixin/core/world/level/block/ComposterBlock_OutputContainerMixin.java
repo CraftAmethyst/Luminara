@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ComposterBlock.OutputContainer.class)
 public abstract class ComposterBlock_OutputContainerMixin
-    extends SimpleContainerMixin {
+    extends SimpleContainerMixin
+{
 
     // @formatter:off
     @Shadow @Final private BlockState state;

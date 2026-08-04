@@ -81,13 +81,11 @@ public class DelegateWorldInfo extends PrimaryLevelData {
         data = resolveDelegate(data);
 
         if (data instanceof WorldData d) {
-            return (
-                d.isFlatWorld()
-                    ? SpecialWorldProperty.FLAT
-                    : (d.isDebugWorld()
-                          ? SpecialWorldProperty.DEBUG
-                          : SpecialWorldProperty.NONE)
-            );
+            return d.isFlatWorld()
+                ? SpecialWorldProperty.FLAT
+                : d.isDebugWorld()
+                  ? SpecialWorldProperty.DEBUG
+                  : SpecialWorldProperty.NONE;
         }
 
         return SpecialWorldProperty.NONE;

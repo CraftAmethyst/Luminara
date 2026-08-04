@@ -72,23 +72,24 @@ public abstract class AreaMap<E> {
     }
 
     @Nullable
-    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
-        E
-    > getObjectsInRange(final long key) {
+    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getObjectsInRange(
+        final long key
+    ) {
         return this.areaMap.get(key);
     }
 
     @Nullable
-    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
-        E
-    > getObjectsInRange(final ChunkPos chunkPos) {
+    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getObjectsInRange(
+        final ChunkPos chunkPos
+    ) {
         return this.areaMap.get(MCUtil.getCoordinateKey(chunkPos));
     }
 
     @Nullable
-    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
-        E
-    > getObjectsInRange(final int chunkX, final int chunkZ) {
+    public final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getObjectsInRange(
+        final int chunkX,
+        final int chunkZ
+    ) {
         return this.areaMap.get(MCUtil.getCoordinateKey(chunkX, chunkZ));
     }
 
@@ -267,14 +268,14 @@ public abstract class AreaMap<E> {
         final int viewDistance
     ) {}
 
-    protected abstract PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
-        E
-    > getEmptySetFor(final E object);
+    protected abstract PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getEmptySetFor(
+        final E object
+    );
 
     // expensive op, only for debug
     protected void validate(final E object, final int viewDistance) {
         int entiesGot = 0;
-        int expectedEntries = (2 * viewDistance + 1);
+        int expectedEntries = 2 * viewDistance + 1;
         expectedEntries *= expectedEntries;
         if (viewDistance < 0) {
             expectedEntries = 0;
@@ -537,7 +538,7 @@ public abstract class AreaMap<E> {
 
         if (
             Math.max(totalX, totalZ) >
-            (2 * Math.max(newViewDistance, oldViewDistance))
+            2 * Math.max(newViewDistance, oldViewDistance)
         ) {
             // teleported?
             this.removeObject(
@@ -566,8 +567,7 @@ public abstract class AreaMap<E> {
                         Math.max(
                             IntegerUtil.branchlessAbs(currX - toX),
                             IntegerUtil.branchlessAbs(currZ - toZ)
-                        ) >
-                        newViewDistance
+                        ) > newViewDistance
                     ) {
                         this.removeObjectFrom(
                             object,
@@ -595,8 +595,7 @@ public abstract class AreaMap<E> {
                         Math.max(
                             IntegerUtil.branchlessAbs(currX - fromX),
                             IntegerUtil.branchlessAbs(currZ - fromZ)
-                        ) >
-                        oldViewDistance
+                        ) > oldViewDistance
                     ) {
                         this.addObjectTo(
                             object,
@@ -640,10 +639,10 @@ public abstract class AreaMap<E> {
         if (dx != 0) {
             // handle right addition
 
-            maxX = toX + (oldViewDistance * right) + right; // exclusive
-            minX = fromX + (oldViewDistance * right) + right; // inclusive
-            maxZ = fromZ + (oldViewDistance * up) + up; // exclusive
-            minZ = toZ - (oldViewDistance * up); // inclusive
+            maxX = toX + oldViewDistance * right + right; // exclusive
+            minX = fromX + oldViewDistance * right + right; // inclusive
+            maxZ = fromZ + oldViewDistance * up + up; // exclusive
+            minZ = toZ - oldViewDistance * up; // inclusive
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {
@@ -663,10 +662,10 @@ public abstract class AreaMap<E> {
         if (dz != 0) {
             // handle up addition
 
-            maxX = toX + (oldViewDistance * right) + right; // exclusive
-            minX = toX - (oldViewDistance * right); // inclusive
-            maxZ = toZ + (oldViewDistance * up) + up; // exclusive
-            minZ = fromZ + (oldViewDistance * up) + up; // inclusive
+            maxX = toX + oldViewDistance * right + right; // exclusive
+            minX = toX - oldViewDistance * right; // inclusive
+            maxZ = toZ + oldViewDistance * up + up; // exclusive
+            minZ = fromZ + oldViewDistance * up + up; // inclusive
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {
@@ -686,10 +685,10 @@ public abstract class AreaMap<E> {
         if (dx != 0) {
             // handle left removal
 
-            maxX = toX - (oldViewDistance * right); // exclusive
-            minX = fromX - (oldViewDistance * right); // inclusive
-            maxZ = fromZ + (oldViewDistance * up) + up; // exclusive
-            minZ = toZ - (oldViewDistance * up); // inclusive
+            maxX = toX - oldViewDistance * right; // exclusive
+            minX = fromX - oldViewDistance * right; // inclusive
+            maxZ = fromZ + oldViewDistance * up + up; // exclusive
+            minZ = toZ - oldViewDistance * up; // inclusive
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {
@@ -709,10 +708,10 @@ public abstract class AreaMap<E> {
         if (dz != 0) {
             // handle down removal
 
-            maxX = fromX + (oldViewDistance * right) + right; // exclusive
-            minX = fromX - (oldViewDistance * right); // inclusive
-            maxZ = toZ - (oldViewDistance * up); // exclusive
-            minZ = fromZ - (oldViewDistance * up); // inclusive
+            maxX = fromX + oldViewDistance * right + right; // exclusive
+            minX = fromX - oldViewDistance * right; // inclusive
+            maxZ = toZ - oldViewDistance * up; // exclusive
+            minZ = fromZ - oldViewDistance * up; // inclusive
 
             for (int currX = minX; currX != maxX; currX += right) {
                 for (int currZ = minZ; currZ != maxZ; currZ += up) {

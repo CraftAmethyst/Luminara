@@ -45,9 +45,7 @@ public abstract class EntityMixin_Optimize {
             for (var entity : this.passengers) {
                 list.add(entity);
                 list.addAll(
-                    (Collection<
-                        ? extends Entity
-                    >) entity.getIndirectPassengers()
+                    (Collection<? extends Entity>) entity.getIndirectPassengers()
                 );
             }
             return list;

@@ -39,9 +39,9 @@ public final class ArclightPermissionHandler implements IPermissionHandler {
         PermissionDynamicContext<?>... context
     ) {
         if (node.getType() == PermissionTypes.BOOLEAN) {
-            return (T) (Object) ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().hasPermission(
-                node.getNodeName()
-            );
+            return (T) (Object) ((ServerPlayerEntityBridge) player)
+                .bridge$getBukkitEntity()
+                .hasPermission(node.getNodeName());
         } else {
             return delegate.getPermission(player, node, context);
         }

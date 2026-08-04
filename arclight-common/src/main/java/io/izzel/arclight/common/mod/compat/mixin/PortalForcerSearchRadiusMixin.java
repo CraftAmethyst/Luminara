@@ -14,12 +14,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(PortalForcer.class)
-@LoadIfMod(
-    modid = ModIds.RADIUM,
-    condition = LoadIfMod.ModCondition.ABSENT
-)
+@LoadIfMod(modid = ModIds.RADIUM, condition = LoadIfMod.ModCondition.ABSENT)
 public abstract class PortalForcerSearchRadiusMixin
-    implements PortalForcerSearchRadiusAccess {
+    implements PortalForcerSearchRadiusAccess
+{
 
     private transient int arclight$searchRadius = -1;
 

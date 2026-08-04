@@ -72,7 +72,7 @@ public abstract class VibrationListenerMixin {
                 BlockReceiveGameEvent event = new BlockReceiveGameEvent(
                     CraftGameEvent.minecraftToBukkit(gameevent),
                     CraftBlock.at(worldserver, BlockPos.containing(vec3d1)),
-                    (entity == null)
+                    entity == null
                         ? null
                         : ((EntityBridge) entity).bridge$getBukkitEntity()
                 );

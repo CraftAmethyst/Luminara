@@ -99,7 +99,9 @@ public interface Player_PaperCompatMixin {
             sameWorld &&
             (retainOpenInventory || !relative.isEmpty())
         ) {
-            ((ServerPlayNetHandlerBridge) craftPlayer.getHandle().connection).bridge$teleport(
+            (
+                (ServerPlayNetHandlerBridge) craftPlayer.getHandle().connection
+            ).bridge$teleport(
                 target.getX(),
                 target.getY(),
                 target.getZ(),
@@ -156,9 +158,10 @@ public interface Player_PaperCompatMixin {
     ) {
         Objects.requireNonNull(playerAnchor, "playerAnchor");
         Player player = (Player) this;
-        Location source = playerAnchor == LookAnchor.EYES
-            ? player.getEyeLocation()
-            : player.getLocation();
+        Location source =
+            playerAnchor == LookAnchor.EYES
+                ? player.getEyeLocation()
+                : player.getLocation();
         double dx = x - source.getX();
         double dy = y - source.getY();
         double dz = z - source.getZ();
@@ -183,10 +186,11 @@ public interface Player_PaperCompatMixin {
     ) {
         Objects.requireNonNull(entity, "entity");
         Objects.requireNonNull(entityAnchor, "entityAnchor");
-        Location target = (entityAnchor == LookAnchor.EYES &&
-                entity instanceof LivingEntity livingEntity)
-            ? livingEntity.getEyeLocation()
-            : entity.getLocation();
+        Location target =
+            entityAnchor == LookAnchor.EYES &&
+            entity instanceof LivingEntity livingEntity
+                ? livingEntity.getEyeLocation()
+                : entity.getLocation();
         this.lookAt(target.getX(), target.getY(), target.getZ(), playerAnchor);
     }
 }

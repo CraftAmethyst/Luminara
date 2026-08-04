@@ -58,7 +58,8 @@ public interface CraftRecipeMixin {
             stack = Ingredient.EMPTY;
         } else if (bukkit instanceof RecipeChoice.MaterialChoice) {
             stack = new Ingredient(
-                ((RecipeChoice.MaterialChoice) bukkit).getChoices()
+                ((RecipeChoice.MaterialChoice) bukkit)
+                    .getChoices()
                     .stream()
                     .map(mat -> {
                         return new Ingredient.ItemValue(
@@ -68,7 +69,8 @@ public interface CraftRecipeMixin {
             );
         } else if (bukkit instanceof RecipeChoice.ExactChoice) {
             stack = new Ingredient(
-                ((RecipeChoice.ExactChoice) bukkit).getChoices()
+                ((RecipeChoice.ExactChoice) bukkit)
+                    .getChoices()
                     .stream()
                     .map(mat -> {
                         return new Ingredient.ItemValue(

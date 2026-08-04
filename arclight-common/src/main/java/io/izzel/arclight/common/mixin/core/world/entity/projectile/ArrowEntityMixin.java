@@ -23,7 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Arrow.class)
 public abstract class ArrowEntityMixin
     extends AbstractArrowMixin
-    implements ArrowEntityBridge {
+    implements ArrowEntityBridge
+{
 
     // @formatter:off
     @Shadow @Final private static EntityDataAccessor<Integer> ID_EFFECT_COLOR;

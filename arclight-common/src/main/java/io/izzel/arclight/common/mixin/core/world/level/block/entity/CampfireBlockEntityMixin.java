@@ -63,18 +63,17 @@ public abstract class CampfireBlockEntityMixin extends BlockEntityMixin {
                 entity.cookingProgress[i]++;
                 if (entity.cookingProgress[i] >= entity.cookingTime[i]) {
                     Container container = new SimpleContainer(itemstack);
-                    ItemStack itemstack1 =
-                        ((CampfireBlockEntityMixin) (Object) entity).quickCheck.getRecipeFor(
+                    ItemStack itemstack1 = (
+                        (CampfireBlockEntityMixin) (Object) entity
+                    ).quickCheck
+                        .getRecipeFor(container, level)
+                        .map(p_155305_ -> {
+                            return p_155305_.assemble(
                                 container,
-                                level
-                            )
-                            .map(p_155305_ -> {
-                                return p_155305_.assemble(
-                                    container,
-                                    level.registryAccess()
-                                );
-                            })
-                            .orElse(itemstack);
+                                level.registryAccess()
+                            );
+                        })
+                        .orElse(itemstack);
 
                     if (
                         !itemstack1.isItemEnabled(level.enabledFeatures())
@@ -145,9 +144,9 @@ public abstract class CampfireBlockEntityMixin extends BlockEntityMixin {
         var event = new CampfireStartEvent(
             CraftBlock.at(this.level, this.worldPosition),
             CraftItemStack.asCraftMirror(stack),
-            (CampfireRecipe) ((IRecipeBridge) getCookableRecipe(
-                    stack
-                ).get()).bridge$toBukkitRecipe()
+            (CampfireRecipe) (
+                (IRecipeBridge) getCookableRecipe(stack).get()
+            ).bridge$toBukkitRecipe()
         );
         Bukkit.getPluginManager().callEvent(event);
         this.cookingTime[i] = event.getTotalCookTime();

@@ -285,10 +285,12 @@ public abstract class ArmorStandMixin extends LivingEntityMixin {
         org.bukkit.inventory.ItemStack playerHeldItem =
             CraftItemStack.asCraftMirror(itemStack);
 
-        Player player =
-            ((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity();
-        ArmorStand self =
-            (ArmorStand) ((EntityBridge) this).bridge$getBukkitEntity();
+        Player player = (
+            (ServerPlayerEntityBridge) playerEntity
+        ).bridge$getBukkitEntity();
+        ArmorStand self = (ArmorStand) (
+            (EntityBridge) this
+        ).bridge$getBukkitEntity();
 
         EquipmentSlot slot = CraftEquipmentSlot.getSlot(slotType);
         EquipmentSlot bukkitHand = CraftEquipmentSlot.getHand(hand);

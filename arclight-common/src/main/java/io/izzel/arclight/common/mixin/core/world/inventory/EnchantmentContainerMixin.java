@@ -53,7 +53,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = EnchantmentMenu.class, priority = 39)
 public abstract class EnchantmentContainerMixin
     extends AbstractContainerMenuMixin
-    implements PosContainerBridge {
+    implements PosContainerBridge
+{
 
     @Shadow
     @Final
@@ -192,7 +193,7 @@ public abstract class EnchantmentContainerMixin
                         new EnchantmentOffer[3];
                     for (int j = 0; j < 3; ++j) {
                         org.bukkit.enchantments.Enchantment enchantment =
-                            (this.enchantClue[j] >= 0)
+                            this.enchantClue[j] >= 0
                                 ? org.bukkit.enchantments.Enchantment.getByKey(
                                       CraftNamespacedKey.fromMinecraft(
                                           ForgeRegistries.ENCHANTMENTS.getKey(
@@ -203,19 +204,24 @@ public abstract class EnchantmentContainerMixin
                                       )
                                   )
                                 : null;
-                        offers[j] = (enchantment != null)
-                            ? new EnchantmentOffer(
-                                  enchantment,
-                                  this.levelClue[j],
-                                  this.costs[j]
-                              )
-                            : null;
+                        offers[j] =
+                            enchantment != null
+                                ? new EnchantmentOffer(
+                                      enchantment,
+                                      this.levelClue[j],
+                                      this.costs[j]
+                                  )
+                                : null;
                     }
 
                     PrepareItemEnchantEvent event = new PrepareItemEnchantEvent(
-                        ((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+                        (
+                            (ServerPlayerEntityBridge) this.playerInventory.player
+                        ).bridge$getBukkitEntity(),
                         this.getBukkitView(),
-                        ((IWorldPosCallableBridge) this.access).bridge$getLocation().getBlock(),
+                        ((IWorldPosCallableBridge) this.access)
+                            .bridge$getLocation()
+                            .getBlock(),
                         item,
                         offers,
                         (int) power
@@ -285,7 +291,7 @@ public abstract class EnchantmentContainerMixin
             this.costs[id] <= 0 ||
             itemstack.isEmpty() ||
             ((playerIn.experienceLevel < i ||
-                    playerIn.experienceLevel < this.costs[id]) &&
+                playerIn.experienceLevel < this.costs[id]) &&
                 !playerIn.getAbilities().instabuild)
         ) {
             return false;
@@ -330,9 +336,13 @@ public abstract class EnchantmentContainerMixin
                         );
                     int hintedEnchantmentLevel = levelClue[id];
                     EnchantItemEvent event = new EnchantItemEvent(
-                        ((Player) ((PlayerEntityBridge) playerIn).bridge$getBukkitEntity()),
+                        (Player) (
+                            (PlayerEntityBridge) playerIn
+                        ).bridge$getBukkitEntity(),
                         this.getBukkitView(),
-                        ((IWorldPosCallableBridge) this.access).bridge$getLocation().getBlock(),
+                        ((IWorldPosCallableBridge) this.access)
+                            .bridge$getLocation()
+                            .getBlock(),
                         item,
                         this.costs[id],
                         enchants,
@@ -446,7 +456,9 @@ public abstract class EnchantmentContainerMixin
             this.enchantSlots
         );
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

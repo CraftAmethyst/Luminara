@@ -82,7 +82,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin
     extends EntityMixin
-    implements LivingEntityBridge {
+    implements LivingEntityBridge
+{
 
     @Shadow
     @Final
@@ -528,12 +529,12 @@ public abstract class LivingEntityMixin
                         : ParticleTypes.ENTITY_EFFECT,
                     this.getX() +
                         (this.random.nextDouble() - 0.5D) *
-                        (double) this.getBbWidth(),
+                            (double) this.getBbWidth(),
                     this.getY() +
                         this.random.nextDouble() * (double) this.getBbHeight(),
                     this.getZ() +
                         (this.random.nextDouble() - 0.5D) *
-                        (double) this.getBbWidth(),
+                            (double) this.getBbWidth(),
                     d0,
                     d1,
                     d2
@@ -764,7 +765,9 @@ public abstract class LivingEntityMixin
             ((ServerPlayerEntityBridge) this).bridge$initialized()
         ) {
             cir.setReturnValue(
-                (float) ((ServerPlayerEntityBridge) this).bridge$getBukkitEntity().getHealth()
+                (float) ((ServerPlayerEntityBridge) this)
+                    .bridge$getBukkitEntity()
+                    .getHealth()
             );
         }
     }
@@ -775,8 +778,9 @@ public abstract class LivingEntityMixin
             this instanceof ServerPlayerEntityBridge &&
             ((ServerPlayerEntityBridge) this).bridge$initialized()
         ) {
-            CraftPlayer player =
-                ((ServerPlayerEntityBridge) this).bridge$getBukkitEntity();
+            CraftPlayer player = (
+                (ServerPlayerEntityBridge) this
+            ).bridge$getBukkitEntity();
 
             double realHealth = Mth.clamp(health, 0.0F, player.getMaxHealth());
             player.setRealHealth(realHealth);
@@ -1123,7 +1127,7 @@ public abstract class LivingEntityMixin
                 damagesource,
                 f
             );
-            if (f <= 0) return arclight$damageResult = true;
+            if (f <= 0) return (arclight$damageResult = true);
 
             float originalDamage = f;
             Function<Double, Double> hardHat = f12 -> {
@@ -1131,7 +1135,7 @@ public abstract class LivingEntityMixin
                     damagesource.is(DamageTypeTags.DAMAGES_HELMET) &&
                     !this.getItemBySlot(EquipmentSlot.HEAD).isEmpty()
                 ) {
-                    return -(f12 - (f12 * 0.75F));
+                    return -(f12 - f12 * 0.75F);
                 }
                 return -0.0;
             };
@@ -1149,7 +1153,7 @@ public abstract class LivingEntityMixin
                 if (!shieldEvent.isCanceled()) {
                     var blocked = shieldEvent.getBlockedDamage();
                     shieldTakesDamage = shieldEvent.shieldTakesDamage();
-                    blocking = f13 -> -(double) blocked;
+                    blocking = f13 -> -((double) blocked);
                 } else {
                     blocking = f13 -> 0d;
                 }
@@ -1160,11 +1164,13 @@ public abstract class LivingEntityMixin
             f += blockingModifier;
 
             Function<Double, Double> armor = f14 ->
-                -(f14 -
+                -(
+                    f14 -
                     this.getDamageAfterArmorAbsorb(
                         damagesource,
                         f14.floatValue()
-                    ));
+                    )
+                );
             float armorModifier = armor.apply((double) f).floatValue();
             f += armorModifier;
 
@@ -1176,13 +1182,13 @@ public abstract class LivingEntityMixin
                 ) {
                     int i =
                         (this.getEffect(
-                                MobEffects.DAMAGE_RESISTANCE
-                            ).getAmplifier() +
+                            MobEffects.DAMAGE_RESISTANCE
+                        ).getAmplifier() +
                             1) *
                         5;
                     int j = 25 - i;
                     float f1 = f15.floatValue() * (float) j;
-                    return -(f15 - (f1 / 25.0F));
+                    return -(f15 - f1 / 25.0F);
                 }
                 return -0.0;
             };
@@ -1192,19 +1198,21 @@ public abstract class LivingEntityMixin
             f += resistanceModifier;
 
             Function<Double, Double> magic = f16 ->
-                -(f16 -
+                -(
+                    f16 -
                     this.getDamageAfterMagicAbsorb(
                         damagesource,
                         f16.floatValue()
-                    ));
+                    )
+                );
             float magicModifier = magic.apply((double) f).floatValue();
             f += magicModifier;
 
             Function<Double, Double> absorption = f17 ->
-                -(Math.max(
-                        f17 - Math.max(f17 - this.getAbsorptionAmount(), 0.0F),
-                        0.0F
-                    ));
+                -Math.max(
+                    f17 - Math.max(f17 - this.getAbsorptionAmount(), 0.0F),
+                    0.0F
+                );
             float absorptionModifier = absorption
                 .apply((double) f)
                 .floatValue();
@@ -1231,11 +1239,13 @@ public abstract class LivingEntityMixin
                 damagesource.getEntity() instanceof
                     net.minecraft.world.entity.player.Player
             ) {
-                ((net.minecraft.world.entity.player.Player) damagesource.getEntity()).resetAttackStrengthTicker();
+                (
+                    (net.minecraft.world.entity.player.Player) damagesource.getEntity()
+                ).resetAttackStrengthTicker();
             }
 
             if (event.isCancelled()) {
-                return arclight$damageResult = false;
+                return (arclight$damageResult = false);
             }
 
             f = (float) event.getFinalDamage();
@@ -1298,7 +1308,7 @@ public abstract class LivingEntityMixin
                 Entity entity = damagesource.getDirectEntity();
 
                 if (entity instanceof LivingEntity) {
-                    this.blockUsingShield(((LivingEntity) entity));
+                    this.blockUsingShield((LivingEntity) entity);
                 }
             }
 
@@ -1316,10 +1326,9 @@ public abstract class LivingEntityMixin
                 (Object) this instanceof
                     net.minecraft.world.entity.player.Player
             ) {
-                ((net.minecraft.world.entity.player.Player) (Object) this).awardStat(
-                    Stats.DAMAGE_ABSORBED,
-                    Math.round(f2 * 10.0F)
-                );
+                (
+                    (net.minecraft.world.entity.player.Player) (Object) this
+                ).awardStat(Stats.DAMAGE_ABSORBED, Math.round(f2 * 10.0F));
             }
             if (
                 f2 > 0.0F &&
@@ -1327,7 +1336,9 @@ public abstract class LivingEntityMixin
                 damagesource.getEntity() instanceof
                     net.minecraft.world.entity.player.Player
             ) {
-                ((net.minecraft.world.entity.player.Player) damagesource.getEntity()).awardStat(
+                (
+                    (net.minecraft.world.entity.player.Player) damagesource.getEntity()
+                ).awardStat(
                     Stats.DAMAGE_DEALT_ABSORBED,
                     Math.round(f2 * 10.0F)
                 );
@@ -1345,14 +1356,13 @@ public abstract class LivingEntityMixin
                     ((PlayerEntityBridge) this).bridge$pushExhaustReason(
                         EntityExhaustionEvent.ExhaustionReason.DAMAGED
                     );
-                    ((net.minecraft.world.entity.player.Player) (Object) this).causeFoodExhaustion(
-                        damagesource.getFoodExhaustion()
-                    );
+                    (
+                        (net.minecraft.world.entity.player.Player) (Object) this
+                    ).causeFoodExhaustion(damagesource.getFoodExhaustion());
                     if (f < 3.4028235E37F) {
-                        ((net.minecraft.world.entity.player.Player) (Object) this).awardStat(
-                            Stats.DAMAGE_TAKEN,
-                            Math.round(f * 10.0F)
-                        );
+                        (
+                            (net.minecraft.world.entity.player.Player) (Object) this
+                        ).awardStat(Stats.DAMAGE_TAKEN, Math.round(f * 10.0F));
                     }
                 }
                 // CraftBukkit end
@@ -1369,7 +1379,7 @@ public abstract class LivingEntityMixin
                     damagesource.getEntity()
                 );
 
-                return arclight$damageResult = true;
+                return (arclight$damageResult = true);
             } else {
                 // Duplicate triggers if blocking
                 if (
@@ -1384,9 +1394,9 @@ public abstract class LivingEntityMixin
                             originalDamage,
                             true
                         );
-                        f2 = (float) (-event.getDamage(
-                                EntityDamageEvent.DamageModifier.BLOCKING
-                            ));
+                        f2 = (float) -event.getDamage(
+                            EntityDamageEvent.DamageModifier.BLOCKING
+                        );
                         if (f2 > 0.0f && f2 < 3.4028235E37f) {
                             ((ServerPlayer) (Object) this).awardStat(
                                 Stats.DAMAGE_BLOCKED_BY_SHIELD,
@@ -1405,14 +1415,14 @@ public abstract class LivingEntityMixin
                         );
                     }
 
-                    return arclight$damageResult = false;
+                    return (arclight$damageResult = false);
                 } else {
-                    return arclight$damageResult = originalDamage > 0;
+                    return (arclight$damageResult = originalDamage > 0);
                 }
                 // CraftBukkit end
             }
         }
-        return arclight$damageResult = false; // CraftBukkit
+        return (arclight$damageResult = false); // CraftBukkit
     }
 
     public void heal(
@@ -1599,7 +1609,9 @@ public abstract class LivingEntityMixin
         org.bukkit.event.entity.EntityDropItemEvent event =
             new org.bukkit.event.entity.EntityDropItemEvent(
                 this.getBukkitEntity(),
-                (org.bukkit.entity.Item) (((EntityBridge) itemEntity).bridge$getBukkitEntity())
+                (org.bukkit.entity.Item) (
+                    (EntityBridge) itemEntity
+                ).bridge$getBukkitEntity()
             );
         CraftEventFactory.callEvent(event);
         if (event.isCancelled()) {
@@ -1698,7 +1710,7 @@ public abstract class LivingEntityMixin
         return (
             this.isPushable() &&
             this.collides !=
-            this.collidableExemptions.contains(entity.getUUID())
+                this.collidableExemptions.contains(entity.getUUID())
         );
     }
 
@@ -1727,8 +1739,12 @@ public abstract class LivingEntityMixin
             );
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
-                ((ServerPlayerEntityBridge) this).bridge$getBukkitEntity().updateInventory();
-                ((ServerPlayerEntityBridge) this).bridge$getBukkitEntity().updateScaledHealth();
+                ((ServerPlayerEntityBridge) this)
+                    .bridge$getBukkitEntity()
+                    .updateInventory();
+                ((ServerPlayerEntityBridge) this)
+                    .bridge$getBukkitEntity()
+                    .updateScaledHealth();
                 ci.cancel();
                 return null;
             } else if (!craftItem.equals(event.getItem())) {

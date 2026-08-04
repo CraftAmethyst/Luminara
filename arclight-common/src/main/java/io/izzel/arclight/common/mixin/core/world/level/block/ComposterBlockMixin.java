@@ -138,14 +138,12 @@ public abstract class ComposterBlockMixin {
         }
     }
 
-    @SuppressWarnings(
-        {
-            "InvalidMemberReference",
-            "UnresolvedMixinReference",
-            "MixinAnnotationTarget",
-            "InvalidInjectorMethodSignature",
-        }
-    )
+    @SuppressWarnings({
+        "InvalidMemberReference",
+        "UnresolvedMixinReference",
+        "MixinAnnotationTarget",
+        "InvalidInjectorMethodSignature",
+    })
     @Redirect(
         method = "getContainer",
         at = @At(

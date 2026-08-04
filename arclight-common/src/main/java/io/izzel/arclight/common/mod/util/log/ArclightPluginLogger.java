@@ -10,7 +10,7 @@ public class ArclightPluginLogger extends PluginLogger {
 
     private static final LogManager JUL_MANAGER =
         java.util.logging.LogManager.getLogManager() instanceof
-                LogManager instance
+            LogManager instance
             ? instance
             : new LogManager();
 

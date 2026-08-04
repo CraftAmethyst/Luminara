@@ -148,20 +148,29 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
         CraftHumanEntity player
     ) {
         InventoryView source = this.getBukkitView();
-        InventoryView destination =
-            ((ContainerBridge) other).bridge$getBukkitView();
-        ((IInventoryBridge) ((CraftInventory) source.getTopInventory()).getInventory()).onClose(
-            player
-        );
-        ((IInventoryBridge) ((CraftInventory) source.getBottomInventory()).getInventory()).onClose(
-            player
-        );
-        ((IInventoryBridge) ((CraftInventory) destination.getTopInventory()).getInventory()).onOpen(
-            player
-        );
-        ((IInventoryBridge) ((CraftInventory) destination.getBottomInventory()).getInventory()).onOpen(
-            player
-        );
+        InventoryView destination = (
+            (ContainerBridge) other
+        ).bridge$getBukkitView();
+        (
+            (IInventoryBridge) (
+                (CraftInventory) source.getTopInventory()
+            ).getInventory()
+        ).onClose(player);
+        (
+            (IInventoryBridge) (
+                (CraftInventory) source.getBottomInventory()
+            ).getInventory()
+        ).onClose(player);
+        (
+            (IInventoryBridge) (
+                (CraftInventory) destination.getTopInventory()
+            ).getInventory()
+        ).onOpen(player);
+        (
+            (IInventoryBridge) (
+                (CraftInventory) destination.getBottomInventory()
+            ).getInventory()
+        ).onOpen(player);
     }
 
     public Component getTitle() {
@@ -245,7 +254,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
             } else if (this.quickcraftStatus == 2) {
                 if (!this.quickcraftSlots.isEmpty()) {
                     if (false && this.quickcraftSlots.size() == 1) {
-                        int l = (this.quickcraftSlots.iterator().next()).index;
+                        int l = this.quickcraftSlots.iterator().next().index;
                         this.resetQuickCraft();
                         this.doClick(
                             l,
@@ -273,7 +282,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                             slot8.mayPlace(itemstack13) &&
                             (this.quickcraftType == 2 ||
                                 itemstack13.getCount() >=
-                                this.quickcraftSlots.size()) &&
+                                    this.quickcraftSlots.size()) &&
                             this.canDragTo(slot8)
                         ) {
                             int j3 = slot8.hasItem()
@@ -285,11 +294,10 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                             );
                             int l3 = Math.min(
                                 getQuickCraftPlaceCount(
-                                        this.quickcraftSlots,
-                                        this.quickcraftType,
-                                        itemstack9
-                                    ) +
-                                    j3,
+                                    this.quickcraftSlots,
+                                    this.quickcraftType,
+                                    itemstack9
+                                ) + j3,
                                 k3
                             );
 
@@ -321,9 +329,9 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                     this.setCarried(CraftItemStack.asNMSCopy(newcursor));
                     InventoryDragEvent event = new InventoryDragEvent(
                         view,
-                        (newcursor.getType() != org.bukkit.Material.AIR
+                        newcursor.getType() != org.bukkit.Material.AIR
                             ? newcursor
-                            : null),
+                            : null,
                         CraftItemStack.asBukkitCopy(oldCursor),
                         this.quickcraftType == 1,
                         eventmap
@@ -365,9 +373,8 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 clickType == ClickType.QUICK_MOVE) &&
             (dragType == 0 || dragType == 1)
         ) {
-            ClickAction clickaction = dragType == 0
-                ? ClickAction.PRIMARY
-                : ClickAction.SECONDARY;
+            ClickAction clickaction =
+                dragType == 0 ? ClickAction.PRIMARY : ClickAction.SECONDARY;
             if (slotId == -999) {
                 if (!this.getCarried().isEmpty()) {
                     if (clickaction == ClickAction.PRIMARY) {
@@ -426,16 +433,18 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 ) {
                     if (itemstack10.isEmpty()) {
                         if (!itemstack11.isEmpty()) {
-                            int l2 = clickaction == ClickAction.PRIMARY
-                                ? itemstack11.getCount()
-                                : 1;
+                            int l2 =
+                                clickaction == ClickAction.PRIMARY
+                                    ? itemstack11.getCount()
+                                    : 1;
                             this.setCarried(slot7.safeInsert(itemstack11, l2));
                         }
                     } else if (slot7.mayPickup(player)) {
                         if (itemstack11.isEmpty()) {
-                            int i3 = clickaction == ClickAction.PRIMARY
-                                ? itemstack10.getCount()
-                                : (itemstack10.getCount() + 1) / 2;
+                            int i3 =
+                                clickaction == ClickAction.PRIMARY
+                                    ? itemstack10.getCount()
+                                    : (itemstack10.getCount() + 1) / 2;
                             Optional<ItemStack> optional1 = slot7.tryRemove(
                                 i3,
                                 Integer.MAX_VALUE,
@@ -452,9 +461,10 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                                     itemstack11
                                 )
                             ) {
-                                int j3 = clickaction == ClickAction.PRIMARY
-                                    ? itemstack11.getCount()
-                                    : 1;
+                                int j3 =
+                                    clickaction == ClickAction.PRIMARY
+                                        ? itemstack11.getCount()
+                                        : 1;
                                 this.setCarried(
                                     slot7.safeInsert(itemstack11, j3)
                                 );
@@ -612,7 +622,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                             if (
                                 k2 != 0 ||
                                 itemstack12.getCount() !=
-                                itemstack12.getMaxStackSize()
+                                    itemstack12.getMaxStackSize()
                             ) {
                                 ItemStack itemstack13 = slot8.safeTake(
                                     itemstack12.getCount(),

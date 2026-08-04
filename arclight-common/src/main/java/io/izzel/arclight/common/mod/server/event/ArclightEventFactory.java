@@ -45,8 +45,9 @@ public abstract class ArclightEventFactory {
         LivingEntity entity,
         List<ItemStack> drops
     ) {
-        CraftLivingEntity craftLivingEntity =
-            ((LivingEntityBridge) entity).bridge$getBukkitEntity();
+        CraftLivingEntity craftLivingEntity = (
+            (LivingEntityBridge) entity
+        ).bridge$getBukkitEntity();
         EntityDeathEvent event = new EntityDeathEvent(
             craftLivingEntity,
             drops,

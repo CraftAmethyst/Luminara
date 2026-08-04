@@ -43,11 +43,9 @@ public class FlintAndSteelItemMixin {
                 playerentity
             ).isCancelled()
         ) {
-            context
-                .getItemInHand()
-                .hurtAndBreak(1, playerentity, entity -> {
-                    entity.broadcastBreakEvent(context.getHand());
-                });
+            context.getItemInHand().hurtAndBreak(1, playerentity, entity -> {
+                entity.broadcastBreakEvent(context.getHand());
+            });
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

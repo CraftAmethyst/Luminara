@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ShulkerBoxMenu.class)
 public abstract class ShulkerBoxContainerMixin
-    extends AbstractContainerMenuMixin {
+    extends AbstractContainerMenuMixin
+{
 
     // @formatter:off
     @Shadow @Final private Container container;
@@ -55,7 +56,9 @@ public abstract class ShulkerBoxContainerMixin
         }
 
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             new CraftInventory(this.container),
             (AbstractContainerMenu) (Object) this
         );

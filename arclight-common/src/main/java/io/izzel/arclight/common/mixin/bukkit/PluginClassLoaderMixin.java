@@ -30,7 +30,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(targets = "org.bukkit.plugin.java.PluginClassLoader", remap = false)
 public class PluginClassLoaderMixin
     extends URLClassLoader
-    implements RemappingClassLoader {
+    implements RemappingClassLoader
+{
 
     // @formatter:off
     @Shadow @Final private Map<String, Class<?>> classes;

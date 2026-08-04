@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractFurnaceMenu.class)
 public abstract class AbstractFurnaceContainerMixin
-    extends AbstractContainerMenuMixin {
+    extends AbstractContainerMenuMixin
+{
 
     // @formatter:off
     @Shadow @Final private Container container;
@@ -65,7 +66,9 @@ public abstract class AbstractFurnaceContainerMixin
             (AbstractFurnaceBlockEntity) this.container
         );
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

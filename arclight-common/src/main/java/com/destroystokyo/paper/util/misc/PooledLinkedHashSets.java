@@ -152,8 +152,7 @@ public class PooledLinkedHashSets<E> {
         return ret;
     }
 
-    static final class RawSetObjectLinkedOpenHashSet<E>
-        extends ObjectOpenHashSet<E> {
+    static final class RawSetObjectLinkedOpenHashSet<E> extends ObjectOpenHashSet<E> {
 
         public RawSetObjectLinkedOpenHashSet() {
             super();

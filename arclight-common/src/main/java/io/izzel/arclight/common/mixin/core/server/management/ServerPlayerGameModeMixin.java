@@ -53,7 +53,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerGameMode.class)
 public abstract class ServerPlayerGameModeMixin
-    implements PlayerInteractionManagerBridge {
+    implements PlayerInteractionManagerBridge
+{
 
     public boolean interactResult = false;
     public boolean firedInteract = false;
@@ -148,7 +149,7 @@ public abstract class ServerPlayerGameModeMixin
             forgeEvent.isCanceled() ||
             (!this.isCreative() &&
                 forgeEvent.getUseItem() ==
-                net.minecraftforge.eventbus.api.Event.Result.DENY)
+                    net.minecraftforge.eventbus.api.Event.Result.DENY)
         ) {
             // Restore block and te data
             level.sendBlockUpdated(
@@ -220,10 +221,12 @@ public abstract class ServerPlayerGameModeMixin
             }
             // Spigot start - handle debug stick left click for non-creative
             if (
-                this.player.getMainHandItem().is(
-                    net.minecraft.world.item.Items.DEBUG_STICK
-                ) &&
-                ((net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.DEBUG_STICK).handleInteraction(
+                this.player
+                    .getMainHandItem()
+                    .is(net.minecraft.world.item.Items.DEBUG_STICK) &&
+                (
+                    (net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.DEBUG_STICK
+                ).handleInteraction(
                     this.player,
                     this.level.getBlockState(blockPos),
                     this.level,
@@ -588,7 +591,9 @@ public abstract class ServerPlayerGameModeMixin
                         )
                     );
                 } else if (blockstate.getBlock() instanceof CakeBlock) {
-                    ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().sendHealthUpdate();
+                    ((ServerPlayerEntityBridge) playerIn)
+                        .bridge$getBukkitEntity()
+                        .sendHealthUpdate();
                 } else if (stackIn.getItem() instanceof DoubleHighBlockItem) {
                     // send a correcting update to the client, as it already placed the upper half of the bisected item
                     playerIn.connection.send(
@@ -607,12 +612,12 @@ public abstract class ServerPlayerGameModeMixin
                         )
                     );
                 }
-                ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().updateInventory();
-                return (
-                    (bukkitEvent.useItemInHand() != Event.Result.ALLOW)
-                        ? InteractionResult.SUCCESS
-                        : InteractionResult.PASS
-                );
+                ((ServerPlayerEntityBridge) playerIn)
+                    .bridge$getBukkitEntity()
+                    .updateInventory();
+                return bukkitEvent.useItemInHand() != Event.Result.ALLOW
+                    ? InteractionResult.SUCCESS
+                    : InteractionResult.PASS;
             }
         }
         if (this.gameModeForPlayer == GameType.SPECTATOR) {
@@ -653,20 +658,23 @@ public abstract class ServerPlayerGameModeMixin
                 !playerIn.getMainHandItem().isEmpty() ||
                 !playerIn.getOffhandItem().isEmpty();
             boolean flag1 =
-                (playerIn.isSecondaryUseActive() && flag) &&
-                !(playerIn
+                playerIn.isSecondaryUseActive() &&
+                flag &&
+                !(
+                    playerIn
                         .getMainHandItem()
                         .doesSneakBypassUse(worldIn, blockpos, playerIn) &&
                     playerIn
                         .getOffhandItem()
-                        .doesSneakBypassUse(worldIn, blockpos, playerIn));
+                        .doesSneakBypassUse(worldIn, blockpos, playerIn)
+                );
             ItemStack itemstack = stackIn.copy();
             InteractionResult resultType = InteractionResult.PASS;
             if (
                 event.getUseBlock() ==
                     net.minecraftforge.eventbus.api.Event.Result.ALLOW ||
                 (event.getUseBlock() !=
-                        net.minecraftforge.eventbus.api.Event.Result.DENY &&
+                    net.minecraftforge.eventbus.api.Event.Result.DENY &&
                     !flag1)
             ) {
                 resultType = blockstate.use(

@@ -88,8 +88,11 @@ public abstract class ChunkGeneratorMixin implements ChunkGeneratorBridge {
         // Thread-safe structure spawn event handling
         try {
             var box = structurestart.getBoundingBox();
-            var world =
-                ((WorldBridge) ((IWorldBridge) manager.level).bridge$getMinecraftWorld()).bridge$getWorld();
+            var world = (
+                (WorldBridge) (
+                    (IWorldBridge) manager.level
+                ).bridge$getMinecraftWorld()
+            ).bridge$getWorld();
             var boundingBox = new org.bukkit.util.BoundingBox(
                 box.minX(),
                 box.minY(),
@@ -149,8 +152,9 @@ public abstract class ChunkGeneratorMixin implements ChunkGeneratorBridge {
         ChunkAccess chunk,
         StructureManager structureManager
     ) {
-        org.bukkit.World world =
-            ((WorldBridge) ((IWorldBridge) region).bridge$getMinecraftWorld()).bridge$getWorld();
+        org.bukkit.World world = (
+            (WorldBridge) ((IWorldBridge) region).bridge$getMinecraftWorld()
+        ).bridge$getWorld();
         // only call when a populator is present (prevents unnecessary entity conversion)
         if (!world.getPopulators().isEmpty()) {
             CraftLimitedRegion limitedRegion = new CraftLimitedRegion(

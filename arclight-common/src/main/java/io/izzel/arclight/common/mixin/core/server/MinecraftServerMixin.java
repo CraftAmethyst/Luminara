@@ -83,7 +83,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin
     extends ReentrantBlockableEventLoop<TickTask>
-    implements MinecraftServerBridge, ICommandSourceBridge {
+    implements MinecraftServerBridge, ICommandSourceBridge
+{
 
     private static final int TPS = 20;
     private static final int TICK_TIME = 1000000000 / TPS;
@@ -477,9 +478,9 @@ public abstract class MinecraftServerMixin
         BukkitRegistry.unlockRegistries();
         this.server.enablePlugins(PluginLoadOrder.POSTWORLD);
         BukkitRegistry.lockRegistries();
-        this.server.getPluginManager().callEvent(
-            new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP)
-        );
+        this.server
+            .getPluginManager()
+            .callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
 
         try {
             MetricsManager.initialize(
@@ -570,12 +571,15 @@ public abstract class MinecraftServerMixin
                     );
             }
             if (((WorldBridge) serverWorld).bridge$getGenerator() != null) {
-                ((WorldBridge) serverWorld).bridge$getWorld()
+                ((WorldBridge) serverWorld)
+                    .bridge$getWorld()
                     .getPopulators()
                     .addAll(
-                        ((WorldBridge) serverWorld).bridge$getGenerator().getDefaultPopulators(
-                            ((WorldBridge) serverWorld).bridge$getWorld()
-                        )
+                        ((WorldBridge) serverWorld)
+                            .bridge$getGenerator()
+                            .getDefaultPopulators(
+                                ((WorldBridge) serverWorld).bridge$getWorld()
+                            )
                     );
             }
             Bukkit.getPluginManager().callEvent(
@@ -621,7 +625,9 @@ public abstract class MinecraftServerMixin
 
         for (ServerLevel serverWorld : this.levels.values()) {
             if (
-                ((WorldBridge) serverWorld).bridge$getWorld().getKeepSpawnInMemory()
+                ((WorldBridge) serverWorld)
+                    .bridge$getWorld()
+                    .getKeepSpawnInMemory()
             ) {
                 ForcedChunksSavedData forcedchunkssavedata = serverWorld
                     .getDataStorage()
@@ -675,12 +681,15 @@ public abstract class MinecraftServerMixin
 
         boolean flag = saveData.isDebugWorld();
         if (((WorldBridge) serverWorld).bridge$getGenerator() != null) {
-            ((WorldBridge) serverWorld).bridge$getWorld()
+            ((WorldBridge) serverWorld)
+                .bridge$getWorld()
                 .getPopulators()
                 .addAll(
-                    ((WorldBridge) serverWorld).bridge$getGenerator().getDefaultPopulators(
-                        ((WorldBridge) serverWorld).bridge$getWorld()
-                    )
+                    ((WorldBridge) serverWorld)
+                        .bridge$getGenerator()
+                        .getDefaultPopulators(
+                            ((WorldBridge) serverWorld).bridge$getWorld()
+                        )
                 );
         }
 
@@ -728,7 +737,9 @@ public abstract class MinecraftServerMixin
         this.markWorldsDirty();
         MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(serverWorld));
         if (
-            !((WorldBridge) serverWorld).bridge$getWorld().getKeepSpawnInMemory()
+            !((WorldBridge) serverWorld)
+                .bridge$getWorld()
+                .getKeepSpawnInMemory()
         ) {
             return;
         }

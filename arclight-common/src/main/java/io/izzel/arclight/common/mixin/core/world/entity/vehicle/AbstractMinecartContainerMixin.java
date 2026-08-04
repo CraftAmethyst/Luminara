@@ -23,7 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractMinecartContainer.class)
 public abstract class AbstractMinecartContainerMixin
     extends AbstractMinecartMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     public List<HumanEntity> transaction;
 

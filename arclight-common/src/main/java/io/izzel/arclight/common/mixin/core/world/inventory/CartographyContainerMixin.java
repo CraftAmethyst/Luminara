@@ -22,7 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CartographyTableMenu.class)
 public abstract class CartographyContainerMixin
     extends AbstractContainerMenuMixin
-    implements PosContainerBridge {
+    implements PosContainerBridge
+{
 
     @Shadow
     @Final
@@ -48,8 +49,9 @@ public abstract class CartographyContainerMixin
         ContainerLevelAccess worldPosCallable,
         CallbackInfo ci
     ) {
-        this.player =
-            ((ServerPlayerEntityBridge) playerInventory.player).bridge$getBukkitEntity();
+        this.player = (
+            (ServerPlayerEntityBridge) playerInventory.player
+        ).bridge$getBukkitEntity();
     }
 
     @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))

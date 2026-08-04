@@ -77,11 +77,14 @@ public class DropperBlockMixin {
                             (CompoundContainer) iinventory
                         );
                     } else {
-                        destinationInventory =
-                            ((IInventoryBridge) iinventory).getOwnerInventory();
+                        destinationInventory = (
+                            (IInventoryBridge) iinventory
+                        ).getOwnerInventory();
                     }
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(
-                        ((IInventoryBridge) dispensertileentity).getOwner().getInventory(),
+                        ((IInventoryBridge) dispensertileentity)
+                            .getOwner()
+                            .getInventory(),
                         craftItemStack,
                         destinationInventory,
                         true

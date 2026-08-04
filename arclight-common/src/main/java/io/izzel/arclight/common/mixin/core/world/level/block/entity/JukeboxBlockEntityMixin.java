@@ -24,7 +24,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(JukeboxBlockEntity.class)
 public abstract class JukeboxBlockEntityMixin
     extends BlockEntityMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     public List<HumanEntity> transaction = new ArrayList<>();
     public boolean opened;

@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange {
+    extends EntityMixin_ActivationRange
+{
 
     // @formatter:off
     @Shadow public int pickupDelay;
@@ -43,8 +44,9 @@ public abstract class ItemEntityMixin_ActivationRange
         CallbackInfo ci
     ) {
         if (DistValidate.isValid(this.level())) {
-            this.lifespan =
-                ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
+            this.lifespan = ((WorldBridge) this.level())
+                .bridge$spigotConfig()
+                .itemDespawnRate;
         }
     }
 
@@ -61,8 +63,9 @@ public abstract class ItemEntityMixin_ActivationRange
         CallbackInfo ci
     ) {
         if (DistValidate.isValid(this.level()) && this.lifespan == 6000) {
-            this.lifespan =
-                ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
+            this.lifespan = ((WorldBridge) this.level())
+                .bridge$spigotConfig()
+                .itemDespawnRate;
         }
     }
 

@@ -24,7 +24,7 @@ public class CraftLegacyLegacyMixin {
                 if (
                     material != null &&
                     ((MaterialBridge) (Object) material).bridge$getType() ==
-                    MaterialPropertySpec.MaterialType.FORGE
+                        MaterialPropertySpec.MaterialType.FORGE
                 ) {
                     return material;
                 } else {
@@ -50,7 +50,7 @@ public class CraftLegacyLegacyMixin {
                 if (
                     material != null &&
                     ((MaterialBridge) (Object) material).bridge$getType() ==
-                    MaterialPropertySpec.MaterialType.FORGE
+                        MaterialPropertySpec.MaterialType.FORGE
                 ) {
                     return material;
                 } else {

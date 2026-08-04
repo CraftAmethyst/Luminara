@@ -104,7 +104,6 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
         return recipe;
     }
 
-
     @Redirect(
         method = "apply",
         at = @At(
@@ -120,8 +119,6 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
     ) {
         ARCLIGHT_LOGGER.info("recipe.loading.completed", count);
     }
-
-
 
     /**
      * @author IzzelAliz
@@ -166,10 +163,10 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
             this.recipes.put(recipe.getType(), hashMap);
             map = hashMap;
         } else {
-            map = ((Object2ObjectLinkedOpenHashMap<
-                    ResourceLocation,
-                    Recipe<?>
-                >) original);
+            map = (Object2ObjectLinkedOpenHashMap<
+                ResourceLocation,
+                Recipe<?>
+            >) original;
         }
 
         if (

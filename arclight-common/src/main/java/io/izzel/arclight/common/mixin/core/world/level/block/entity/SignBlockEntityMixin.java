@@ -47,7 +47,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SignBlockEntity.class)
 public abstract class SignBlockEntityMixin
     extends BlockEntityMixin
-    implements SignTileEntityBridge, CommandSource, ICommandSourceBridge {
+    implements SignTileEntityBridge, CommandSource, ICommandSourceBridge
+{
 
     private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER =
         ArclightI18nLogger.getLogger("SignBlockEntity");
@@ -93,17 +94,14 @@ public abstract class SignBlockEntityMixin
             p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) &&
             this.level != null
         ) {
-            this.updateText(
-                p_277776_ -> {
-                    return this.setMessages(
-                        p_278048_,
-                        p_277990_,
-                        p_277776_,
-                        p_278103_
-                    );
-                },
-                p_278103_
-            );
+            this.updateText(p_277776_ -> {
+                return this.setMessages(
+                    p_278048_,
+                    p_277990_,
+                    p_277776_,
+                    p_278103_
+                );
+            }, p_278103_);
             this.setAllowedPlayerEditor(null);
             this.level.sendBlockUpdated(
                 this.getBlockPos(),
@@ -154,8 +152,9 @@ public abstract class SignBlockEntityMixin
         }
 
         // CraftBukkit start
-        org.bukkit.entity.Player player =
-            ((ServerPlayerEntityBridge) entityhuman).bridge$getBukkitEntity();
+        org.bukkit.entity.Player player = (
+            (ServerPlayerEntityBridge) entityhuman
+        ).bridge$getBukkitEntity();
         String[] lines = new String[4];
 
         for (int j = 0; j < list.size(); ++j) {

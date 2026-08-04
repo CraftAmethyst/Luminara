@@ -24,7 +24,9 @@ public class ServerFunctionManagerMixin {
         CallbackInfoReturnable<CommandDispatcher<CommandSourceStack>> cir
     ) {
         cir.setReturnValue(
-            ((MinecraftServerBridge) this.server).bridge$getVanillaCommands().getDispatcher()
+            ((MinecraftServerBridge) this.server)
+                .bridge$getVanillaCommands()
+                .getDispatcher()
         );
     }
 }

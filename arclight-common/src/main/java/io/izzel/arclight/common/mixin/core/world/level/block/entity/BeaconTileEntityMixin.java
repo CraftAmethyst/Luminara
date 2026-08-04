@@ -32,7 +32,7 @@ public abstract class BeaconTileEntityMixin implements BeaconTileEntityBridge {
     }
 
     public PotionEffect getPrimaryEffect() {
-        return (this.primaryPower != null)
+        return this.primaryPower != null
             ? CraftPotionUtil.toBukkit(
                   new MobEffectInstance(
                       this.primaryPower,
@@ -46,7 +46,7 @@ public abstract class BeaconTileEntityMixin implements BeaconTileEntityBridge {
     }
 
     public PotionEffect getSecondaryEffect() {
-        return (this.hasSecondaryEffect())
+        return this.hasSecondaryEffect()
             ? CraftPotionUtil.toBukkit(
                   new MobEffectInstance(
                       this.secondaryPower,

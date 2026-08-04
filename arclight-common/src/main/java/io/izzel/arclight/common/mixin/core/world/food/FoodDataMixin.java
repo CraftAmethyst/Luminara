@@ -71,9 +71,12 @@ public abstract class FoodDataMixin implements FoodStatsBridge {
         ItemStack stack,
         @Nullable LivingEntity entity
     ) {
-        var player = this.entityhuman != null
-            ? this.entityhuman
-            : (entity instanceof Player p ? p : null);
+        var player =
+            this.entityhuman != null
+                ? this.entityhuman
+                : entity instanceof Player p
+                  ? p
+                  : null;
         if (player == null) {
             foodStats.eat(foodLevelIn, foodSaturationModifier);
             return;
@@ -93,7 +96,9 @@ public abstract class FoodDataMixin implements FoodStatsBridge {
                 food.getSaturationModifier()
             );
         }
-        ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().sendHealthUpdate();
+        ((ServerPlayerEntityBridge) player)
+            .bridge$getBukkitEntity()
+            .sendHealthUpdate();
     }
 
     @Inject(
@@ -121,7 +126,9 @@ public abstract class FoodDataMixin implements FoodStatsBridge {
 
         ((ServerPlayer) entityhuman).connection.send(
             new ClientboundSetHealthPacket(
-                ((ServerPlayerEntityBridge) entityhuman).bridge$getBukkitEntity().getScaledHealth(),
+                ((ServerPlayerEntityBridge) entityhuman)
+                    .bridge$getBukkitEntity()
+                    .getScaledHealth(),
                 this.foodLevel,
                 this.saturationLevel
             )

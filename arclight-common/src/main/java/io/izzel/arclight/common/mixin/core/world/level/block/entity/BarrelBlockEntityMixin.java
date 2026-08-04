@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(BarrelBlockEntity.class)
 public abstract class BarrelBlockEntityMixin
     extends LockableBlockEntityMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     public List<HumanEntity> transaction = new ArrayList<>();
 

@@ -45,7 +45,7 @@ public class ClientboundCommandsPacket_ArgumentNodeStubMixin {
         }
         var key = ForgeRegistries.COMMAND_ARGUMENT_TYPES.getKey(type);
         if (
-            (key != null) &&
+            key != null &&
             (key.getNamespace().equals("minecraft") ||
                 key.getNamespace().equals("brigadier"))
         ) {

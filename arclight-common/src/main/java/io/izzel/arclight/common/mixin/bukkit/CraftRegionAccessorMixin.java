@@ -35,8 +35,9 @@ public abstract class CraftRegionAccessorMixin {
         Function<
             Location,
             ? extends net.minecraft.world.entity.Entity
-        > factory =
-            ((EntityTypeBridge) (Object) entityType).bridge$entityFactory();
+        > factory = (
+            (EntityTypeBridge) (Object) entityType
+        ).bridge$entityFactory();
         if (factory != null) {
             cir.setReturnValue(
                 this.addEntity(
@@ -63,8 +64,9 @@ public abstract class CraftRegionAccessorMixin {
         Function<
             Location,
             ? extends net.minecraft.world.entity.Entity
-        > factory =
-            ((EntityTypeBridge) (Object) entityType).bridge$entityFactory();
+        > factory = (
+            (EntityTypeBridge) (Object) entityType
+        ).bridge$entityFactory();
         if (factory != null) {
             cir.setReturnValue(
                 this.addEntity(

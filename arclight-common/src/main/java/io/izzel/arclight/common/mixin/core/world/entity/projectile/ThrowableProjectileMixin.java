@@ -25,8 +25,9 @@ public abstract class ThrowableProjectileMixin extends ProjectileMixin {
         Level worldIn,
         CallbackInfo ci
     ) {
-        this.projectileSource =
-            ((LivingEntityBridge) livingEntityIn).bridge$getBukkitEntity();
+        this.projectileSource = (
+            (LivingEntityBridge) livingEntityIn
+        ).bridge$getBukkitEntity();
     }
 
     @Redirect(

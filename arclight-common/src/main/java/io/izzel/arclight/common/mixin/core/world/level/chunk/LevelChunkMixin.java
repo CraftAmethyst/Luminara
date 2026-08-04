@@ -34,7 +34,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LevelChunk.class)
 public abstract class LevelChunkMixin
     extends ChunkAccessMixin
-    implements ChunkBridge {
+    implements ChunkBridge
+{
 
     @Shadow
     @Final

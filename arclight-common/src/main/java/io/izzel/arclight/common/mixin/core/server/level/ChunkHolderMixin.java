@@ -60,9 +60,7 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
         > statusFuture = this.getFutureIfPresentUnchecked(ChunkStatus.FULL);
         Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either =
             statusFuture.getNow(null);
-        return (either == null)
-            ? null
-            : (LevelChunk) either.left().orElse(null);
+        return either == null ? null : (LevelChunk) either.left().orElse(null);
     }
 
     @Override
@@ -120,12 +118,12 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
                 .thenAccept(either -> {
                     LevelChunk chunk = (LevelChunk) either.left().orElse(null);
                     if (chunk != null) {
-                        ((ChunkMapBridge) chunkManager).bridge$getCallbackExecutor().execute(
-                            () -> {
+                        ((ChunkMapBridge) chunkManager)
+                            .bridge$getCallbackExecutor()
+                            .execute(() -> {
                                 chunk.setUnsaved(true);
                                 ((ChunkBridge) chunk).bridge$unloadCallback();
-                            }
-                        );
+                            });
                     }
                 })
                 .exceptionally(throwable -> {
@@ -167,9 +165,11 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
                 .thenAccept(either -> {
                     LevelChunk chunk = (LevelChunk) either.left().orElse(null);
                     if (chunk != null) {
-                        ((ChunkMapBridge) chunkManager).bridge$getCallbackExecutor().execute(
-                            ((ChunkBridge) chunk)::bridge$loadCallback
-                        );
+                        ((ChunkMapBridge) chunkManager)
+                            .bridge$getCallbackExecutor()
+                            .execute(
+                                ((ChunkBridge) chunk)::bridge$loadCallback
+                            );
                     }
                 })
                 .exceptionally(throwable -> {

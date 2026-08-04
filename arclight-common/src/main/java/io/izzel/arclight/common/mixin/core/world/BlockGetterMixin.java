@@ -51,16 +51,18 @@ public interface BlockGetterMixin extends IBlockReaderBridge {
             vec3d1,
             pos
         );
-        double d0 = blockraytraceresult == null
-            ? Double.MAX_VALUE
-            : context
-                  .getFrom()
-                  .distanceToSqr(blockraytraceresult.getLocation());
-        double d1 = blockraytraceresult1 == null
-            ? Double.MAX_VALUE
-            : context
-                  .getFrom()
-                  .distanceToSqr(blockraytraceresult1.getLocation());
+        double d0 =
+            blockraytraceresult == null
+                ? Double.MAX_VALUE
+                : context
+                      .getFrom()
+                      .distanceToSqr(blockraytraceresult.getLocation());
+        double d1 =
+            blockraytraceresult1 == null
+                ? Double.MAX_VALUE
+                : context
+                      .getFrom()
+                      .distanceToSqr(blockraytraceresult1.getLocation());
         return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
     }
 

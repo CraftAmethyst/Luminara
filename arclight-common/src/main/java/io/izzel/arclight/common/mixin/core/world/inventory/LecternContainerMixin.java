@@ -22,7 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LecternMenu.class)
 public abstract class LecternContainerMixin
     extends AbstractContainerMenuMixin
-    implements LecternContainerBridge {
+    implements LecternContainerBridge
+{
 
     // @formatter:off
     @Shadow @Final private Container lectern;
@@ -73,8 +74,12 @@ public abstract class LecternContainerMixin
         CallbackInfoReturnable<Boolean> cir
     ) {
         PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(
-            ((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
-            ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder()
+            (
+                (ServerPlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
+            (
+                (CraftInventoryLectern) getBukkitView().getTopInventory()
+            ).getHolder()
         );
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -99,7 +104,9 @@ public abstract class LecternContainerMixin
             this.lectern
         );
         bukkitEntity = new CraftInventoryView(
-            ((ServerPlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (ServerPlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

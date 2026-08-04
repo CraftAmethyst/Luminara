@@ -118,15 +118,16 @@ public abstract class ItemEntityMixin extends EntityMixin {
             );
             if (hook < 0) return;
 
-            final int canHold =
-                ((PlayerInventoryBridge) entity.getInventory()).bridge$canHold(
-                    itemstack
-                );
+            final int canHold = (
+                (PlayerInventoryBridge) entity.getInventory()
+            ).bridge$canHold(itemstack);
             final int remaining = itemstack.getCount() - canHold;
             if (this.pickupDelay <= 0) {
                 final PlayerAttemptPickupItemEvent attemptEvent =
                     new PlayerAttemptPickupItemEvent(
-                        ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity(),
+                        (
+                            (ServerPlayerEntityBridge) entity
+                        ).bridge$getBukkitEntity(),
                         (Item) this.getBukkitEntity(),
                         remaining
                     );
@@ -142,7 +143,9 @@ public abstract class ItemEntityMixin extends EntityMixin {
                 itemstack.setCount(canHold);
                 final PlayerPickupItemEvent playerEvent =
                     new PlayerPickupItemEvent(
-                        ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity(),
+                        (
+                            (ServerPlayerEntityBridge) entity
+                        ).bridge$getBukkitEntity(),
                         (Item) this.getBukkitEntity(),
                         remaining
                     );

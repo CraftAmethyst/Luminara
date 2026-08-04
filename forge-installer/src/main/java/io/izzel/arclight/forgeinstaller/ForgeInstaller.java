@@ -85,9 +85,9 @@ public class ForgeInstaller {
         try (
             Reader reader = new InputStreamReader(
                 Objects.requireNonNull(
-                    ForgeInstaller.class.getModule().getResourceAsStream(
-                        "/META-INF/installer.json"
-                    ),
+                    ForgeInstaller.class
+                        .getModule()
+                        .getResourceAsStream("/META-INF/installer.json"),
                     "Missing META-INF/installer.json resource"
                 ),
                 StandardCharsets.UTF_8
@@ -218,101 +218,94 @@ public class ForgeInstaller {
         ExecutorService pool,
         Consumer<String> logger
     ) {
-        var minecraftData = CompletableFuture.supplyAsync(
-            () -> {
-                logger.accept("Downloading mc version manifest...");
-                for (Map.Entry<
-                    String,
-                    String
-                > entry : Mirrors.getVersionManifest()) {
-                    try (var stream = FileDownloader.read(entry.getValue())) {
-                        var bytes = stream.readAllBytes();
-                        var element = JsonParser.parseString(
-                            new String(bytes, StandardCharsets.UTF_8)
-                        ).getAsJsonObject();
-                        var versions = element.getAsJsonArray("versions");
-                        for (var version : versions) {
-                            var id = version
+        var minecraftData = CompletableFuture.supplyAsync(() -> {
+            logger.accept("Downloading mc version manifest...");
+            for (Map.Entry<
+                String,
+                String
+            > entry : Mirrors.getVersionManifest()) {
+                try (var stream = FileDownloader.read(entry.getValue())) {
+                    var bytes = stream.readAllBytes();
+                    var element = JsonParser.parseString(
+                        new String(bytes, StandardCharsets.UTF_8)
+                    ).getAsJsonObject();
+                    var versions = element.getAsJsonArray("versions");
+                    for (var version : versions) {
+                        var id = version
+                            .getAsJsonObject()
+                            .get("id")
+                            .getAsString();
+                        if (Objects.equals(id, info.installer.minecraft)) {
+                            var url = version
                                 .getAsJsonObject()
-                                .get("id")
+                                .get("url")
                                 .getAsString();
-                            if (Objects.equals(id, info.installer.minecraft)) {
-                                var url = version
-                                    .getAsJsonObject()
+                            try (var versionStream = FileDownloader.read(url)) {
+                                var object = JsonParser.parseString(
+                                    new String(
+                                        versionStream.readAllBytes(),
+                                        StandardCharsets.UTF_8
+                                    )
+                                ).getAsJsonObject();
+                                var downloads = object.getAsJsonObject(
+                                    "downloads"
+                                );
+                                var server = downloads.getAsJsonObject(
+                                    "server"
+                                );
+                                var serverUrl = server.get("url").getAsString();
+                                var serverHash = server
+                                    .get("sha1")
+                                    .getAsString();
+                                var mapping = downloads.getAsJsonObject(
+                                    "server_mappings"
+                                );
+                                var mappingUrl = mapping
                                     .get("url")
                                     .getAsString();
-                                try (
-                                    var versionStream = FileDownloader.read(url)
-                                ) {
-                                    var object = JsonParser.parseString(
-                                        new String(
-                                            versionStream.readAllBytes(),
-                                            StandardCharsets.UTF_8
-                                        )
-                                    ).getAsJsonObject();
-                                    var downloads = object.getAsJsonObject(
-                                        "downloads"
-                                    );
-                                    var server = downloads.getAsJsonObject(
-                                        "server"
-                                    );
-                                    var serverUrl = server
-                                        .get("url")
-                                        .getAsString();
-                                    var serverHash = server
-                                        .get("sha1")
-                                        .getAsString();
-                                    var mapping = downloads.getAsJsonObject(
-                                        "server_mappings"
-                                    );
-                                    var mappingUrl = mapping
-                                        .get("url")
-                                        .getAsString();
-                                    var mappingHash = mapping
-                                        .get("sha1")
-                                        .getAsString();
-                                    logger.accept(
-                                        "Minecraft version: %s, server: %s, mappings: %s".formatted(
-                                            info.installer.minecraft,
-                                            serverHash,
-                                            mappingHash
-                                        )
-                                    );
-                                    return new MinecraftData(
-                                        entry.getKey(),
-                                        Mirrors.mapMojangMirror(
-                                            serverUrl,
-                                            entry.getKey()
-                                        ),
+                                var mappingHash = mapping
+                                    .get("sha1")
+                                    .getAsString();
+                                logger.accept(
+                                    "Minecraft version: %s, server: %s, mappings: %s".formatted(
+                                        info.installer.minecraft,
                                         serverHash,
-                                        Mirrors.mapMojangMirror(
-                                            mappingUrl,
-                                            entry.getKey()
-                                        ),
                                         mappingHash
-                                    );
-                                }
+                                    )
+                                );
+                                return new MinecraftData(
+                                    entry.getKey(),
+                                    Mirrors.mapMojangMirror(
+                                        serverUrl,
+                                        entry.getKey()
+                                    ),
+                                    serverHash,
+                                    Mirrors.mapMojangMirror(
+                                        mappingUrl,
+                                        entry.getKey()
+                                    ),
+                                    mappingHash
+                                );
                             }
                         }
-                        logger.accept(
-                            "Version %s not available in %s".formatted(
-                                info.installer.minecraft,
-                                entry.getKey()
-                            )
-                        );
-                    } catch (Exception e) {
-                        logger.accept(
-                            "Failed to download manifest from " +
-                                entry.getKey() +
-                                "\n  " +
-                                e
-                        );
                     }
+                    logger.accept(
+                        "Version %s not available in %s".formatted(
+                            info.installer.minecraft,
+                            entry.getKey()
+                        )
+                    );
+                } catch (Exception e) {
+                    logger.accept(
+                        "Failed to download manifest from " +
+                            entry.getKey() +
+                            "\n  " +
+                            e
+                    );
                 }
-                return null;
-            },
-            pool
-        );
+            }
+            return null;
+        }, pool);
         String coord = String.format(
             "net.minecraftforge:forge:%s-%s:installer",
             info.installer.minecraft,
@@ -717,7 +710,8 @@ public class ForgeInstaller {
         try {
             legacyClassPath.add(
                 Paths.get(
-                    ForgeInstaller.class.getProtectionDomain()
+                    ForgeInstaller.class
+                        .getProtectionDomain()
                         .getCodeSource()
                         .getLocation()
                         .toURI()
@@ -1110,11 +1104,13 @@ public class ForgeInstaller {
         );
 
         // Define all extra modules and add all of the new config "nameToModule" to boot module layer config
-        ((Map<String, Module>) IMPL_LOOKUP.findGetter(
+        (
+            (Map<String, Module>) IMPL_LOOKUP.findGetter(
                 ModuleLayer.class,
                 "nameToModule",
                 Map.class
-            ).invokeWithArguments(ModuleLayer.boot())).putAll(
+            ).invokeWithArguments(ModuleLayer.boot())
+        ).putAll(
             (Map<String, Module>) IMPL_LOOKUP.findStatic(
                 Module.class,
                 "defineModules",
@@ -1157,28 +1153,23 @@ public class ForgeInstaller {
             "implAddReads",
             MethodType.methodType(void.class, Module.class)
         );
-        config
-            .modules()
-            .forEach(rm ->
-                ModuleLayer.boot()
-                    .findModule(rm.name())
-                    .ifPresent(m ->
-                        oldBootModules.forEach(brm ->
-                            ModuleLayer.boot()
-                                .findModule(brm.name())
-                                .ifPresent(bm -> {
-                                    try {
-                                        implAddReadsMH.invokeWithArguments(
-                                            m,
-                                            bm
-                                        );
-                                    } catch (Throwable throwable) {
-                                        throw new RuntimeException(throwable);
-                                    }
-                                })
-                        )
+        config.modules().forEach(rm ->
+            ModuleLayer.boot()
+                .findModule(rm.name())
+                .ifPresent(m ->
+                    oldBootModules.forEach(brm ->
+                        ModuleLayer.boot()
+                            .findModule(brm.name())
+                            .ifPresent(bm -> {
+                                try {
+                                    implAddReadsMH.invokeWithArguments(m, bm);
+                                } catch (Throwable throwable) {
+                                    throw new RuntimeException(throwable);
+                                }
+                            })
                     )
-            );
+                )
+        );
     }
 
     private static void cleanupInstallationFiles(InstallInfo installInfo) {

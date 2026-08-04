@@ -38,7 +38,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Block.class)
 public abstract class BlockMixin
     extends BlockBehaviourMixin
-    implements BlockBridge {
+    implements BlockBridge
+{
 
     /**
      * @author IzzelAliz
@@ -117,8 +118,7 @@ public abstract class BlockMixin
             EnchantmentHelper.getItemEnchantmentLevel(
                 Enchantments.SILK_TOUCH,
                 itemstack
-            ) ==
-            0
+            ) == 0
         ) {
             int i = intprovider.sample(worldserver.random);
             if (i > 0) {
@@ -191,7 +191,7 @@ public abstract class BlockMixin
                 CraftEventFactory.handleBlockDropItemEvent(
                     craftBlock,
                     state,
-                    ((ServerPlayer) player),
+                    (ServerPlayer) player,
                     blockDrops
                 );
             }

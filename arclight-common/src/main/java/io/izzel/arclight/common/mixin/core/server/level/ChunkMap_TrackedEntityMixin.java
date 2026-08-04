@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChunkMap.TrackedEntity.class)
 public abstract class ChunkMap_TrackedEntityMixin
-    implements ChunkMap_TrackedEntityBridge {
+    implements ChunkMap_TrackedEntityBridge
+{
 
     @Shadow
     @Final

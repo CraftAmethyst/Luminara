@@ -50,7 +50,7 @@ public abstract class Turtle_LayEggGoalMixin extends MoveToBlockGoal {
                     CraftEventFactory.callEntityChangeBlockEvent(
                         this.turtle,
                         this.blockPos.above(),
-                        (Blocks.TURTLE_EGG.defaultBlockState()).setValue(
+                        Blocks.TURTLE_EGG.defaultBlockState().setValue(
                             TurtleEggBlock.EGGS,
                             this.turtle.getRandom().nextInt(4) + 1
                         )

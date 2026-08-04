@@ -29,9 +29,7 @@ public abstract class SlimeMixin extends MobMixin {
     // @formatter:on
 
     @Shadow
-    public abstract EntityType<
-        ? extends net.minecraft.world.entity.monster.Slime
-    > getType();
+    public abstract EntityType<? extends net.minecraft.world.entity.monster.Slime> getType();
 
     /**
      * @author IzzelAliz

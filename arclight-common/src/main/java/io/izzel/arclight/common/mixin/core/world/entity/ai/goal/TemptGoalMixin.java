@@ -48,9 +48,10 @@ public abstract class TemptGoalMixin {
                 cir.setReturnValue(false);
                 return;
             }
-            this.player = (event.getTarget() == null)
-                ? null
-                : ((CraftHumanEntity) event.getTarget()).getHandle();
+            this.player =
+                event.getTarget() == null
+                    ? null
+                    : ((CraftHumanEntity) event.getTarget()).getHandle();
         }
         cir.setReturnValue(tempt);
     }

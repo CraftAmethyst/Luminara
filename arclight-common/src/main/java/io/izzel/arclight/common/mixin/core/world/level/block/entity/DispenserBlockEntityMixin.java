@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(DispenserBlockEntity.class)
 public abstract class DispenserBlockEntityMixin
-    extends LockableBlockEntityMixin {
+    extends LockableBlockEntityMixin
+{
 
     public List<HumanEntity> transaction = new ArrayList<>();
 

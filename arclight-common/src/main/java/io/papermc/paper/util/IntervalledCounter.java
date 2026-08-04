@@ -88,9 +88,8 @@ public final class IntervalledCounter {
 
         final int head = this.head;
         final int tail = this.tail;
-        final int size = tail >= head
-            ? (tail - head)
-            : (tail + (oldElements.length - head));
+        final int size =
+            tail >= head ? tail - head : tail + (oldElements.length - head);
         this.head = 0;
         this.tail = size;
 

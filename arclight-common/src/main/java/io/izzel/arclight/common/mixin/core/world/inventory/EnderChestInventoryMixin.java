@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(PlayerEnderChestContainer.class)
 public abstract class EnderChestInventoryMixin
     extends SimpleContainerMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     // @formatter:off
     @Shadow private EnderChestBlockEntity activeChest;

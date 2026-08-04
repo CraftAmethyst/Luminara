@@ -69,8 +69,9 @@ public class ChorusFruitItemMixin extends Item {
                     entityLiving instanceof ServerPlayer &&
                     DistValidate.isValid(worldIn)
                 ) {
-                    Player player =
-                        ((ServerPlayerEntityBridge) entityLiving).bridge$getBukkitEntity();
+                    Player player = (
+                        (ServerPlayerEntityBridge) entityLiving
+                    ).bridge$getBukkitEntity();
                     PlayerTeleportEvent event = new PlayerTeleportEvent(
                         player,
                         player.getLocation(),
@@ -103,9 +104,10 @@ public class ChorusFruitItemMixin extends Item {
                         vec3d,
                         GameEvent.Context.of(entityLiving)
                     );
-                    SoundEvent soundevent = entityLiving instanceof Fox
-                        ? SoundEvents.FOX_TELEPORT
-                        : SoundEvents.CHORUS_FRUIT_TELEPORT;
+                    SoundEvent soundevent =
+                        entityLiving instanceof Fox
+                            ? SoundEvents.FOX_TELEPORT
+                            : SoundEvents.CHORUS_FRUIT_TELEPORT;
                     worldIn.playSound(
                         null,
                         d0,
@@ -124,10 +126,9 @@ public class ChorusFruitItemMixin extends Item {
             if (
                 entityLiving instanceof net.minecraft.world.entity.player.Player
             ) {
-                ((net.minecraft.world.entity.player.Player) entityLiving).getCooldowns().addCooldown(
-                    this,
-                    20
-                );
+                ((net.minecraft.world.entity.player.Player) entityLiving)
+                    .getCooldowns()
+                    .addCooldown(this, 20);
             }
         }
 

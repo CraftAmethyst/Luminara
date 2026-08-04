@@ -37,7 +37,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Mob.class)
 public abstract class MobMixin
     extends LivingEntityMixin
-    implements MobEntityBridge {
+    implements MobEntityBridge
+{
 
     // @formatter:off
     @Shadow public boolean persistenceRequired;

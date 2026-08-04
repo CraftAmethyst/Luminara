@@ -117,11 +117,12 @@ public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
         // Have to special case large chests as they work oddly
         if (destination instanceof CompoundContainer) {
             destinationInventory = new CraftInventoryDoubleChest(
-                ((CompoundContainer) destination)
+                (CompoundContainer) destination
             );
         } else {
-            destinationInventory =
-                ((IInventoryBridge) destination).getOwnerInventory();
+            destinationInventory = (
+                (IInventoryBridge) destination
+            ).getOwnerInventory();
         }
 
         InventoryMoveItemEvent event = new InventoryMoveItemEvent(
@@ -172,7 +173,7 @@ public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
         // Have to special case large chests as they work oddly
         if (source instanceof CompoundContainer) {
             sourceInventory = new CraftInventoryDoubleChest(
-                ((CompoundContainer) source)
+                (CompoundContainer) source
             );
         } else {
             sourceInventory = ((IInventoryBridge) source).getOwnerInventory();
@@ -228,14 +229,14 @@ public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
         HopperInventorySearchEvent.ContainerType containerType
     ) {
         var event = new HopperInventorySearchEvent(
-            (inventory != null) ? new CraftInventory(inventory) : null,
+            inventory != null ? new CraftInventory(inventory) : null,
             containerType,
             hopper,
             searchLocation
         );
         Bukkit.getServer().getPluginManager().callEvent(event);
         CraftInventory craftInventory = (CraftInventory) event.getInventory();
-        return (craftInventory != null) ? craftInventory.getInventory() : null;
+        return craftInventory != null ? craftInventory.getInventory() : null;
     }
 
     @Inject(

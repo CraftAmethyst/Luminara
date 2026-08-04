@@ -51,7 +51,9 @@ public class EnderPearlItemMixin extends Item {
             );
             if (!worldIn.addFreshEntity(enderpearlentity)) {
                 if (playerIn instanceof ServerPlayerEntityBridge) {
-                    ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().updateInventory();
+                    ((ServerPlayerEntityBridge) playerIn)
+                        .bridge$getBukkitEntity()
+                        .updateInventory();
                 }
                 return new InteractionResultHolder<>(
                     InteractionResult.FAIL,

@@ -108,9 +108,10 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
         inventoryBukkitAccessTransformer(rows, bukkit, bukkitMappings);
         inventoryExtraMappings(rows, mappings, minecraft, bukkit);
         for (File generated : generatedRemapperInputs.getFiles()) {
-            String status = generated.isFile() && generated.length() > 0
-                ? "ACTIVE"
-                : "MISSING_GENERATED_INPUT";
+            String status =
+                generated.isFile() && generated.length() > 0
+                    ? "ACTIVE"
+                    : "MISSING_GENERATED_INPUT";
             rows.add(
                 row(
                     "generated-remapper",
@@ -227,7 +228,9 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                     input.getName(),
                     index + 1,
                     descriptor.isEmpty()
-                        ? (memberName.isEmpty() ? "class" : "field")
+                        ? memberName.isEmpty()
+                            ? "class"
+                            : "field"
                         : "method",
                     className.replace('/', '.'),
                     memberName,
@@ -268,12 +271,14 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
             }
             String target = parts[1].replace("/v/", "/v1_20_R1/");
             int memberSeparator = target.indexOf("/<");
-            String className = memberSeparator < 0
-                ? target
-                : target.substring(0, memberSeparator);
-            String member = memberSeparator < 0
-                ? ""
-                : target.substring(memberSeparator + 1);
+            String className =
+                memberSeparator < 0
+                    ? target
+                    : target.substring(0, memberSeparator);
+            String member =
+                memberSeparator < 0
+                    ? ""
+                    : target.substring(memberSeparator + 1);
             String descriptor = toBukkitDescriptor(
                 descriptor(member).replace("/v/", "/v1_20_R1/"),
                 mappings
@@ -361,9 +366,8 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                     minecraft.read(leftClass)
                 );
                 SrgClass rightMapping = mappings.findClass(rightClass);
-                String namedRight = rightMapping == null
-                    ? rightClass
-                    : rightMapping.namedClass;
+                String namedRight =
+                    rightMapping == null ? rightClass : rightMapping.namedClass;
                 rightNode = minecraft.read(namedRight);
                 boolean hasFieldMappings =
                     index + 1 < lines.size() &&
@@ -426,9 +430,10 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
         if ("<init>".equals(member)) {
             term = descriptor;
         } else {
-            term = member == null || member.isBlank()
-                ? className
-                : member.split("\\s+| -> ")[0];
+            term =
+                member == null || member.isBlank()
+                    ? className
+                    : member.split("\\s+| -> ")[0];
             if (term.contains("(")) term = term.substring(0, term.indexOf('('));
         }
         for (File source : referenceSources.getFiles()) {

@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(AbstractHurtingProjectile.class)
 public abstract class AbstractHurtingProjectileMixin
     extends ProjectileMixin
-    implements DamagingProjectileEntityBridge {
+    implements DamagingProjectileEntityBridge
+{
 
     // @formatter:off
     @Shadow public double xPower;

@@ -99,21 +99,21 @@ public abstract class ExperienceOrbMixin extends EntityMixin {
                 CraftEventFactory.callEntityTargetLivingEvent(
                     (ExperienceOrb) (Object) this,
                     this.followingPlayer,
-                    (this.followingPlayer != null)
+                    this.followingPlayer != null
                         ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER
                         : EntityTargetEvent.TargetReason.FORGOT_TARGET
                 );
-            LivingEntity target = (event.getTarget() == null)
-                ? null
-                : ((CraftLivingEntity) event.getTarget()).getHandle();
+            LivingEntity target =
+                event.getTarget() == null
+                    ? null
+                    : ((CraftLivingEntity) event.getTarget()).getHandle();
 
             if (event.isCancelled()) {
                 this.followingPlayer = arclight$lastPlayer;
                 return null;
             } else {
-                this.followingPlayer = (target instanceof Player)
-                    ? (Player) target
-                    : null;
+                this.followingPlayer =
+                    target instanceof Player ? (Player) target : null;
             }
         }
         return this.followingPlayer;

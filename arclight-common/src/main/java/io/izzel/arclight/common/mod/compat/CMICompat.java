@@ -26,9 +26,10 @@ public final class CMICompat {
             return original;
         }
 
-        ClassLoader loader = ownerClass == null
-            ? CMICompat.class.getClassLoader()
-            : ownerClass.getClassLoader();
+        ClassLoader loader =
+            ownerClass == null
+                ? CMICompat.class.getClassLoader()
+                : ownerClass.getClassLoader();
         return FALLBACK_EXECUTORS.compute(loader, (key, existing) -> {
             if (
                 existing != null &&

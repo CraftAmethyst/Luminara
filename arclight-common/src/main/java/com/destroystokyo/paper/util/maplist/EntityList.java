@@ -118,7 +118,9 @@ public final class EntityList implements Iterable<Entity> {
                 if (this.current >= EntityList.this.count) {
                     throw new NoSuchElementException();
                 }
-                return this.lastRet = EntityList.this.entities[this.current++];
+                return (this.lastRet = EntityList.this.entities[
+                    this.current++
+                ]);
             }
 
             @Override

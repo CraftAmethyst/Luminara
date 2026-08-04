@@ -40,9 +40,9 @@ public final class PlayerAreaMap extends AreaMap<ServerPlayer> {
     }
 
     @Override
-    protected PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
-        ServerPlayer
-    > getEmptySetFor(final ServerPlayer player) {
+    protected PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> getEmptySetFor(
+        final ServerPlayer player
+    ) {
         return new PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(player);
     }
 }

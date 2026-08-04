@@ -19,8 +19,11 @@ import java.util.Set;
 import java.util.function.Supplier;
 import javax.net.ssl.SSLException;
 
-public record FileDownloader(String url, String target, String hash) implements
-    Supplier<Path> {
+public record FileDownloader(
+    String url,
+    String target,
+    String hash
+) implements Supplier<Path> {
     static final int CONNECT_TIMEOUT_MILLIS = 15_000;
     static final int READ_TIMEOUT_MILLIS = 15_000;
     static final int MAX_REDIRECTS = 8;
@@ -31,8 +34,9 @@ public record FileDownloader(String url, String target, String hash) implements
     }
 
     static InputStream read(String url) throws IOException {
-        return read(url, current ->
-            (HttpURLConnection) current.openConnection()
+        return read(
+            url,
+            current -> (HttpURLConnection) current.openConnection()
         );
     }
 
@@ -126,8 +130,11 @@ public record FileDownloader(String url, String target, String hash) implements
 
     @Override
     public Path get() {
-        return download(url, Paths.get(target), hash, current ->
-            (HttpURLConnection) current.openConnection()
+        return download(
+            url,
+            Paths.get(target),
+            hash,
+            current -> (HttpURLConnection) current.openConnection()
         );
     }
 

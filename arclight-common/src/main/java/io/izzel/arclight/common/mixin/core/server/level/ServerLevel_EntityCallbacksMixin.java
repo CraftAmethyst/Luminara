@@ -43,9 +43,11 @@ public class ServerLevel_EntityCallbacksMixin {
                 for (Object o : worldData.cache.values()) {
                     if (o instanceof MapItemSavedData map) {
                         map.carriedByPlayers.remove(player);
-                        ((MapDataBridge) map).bridge$getCarriedBy().removeIf(
-                            holdingPlayer -> holdingPlayer.player == entity
-                        );
+                        ((MapDataBridge) map)
+                            .bridge$getCarriedBy()
+                            .removeIf(
+                                holdingPlayer -> holdingPlayer.player == entity
+                            );
                     }
                 }
             }
@@ -70,9 +72,9 @@ public class ServerLevel_EntityCallbacksMixin {
         ((EntityBridge) entity).bridge$setValid(false);
         if (!(entity instanceof ServerPlayer)) {
             for (var player : outerThis.players()) {
-                ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().onEntityRemove(
-                    entity
-                );
+                ((ServerPlayerEntityBridge) player)
+                    .bridge$getBukkitEntity()
+                    .onEntityRemove(entity);
             }
         }
     }

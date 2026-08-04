@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(StonecutterMenu.class)
 public abstract class StonecutterContainerMixin
     extends AbstractContainerMenuMixin
-    implements PosContainerBridge {
+    implements PosContainerBridge
+{
 
     // @formatter:off
     @Shadow @Final public Container container;
@@ -58,7 +59,9 @@ public abstract class StonecutterContainerMixin
             this.resultContainer
         );
         bukkitEntity = new CraftInventoryView(
-            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            (
+                (PlayerEntityBridge) this.playerInventory.player
+            ).bridge$getBukkitEntity(),
             inventory,
             (AbstractContainerMenu) (Object) this
         );

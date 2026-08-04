@@ -33,7 +33,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(LecternBlockEntity.class)
 public abstract class LecternBlockEntityMixin
     extends BlockEntityMixin
-    implements CommandSource, ICommandSourceBridge {
+    implements CommandSource, ICommandSourceBridge
+{
 
     // @formatter:off
     @Shadow @Final public Container bookAccess;

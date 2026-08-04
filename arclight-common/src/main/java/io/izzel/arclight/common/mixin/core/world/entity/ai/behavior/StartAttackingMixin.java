@@ -66,8 +66,7 @@ public class StartAttackingMixin {
                                         CraftEventFactory.callEntityTargetLivingEvent(
                                             p_258774_,
                                             livingentity,
-                                            (livingentity instanceof
-                                                        ServerPlayer)
+                                            livingentity instanceof ServerPlayer
                                                 ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER
                                                 : EntityTargetEvent.TargetReason.CLOSEST_ENTITY
                                         );
@@ -78,8 +77,9 @@ public class StartAttackingMixin {
                                         p_258778_.erase();
                                         return true;
                                     }
-                                    livingentity =
-                                        ((CraftLivingEntity) event.getTarget()).getHandle();
+                                    livingentity = (
+                                        (CraftLivingEntity) event.getTarget()
+                                    ).getHandle();
                                     // CraftBukkit end
                                     p_258778_.set(
                                         changeTargetEvent.getNewTarget()

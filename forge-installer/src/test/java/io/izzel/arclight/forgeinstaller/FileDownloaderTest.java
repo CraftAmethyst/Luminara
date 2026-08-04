@@ -64,8 +64,9 @@ class FileDownloaderTest {
         );
 
         IOException exception = assertThrows(IOException.class, () ->
-            FileDownloader.read(connection.getURL().toString(), ignored ->
-                connection
+            FileDownloader.read(
+                connection.getURL().toString(),
+                ignored -> connection
             )
         );
 

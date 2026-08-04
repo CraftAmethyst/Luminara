@@ -179,8 +179,9 @@ public class ModBootstrap extends AbstractBootstrap {
         ClassLoader parent
     ) {}
 
-    private record JarModuleDataProvider(Jar jar) implements
-        SecureJar.ModuleDataProvider {
+    private record JarModuleDataProvider(
+        Jar jar
+    ) implements SecureJar.ModuleDataProvider {
         @Override
         public String name() {
             return jar.name();

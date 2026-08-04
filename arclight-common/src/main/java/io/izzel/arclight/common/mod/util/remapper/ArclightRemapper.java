@@ -101,9 +101,9 @@ public class ArclightRemapper {
         // TODO workaround for https://github.com/md-5/SpecialSource/pull/81
         //  remove on update
         var content = new String(
-            ArclightRemapper.class.getResourceAsStream(
-                "/bukkit_srg.srg"
-            ).readAllBytes(),
+            ArclightRemapper.class
+                .getResourceAsStream("/bukkit_srg.srg")
+                .readAllBytes(),
             StandardCharsets.UTF_8
         );
         var i = content.indexOf(

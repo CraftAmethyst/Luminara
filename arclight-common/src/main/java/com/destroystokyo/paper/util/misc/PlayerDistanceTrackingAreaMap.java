@@ -3,7 +3,8 @@ package com.destroystokyo.paper.util.misc;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PlayerDistanceTrackingAreaMap
-    extends DistanceTrackingAreaMap<ServerPlayer> {
+    extends DistanceTrackingAreaMap<ServerPlayer>
+{
 
     public PlayerDistanceTrackingAreaMap() {
         super();
@@ -30,9 +31,9 @@ public class PlayerDistanceTrackingAreaMap
     }
 
     @Override
-    protected PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<
-        ServerPlayer
-    > getEmptySetFor(final ServerPlayer player) {
+    protected PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> getEmptySetFor(
+        final ServerPlayer player
+    ) {
         return new PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<>(player);
     }
 }

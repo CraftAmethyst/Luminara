@@ -151,8 +151,9 @@ public abstract class PortalShapeMixin implements PortalSizeBridge {
 
     @Inject(method = "createPortalBlocks", cancellable = true, at = @At("HEAD"))
     private void arclight$buildPortal(CallbackInfo ci) {
-        World world =
-            ((WorldBridge) ((IWorldBridge) this.level).bridge$getMinecraftWorld()).bridge$getWorld();
+        World world = (
+            (WorldBridge) ((IWorldBridge) this.level).bridge$getMinecraftWorld()
+        ).bridge$getWorld();
         net.minecraft.world.level.block.state.BlockState blockState =
             Blocks.NETHER_PORTAL.defaultBlockState().setValue(
                 NetherPortalBlock.AXIS,
@@ -160,10 +161,9 @@ public abstract class PortalShapeMixin implements PortalSizeBridge {
             );
         BlockPos.betweenClosed(
             this.bottomLeft,
-            this.bottomLeft.relative(Direction.UP, this.height - 1).relative(
-                this.rightDir,
-                this.width - 1
-            )
+            this.bottomLeft
+                .relative(Direction.UP, this.height - 1)
+                .relative(this.rightDir, this.width - 1)
         ).forEach(pos -> {
             CraftBlockState state = CraftBlockStates.getBlockState(
                 ((IWorldBridge) this.level).bridge$getMinecraftWorld(),

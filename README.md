@@ -37,6 +37,7 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
   > The next version will be compatible
 
 ## Known Incompatible Plugins
+
 - Any plugin that claims to optimize server performance (e.g., LaggRemover)
   > Most of these plugins offer fake optimizations — they either don't help performance or actively harm it
 - Any anti-cheat plugin (e.g., GrimAC, Matrix, Vulcan)
@@ -48,6 +49,7 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 ## How Can I Maximize Optimization on This Server?
 
 - If you want more aggressive performance optimization, I recommend our downstream project [PRTS-SERVER](https://github.com/ElainAwa/PRTS-SERVER)
+
   > PRTS-SERVER aims to implement more performance optimization patches while maintaining compatibility as much as possible. These patches come from [ServerCore](https://modrinth.com/mod/servercore), [Very Many Players](https://modrinth.com/mod/vmp-forge), [Paper](https://papermc.io/), [Mohist](https://www.mohistmc.com/), and others
   > Note that this is only suitable for small to medium modpacks! For large modpacks like ATM9, we recommend staying on this server instead, because large modpacks often require more compatibility
 

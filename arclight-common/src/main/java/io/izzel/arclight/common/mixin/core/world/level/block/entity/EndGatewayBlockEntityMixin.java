@@ -49,8 +49,9 @@ public abstract class EndGatewayBlockEntityMixin extends BlockEntityMixin {
         BlockPos dest
     ) {
         if (entityIn instanceof ServerPlayer) {
-            CraftPlayer player =
-                ((ServerPlayerEntityBridge) entityIn).bridge$getBukkitEntity();
+            CraftPlayer player = (
+                (ServerPlayerEntityBridge) entityIn
+            ).bridge$getBukkitEntity();
             Location location = new Location(
                 ((WorldBridge) level).bridge$getWorld(),
                 dest.getX() + 0.5D,
@@ -73,9 +74,11 @@ public abstract class EndGatewayBlockEntityMixin extends BlockEntityMixin {
             }
 
             entityIn.setPortalCooldown();
-            ((ServerPlayNetHandlerBridge) (((ServerPlayer) entityIn)).connection).bridge$teleport(
-                event.getTo()
-            );
+            (
+                (ServerPlayNetHandlerBridge) (
+                    (ServerPlayer) entityIn
+                ).connection
+            ).bridge$teleport(event.getTo());
             triggerCooldown(level, pos, state, entity);
             ci.cancel();
         }

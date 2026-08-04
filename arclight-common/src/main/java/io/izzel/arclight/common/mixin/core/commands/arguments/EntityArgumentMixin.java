@@ -39,10 +39,9 @@ public class EntityArgumentMixin implements EntityArgumentBridge {
         EntitySelectorParser entityselectorparser = new EntitySelectorParser(
             reader
         );
-        EntitySelector entityselector =
-            ((EntitySelectorParserBridge) entityselectorparser).bridge$parse(
-                overridePermissions
-            );
+        EntitySelector entityselector = (
+            (EntitySelectorParserBridge) entityselectorparser
+        ).bridge$parse(overridePermissions);
         if (entityselector.getMaxResults() > 1 && this.single) {
             if (this.playersOnly) {
                 reader.setCursor(0);

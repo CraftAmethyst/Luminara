@@ -236,9 +236,10 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     }
 
     public void tryDefineClass(String internalName) {
-        String normalizedName = internalName.indexOf('.') == -1
-            ? internalName
-            : internalName.replace('.', '/');
+        String normalizedName =
+            internalName.indexOf('.') == -1
+                ? internalName
+                : internalName.replace('.', '/');
         normalizedName = CraftBukkitVersionRemapper.remapInternalName(
             normalizedName
         );
@@ -423,19 +424,17 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
     private boolean isSecureJar(JarFile jarFile) {
         return this.secureJarInfo.computeIfAbsent(jarFile.getName(), key ->
-            jarFile
-                .stream()
-                .anyMatch(it -> {
-                    if (it.isDirectory()) return false;
-                    String name = it.getName().toUpperCase(Locale.ROOT);
-                    return (
-                        name.startsWith("META-INF") &&
-                        (name.endsWith(".DSA") ||
-                            name.endsWith(".RSA") ||
-                            name.endsWith(".EC") ||
-                            name.endsWith(".SF"))
-                    );
-                })
+            jarFile.stream().anyMatch(it -> {
+                if (it.isDirectory()) return false;
+                String name = it.getName().toUpperCase(Locale.ROOT);
+                return (
+                    name.startsWith("META-INF") &&
+                    (name.endsWith(".DSA") ||
+                        name.endsWith(".RSA") ||
+                        name.endsWith(".EC") ||
+                        name.endsWith(".SF"))
+                );
+            })
         );
     }
 
@@ -466,8 +465,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                         )
                     ) {
                         ByteStreams.exhaust(connection.getInputStream()); // must read before asking signers
-                        signers =
-                            ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+                        signers = ((JarURLConnection) connection)
+                            .getJarEntry()
+                            .getCodeSigners();
                     } else {
                         signers = null;
                     }
@@ -505,8 +505,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                 CodeSigner[] signers;
                 if (connection instanceof JarURLConnection) {
                     url = ((JarURLConnection) connection).getJarFileURL();
-                    signers =
-                        ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+                    signers = ((JarURLConnection) connection)
+                        .getJarEntry()
+                        .getCodeSigners();
                 } else {
                     url = connection.getURL();
                     signers = null;

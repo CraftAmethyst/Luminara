@@ -188,7 +188,8 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin {
                 result.append(plugins[i].getDescription().getName());
                 result.append(" ");
                 result.append(
-                    plugins[i].getDescription()
+                    plugins[i]
+                        .getDescription()
                         .getVersion()
                         .replaceAll(";", ",")
                 );

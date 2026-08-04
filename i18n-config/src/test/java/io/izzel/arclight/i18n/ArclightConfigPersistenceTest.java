@@ -28,9 +28,9 @@ class ArclightConfigPersistenceTest {
         node.getNode("locale", "current").setValue("en_us");
 
         node.getNode("optimization", "cache-plugin-class").setValue(true);
-        node
-            .getNode("compatibility", "extra-logic-worlds")
-            .setValue(java.util.List.of("example.First", "example.Second"));
+        node.getNode("compatibility", "extra-logic-worlds").setValue(
+            java.util.List.of("example.First", "example.Second")
+        );
         ArclightConfig.saveAtomically(config, node);
 
         ConfigurationNode reloaded = YAMLConfigurationLoader.builder()

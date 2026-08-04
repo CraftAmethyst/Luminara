@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.Shadow;
     targets = "net.minecraft.server.level.ServerChunkCache$MainThreadExecutor"
 )
 public abstract class ServerChunkCache_MainThreadExecutorMixin
-    extends BlockableEventLoop<Runnable> {
+    extends BlockableEventLoop<Runnable>
+{
 
     // @formatter:off
     @Shadow(aliases = {"this$0", "f_8491_"}, remap = false) @Final private ServerChunkCache outer;
@@ -38,12 +39,18 @@ public abstract class ServerChunkCache_MainThreadExecutorMixin
             ) {
                 return true;
             } else {
-                ((ServerChunkProviderBridge) outer).bridge$getLightManager().tryScheduleUpdate();
+                ((ServerChunkProviderBridge) outer)
+                    .bridge$getLightManager()
+                    .tryScheduleUpdate();
                 return super.pollTask();
             }
         } finally {
-            ((ChunkMapBridge) outer.chunkMap).bridge$getCallbackExecutor().run();
-            ((MinecraftServerBridge) ArclightServer.getMinecraftServer()).bridge$drainQueuedTasks();
+            ((ChunkMapBridge) outer.chunkMap)
+                .bridge$getCallbackExecutor()
+                .run();
+            (
+                (MinecraftServerBridge) ArclightServer.getMinecraftServer()
+            ).bridge$drainQueuedTasks();
         }
     }
 }

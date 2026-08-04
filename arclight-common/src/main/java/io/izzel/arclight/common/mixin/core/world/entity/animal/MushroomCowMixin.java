@@ -86,7 +86,9 @@ public abstract class MushroomCowMixin extends AnimalMixin {
             );
             EntityDropItemEvent event = new EntityDropItemEvent(
                 this.getBukkitEntity(),
-                (org.bukkit.entity.Item) ((EntityBridge) itemEntity).bridge$getBukkitEntity()
+                (org.bukkit.entity.Item) (
+                    (EntityBridge) itemEntity
+                ).bridge$getBukkitEntity()
             );
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {

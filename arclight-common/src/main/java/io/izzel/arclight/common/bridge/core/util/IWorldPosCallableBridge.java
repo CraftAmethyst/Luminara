@@ -22,9 +22,8 @@ public interface IWorldPosCallableBridge {
             return null;
         } else {
             Level level = bridge$getWorld();
-            CraftWorld world = level == null
-                ? null
-                : ((WorldBridge) level).bridge$getWorld();
+            CraftWorld world =
+                level == null ? null : ((WorldBridge) level).bridge$getWorld();
             return new Location(
                 world,
                 blockPos.getX(),

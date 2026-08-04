@@ -99,10 +99,9 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
                 this.pickup ==
                     net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED &&
                 !itemstack.isEmpty() &&
-                ((PlayerInventoryBridge) playerEntity.getInventory()).bridge$canHold(
-                    itemstack
-                ) >
-                0
+                (
+                    (PlayerInventoryBridge) playerEntity.getInventory()
+                ).bridge$canHold(itemstack) > 0
             ) {
                 ItemEntity item = new ItemEntity(
                     this.level(),
@@ -112,9 +111,11 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
                     itemstack
                 );
                 PlayerPickupArrowEvent event = new PlayerPickupArrowEvent(
-                    ((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity(),
+                    (
+                        (ServerPlayerEntityBridge) playerEntity
+                    ).bridge$getBukkitEntity(),
                     new CraftItem(
-                        ((CraftServer) Bukkit.getServer()),
+                        (CraftServer) Bukkit.getServer(),
                         (net.minecraft.world.entity.projectile.AbstractArrow) (Object) this,
                         item
                     ),
@@ -128,10 +129,10 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
             }
             if (
                 (this.pickup ==
-                        net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED &&
+                    net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED &&
                     playerEntity.getInventory().add(itemstack)) ||
                 (this.pickup ==
-                        net.minecraft.world.entity.projectile.AbstractArrow.Pickup.CREATIVE_ONLY &&
+                    net.minecraft.world.entity.projectile.AbstractArrow.Pickup.CREATIVE_ONLY &&
                     playerEntity.getAbilities().instabuild)
             ) {
                 playerEntity.take(
@@ -145,8 +146,11 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
 
     @Inject(method = "setOwner", at = @At("HEAD"))
     private void arclight$setShooter(Entity entityIn, CallbackInfo ci) {
-        this.projectileSource = entityIn == null
-            ? null
-            : (ProjectileSource) ((EntityBridge) entityIn).bridge$getBukkitEntity();
+        this.projectileSource =
+            entityIn == null
+                ? null
+                : (ProjectileSource) (
+                      (EntityBridge) entityIn
+                  ).bridge$getBukkitEntity();
     }
 }

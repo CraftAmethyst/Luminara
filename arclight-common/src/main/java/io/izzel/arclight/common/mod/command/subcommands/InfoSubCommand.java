@@ -39,8 +39,9 @@ public class InfoSubCommand implements LuminaraSubCommand {
 
     private int execute(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        CommandSender sender =
-            ((CommandSourceBridge) source).bridge$getBukkitSender();
+        CommandSender sender = (
+            (CommandSourceBridge) source
+        ).bridge$getBukkitSender();
 
         try {
             sender.sendMessage("§6=== Luminara Information ===");

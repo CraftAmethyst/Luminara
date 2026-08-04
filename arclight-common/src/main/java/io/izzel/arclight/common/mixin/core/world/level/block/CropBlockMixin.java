@@ -40,7 +40,7 @@ public class CropBlockMixin {
                 modifier = bridge.bridge$spigotConfig().wheatModifier;
             }
             var f = cir.getReturnValueF();
-            f /= (100F / modifier);
+            f /= 100F / modifier;
             cir.setReturnValue(f);
         }
     }

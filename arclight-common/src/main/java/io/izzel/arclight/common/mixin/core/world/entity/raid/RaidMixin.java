@@ -193,9 +193,10 @@ public class RaidMixin implements RaidBridge {
         )
     )
     public void arclight$finish(CallbackInfo ci) {
-        List<Player> winners = this.arclight$winners == null
-            ? new ArrayList<>()
-            : this.arclight$winners;
+        List<Player> winners =
+            this.arclight$winners == null
+                ? new ArrayList<>()
+                : this.arclight$winners;
         this.arclight$winners = null;
         CraftEventFactory.callRaidFinishEvent((Raid) (Object) this, winners);
     }

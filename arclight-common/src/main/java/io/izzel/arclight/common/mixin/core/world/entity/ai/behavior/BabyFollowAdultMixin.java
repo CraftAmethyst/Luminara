@@ -66,8 +66,9 @@ public abstract class BabyFollowAdultMixin {
                                     p_258317_.erase();
                                     return true;
                                 }
-                                ageablemob =
-                                    ((CraftLivingEntity) event.getTarget()).getHandle();
+                                ageablemob = (
+                                    (CraftLivingEntity) event.getTarget()
+                                ).getHandle();
                                 // CraftBukkit end
                                 WalkTarget walktarget = new WalkTarget(
                                     new EntityTracker(ageablemob, false),

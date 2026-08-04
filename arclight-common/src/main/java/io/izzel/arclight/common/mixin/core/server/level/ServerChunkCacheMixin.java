@@ -24,7 +24,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerChunkCache.class)
 public abstract class ServerChunkCacheMixin
-    implements ServerChunkProviderBridge {
+    implements ServerChunkProviderBridge
+{
 
     @Shadow
     @Final
@@ -56,10 +57,9 @@ public abstract class ServerChunkCacheMixin
     // @formatter:on
 
     public boolean isChunkLoaded(final int chunkX, final int chunkZ) {
-        ChunkHolder chunk =
-            ((ChunkMapBridge) this.chunkMap).bridge$chunkHolderAt(
-                ChunkPos.asLong(chunkX, chunkZ)
-            );
+        ChunkHolder chunk = (
+            (ChunkMapBridge) this.chunkMap
+        ).bridge$chunkHolderAt(ChunkPos.asLong(chunkX, chunkZ));
         return (
             chunk != null &&
             ((ChunkHolderBridge) chunk).bridge$getFullChunk() != null
@@ -67,10 +67,9 @@ public abstract class ServerChunkCacheMixin
     }
 
     public LevelChunk getChunkUnchecked(int chunkX, int chunkZ) {
-        ChunkHolder chunk =
-            ((ChunkMapBridge) this.chunkMap).bridge$chunkHolderAt(
-                ChunkPos.asLong(chunkX, chunkZ)
-            );
+        ChunkHolder chunk = (
+            (ChunkMapBridge) this.chunkMap
+        ).bridge$chunkHolderAt(ChunkPos.asLong(chunkX, chunkZ));
         if (chunk == null) {
             return null;
         }
@@ -151,11 +150,10 @@ public abstract class ServerChunkCacheMixin
     )
     private long arclight$ticksPer(LevelData worldInfo) {
         long gameTime = worldInfo.getGameTime();
-        long ticksPer =
-            ((WorldBridge) this.level).bridge$ticksPerSpawnCategory().getLong(
-                SpawnCategory.ANIMAL
-            );
-        return (ticksPer != 0L && gameTime % ticksPer == 0) ? 0 : 1;
+        long ticksPer = ((WorldBridge) this.level)
+            .bridge$ticksPerSpawnCategory()
+            .getLong(SpawnCategory.ANIMAL);
+        return ticksPer != 0L && gameTime % ticksPer == 0 ? 0 : 1;
     }
 
     public void close(boolean save) throws IOException {

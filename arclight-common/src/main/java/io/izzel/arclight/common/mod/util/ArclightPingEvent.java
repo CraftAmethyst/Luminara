@@ -27,7 +27,9 @@ public class ArclightPingEvent extends ServerListPingEvent {
     ) {
         super(
             ((NetworkManagerBridge) networkManager).bridge$getHostname(),
-            ((InetSocketAddress) networkManager.getRemoteAddress()).getAddress(),
+            (
+                (InetSocketAddress) networkManager.getRemoteAddress()
+            ).getAddress(),
             server.getMotd(),
             server.getPlayerList().getMaxPlayers()
         );

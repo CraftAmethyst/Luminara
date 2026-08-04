@@ -69,7 +69,9 @@ public class TeleportCommandMixin {
 
             boolean result;
             if (entity instanceof ServerPlayer player) {
-                ((ServerPlayerEntityBridge) player).bridge$pushChangeDimensionCause(
+                (
+                    (ServerPlayerEntityBridge) player
+                ).bridge$pushChangeDimensionCause(
                     PlayerTeleportEvent.TeleportCause.COMMAND
                 );
                 result = player.teleportTo(level, x, y, z, set, f, f1);
@@ -84,7 +86,9 @@ public class TeleportCommandMixin {
                 );
                 var e = new org.bukkit.event.entity.EntityTeleportEvent(
                     ((EntityBridge) entity).bridge$getBukkitEntity(),
-                    ((EntityBridge) entity).bridge$getBukkitEntity().getLocation(),
+                    ((EntityBridge) entity)
+                        .bridge$getBukkitEntity()
+                        .getLocation(),
                     to
                 );
                 Bukkit.getPluginManager().callEvent(e);

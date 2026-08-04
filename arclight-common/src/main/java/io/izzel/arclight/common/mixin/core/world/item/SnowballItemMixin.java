@@ -62,7 +62,9 @@ public class SnowballItemMixin extends Item {
                     0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F)
                 );
             } else if (playerIn instanceof ServerPlayer) {
-                ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity().updateInventory();
+                ((ServerPlayerEntityBridge) playerIn)
+                    .bridge$getBukkitEntity()
+                    .updateInventory();
             }
         }
 

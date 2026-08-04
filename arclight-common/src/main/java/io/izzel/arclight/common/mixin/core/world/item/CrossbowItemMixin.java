@@ -90,7 +90,9 @@ public class CrossbowItemMixin {
         if (arclight$capturedBoolean) {
             if (!world.addFreshEntity(entityIn)) {
                 if (shooter instanceof ServerPlayer) {
-                    ((ServerPlayerEntityBridge) shooter).bridge$getBukkitEntity().updateInventory();
+                    ((ServerPlayerEntityBridge) shooter)
+                        .bridge$getBukkitEntity()
+                        .updateInventory();
                 }
                 ci.cancel();
             }

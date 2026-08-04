@@ -58,10 +58,10 @@ public class ServerScoreboardMixin {
             .stream()
             .filter(
                 it ->
-                    ((ServerPlayerEntityBridge) it).bridge$getBukkitEntity()
+                    ((ServerPlayerEntityBridge) it)
+                        .bridge$getBukkitEntity()
                         .getScoreboard()
-                        .getHandle() ==
-                    (Object) this
+                        .getHandle() == (Object) this
             )
             .collect(Collectors.toList());
     }

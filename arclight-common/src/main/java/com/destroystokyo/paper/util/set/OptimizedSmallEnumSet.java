@@ -55,7 +55,7 @@ public final class OptimizedSmallEnumSet<E extends Enum<E>> {
             if (element == null) {
                 throw new NullPointerException("Null element");
             }
-            this.backingSet |= (1L << element.ordinal());
+            this.backingSet |= 1L << element.ordinal();
         }
     }
 

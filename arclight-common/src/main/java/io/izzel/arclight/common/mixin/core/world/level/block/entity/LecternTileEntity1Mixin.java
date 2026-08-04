@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(targets = "net/minecraft/world/level/block/entity/LecternBlockEntity$1")
 public abstract class LecternTileEntity1Mixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     public List<HumanEntity> transaction = new ArrayList<>();
 

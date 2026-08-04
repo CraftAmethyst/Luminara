@@ -43,9 +43,9 @@ public abstract class MaterialMixin implements MaterialBridge {
         String,
         BiFunction<Material, CraftMetaItem, ItemMeta>
     > TYPES = ImmutableMap.<
-            String,
-            BiFunction<Material, CraftMetaItem, ItemMeta>
-        >builder()
+        String,
+        BiFunction<Material, CraftMetaItem, ItemMeta>
+    >builder()
         .put("ARMOR_STAND", (a, b) ->
             b instanceof CraftMetaArmorStand ? b : new CraftMetaArmorStand(b)
         )
@@ -398,9 +398,11 @@ public abstract class MaterialMixin implements MaterialBridge {
                 Class<?> data = Class.forName(arclight$spec.materialDataClass);
                 if (MaterialData.class.isAssignableFrom(data)) {
                     this.data = data;
-                    this.ctor = (Constructor<
-                        ? extends MaterialData
-                    >) data.getConstructor(Material.class, byte.class);
+                    this.ctor =
+                        (Constructor<? extends MaterialData>) data.getConstructor(
+                            Material.class,
+                            byte.class
+                        );
                 }
             } catch (Exception e) {
                 ArclightMod.LOGGER.warn(
@@ -460,23 +462,21 @@ public abstract class MaterialMixin implements MaterialBridge {
             arclight$spec.interactable = true;
         }
         if (arclight$spec.hardness == null) {
-            arclight$spec.hardness = block != null
-                ? block.defaultBlockState().destroySpeed
-                : 0;
+            arclight$spec.hardness =
+                block != null ? block.defaultBlockState().destroySpeed : 0;
         }
         if (arclight$spec.blastResistance == null) {
-            arclight$spec.blastResistance = block != null
-                ? block.getExplosionResistance()
-                : 0;
+            arclight$spec.blastResistance =
+                block != null ? block.getExplosionResistance() : 0;
         }
         if (arclight$spec.craftingRemainingItem == null) {
             // noinspection deprecation
-            arclight$spec.craftingRemainingItem = item != null &&
-                item.hasCraftingRemainingItem()
-                ? ForgeRegistries.ITEMS.getKey(
-                      item.getCraftingRemainingItem()
-                  ).toString()
-                : null;
+            arclight$spec.craftingRemainingItem =
+                item != null && item.hasCraftingRemainingItem()
+                    ? ForgeRegistries.ITEMS.getKey(
+                          item.getCraftingRemainingItem()
+                      ).toString()
+                    : null;
         }
         if (arclight$spec.itemMetaType == null) {
             arclight$spec.itemMetaType = "UNSPECIFIC";
@@ -509,13 +509,10 @@ public abstract class MaterialMixin implements MaterialBridge {
                         CraftBlockState.class
                     );
                 }
-                for (Constructor<
-                    ?
-                > constructor : cl.getDeclaredConstructors()) {
+                for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
                     if (
                         constructor.getParameterTypes().length == 1 &&
-                        org.bukkit.block
-                            .Block.class.isAssignableFrom(
+                        org.bukkit.block.Block.class.isAssignableFrom(
                             constructor.getParameterTypes()[0]
                         )
                     ) {

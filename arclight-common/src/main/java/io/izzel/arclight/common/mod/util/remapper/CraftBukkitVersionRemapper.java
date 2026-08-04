@@ -125,9 +125,10 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
             CRAFTBUKKIT_PREFIX.length()
         );
         int slashIndex = afterPrefix.indexOf('/');
-        String versionPart = slashIndex == -1
-            ? afterPrefix
-            : afterPrefix.substring(0, slashIndex);
+        String versionPart =
+            slashIndex == -1
+                ? afterPrefix
+                : afterPrefix.substring(0, slashIndex);
         if (!GENERIC_VERSION.equals(versionPart)) {
             return internalName;
         }
@@ -153,9 +154,8 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
             CRAFTBUKKIT_DOT_PREFIX.length()
         );
         int dotIndex = afterPrefix.indexOf('.');
-        String versionPart = dotIndex == -1
-            ? afterPrefix
-            : afterPrefix.substring(0, dotIndex);
+        String versionPart =
+            dotIndex == -1 ? afterPrefix : afterPrefix.substring(0, dotIndex);
         if (!GENERIC_VERSION.equals(versionPart)) {
             return binaryName;
         }
@@ -251,7 +251,9 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
                         if (bsmArgs[i] instanceof org.objectweb.asm.Type) {
                             bsmArgs[i] = org.objectweb.asm.Type.getType(
                                 remapDescriptor(
-                                    ((org.objectweb.asm.Type) bsmArgs[i]).getDescriptor()
+                                    (
+                                        (org.objectweb.asm.Type) bsmArgs[i]
+                                    ).getDescriptor()
                                 )
                             );
                         } else if (

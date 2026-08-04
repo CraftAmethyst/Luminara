@@ -70,9 +70,13 @@ public class FishingRodItemMixin extends Item {
                 FishingHook hook = new FishingHook(playerIn, worldIn, j, k);
                 if (DistValidate.isValid(worldIn)) {
                     PlayerFishEvent playerFishEvent = new PlayerFishEvent(
-                        ((ServerPlayerEntityBridge) playerIn).bridge$getBukkitEntity(),
+                        (
+                            (ServerPlayerEntityBridge) playerIn
+                        ).bridge$getBukkitEntity(),
                         null,
-                        (FishHook) ((EntityBridge) hook).bridge$getBukkitEntity(),
+                        (FishHook) (
+                            (EntityBridge) hook
+                        ).bridge$getBukkitEntity(),
                         CraftEquipmentSlot.getHand(handIn),
                         PlayerFishEvent.State.FISHING
                     );

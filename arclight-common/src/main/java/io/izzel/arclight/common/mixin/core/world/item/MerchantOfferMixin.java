@@ -23,10 +23,10 @@ public class MerchantOfferMixin implements MerchantOfferBridge {
     private CraftMerchantRecipe bukkitHandle;
 
     public CraftMerchantRecipe asBukkit() {
-        return (bukkitHandle == null)
-            ? bukkitHandle = new CraftMerchantRecipe(
+        return bukkitHandle == null
+            ? (bukkitHandle = new CraftMerchantRecipe(
                   (MerchantOffer) (Object) this
-              )
+              ))
             : bukkitHandle;
     }
 

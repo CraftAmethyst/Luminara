@@ -20,7 +20,8 @@ public class BootstrapMixin {
         // 我简直是 fucking genius
         if (
             new LinkageError()
-                .getStackTrace()[2].toString()
+                .getStackTrace()[2]
+                .toString()
                 .contains("util.CraftLegacy")
         ) {
             try {

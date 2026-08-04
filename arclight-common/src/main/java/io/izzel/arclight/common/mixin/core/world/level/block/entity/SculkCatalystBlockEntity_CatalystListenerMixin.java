@@ -11,7 +11,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(SculkCatalystBlockEntity.CatalystListener.class)
 public class SculkCatalystBlockEntity_CatalystListenerMixin
-    implements SculkCatalystListenerBridge {
+    implements SculkCatalystListenerBridge
+{
 
     @Shadow
     @Final

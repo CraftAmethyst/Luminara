@@ -32,10 +32,11 @@ public abstract class ProjectileMixin extends EntityMixin {
     @Inject(method = "setOwner", at = @At("RETURN"))
     private void arclight$updateSource(Entity entityIn, CallbackInfo ci) {
         if (entityIn != null) {
-            CraftEntity entity =
-                ((EntityBridge) entityIn).bridge$getBukkitEntity();
+            CraftEntity entity = (
+                (EntityBridge) entityIn
+            ).bridge$getBukkitEntity();
             if (entity instanceof ProjectileSource) {
-                this.projectileSource = ((ProjectileSource) entity);
+                this.projectileSource = (ProjectileSource) entity;
             }
         }
     }

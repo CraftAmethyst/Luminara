@@ -167,8 +167,8 @@ public abstract class EnderDragonMixin extends MobMixin {
                     craftBlock.getNMS().getBlock();
                 if (nmsBlock.dropFromExplosion(this.explosionSource)) {
                     BlockEntity tileentity = craftBlock
-                            .getNMS()
-                            .hasBlockEntity()
+                        .getNMS()
+                        .hasBlockEntity()
                         ? this.level().getBlockEntity(blockposition2)
                         : null;
                     LootParams.Builder loottableinfo_builder =

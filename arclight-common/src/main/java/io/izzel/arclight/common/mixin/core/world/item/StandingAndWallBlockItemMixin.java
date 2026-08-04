@@ -31,10 +31,10 @@ public class StandingAndWallBlockItemMixin {
     ) {
         if (defaultReturn != null) {
             var result = cir.getReturnValue() != null;
-            var player = (context.getPlayer() instanceof
-                        ServerPlayerEntityBridge bridge)
-                ? bridge.bridge$getBukkitEntity()
-                : null;
+            var player =
+                context.getPlayer() instanceof ServerPlayerEntityBridge bridge
+                    ? bridge.bridge$getBukkitEntity()
+                    : null;
 
             var event = new BlockCanBuildEvent(
                 CraftBlock.at(context.getLevel(), context.getClickedPos()),

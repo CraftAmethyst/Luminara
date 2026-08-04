@@ -83,7 +83,9 @@ public abstract class Silverfish_WakeUpFriendsGoalMixin extends Goal {
                             } else {
                                 world.setBlock(
                                     blockpos1,
-                                    ((InfestedBlock) block).getHostBlock().defaultBlockState(),
+                                    ((InfestedBlock) block)
+                                        .getHostBlock()
+                                        .defaultBlockState(),
                                     3
                                 );
                             }

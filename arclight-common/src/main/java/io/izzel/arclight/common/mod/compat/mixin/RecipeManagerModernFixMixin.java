@@ -10,14 +10,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = RecipeManager.class, priority = 2100)
-@LoadIfMod(
-    modid = ModIds.MODERNFIX,
-    condition = LoadIfMod.ModCondition.PRESENT
-)
+@LoadIfMod(modid = ModIds.MODERNFIX, condition = LoadIfMod.ModCondition.PRESENT)
 public abstract class RecipeManagerModernFixMixin {
 
-    private static final Logger ARCLIGHT_LOGGER =
-        ArclightI18nLogger.getLogger("RecipeManager");
+    private static final Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger(
+        "RecipeManager"
+    );
 
     @Redirect(
         method = "apply",

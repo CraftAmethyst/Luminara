@@ -22,7 +22,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PressurePlateBlock.class)
 public abstract class PressurePlateBlockMixin
-    extends BasePressurePlateBlockMixin {
+    extends BasePressurePlateBlockMixin
+{
 
     // @formatter:off
     @Shadow @Final private PressurePlateBlock.Sensitivity sensitivity;
@@ -68,8 +69,9 @@ public abstract class PressurePlateBlockMixin
             if (
                 this.getSignalForState(world.getBlockState(blockposition)) == 0
             ) {
-                org.bukkit.World bworld =
-                    ((WorldBridge) world).bridge$getWorld();
+                org.bukkit.World bworld = (
+                    (WorldBridge) world
+                ).bridge$getWorld();
                 org.bukkit.plugin.PluginManager manager =
                     Bukkit.getPluginManager();
                 org.bukkit.event.Cancellable cancellable;

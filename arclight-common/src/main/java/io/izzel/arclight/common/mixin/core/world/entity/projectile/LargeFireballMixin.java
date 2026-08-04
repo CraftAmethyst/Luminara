@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LargeFireball.class)
 public abstract class LargeFireballMixin
-    extends AbstractHurtingProjectileMixin {
+    extends AbstractHurtingProjectileMixin
+{
 
     @Inject(
         method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V",

@@ -98,9 +98,10 @@ public class PistonBlockMixin {
                 if (index >= size() || index < 0) {
                     throw new ArrayIndexOutOfBoundsException(index);
                 }
-                BlockPos pos = index < moved.size()
-                    ? moved.get(index)
-                    : broken.get(index - moved.size());
+                BlockPos pos =
+                    index < moved.size()
+                        ? moved.get(index)
+                        : broken.get(index - moved.size());
                 return craftBlock
                     .getWorld()
                     .getBlockAt(pos.getX(), pos.getY(), pos.getZ());

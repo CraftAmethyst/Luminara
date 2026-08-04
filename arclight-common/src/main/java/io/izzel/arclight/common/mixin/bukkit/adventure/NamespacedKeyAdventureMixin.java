@@ -7,7 +7,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = NamespacedKey.class, remap = false)
 public abstract class NamespacedKeyAdventureMixin
-    implements net.kyori.adventure.key.Key {
+    implements net.kyori.adventure.key.Key
+{
 
     @Shadow
     public abstract @NotNull String getNamespace();
@@ -33,7 +34,7 @@ public abstract class NamespacedKeyAdventureMixin
     @Override
     public int hashCode() {
         int result = namespace().hashCode();
-        result = (31 * result) + value().hashCode();
+        result = 31 * result + value().hashCode();
         return result;
     }
 

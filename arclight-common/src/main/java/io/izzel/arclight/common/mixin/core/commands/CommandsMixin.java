@@ -79,8 +79,9 @@ public abstract class CommandsMixin {
 
         RootCommandNode<SharedSuggestionProvider> vanillaRoot =
             new RootCommandNode<>();
-        Commands vanillaCommands =
-            ((MinecraftServerBridge) player.server).bridge$getVanillaCommands();
+        Commands vanillaCommands = (
+            (MinecraftServerBridge) player.server
+        ).bridge$getVanillaCommands();
         map.put(vanillaCommands.getDispatcher().getRoot(), vanillaRoot);
         // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
         CommandHelper.mergeCommandNode(
@@ -91,11 +92,7 @@ public abstract class CommandsMixin {
             ctx -> 0,
             suggest ->
                 SuggestionProviders.safelySwap(
-                    (com.mojang.brigadier.suggestion.SuggestionProvider<
-                        SharedSuggestionProvider
-                    >) (com.mojang.brigadier.suggestion.SuggestionProvider<
-                        ?
-                    >) suggest
+                    (com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest
                 )
         );
 
@@ -110,11 +107,7 @@ public abstract class CommandsMixin {
             ctx -> 0,
             suggest ->
                 SuggestionProviders.safelySwap(
-                    (com.mojang.brigadier.suggestion.SuggestionProvider<
-                        SharedSuggestionProvider
-                    >) (com.mojang.brigadier.suggestion.SuggestionProvider<
-                        ?
-                    >) suggest
+                    (com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest
                 )
         );
 

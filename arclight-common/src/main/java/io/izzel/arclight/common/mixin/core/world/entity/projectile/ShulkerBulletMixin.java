@@ -42,8 +42,9 @@ public abstract class ShulkerBulletMixin extends EntityMixin {
         Direction.Axis p_i46772_4_,
         CallbackInfo ci
     ) {
-        this.projectileSource =
-            ((LivingEntityBridge) ownerIn).bridge$getBukkitEntity();
+        this.projectileSource = (
+            (LivingEntityBridge) ownerIn
+        ).bridge$getBukkitEntity();
     }
 
     @Inject(

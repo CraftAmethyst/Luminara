@@ -18,7 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MerchantMenu.class)
 public abstract class MerchantContainerMixin
-    extends AbstractContainerMenuMixin {
+    extends AbstractContainerMenuMixin
+{
 
     // @formatter:off
     @Shadow @Final private Merchant trader;
@@ -54,7 +55,9 @@ public abstract class MerchantContainerMixin
     public CraftInventoryView getBukkitView() {
         if (bukkitEntity == null) {
             bukkitEntity = new CraftInventoryView(
-                ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+                (
+                    (PlayerEntityBridge) this.playerInventory.player
+                ).bridge$getBukkitEntity(),
                 new CraftInventoryMerchant(this.trader, this.tradeContainer),
                 (AbstractContainerMenu) (Object) this
             );

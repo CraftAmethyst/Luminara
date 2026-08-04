@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(CompoundContainer.class)
 public abstract class CompoundContainerMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     @Shadow
     @Final

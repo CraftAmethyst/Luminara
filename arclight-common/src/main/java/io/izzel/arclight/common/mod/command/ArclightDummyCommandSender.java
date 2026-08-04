@@ -19,7 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class ArclightDummyCommandSender
     extends ArclightDummyPermissible
-    implements CommandSender, Audience {
+    implements CommandSender, Audience
+{
 
     public CommandSourceStack stack;
     public Spigot spigot;

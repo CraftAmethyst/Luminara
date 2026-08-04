@@ -108,7 +108,7 @@ public final class Delayed26WayDistancePropagator3D {
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
 
-        this.levelIncreaseWorkQueueBitset |= (1L << level);
+        this.levelIncreaseWorkQueueBitset |= 1L << level;
     }
 
     private void addToIncreaseWorkQueue(
@@ -121,7 +121,7 @@ public final class Delayed26WayDistancePropagator3D {
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
 
-        this.levelIncreaseWorkQueueBitset |= (1L << index);
+        this.levelIncreaseWorkQueueBitset |= 1L << index;
     }
 
     private void addToRemoveWorkQueue(final long coordinate, final byte level) {
@@ -130,7 +130,7 @@ public final class Delayed26WayDistancePropagator3D {
         queue.queuedCoordinates.enqueue(coordinate);
         queue.queuedLevels.enqueue(level);
 
-        this.levelRemoveWorkQueueBitset |= (1L << level);
+        this.levelRemoveWorkQueueBitset |= 1L << level;
     }
 
     public boolean propagateUpdates() {
@@ -184,7 +184,7 @@ public final class Delayed26WayDistancePropagator3D {
                 63 ^
                 Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset);
             this.levelIncreaseWorkQueueBitset != 0L;
-            this.levelIncreaseWorkQueueBitset ^= (1L << queueIndex),
+            this.levelIncreaseWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
                     Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)
@@ -272,7 +272,7 @@ public final class Delayed26WayDistancePropagator3D {
             int queueIndex =
                 63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
             this.levelRemoveWorkQueueBitset != 0L;
-            this.levelRemoveWorkQueueBitset ^= (1L << queueIndex),
+            this.levelRemoveWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
                     Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)

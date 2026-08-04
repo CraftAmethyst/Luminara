@@ -128,9 +128,9 @@ public class ComponentBridgeHandler {
         Type[] args = pType.getActualTypeArguments();
         return (
             args.length == 1 &&
-            args[0].getTypeName().contains(
-                "net.minecraft.network.chat.Component"
-            )
+            args[0]
+                .getTypeName()
+                .contains("net.minecraft.network.chat.Component")
         );
     }
 

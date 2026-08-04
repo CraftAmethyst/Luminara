@@ -29,11 +29,11 @@ public class LiquidBlockMixin {
         BlockPos pos,
         BlockState state
     ) {
-        return arclight$fizz = CraftEventFactory.handleBlockFormEvent(
+        return (arclight$fizz = CraftEventFactory.handleBlockFormEvent(
             world,
             pos,
             state
-        );
+        ));
     }
 
     @Inject(method = "fizz", cancellable = true, at = @At("HEAD"))

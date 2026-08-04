@@ -88,7 +88,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @SuppressWarnings("ConstantConditions")
 @Mixin(Entity.class)
 public abstract class EntityMixin
-    implements InternalEntityBridge, EntityBridge, ICommandSourceBridge {
+    implements InternalEntityBridge, EntityBridge, ICommandSourceBridge
+{
 
     private static final int CURRENT_LEVEL = 2;
 
@@ -504,7 +505,7 @@ public abstract class EntityMixin
         }
 
         if (yaw == Float.POSITIVE_INFINITY || yaw == Float.NEGATIVE_INFINITY) {
-            if (((Object) this) instanceof Player) {
+            if ((Object) this instanceof Player) {
                 Bukkit.getLogger().warning(
                     this.getScoreboardName() +
                         " was caught trying to crash the server with an invalid yaw"
@@ -526,7 +527,7 @@ public abstract class EntityMixin
         if (
             pitch == Float.POSITIVE_INFINITY || pitch == Float.NEGATIVE_INFINITY
         ) {
-            if (((Object) this) instanceof Player) {
+            if ((Object) this instanceof Player) {
                 Bukkit.getLogger().warning(
                     this.getScoreboardName() +
                         " was caught trying to crash the server with an invalid pitch"
@@ -655,9 +656,10 @@ public abstract class EntityMixin
         Entity entity,
         int seconds
     ) {
-        var damager = (lastLavaContact == null)
-            ? null
-            : CraftBlock.at(level(), lastLavaContact);
+        var damager =
+            lastLavaContact == null
+                ? null
+                : CraftBlock.at(level(), lastLavaContact);
         CraftEventFactory.blockDamage = damager;
         if ((Object) this instanceof LivingEntity && remainingFireTicks <= 0) {
             var damagee = this.getBukkitEntity();
@@ -753,8 +755,9 @@ public abstract class EntityMixin
             horizontalCollision &&
             this.bridge$getBukkitEntity() instanceof Vehicle vehicle
         ) {
-            org.bukkit.block.Block block =
-                ((WorldBridge) this.level()).bridge$getWorld().getBlockAt(
+            org.bukkit.block.Block block = ((WorldBridge) this.level())
+                .bridge$getWorld()
+                .getBlockAt(
                     Mth.floor(this.getX()),
                     Mth.floor(this.getY()),
                     Mth.floor(this.getZ())
@@ -853,13 +856,15 @@ public abstract class EntityMixin
     ) {
         compound.putLong(
             "WorldUUIDLeast",
-            ((WorldBridge) this.level()).bridge$getWorld()
+            ((WorldBridge) this.level())
+                .bridge$getWorld()
                 .getUID()
                 .getLeastSignificantBits()
         );
         compound.putLong(
             "WorldUUIDMost",
-            ((WorldBridge) this.level()).bridge$getWorld()
+            ((WorldBridge) this.level())
+                .bridge$getWorld()
                 .getUID()
                 .getMostSignificantBits()
         );
@@ -933,10 +938,11 @@ public abstract class EntityMixin
             }
 
             if (bworld == null) {
-                bworld =
-                    ((WorldBridge) ((CraftServer) server).getServer().getLevel(
-                            Level.OVERWORLD
-                        )).bridge$getWorld();
+                bworld = (
+                    (WorldBridge) ((CraftServer) server)
+                        .getServer()
+                        .getLevel(Level.OVERWORLD)
+                ).bridge$getWorld();
             }
 
             ((ServerPlayer) (Object) this).setServerLevel(
@@ -999,7 +1005,9 @@ public abstract class EntityMixin
     ) {
         EntityDropItemEvent event = new EntityDropItemEvent(
             this.getBukkitEntity(),
-            (org.bukkit.entity.Item) ((EntityBridge) itementity).bridge$getBukkitEntity()
+            (org.bukkit.entity.Item) (
+                (EntityBridge) itementity
+            ).bridge$getBukkitEntity()
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -1057,8 +1065,9 @@ public abstract class EntityMixin
                 entity
             );
 
-            CraftEntity craft =
-                (CraftEntity) ((EntityBridge) entity).bridge$getBukkitEntity().getVehicle();
+            CraftEntity craft = (CraftEntity) ((EntityBridge) entity)
+                .bridge$getBukkitEntity()
+                .getVehicle();
             Entity orig = craft == null ? null : craft.getHandle();
             if (
                 getBukkitEntity() instanceof Vehicle &&
@@ -1073,8 +1082,9 @@ public abstract class EntityMixin
                 if (this.valid) {
                     Bukkit.getPluginManager().callEvent(event);
                 }
-                CraftEntity craftn =
-                    (CraftEntity) ((EntityBridge) entity).bridge$getBukkitEntity().getVehicle();
+                CraftEntity craftn = (CraftEntity) ((EntityBridge) entity)
+                    .bridge$getBukkitEntity()
+                    .getVehicle();
                 Entity n = craftn == null ? null : craftn.getHandle();
                 if (event.isCancelled() || n != orig) {
                     return false;
@@ -1131,8 +1141,9 @@ public abstract class EntityMixin
             );
         } else {
             // CraftBukkit start
-            CraftEntity craft =
-                (CraftEntity) ((EntityBridge) entity).bridge$getBukkitEntity().getVehicle();
+            CraftEntity craft = (CraftEntity) ((EntityBridge) entity)
+                .bridge$getBukkitEntity()
+                .getVehicle();
             Entity orig = craft == null ? null : craft.getHandle();
             if (
                 getBukkitEntity() instanceof Vehicle &&
@@ -1141,14 +1152,17 @@ public abstract class EntityMixin
             ) {
                 VehicleExitEvent event = new VehicleExitEvent(
                     (Vehicle) getBukkitEntity(),
-                    (org.bukkit.entity.LivingEntity) ((EntityBridge) entity).bridge$getBukkitEntity()
+                    (org.bukkit.entity.LivingEntity) (
+                        (EntityBridge) entity
+                    ).bridge$getBukkitEntity()
                 );
                 // Suppress during worldgen
                 if (this.valid) {
                     Bukkit.getPluginManager().callEvent(event);
                 }
-                CraftEntity craftn =
-                    (CraftEntity) ((EntityBridge) entity).bridge$getBukkitEntity().getVehicle();
+                CraftEntity craftn = (CraftEntity) ((EntityBridge) entity)
+                    .bridge$getBukkitEntity()
+                    .getVehicle();
                 Entity n = craftn == null ? null : craftn.getHandle();
                 if (event.isCancelled() || n != orig) {
                     return false;
@@ -1174,7 +1188,8 @@ public abstract class EntityMixin
             ) {
                 this.passengers = ImmutableList.of();
             } else {
-                this.passengers = this.passengers.stream()
+                this.passengers = this.passengers
+                    .stream()
                     .filter(entity1 -> entity1 != entity)
                     .collect(ImmutableList.toImmutableList());
             }
@@ -1266,8 +1281,9 @@ public abstract class EntityMixin
     ) {
         final org.bukkit.entity.Entity thisBukkitEntity =
             this.getBukkitEntity();
-        final org.bukkit.entity.Entity stormBukkitEntity =
-            ((EntityBridge) entity).bridge$getBukkitEntity();
+        final org.bukkit.entity.Entity stormBukkitEntity = (
+            (EntityBridge) entity
+        ).bridge$getBukkitEntity();
         final PluginManager pluginManager = Bukkit.getPluginManager();
         // CraftBukkit start - Call a combust event when lightning strikes
         EntityCombustByEntityEvent entityCombustEvent =
@@ -1297,8 +1313,9 @@ public abstract class EntityMixin
     ) {
         final org.bukkit.entity.Entity thisBukkitEntity =
             this.getBukkitEntity();
-        final org.bukkit.entity.Entity stormBukkitEntity =
-            ((EntityBridge) entity).bridge$getBukkitEntity();
+        final org.bukkit.entity.Entity stormBukkitEntity = (
+            (EntityBridge) entity
+        ).bridge$getBukkitEntity();
         final PluginManager pluginManager = Bukkit.getPluginManager();
         if (thisBukkitEntity instanceof Hanging) {
             HangingBreakByEntityEvent hangingEvent =
@@ -1381,18 +1398,19 @@ public abstract class EntityMixin
             this.level().getProfiler().push("reposition");
             var bukkitPos = arclight$tpPos;
             arclight$tpPos = null;
-            PortalInfo portalinfo = bukkitPos == null
-                ? teleporter.getPortalInfo(
-                      (Entity) (Object) this,
-                      server,
-                      this::findDimensionEntryPoint
-                  )
-                : new PortalInfo(
-                      new Vec3(bukkitPos.x(), bukkitPos.y(), bukkitPos.z()),
-                      Vec3.ZERO,
-                      this.yRot,
-                      this.xRot
-                  );
+            PortalInfo portalinfo =
+                bukkitPos == null
+                    ? teleporter.getPortalInfo(
+                          (Entity) (Object) this,
+                          server,
+                          this::findDimensionEntryPoint
+                      )
+                    : new PortalInfo(
+                          new Vec3(bukkitPos.x(), bukkitPos.y(), bukkitPos.z()),
+                          Vec3.ZERO,
+                          this.yRot,
+                          this.xRot
+                      );
             if (portalinfo == null) {
                 return null;
             } else {
@@ -1462,9 +1480,9 @@ public abstract class EntityMixin
 
     @Inject(method = "restoreFrom", at = @At("HEAD"))
     private void arclight$forwardHandle(Entity entityIn, CallbackInfo ci) {
-        ((InternalEntityBridge) entityIn).internal$getBukkitEntity().setHandle(
-            (Entity) (Object) this
-        );
+        ((InternalEntityBridge) entityIn)
+            .internal$getBukkitEntity()
+            .setHandle((Entity) (Object) this);
         ((EntityBridge) this).bridge$setBukkitEntity(
             ((InternalEntityBridge) entityIn).internal$getBukkitEntity()
         );
@@ -1520,9 +1538,9 @@ public abstract class EntityMixin
                 if (event == null) {
                     return null;
                 }
-                ServerLevel worldFinal = world = ((CraftWorld) event
-                        .getTo()
-                        .getWorld()).getHandle();
+                ServerLevel worldFinal = (world = (
+                    (CraftWorld) event.getTo().getWorld()
+                ).getHandle());
                 blockpos1 = worldFinal
                     .getWorldBorder()
                     .clampToBounds(
@@ -1532,14 +1550,14 @@ public abstract class EntityMixin
                     );
 
                 return this.getExitPortal(
-                        world,
-                        blockpos1,
-                        flag2,
-                        worldborder,
-                        event.getSearchRadius(),
-                        event.getCanCreatePortal(),
-                        event.getCreationRadius()
-                    )
+                    world,
+                    blockpos1,
+                    flag2,
+                    worldborder,
+                    event.getSearchRadius(),
+                    event.getCanCreatePortal(),
+                    event.getCreationRadius()
+                )
                     .map(result -> {
                         BlockState blockstate = this.level().getBlockState(
                             this.portalEntrancePos
@@ -1644,8 +1662,9 @@ public abstract class EntityMixin
         int searchRadius,
         int creationRadius
     ) {
-        CraftEntity bukkitEntity =
-            ((EntityBridge) entity).bridge$getBukkitEntity();
+        CraftEntity bukkitEntity = (
+            (EntityBridge) entity
+        ).bridge$getBukkitEntity();
         Location enter = bukkitEntity.getLocation();
         Location exit = new Location(
             ((WorldBridge) exitWorldServer).bridge$getWorld(),

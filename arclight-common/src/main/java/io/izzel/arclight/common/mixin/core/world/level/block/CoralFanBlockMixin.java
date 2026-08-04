@@ -42,10 +42,9 @@ public class CoralFanBlockMixin {
             CraftEventFactory.callBlockFadeEvent(
                 worldIn,
                 pos,
-                this.deadBlock.defaultBlockState().setValue(
-                    BaseCoralPlantTypeBlock.WATERLOGGED,
-                    false
-                )
+                this.deadBlock
+                    .defaultBlockState()
+                    .setValue(BaseCoralPlantTypeBlock.WATERLOGGED, false)
             ).isCancelled()
         ) {
             ci.cancel();

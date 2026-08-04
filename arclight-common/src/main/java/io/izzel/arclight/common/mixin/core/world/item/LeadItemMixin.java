@@ -65,9 +65,13 @@ public class LeadItemMixin {
                         fence
                     );
                     HangingPlaceEvent event = new HangingPlaceEvent(
-                        (Hanging) ((EntityBridge) leashknotentity).bridge$getBukkitEntity(),
+                        (Hanging) (
+                            (EntityBridge) leashknotentity
+                        ).bridge$getBukkitEntity(),
                         player != null
-                            ? (Player) ((PlayerEntityBridge) player).bridge$getBukkitEntity()
+                            ? (Player) (
+                                  (PlayerEntityBridge) player
+                              ).bridge$getBukkitEntity()
                             : null,
                         CraftBlock.at(worldIn, fence),
                         BlockFace.SELF,

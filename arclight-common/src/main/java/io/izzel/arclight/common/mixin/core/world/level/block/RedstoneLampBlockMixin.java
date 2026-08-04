@@ -37,8 +37,7 @@ public class RedstoneLampBlockMixin {
                 pos,
                 15,
                 0
-            ).getNewCurrent() !=
-            0
+            ).getNewCurrent() != 0
         ) {
             ci.cancel();
         }
@@ -67,8 +66,7 @@ public class RedstoneLampBlockMixin {
                 pos,
                 0,
                 15
-            ).getNewCurrent() !=
-            15
+            ).getNewCurrent() != 15
         ) {
             ci.cancel();
         }

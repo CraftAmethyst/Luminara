@@ -111,7 +111,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin
     extends PlayerMixin
-    implements ServerPlayerEntityBridge {
+    implements ServerPlayerEntityBridge
+{
 
     // @formatter:off
     @Shadow @Final public MinecraftServer server;
@@ -271,9 +272,10 @@ public abstract class ServerPlayerMixin
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void arclight$init(CallbackInfo ci) {
-        this.displayName = this.getGameProfile() != null
-            ? getScoreboardName()
-            : "~FakePlayer~";
+        this.displayName =
+            this.getGameProfile() != null
+                ? getScoreboardName()
+                : "~FakePlayer~";
         this.bukkitPickUpLoot = true;
         this.maxHealthCache = this.getMaxHealth();
         this.arclight$initialized = true;
@@ -307,9 +309,10 @@ public abstract class ServerPlayerMixin
             if (j <= 1) {
                 i = 1;
             }
-            int i1 = (l = (k = (long) (i * 2 + 1)) * k) > Integer.MAX_VALUE
-                ? Integer.MAX_VALUE
-                : (int) l;
+            int i1 =
+                (l = (k = (long) (i * 2 + 1)) * k) > Integer.MAX_VALUE
+                    ? Integer.MAX_VALUE
+                    : (int) l;
             int j1 = this.getCoprime(i1);
             int k1 = new Random().nextInt(i1);
             for (int l1 = 0; l1 < i1; ++l1) {
@@ -383,9 +386,8 @@ public abstract class ServerPlayerMixin
             if (
                 this.respawnDimension != null &&
                 (world = ServerLifecycleHooks.getCurrentServer().getLevel(
-                        this.respawnDimension
-                    )) !=
-                null &&
+                    this.respawnDimension
+                )) != null &&
                 this.getRespawnPosition() != null
             ) {
                 position = Player.findRespawnPositionAndUseSpawnBlock(
@@ -397,9 +399,9 @@ public abstract class ServerPlayerMixin
                 ).orElse(null);
             }
             if (world == null || position == null) {
-                world = ((CraftWorld) Bukkit.getServer()
-                        .getWorlds()
-                        .get(0)).getHandle();
+                world = (
+                    (CraftWorld) Bukkit.getServer().getWorlds().get(0)
+                ).getHandle();
                 position = Vec3.atCenterOf(
                     ((ServerLevel) world).getSharedSpawnPos()
                 );
@@ -459,7 +461,9 @@ public abstract class ServerPlayerMixin
             this.oldLevel = this.experienceLevel;
         }
         if (this.getBukkitEntity().hasClientWorldBorder()) {
-            ((CraftWorldBorder) this.getBukkitEntity().getWorldBorder()).getHandle().tick();
+            ((CraftWorldBorder) this.getBukkitEntity().getWorldBorder())
+                .getHandle()
+                .tick();
         }
     }
 
@@ -482,8 +486,7 @@ public abstract class ServerPlayerMixin
         boolean keepInventory =
             this.level()
                 .getGameRules()
-                .getBoolean(GameRules.RULE_KEEPINVENTORY) ||
-            this.isSpectator();
+                .getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
         Inventory copyInv;
         if (keepInventory) {
             copyInv = this.getInventory();
@@ -568,30 +571,33 @@ public abstract class ServerPlayerMixin
             if (
                 scoreboardteambase != null &&
                 scoreboardteambase.getDeathMessageVisibility() !=
-                Team.Visibility.ALWAYS
+                    Team.Visibility.ALWAYS
             ) {
                 if (
                     scoreboardteambase.getDeathMessageVisibility() ==
                     Team.Visibility.HIDE_FOR_OTHER_TEAMS
                 ) {
-                    this.server.getPlayerList().broadcastSystemToTeam(
-                        (ServerPlayer) (Object) this,
-                        itextcomponent
-                    );
+                    this.server
+                        .getPlayerList()
+                        .broadcastSystemToTeam(
+                            (ServerPlayer) (Object) this,
+                            itextcomponent
+                        );
                 } else if (
                     scoreboardteambase.getDeathMessageVisibility() ==
                     Team.Visibility.HIDE_FOR_OWN_TEAM
                 ) {
-                    this.server.getPlayerList().broadcastSystemToAllExceptTeam(
-                        (ServerPlayer) (Object) this,
-                        itextcomponent
-                    );
+                    this.server
+                        .getPlayerList()
+                        .broadcastSystemToAllExceptTeam(
+                            (ServerPlayer) (Object) this,
+                            itextcomponent
+                        );
                 }
             } else {
-                this.server.getPlayerList().broadcastSystemMessage(
-                    itextcomponent,
-                    false
-                );
+                this.server
+                    .getPlayerList()
+                    .broadcastSystemMessage(itextcomponent, false);
             }
         } else {
             // Either showDeathMessages gamerule is false, or a plugin intentionally
@@ -620,7 +626,9 @@ public abstract class ServerPlayerMixin
             this.getInventory().clearContent();
         }
         this.setCamera((ServerPlayer) (Object) this);
-        ((CraftScoreboardManager) Bukkit.getScoreboardManager()).getScoreboardScores(
+        (
+            (CraftScoreboardManager) Bukkit.getScoreboardManager()
+        ).getScoreboardScores(
             ObjectiveCriteria.DEATH_COUNT,
             this.getScoreboardName(),
             Score::increment
@@ -668,11 +676,9 @@ public abstract class ServerPlayerMixin
         String p_197893_2_,
         Consumer<Score> p_197893_3_
     ) {
-        ((CraftServer) Bukkit.getServer()).getScoreboardManager().getScoreboardScores(
-            p_197893_1_,
-            p_197893_2_,
-            p_197893_3_
-        );
+        ((CraftServer) Bukkit.getServer())
+            .getScoreboardManager()
+            .getScoreboardScores(p_197893_1_, p_197893_2_, p_197893_3_);
     }
 
     @Redirect(
@@ -688,11 +694,9 @@ public abstract class ServerPlayerMixin
         String p_197893_2_,
         Consumer<Score> p_197893_3_
     ) {
-        ((CraftServer) Bukkit.getServer()).getScoreboardManager().getScoreboardScores(
-            p_197893_1_,
-            p_197893_2_,
-            p_197893_3_
-        );
+        ((CraftServer) Bukkit.getServer())
+            .getScoreboardManager()
+            .getScoreboardScores(p_197893_1_, p_197893_2_, p_197893_3_);
     }
 
     @Inject(method = "isPvpAllowed", cancellable = true, at = @At("HEAD"))
@@ -708,14 +712,15 @@ public abstract class ServerPlayerMixin
     @Overwrite
     protected PortalInfo findDimensionEntryPoint(ServerLevel level) {
         PortalInfo portalinfo = super.findDimensionEntryPoint(level);
-        level = portalinfo == null ||
+        level =
+            portalinfo == null ||
             ((PortalInfoBridge) portalinfo).bridge$getWorld() == null
-            ? level
-            : ((PortalInfoBridge) portalinfo).bridge$getWorld();
+                ? level
+                : ((PortalInfoBridge) portalinfo).bridge$getWorld();
         if (
             portalinfo != null &&
             ((WorldBridge) this.level()).bridge$getTypeKey() ==
-            LevelStem.OVERWORLD &&
+                LevelStem.OVERWORLD &&
             ((WorldBridge) level).bridge$getTypeKey() == LevelStem.END
         ) {
             Vec3 vector3d = portalinfo.pos.add(0.0D, -1.0D, 0.0D);
@@ -799,15 +804,17 @@ public abstract class ServerPlayerMixin
             )
         ) return null;
 
-        PlayerTeleportEvent.TeleportCause cause = arclight$cause == null
-            ? PlayerTeleportEvent.TeleportCause.UNKNOWN
-            : arclight$cause;
+        PlayerTeleportEvent.TeleportCause cause =
+            arclight$cause == null
+                ? PlayerTeleportEvent.TeleportCause.UNKNOWN
+                : arclight$cause;
         arclight$cause = null;
 
         // this.invulnerableDimensionChange = true;
         ServerLevel serverworld = this.serverLevel();
-        ResourceKey<LevelStem> registrykey =
-            ((WorldBridge) serverworld).bridge$getTypeKey();
+        ResourceKey<LevelStem> registrykey = (
+            (WorldBridge) serverworld
+        ).bridge$getTypeKey();
         if (
             registrykey == LevelStem.END &&
             ((WorldBridge) server).bridge$getTypeKey() == LevelStem.OVERWORLD &&
@@ -884,17 +891,22 @@ public abstract class ServerPlayerMixin
                         if (exitWorld[0] != null) {
                             if (
                                 registrykey == LevelStem.OVERWORLD &&
-                                ((WorldBridge) exitWorld[0]).bridge$getTypeKey() ==
-                                LevelStem.NETHER
+                                (
+                                    (WorldBridge) exitWorld[0]
+                                ).bridge$getTypeKey() == LevelStem.NETHER
                             ) {
                                 this.enteredNetherPosition = this.position();
                             } else if (
                                 spawnPortal &&
-                                ((WorldBridge) exitWorld[0]).bridge$getTypeKey() ==
-                                LevelStem.END &&
-                                (((PortalInfoBridge) portalinfo).bridge$getPortalEventInfo() ==
-                                        null ||
-                                    ((PortalInfoBridge) portalinfo).bridge$getPortalEventInfo().getCanCreatePortal())
+                                (
+                                    (WorldBridge) exitWorld[0]
+                                ).bridge$getTypeKey() == LevelStem.END &&
+                                ((
+                                    (PortalInfoBridge) portalinfo
+                                ).bridge$getPortalEventInfo() == null ||
+                                    ((PortalInfoBridge) portalinfo)
+                                        .bridge$getPortalEventInfo()
+                                        .getCanCreatePortal())
                             ) {
                                 this.createEndPlatform(
                                     exitWorld[0],
@@ -904,16 +916,19 @@ public abstract class ServerPlayerMixin
                         }
 
                         Location enter = this.getBukkitEntity().getLocation();
-                        Location exit = (exitWorld[0] == null)
-                            ? null
-                            : new Location(
-                                  ((WorldBridge) exitWorld[0]).bridge$getWorld(),
-                                  portalinfo.pos.x,
-                                  portalinfo.pos.y,
-                                  portalinfo.pos.z,
-                                  portalinfo.yRot,
-                                  portalinfo.xRot
-                              );
+                        Location exit =
+                            exitWorld[0] == null
+                                ? null
+                                : new Location(
+                                      (
+                                          (WorldBridge) exitWorld[0]
+                                      ).bridge$getWorld(),
+                                      portalinfo.pos.x,
+                                      portalinfo.pos.y,
+                                      portalinfo.pos.z,
+                                      portalinfo.yRot,
+                                      portalinfo.xRot
+                                  );
                         PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(
                             this.getBukkitEntity(),
                             enter,
@@ -932,8 +947,9 @@ public abstract class ServerPlayerMixin
                         serverworld.getProfiler().push("placing");
 
                         this.isChangingDimension = true;
-                        ServerLevel newWorld =
-                            ((CraftWorld) exit.getWorld()).getHandle();
+                        ServerLevel newWorld = (
+                            (CraftWorld) exit.getWorld()
+                        ).getHandle();
                         if (newWorld != exitWorld[0]) {
                             exitWorld[0] = newWorld;
                             LevelData newWorldInfo =
@@ -967,9 +983,9 @@ public abstract class ServerPlayerMixin
                             (ServerPlayer) (Object) this
                         );
 
-                        ((ServerPlayNetHandlerBridge) this.connection).bridge$teleport(
-                            exit
-                        );
+                        (
+                            (ServerPlayNetHandlerBridge) this.connection
+                        ).bridge$teleport(exit);
                         this.connection.resetPosition();
 
                         serverworld.getProfiler().pop();
@@ -1112,13 +1128,14 @@ public abstract class ServerPlayerMixin
             .getBlockState(this.portalEntrancePos)
             .getOptionalValue(NetherPortalBlock.AXIS)
             .orElse(Direction.Axis.X);
-        Optional<BlockUtil.FoundRectangle> optional1 =
-            ((TeleporterBridge) worldserver.getPortalForcer()).bridge$createPortal(
-                blockposition,
-                enumdirection_enumaxis,
-                (ServerPlayer) (Object) this,
-                createRadius
-            );
+        Optional<BlockUtil.FoundRectangle> optional1 = (
+            (TeleporterBridge) worldserver.getPortalForcer()
+        ).bridge$createPortal(
+            blockposition,
+            enumdirection_enumaxis,
+            (ServerPlayer) (Object) this,
+            createRadius
+        );
         if (!optional1.isPresent()) {
             //  LOGGER.error("Unable to create a portal, likely target out of worldborder");
         }
@@ -1324,7 +1341,9 @@ public abstract class ServerPlayerMixin
             ci.cancel();
         } else {
             if (this.connection != null) {
-                ((ServerPlayNetHandlerBridge) this.connection).bridge$pushTeleportCause(
+                (
+                    (ServerPlayNetHandlerBridge) this.connection
+                ).bridge$pushTeleportCause(
                     PlayerTeleportEvent.TeleportCause.EXIT_BED
                 );
             }
@@ -1493,11 +1512,9 @@ public abstract class ServerPlayerMixin
         String p_197893_2_,
         Consumer<Score> p_197893_3_
     ) {
-        ((CraftScoreboardManager) Bukkit.getScoreboardManager()).getScoreboardScores(
-            p_197893_1_,
-            p_197893_2_,
-            p_197893_3_
-        );
+        (
+            (CraftScoreboardManager) Bukkit.getScoreboardManager()
+        ).getScoreboardScores(p_197893_1_, p_197893_2_, p_197893_3_);
     }
 
     @Redirect(
@@ -1513,11 +1530,9 @@ public abstract class ServerPlayerMixin
         String p_197893_2_,
         Consumer<Score> p_197893_3_
     ) {
-        ((CraftScoreboardManager) Bukkit.getScoreboardManager()).getScoreboardScores(
-            p_197893_1_,
-            p_197893_2_,
-            p_197893_3_
-        );
+        (
+            (CraftScoreboardManager) Bukkit.getScoreboardManager()
+        ).getScoreboardScores(p_197893_1_, p_197893_2_, p_197893_3_);
     }
 
     @Inject(method = "resetSentInfo", at = @At("HEAD"))
@@ -1533,7 +1548,7 @@ public abstract class ServerPlayerMixin
         if (this.getMainArm() != packetIn.mainHand()) {
             PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent(
                 this.getBukkitEntity(),
-                (this.getMainArm() == HumanoidArm.LEFT)
+                this.getMainArm() == HumanoidArm.LEFT
                     ? MainHand.LEFT
                     : MainHand.RIGHT
             );
@@ -1604,9 +1619,10 @@ public abstract class ServerPlayerMixin
         float pitch,
         CallbackInfo ci
     ) {
-        PlayerTeleportEvent.TeleportCause cause = arclight$cause == null
-            ? PlayerTeleportEvent.TeleportCause.UNKNOWN
-            : arclight$cause;
+        PlayerTeleportEvent.TeleportCause cause =
+            arclight$cause == null
+                ? PlayerTeleportEvent.TeleportCause.UNKNOWN
+                : arclight$cause;
         arclight$cause = null;
         this.getBukkitEntity().teleport(
             new Location(
@@ -1636,12 +1652,16 @@ public abstract class ServerPlayerMixin
     }
 
     public CraftPlayer getBukkitEntity() {
-        return (CraftPlayer) ((InternalEntityBridge) this).internal$getBukkitEntity();
+        return (CraftPlayer) (
+            (InternalEntityBridge) this
+        ).internal$getBukkitEntity();
     }
 
     @Override
     public CraftPlayer bridge$getBukkitEntity() {
-        return (CraftPlayer) ((InternalEntityBridge) this).internal$getBukkitEntity();
+        return (CraftPlayer) (
+            (InternalEntityBridge) this
+        ).internal$getBukkitEntity();
     }
 
     @Override
@@ -1652,9 +1672,7 @@ public abstract class ServerPlayerMixin
     }
 
     @Override
-    public Optional<
-        PlayerTeleportEvent.TeleportCause
-    > bridge$getTeleportCause() {
+    public Optional<PlayerTeleportEvent.TeleportCause> bridge$getTeleportCause() {
         try {
             return Optional.ofNullable(arclight$cause);
         } finally {
@@ -1841,21 +1859,23 @@ public abstract class ServerPlayerMixin
                 p_9162_
             )
         ) return;
-        var cause = arclight$spawnChangeCause == null
-            ? PlayerSpawnChangeEvent.Cause.UNKNOWN
-            : arclight$spawnChangeCause;
+        var cause =
+            arclight$spawnChangeCause == null
+                ? PlayerSpawnChangeEvent.Cause.UNKNOWN
+                : arclight$spawnChangeCause;
         arclight$spawnChangeCause = null;
         var newWorld = this.server.getLevel(p_9159_);
-        Location newSpawn = (p_9160_ != null)
-            ? new Location(
-                  ((ServerWorldBridge) newWorld).bridge$getWorld(),
-                  p_9160_.getX(),
-                  p_9160_.getY(),
-                  p_9160_.getZ(),
-                  p_9161_,
-                  0
-              )
-            : null;
+        Location newSpawn =
+            p_9160_ != null
+                ? new Location(
+                      ((ServerWorldBridge) newWorld).bridge$getWorld(),
+                      p_9160_.getX(),
+                      p_9160_.getY(),
+                      p_9160_.getZ(),
+                      p_9161_,
+                      0
+                  )
+                : null;
 
         PlayerSpawnChangeEvent event = new PlayerSpawnChangeEvent(
             this.getBukkitEntity(),
@@ -1871,8 +1891,9 @@ public abstract class ServerPlayerMixin
         p_9162_ = event.isForced();
 
         if (newSpawn != null) {
-            p_9159_ =
-                ((CraftWorld) newSpawn.getWorld()).getHandle().dimension();
+            p_9159_ = ((CraftWorld) newSpawn.getWorld())
+                .getHandle()
+                .dimension();
             p_9160_ = BlockPos.containing(
                 newSpawn.getX(),
                 newSpawn.getY(),

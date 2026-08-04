@@ -29,7 +29,7 @@ public final class IBlockDataList {
     }
 
     public static int getLocationKey(final int x, final int y, final int z) {
-        return (x & 15) | (((z & 15) << 4)) | ((y & 255) << (4 + 4));
+        return (x & 15) | ((z & 15) << 4) | ((y & 255) << (4 + 4));
     }
 
     public static BlockState getBlockDataFromRaw(final long raw) {
@@ -52,12 +52,12 @@ public final class IBlockDataList {
         return (
             (long) index |
             ((long) location << 16) |
-            (((long) GLOBAL_PALETTE.idFor(data)) << 32)
+            ((long) GLOBAL_PALETTE.idFor(data) << 32)
         );
     }
 
     public static long setIndexRawValues(final long value, final int index) {
-        return (value & ~(0xFFFF)) | (index);
+        return (value & ~0xFFFF) | index;
     }
 
     public long add(
@@ -88,11 +88,11 @@ public final class IBlockDataList {
             return raw;
         } else {
             final int index = getIndexFromRaw(curr);
-            final long raw = this.byIndex[index] = getRawFromValues(
+            final long raw = (this.byIndex[index] = getRawFromValues(
                 index,
                 location,
                 data
-            );
+            ));
 
             this.map.put((short) location, raw);
 

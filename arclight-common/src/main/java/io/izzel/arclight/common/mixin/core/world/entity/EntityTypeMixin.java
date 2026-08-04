@@ -22,8 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(EntityType.class)
-public abstract class EntityTypeMixin<T extends Entity>
-    implements EntityTypeBridge<T> {
+public abstract class EntityTypeMixin<T extends Entity> implements
+    EntityTypeBridge<T> {
 
     // @formatter:off
     @Shadow @Nullable public abstract T create(ServerLevel p_262637_, @org.jetbrains.annotations.Nullable CompoundTag p_262687_, @org.jetbrains.annotations.Nullable Consumer<T> p_262629_, BlockPos p_262595_, MobSpawnType p_262666_, boolean p_262685_, boolean p_262588_);
@@ -44,8 +44,9 @@ public abstract class EntityTypeMixin<T extends Entity>
         boolean p_20599_,
         CallbackInfoReturnable<T> cir
     ) {
-        CreatureSpawnEvent.SpawnReason spawnReason =
-            ((IWorldWriterBridge) worldIn).bridge$getAddEntityReason();
+        CreatureSpawnEvent.SpawnReason spawnReason = (
+            (IWorldWriterBridge) worldIn
+        ).bridge$getAddEntityReason();
         if (spawnReason == null) {
             ((IWorldWriterBridge) worldIn).bridge$pushAddEntityReason(
                 CreatureSpawnEvent.SpawnReason.SPAWNER_EGG

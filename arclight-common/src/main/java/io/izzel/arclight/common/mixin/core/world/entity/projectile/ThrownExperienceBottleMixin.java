@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(ThrownExperienceBottle.class)
 public abstract class ThrownExperienceBottleMixin
-    extends ThrowableItemProjectileMixin {
+    extends ThrowableItemProjectileMixin
+{
 
     /**
      * @author IzzelAliz

@@ -83,8 +83,8 @@ public class ButtonBlockMixin {
         boolean flag1
     ) {
         Block block = CraftBlock.at(worldIn, pos);
-        int old = (flag1) ? 15 : 0;
-        int current = (!flag1) ? 15 : 0;
+        int old = flag1 ? 15 : 0;
+        int current = !flag1 ? 15 : 0;
 
         BlockRedstoneEvent event = new BlockRedstoneEvent(block, old, current);
         Bukkit.getPluginManager().callEvent(event);
@@ -110,8 +110,8 @@ public class ButtonBlockMixin {
         if (!state.getValue(POWERED)) {
             boolean powered = state.getValue(POWERED);
             Block block = CraftBlock.at(worldIn, pos);
-            int old = (powered) ? 15 : 0;
-            int current = (!powered) ? 15 : 0;
+            int old = powered ? 15 : 0;
+            int current = !powered ? 15 : 0;
 
             BlockRedstoneEvent event = new BlockRedstoneEvent(
                 block,
@@ -120,7 +120,7 @@ public class ButtonBlockMixin {
             );
             Bukkit.getPluginManager().callEvent(event);
 
-            if ((event.getNewCurrent() > 0) == (powered)) {
+            if (event.getNewCurrent() > 0 == powered) {
                 cir.setReturnValue(true);
             }
         }

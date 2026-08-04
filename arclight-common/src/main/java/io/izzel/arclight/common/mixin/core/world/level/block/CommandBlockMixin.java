@@ -56,7 +56,7 @@ public abstract class CommandBlockMixin {
                     !flag1 &&
                     !commandblocktileentity.isAutomatic() &&
                     commandblocktileentity.getMode() !=
-                    CommandBlockEntity.Mode.SEQUENCE
+                        CommandBlockEntity.Mode.SEQUENCE
                 ) {
                     if (flag) {
                         commandblocktileentity.markConditionMet();

@@ -8,9 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(LootPoolEntryContainer.Serializer.class)
-public abstract class LootEntry_SerializerMixin<
-    T extends LootPoolEntryContainer
-> {
+public abstract class LootEntry_SerializerMixin<T extends LootPoolEntryContainer> {
 
     // @formatter:off
     @Shadow public abstract void serialize(JsonObject p_230424_1_, T p_230424_2_, JsonSerializationContext p_230424_3_);

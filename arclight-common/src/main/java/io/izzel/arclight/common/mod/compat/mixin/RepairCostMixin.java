@@ -9,10 +9,7 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(AnvilMenu.class)
-@LoadIfMod(
-    modid = ModIds.APOTHEOSIS,
-    condition = LoadIfMod.ModCondition.ABSENT
-)
+@LoadIfMod(modid = ModIds.APOTHEOSIS, condition = LoadIfMod.ModCondition.ABSENT)
 public abstract class RepairCostMixin {
 
     @ModifyConstant(

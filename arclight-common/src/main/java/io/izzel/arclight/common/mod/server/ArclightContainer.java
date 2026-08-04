@@ -56,7 +56,8 @@ public class ArclightContainer {
     }
 
     private static class ContainerInvWrapper
-        implements Container, IInventoryBridge {
+        implements Container, IInventoryBridge
+    {
 
         private final AbstractContainerMenu container;
         private final List<HumanEntity> viewers = new ArrayList<>();

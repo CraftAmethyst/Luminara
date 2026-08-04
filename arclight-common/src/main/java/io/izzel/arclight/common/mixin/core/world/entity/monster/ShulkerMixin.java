@@ -60,7 +60,7 @@ public abstract class ShulkerMixin extends PathfinderMobMixin {
                     this.level().getWorldBorder().isWithinBounds(blockpos1) &&
                     this.level().noCollision(
                         (Shulker) (Object) this,
-                        (new AABB(blockpos1)).deflate(1.0E-6D)
+                        new AABB(blockpos1).deflate(1.0E-6D)
                     )
                 ) {
                     Direction direction = this.findAttachableSurface(blockpos1);

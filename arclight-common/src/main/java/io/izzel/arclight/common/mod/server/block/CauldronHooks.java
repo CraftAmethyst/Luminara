@@ -56,7 +56,7 @@ public class CauldronHooks {
         newState.setData(state);
         CauldronLevelChangeEvent event = new CauldronLevelChangeEvent(
             CraftBlock.at(world, pos),
-            (entity == null)
+            entity == null
                 ? null
                 : ((EntityBridge) entity).bridge$getBukkitEntity(),
             reason,
@@ -64,10 +64,10 @@ public class CauldronHooks {
         );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            return lastRet = false;
+            return (lastRet = false);
         } else {
             newState.update(true);
-            return lastRet = true;
+            return (lastRet = true);
         }
     }
 }

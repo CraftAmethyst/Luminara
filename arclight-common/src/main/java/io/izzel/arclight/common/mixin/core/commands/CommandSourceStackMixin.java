@@ -73,18 +73,16 @@ public abstract class CommandSourceStackMixin implements CommandSourceBridge {
         PlayerList instance,
         GameProfile profile
     ) {
-        return (
-            (ServerPlayerEntityBridge) instance.getPlayer(profile.getId())
-        ).bridge$getBukkitEntity().hasPermission(
-            "minecraft.admin.command_feedback"
-        );
+        return ((ServerPlayerEntityBridge) instance.getPlayer(profile.getId()))
+            .bridge$getBukkitEntity()
+            .hasPermission("minecraft.admin.command_feedback");
     }
 
     public boolean hasPermission(int i, String bukkitPermission) {
         // World is null when loading functions
         return (
             ((getLevel() == null ||
-                    !((CraftServer) Bukkit.getServer()).ignoreVanillaPermissions) &&
+                !((CraftServer) Bukkit.getServer()).ignoreVanillaPermissions) &&
                 this.permissionLevel >= i) ||
             getBukkitSender().hasPermission(bukkitPermission)
         );
@@ -111,8 +109,9 @@ public abstract class CommandSourceStackMixin implements CommandSourceBridge {
 
     public CommandSender getBukkitSender() {
         var thus = (CommandSourceStack) (Object) this;
-        var sender =
-            ((ICommandSourceBridge) this.source).bridge$getBukkitSender(thus);
+        var sender = (
+            (ICommandSourceBridge) this.source
+        ).bridge$getBukkitSender(thus);
         // It means that this is a custom CommandSource
         return Objects.requireNonNullElseGet(sender, () ->
             new ArclightDummyCommandSender(thus)

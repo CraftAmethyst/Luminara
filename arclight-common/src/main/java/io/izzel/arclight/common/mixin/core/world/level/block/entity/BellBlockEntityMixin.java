@@ -30,8 +30,11 @@ public class BellBlockEntityMixin {
         BlockPos pos
     ) {
         var list = instance
-            .map(it ->
-                (org.bukkit.entity.LivingEntity) ((EntityBridge) it).bridge$getBukkitEntity()
+            .map(
+                it ->
+                    (org.bukkit.entity.LivingEntity) (
+                        (EntityBridge) it
+                    ).bridge$getBukkitEntity()
             )
             .toList();
         CraftEventFactory.handleBellResonateEvent(level, pos, list).forEach(

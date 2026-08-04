@@ -35,7 +35,7 @@ public class PrepareRamNearestTargetMixin {
             var event = CraftEventFactory.callEntityTargetLivingEvent(
                 mob,
                 entity,
-                (entity instanceof ServerPlayer)
+                entity instanceof ServerPlayer
                     ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER
                     : EntityTargetEvent.TargetReason.CLOSEST_ENTITY
             );

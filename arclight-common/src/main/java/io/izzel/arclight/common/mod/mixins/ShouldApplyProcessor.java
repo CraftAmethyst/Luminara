@@ -17,10 +17,9 @@ public class ShouldApplyProcessor {
 
     public static boolean shouldApply(String mixinClass) {
         try (
-            var stream =
-                LoadIfModProcessor.class.getClassLoader().getResourceAsStream(
-                    mixinClass.replace('.', '/') + ".class"
-                )
+            var stream = LoadIfModProcessor.class
+                .getClassLoader()
+                .getResourceAsStream(mixinClass.replace('.', '/') + ".class")
         ) {
             if (stream != null) {
                 var bytes = stream.readAllBytes();

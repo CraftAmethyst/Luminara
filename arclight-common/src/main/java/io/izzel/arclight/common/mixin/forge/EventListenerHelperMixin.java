@@ -34,9 +34,10 @@ public class EventListenerHelperMixin {
             eventClass.getConstructor();
         } catch (NoSuchMethodException | SecurityException e) {
             Class<?> superClass = eventClass.getSuperclass();
-            ListenerList superList = superClass == null
-                ? new ListenerList()
-                : EventListenerHelper.getListenerList(superClass);
+            ListenerList superList =
+                superClass == null
+                    ? new ListenerList()
+                    : EventListenerHelper.getListenerList(superClass);
             cir.setReturnValue(new ListenerList(superList));
         }
     }

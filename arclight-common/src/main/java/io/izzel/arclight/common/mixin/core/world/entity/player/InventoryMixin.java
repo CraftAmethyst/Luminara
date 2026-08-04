@@ -21,7 +21,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Inventory.class)
 public abstract class InventoryMixin
-    implements Container, IInventoryBridge, PlayerInventoryBridge {
+    implements Container, IInventoryBridge, PlayerInventoryBridge
+{
 
     // @formatter:off
     @Shadow @Final public NonNullList<ItemStack> items;
@@ -55,8 +56,7 @@ public abstract class InventoryMixin
                 remains -=
                     (slot.getMaxStackSize() < this.getMaxStackSize()
                         ? slot.getMaxStackSize()
-                        : this.getMaxStackSize()) -
-                    slot.getCount();
+                        : this.getMaxStackSize()) - slot.getCount();
             }
             if (remains <= 0) return stack.getCount();
         }
@@ -67,8 +67,7 @@ public abstract class InventoryMixin
             remains -=
                 (offhandItemStack.getMaxStackSize() < this.getMaxStackSize()
                     ? offhandItemStack.getMaxStackSize()
-                    : this.getMaxStackSize()) -
-                offhandItemStack.getCount();
+                    : this.getMaxStackSize()) - offhandItemStack.getCount();
         }
         if (remains <= 0) return stack.getCount();
 
@@ -133,9 +132,9 @@ public abstract class InventoryMixin
 
     @Override
     public Location getLocation() {
-        return (
-            (PlayerEntityBridge) this.player
-        ).bridge$getBukkitEntity().getLocation();
+        return ((PlayerEntityBridge) this.player)
+            .bridge$getBukkitEntity()
+            .getLocation();
     }
 
     @Override

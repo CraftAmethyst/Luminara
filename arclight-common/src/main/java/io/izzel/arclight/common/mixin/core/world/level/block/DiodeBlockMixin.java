@@ -36,8 +36,7 @@ public class DiodeBlockMixin {
                 pos,
                 15,
                 0
-            ).getNewCurrent() !=
-            0
+            ).getNewCurrent() != 0
         ) {
             ci.cancel();
         }
@@ -65,8 +64,7 @@ public class DiodeBlockMixin {
                 pos,
                 0,
                 15
-            ).getNewCurrent() !=
-            15
+            ).getNewCurrent() != 15
         ) {
             ci.cancel();
         }

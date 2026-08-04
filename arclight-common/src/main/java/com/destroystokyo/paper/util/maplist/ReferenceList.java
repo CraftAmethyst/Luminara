@@ -110,8 +110,9 @@ public final class ReferenceList<E> implements Iterable<E> {
                 if (this.current >= ReferenceList.this.count) {
                     throw new NoSuchElementException();
                 }
-                return this.lastRet =
-                    (E) ReferenceList.this.references[this.current++];
+                return (this.lastRet = (E) ReferenceList.this.references[
+                    this.current++
+                ]);
             }
 
             @Override

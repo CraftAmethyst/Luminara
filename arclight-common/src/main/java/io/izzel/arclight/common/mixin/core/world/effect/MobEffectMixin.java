@@ -106,7 +106,7 @@ public class MobEffectMixin {
         LivingEntity livingEntity,
         int amplifier
     ) {
-        Player playerEntity = ((Player) livingEntity);
+        Player playerEntity = (Player) livingEntity;
         int oldFoodLevel = playerEntity.getFoodData().getFoodLevel();
         FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(
             playerEntity,
@@ -122,7 +122,9 @@ public class MobEffectMixin {
         }
         ((ServerPlayer) playerEntity).connection.send(
             new ClientboundSetHealthPacket(
-                ((ServerPlayerEntityBridge) playerEntity).bridge$getBukkitEntity().getScaledHealth(),
+                ((ServerPlayerEntityBridge) playerEntity)
+                    .bridge$getBukkitEntity()
+                    .getScaledHealth(),
                 playerEntity.getFoodData().getFoodLevel(),
                 playerEntity.getFoodData().getSaturationLevel()
             )

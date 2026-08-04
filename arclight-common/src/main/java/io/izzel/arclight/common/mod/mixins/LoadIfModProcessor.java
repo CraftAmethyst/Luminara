@@ -44,14 +44,14 @@ public class LoadIfModProcessor {
         LoadIfMod.ModCondition condition = null;
         List<String> modids = null;
         for (int i = 0; i < ann.values.size(); i += 2) {
-            var name = ((String) ann.values.get(i));
+            var name = (String) ann.values.get(i);
             var value = ann.values.get(i + 1);
             switch (name) {
                 case "condition" -> {
                     var condName = ((String[]) value)[1];
                     condition = LoadIfMod.ModCondition.valueOf(condName);
                 }
-                case "modid" -> modids = ((List<String>) value);
+                case "modid" -> modids = (List<String>) value;
             }
         }
         return new LoadIfModData(

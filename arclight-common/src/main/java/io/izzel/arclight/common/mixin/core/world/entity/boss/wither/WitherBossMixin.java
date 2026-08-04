@@ -247,8 +247,7 @@ public abstract class WitherBossMixin extends PathfinderMobMixin {
                                             blockpos,
                                             true,
                                             (WitherBoss) (Object) this
-                                        ) ||
-                                        flag;
+                                        ) || flag;
                                 }
                             }
                         }

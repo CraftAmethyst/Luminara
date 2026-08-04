@@ -1322,8 +1322,9 @@ public class EntityClassLookup {
                         allEntityClasses.add(cl);
                         for (Class<?> intf : cl.getInterfaces()) {
                             if (
-                                org.bukkit.entity
-                                    .Entity.class.isAssignableFrom(intf)
+                                org.bukkit.entity.Entity.class.isAssignableFrom(
+                                    intf
+                                )
                             ) {
                                 next.addLast(intf);
                             }
@@ -1372,9 +1373,11 @@ public class EntityClassLookup {
             CraftServer,
             T,
             org.bukkit.entity.Entity
-        >) nmsClassMap.computeIfAbsent(entity.getClass(), k ->
-            getEntityTypeData(k, entity.getType())
-        ).convert;
+        >) nmsClassMap
+            .computeIfAbsent(entity.getClass(), k ->
+                getEntityTypeData(k, entity.getType())
+            )
+            .convert;
     }
 
     @SuppressWarnings("unchecked")

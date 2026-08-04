@@ -37,9 +37,11 @@ public class DerivedWorldInfoMixin implements DerivedWorldInfoBridge {
                 } else if (typeKey == LevelStem.END) {
                     suffix = "the_end";
                 } else {
-                    suffix = (typeKey.location().getNamespace() +
+                    suffix = (
+                        typeKey.location().getNamespace() +
                         "_" +
-                        typeKey.location().getPath()).replace('/', '_');
+                        typeKey.location().getPath()
+                    ).replace('/', '_');
                 }
                 return worldName + suffix;
             } else {

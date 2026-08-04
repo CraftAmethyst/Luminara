@@ -161,7 +161,7 @@ public final class SingleThreadChunkRegionManager {
         if (force == null) {
             this.regionsBySection.put(
                 sectionKey,
-                section = new RegionSection(sectionKey, this)
+                (section = new RegionSection(sectionKey, this))
             );
         } else {
             final RegionSection existing = this.regionsBySection.putIfAbsent(
@@ -358,9 +358,7 @@ public final class SingleThreadChunkRegionManager {
             this.regionData = regionManager.regionDataSupplier.get();
         }
 
-        public IteratorSafeOrderedReferenceSet.Iterator<
-            RegionSection
-        > getSections() {
+        public IteratorSafeOrderedReferenceSet.Iterator<RegionSection> getSections() {
             return this.sections.iterator(
                 IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
             );
@@ -478,9 +476,9 @@ public final class SingleThreadChunkRegionManager {
             if (
                 this.markedForRecalc &&
                 (this.sections.size() <
-                        this.regionManager.minSectionRecalcCount ||
+                    this.regionManager.minSectionRecalcCount ||
                     this.getDeadSectionPercent() <
-                    this.regionManager.maxDeadRegionPercent)
+                        this.regionManager.maxDeadRegionPercent)
             ) {
                 this.regionManager.removeFromRecalcQueue(this);
                 this.markedForRecalc = false;
@@ -492,10 +490,10 @@ public final class SingleThreadChunkRegionManager {
             if (
                 !this.markedForRecalc &&
                 (this.sections.size() >=
-                        this.regionManager.minSectionRecalcCount ||
+                    this.regionManager.minSectionRecalcCount ||
                     this.sections.size() == this.deadSections.size()) &&
                 this.getDeadSectionPercent() >=
-                this.regionManager.maxDeadRegionPercent
+                    this.regionManager.maxDeadRegionPercent
             ) {
                 this.regionManager.addToRecalcQueue(this);
                 this.markedForRecalc = true;
@@ -508,13 +506,11 @@ public final class SingleThreadChunkRegionManager {
 
             ret.append("Region{");
             ret.append("dead=").append(this.dead).append(',');
-            ret
-                .append("markedForRecalc=")
+            ret.append("markedForRecalc=")
                 .append(this.markedForRecalc)
                 .append(',');
 
-            ret
-                .append("sectionCount=")
+            ret.append("sectionCount=")
                 .append(this.sections.size())
                 .append(',');
             ret.append("sections=[");
@@ -557,7 +553,7 @@ public final class SingleThreadChunkRegionManager {
             this.chunksBitset = new long[Math.max(
                 1,
                 (regionManager.regionSectionChunkSize *
-                        regionManager.regionSectionChunkSize) /
+                    regionManager.regionSectionChunkSize) /
                     Long.SIZE
             )];
             this.sectionData = regionManager.regionSectionDataSupplier.get();
@@ -611,8 +607,8 @@ public final class SingleThreadChunkRegionManager {
         private void addChunk(final int chunkX, final int chunkZ) {
             final int index = this.getChunkIndex(chunkX, chunkZ);
             final long bitset = this.chunksBitset[index >>> 6]; // index / Long.SIZE
-            final long after = this.chunksBitset[index >>> 6] =
-                bitset | (1L << (index & (Long.SIZE - 1)));
+            final long after = (this.chunksBitset[index >>> 6] =
+                bitset | (1L << (index & (Long.SIZE - 1))));
             if (after == bitset) {
                 throw new IllegalStateException(
                     "Cannot add a chunk to a section which already has the chunk! RegionSection: " +
@@ -630,8 +626,8 @@ public final class SingleThreadChunkRegionManager {
         private void removeChunk(final int chunkX, final int chunkZ) {
             final int index = this.getChunkIndex(chunkX, chunkZ);
             final long before = this.chunksBitset[index >>> 6]; // index / Long.SIZE
-            final long bitset = this.chunksBitset[index >>> 6] =
-                before & ~(1L << (index & (Long.SIZE - 1)));
+            final long bitset = (this.chunksBitset[index >>> 6] =
+                before & ~(1L << (index & (Long.SIZE - 1))));
             if (before == bitset) {
                 throw new IllegalStateException(
                     "Cannot remove a chunk from a section which does not have that chunk! RegionSection: " +

@@ -28,7 +28,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(Creeper.class)
 public abstract class CreeperMixin
     extends PathfinderMobMixin
-    implements CreeperEntityBridge {
+    implements CreeperEntityBridge
+{
 
     // @formatter:off
     @Shadow @Final private static EntityDataAccessor<Boolean> DATA_IS_POWERED;

@@ -35,7 +35,7 @@ public final class CoordinateUtils {
         final int dz,
         final int radius
     ) {
-        return (dx + radius) + (2 * radius + 1) * (dz + radius);
+        return dx + radius + (2 * radius + 1) * (dz + radius);
     }
 
     public static long getChunkKey(final BlockPos pos) {
@@ -117,25 +117,25 @@ public final class CoordinateUtils {
     public static long getChunkSectionKey(final Entity entity) {
         return (
             ((Mth.lfloor(entity.getX()) <<
-                    (SECTION_X_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
+                (SECTION_X_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
                 (SECTION_X_MASK << SECTION_X_SHIFT)) |
             ((Mth.lfloor(entity.getY()) >> SECTION_TO_BLOCK_SHIFT) &
                 (SECTION_Y_MASK << SECTION_Y_SHIFT)) |
             ((Mth.lfloor(entity.getZ()) <<
-                    (SECTION_Z_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
+                (SECTION_Z_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
                 (SECTION_Z_MASK << SECTION_Z_SHIFT))
         );
     }
 
     public static int getChunkSectionX(final long key) {
         return (int) ((key <<
-                (Long.SIZE - (SECTION_X_SHIFT + SECTION_X_BITS))) >>
+            (Long.SIZE - (SECTION_X_SHIFT + SECTION_X_BITS))) >>
             (Long.SIZE - SECTION_X_BITS));
     }
 
     public static int getChunkSectionY(final long key) {
         return (int) ((key <<
-                (Long.SIZE - (SECTION_Y_SHIFT + SECTION_Y_BITS))) >>
+            (Long.SIZE - (SECTION_Y_SHIFT + SECTION_Y_BITS))) >>
             (Long.SIZE - SECTION_Y_BITS));
     }
 
@@ -143,7 +143,7 @@ public final class CoordinateUtils {
 
     public static int getChunkSectionZ(final long key) {
         return (int) ((key <<
-                (Long.SIZE - (SECTION_Z_SHIFT + SECTION_Z_BITS))) >>
+            (Long.SIZE - (SECTION_Z_SHIFT + SECTION_Z_BITS))) >>
             (Long.SIZE - SECTION_Z_BITS));
     }
 

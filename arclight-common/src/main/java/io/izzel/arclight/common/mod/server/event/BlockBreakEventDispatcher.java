@@ -28,7 +28,9 @@ public class BlockBreakEventDispatcher {
             );
             BlockBreakEvent breakEvent = new BlockBreakEvent(
                 craftBlock,
-                ((ServerPlayerEntityBridge) event.getPlayer()).bridge$getBukkitEntity()
+                (
+                    (ServerPlayerEntityBridge) event.getPlayer()
+                ).bridge$getBukkitEntity()
             );
             ArclightCaptures.captureBlockBreakPlayer(breakEvent);
             breakEvent.setCancelled(event.isCanceled());

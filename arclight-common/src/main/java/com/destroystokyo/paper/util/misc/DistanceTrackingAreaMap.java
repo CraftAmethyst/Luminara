@@ -192,7 +192,7 @@ public abstract class DistanceTrackingAreaMap<E> extends AreaMap<E> {
 
         if (
             Math.max(totalX, totalZ) >
-            (2 * Math.max(newViewDistance, oldViewDistance))
+            2 * Math.max(newViewDistance, oldViewDistance)
         ) {
             // teleported?
             this.removeObjectCallback(object, fromX, fromZ, oldViewDistance);

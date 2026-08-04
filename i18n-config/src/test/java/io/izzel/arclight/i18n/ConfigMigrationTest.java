@@ -14,14 +14,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 class ConfigMigrationTest {
 
     @ParameterizedTest
-    @CsvSource(
-        {
-            "true, FORGE_TO_BUKKIT",
-            "'true', FORGE_TO_BUKKIT",
-            "reverse, BUKKIT_TO_FORGE",
-            "false, DISABLED",
-        }
-    )
+    @CsvSource({
+        "true, FORGE_TO_BUKKIT",
+        "'true', FORGE_TO_BUKKIT",
+        "reverse, BUKKIT_TO_FORGE",
+        "false, DISABLED",
+    })
     void migratesPermissionForwardingAndRemovesUnsafeSections(
         String legacy,
         PermissionForwarding expected

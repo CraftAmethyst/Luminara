@@ -171,8 +171,9 @@ public abstract class CraftServerMixin implements CraftServerBridge {
     ) {
         CommandSourceStack commandSource;
         if (sender instanceof CraftEntity) {
-            commandSource =
-                ((CraftEntity) sender).getHandle().createCommandSourceStack();
+            commandSource = ((CraftEntity) sender)
+                .getHandle()
+                .createCommandSourceStack();
         } else if (sender == Bukkit.getConsoleSender()) {
             commandSource =
                 ArclightServer.getMinecraftServer().createCommandSourceStack();
@@ -227,7 +228,8 @@ public abstract class CraftServerMixin implements CraftServerBridge {
             return;
         }
         this.worlds.remove(
-            ((WorldBridge) world).bridge$getWorld()
+            ((WorldBridge) world)
+                .bridge$getWorld()
                 .getName()
                 .toLowerCase(Locale.ROOT)
         );
@@ -269,10 +271,9 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         this.commandMap.clearCommands();
         this.reloadData();
         SpigotConfig.registerCommands();
-        this.overrideAllCommandBlockCommands =
-            this.commandsConfiguration.getStringList(
-                "command-block-overrides"
-            ).contains("*");
+        this.overrideAllCommandBlockCommands = this.commandsConfiguration
+            .getStringList("command-block-overrides")
+            .contains("*");
         this.ignoreVanillaPermissions = this.commandsConfiguration.getBoolean(
             "ignore-vanilla-permissions"
         );

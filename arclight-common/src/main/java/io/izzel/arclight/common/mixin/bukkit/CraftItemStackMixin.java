@@ -66,8 +66,9 @@ public abstract class CraftItemStackMixin implements CraftItemStackBridge {
         CallbackInfoReturnable<Boolean> cir
     ) {
         if (item != null) {
-            CompoundTag forgeCaps =
-                ((ItemStackBridge) (Object) item).bridge$getForgeCaps();
+            CompoundTag forgeCaps = (
+                (ItemStackBridge) (Object) item
+            ).bridge$getForgeCaps();
             if (forgeCaps != null && !forgeCaps.isEmpty()) {
                 cir.setReturnValue(true);
             }
@@ -115,21 +116,29 @@ public abstract class CraftItemStackMixin implements CraftItemStackBridge {
         }
         Material comparisonType = CraftLegacy.fromLegacy(that.getType()); // This may be called from legacy item stacks, try to get the right material
         if (
-            !(comparisonType == this.getType() &&
-                getDurability() == that.getDurability())
+            !(
+                comparisonType == this.getType() &&
+                getDurability() == that.getDurability()
+            )
         ) {
             return false;
         }
         return hasItemMeta()
-            ? (that.hasItemMeta() &&
+            ? that.hasItemMeta() &&
                   Objects.equals(
                       handle.getTag(),
-                      ((CraftItemStackBridge) (Object) that).bridge$getHandle().getTag()
+                      ((CraftItemStackBridge) (Object) that)
+                          .bridge$getHandle()
+                          .getTag()
                   ) &&
                   Objects.equals(
                       ((ItemStackBridge) (Object) handle).bridge$getForgeCaps(),
-                      ((ItemStackBridge) (Object) ((CraftItemStackBridge) (Object) that).bridge$getHandle()).bridge$getForgeCaps()
-                  ))
+                      (
+                          (ItemStackBridge) (Object) (
+                              (CraftItemStackBridge) (Object) that
+                          ).bridge$getHandle()
+                      ).bridge$getForgeCaps()
+                  )
             : !that.hasItemMeta();
     }
 

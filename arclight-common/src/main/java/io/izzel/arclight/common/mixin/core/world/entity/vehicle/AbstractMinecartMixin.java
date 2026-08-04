@@ -32,7 +32,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractMinecart.class)
 public abstract class AbstractMinecartMixin
     extends EntityMixin
-    implements IForgeAbstractMinecart {
+    implements IForgeAbstractMinecart
+{
 
     public boolean slowWhenEmpty = true;
     public double maxSpeed = 0.4D;

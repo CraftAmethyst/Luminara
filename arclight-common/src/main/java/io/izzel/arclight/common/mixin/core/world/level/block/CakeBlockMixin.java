@@ -40,6 +40,8 @@ public class CakeBlockMixin {
         if (!event.isCancelled()) {
             foodStats.eat(event.getFoodLevel() - old, foodSaturationModifier);
         }
-        ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity().sendHealthUpdate();
+        ((ServerPlayerEntityBridge) player)
+            .bridge$getBukkitEntity()
+            .sendHealthUpdate();
     }
 }

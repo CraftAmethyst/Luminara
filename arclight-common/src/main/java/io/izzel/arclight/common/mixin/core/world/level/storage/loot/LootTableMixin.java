@@ -71,9 +71,9 @@ public abstract class LootTableMixin implements LootTableBridge {
             return list;
         }
         if (
-            !((LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()).bridge$isRegistered(
-                (LootTable) (Object) this
-            )
+            !(
+                (LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()
+            ).bridge$isRegistered((LootTable) (Object) this)
         ) {
             return list;
         }
@@ -102,18 +102,18 @@ public abstract class LootTableMixin implements LootTableBridge {
         long i,
         boolean plugin
     ) {
-        LootContext context = (new LootContext.Builder(
-                lootparams
-            )).withOptionalRandomSeed(i).create(this.randomSequence);
+        LootContext context = new LootContext.Builder(lootparams)
+            .withOptionalRandomSeed(i)
+            .create(this.randomSequence);
         ObjectArrayList<ItemStack> objectarraylist = this.getRandomItems(
             context
         );
         RandomSource randomsource = context.getRandom();
 
         if (
-            ((LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()).bridge$isRegistered(
-                (LootTable) (Object) this
-            )
+            (
+                (LootDataManagerBridge) ArclightServer.getMinecraftServer().getLootData()
+            ).bridge$isRegistered((LootTable) (Object) this)
         ) {
             LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(
                 inv,

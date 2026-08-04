@@ -43,7 +43,8 @@ public class Main_Forge {
 
     private static void verifyManifest()
         throws IOException, URISyntaxException {
-        var location = Main_Forge.class.getProtectionDomain()
+        var location = Main_Forge.class
+            .getProtectionDomain()
             .getCodeSource()
             .getLocation();
         try (JarFile baseArchive = new JarFile(new File(location.toURI()))) {
@@ -78,7 +79,8 @@ public class Main_Forge {
             var loader = new URLClassLoader(
                 new URL[] {
                     path.toUri().toURL(),
-                    Main_Forge.class.getProtectionDomain()
+                    Main_Forge.class
+                        .getProtectionDomain()
                         .getCodeSource()
                         .getLocation(),
                 },

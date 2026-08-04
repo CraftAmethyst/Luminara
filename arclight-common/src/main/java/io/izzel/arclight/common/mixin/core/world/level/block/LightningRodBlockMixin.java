@@ -29,8 +29,8 @@ public class LightningRodBlockMixin {
         CallbackInfo ci
     ) {
         boolean powered = state.getValue(LightningRodBlock.POWERED);
-        int old = (powered) ? 15 : 0;
-        int current = (!powered) ? 15 : 0;
+        int old = powered ? 15 : 0;
+        int current = !powered ? 15 : 0;
 
         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
             CraftBlock.at(level, pos),

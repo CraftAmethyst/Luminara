@@ -37,8 +37,9 @@ public abstract class ServerGamePacketListenerImplMixin_Paper {
             return;
         }
 
-        CraftPlayer craftPlayer =
-            ((io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge) this.player).bridge$getBukkitEntity();
+        CraftPlayer craftPlayer = (
+            (io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge) this.player
+        ).bridge$getBukkitEntity();
         String content = message.signedContent();
 
         Component originalMessage = Component.text(content);

@@ -75,7 +75,6 @@ public abstract class RepairContainerMixin extends ItemCombinerMixin {
         sendAllDataToRemote();
     }
 
-
     @Override
     public CraftInventoryView getBukkitView() {
         if (bukkitEntity != null) {

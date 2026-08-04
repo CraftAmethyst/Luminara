@@ -45,8 +45,6 @@ public abstract class PortalForcerMixin implements TeleporterBridge {
 
     @Shadow public abstract Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_);
 
-
-
     @Override
     public Optional<BlockUtil.FoundRectangle> bridge$findPortal(
         BlockPos pos,
@@ -62,7 +60,6 @@ public abstract class PortalForcerMixin implements TeleporterBridge {
         }
         return this.findPortalAround(pos, false, worldborder);
     }
-
 
     @ModifyArg(method = "createPortal", index = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;spiralAround(Lnet/minecraft/core/BlockPos;ILnet/minecraft/core/Direction;Lnet/minecraft/core/Direction;)Ljava/lang/Iterable;"))
     private int arclight$changeRadius(int i) {

@@ -46,8 +46,8 @@ public class LeverBlockMixin {
     ) {
         boolean flag = state.getValue(POWERED);
         Block block = CraftBlock.at(worldIn, pos);
-        int old = (flag) ? 15 : 0;
-        int current = (!flag) ? 15 : 0;
+        int old = flag ? 15 : 0;
+        int current = !flag ? 15 : 0;
 
         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
             block,
@@ -56,7 +56,7 @@ public class LeverBlockMixin {
         );
         Bukkit.getPluginManager().callEvent(eventRedstone);
 
-        if ((eventRedstone.getNewCurrent() > 0) == flag) {
+        if (eventRedstone.getNewCurrent() > 0 == flag) {
             cir.setReturnValue(true);
         }
     }

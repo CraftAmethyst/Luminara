@@ -18,8 +18,9 @@ public class EntityTeleportEventDispatcher {
         net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event
     ) {
         if (event.getEntity() instanceof ServerPlayer) {
-            CraftPlayer player =
-                ((ServerPlayerEntityBridge) event.getEntity()).bridge$getBukkitEntity();
+            CraftPlayer player = (
+                (ServerPlayerEntityBridge) event.getEntity()
+            ).bridge$getBukkitEntity();
             PlayerTeleportEvent bukkitEvent = new PlayerTeleportEvent(
                 player,
                 player.getLocation(),
@@ -37,8 +38,9 @@ public class EntityTeleportEventDispatcher {
             event.setTargetY(bukkitEvent.getTo().getY());
             event.setTargetZ(bukkitEvent.getTo().getZ());
         } else {
-            CraftEntity entity =
-                ((EntityBridge) event.getEntity()).bridge$getBukkitEntity();
+            CraftEntity entity = (
+                (EntityBridge) event.getEntity()
+            ).bridge$getBukkitEntity();
             EntityTeleportEvent bukkitEvent = new EntityTeleportEvent(
                 entity,
                 entity.getLocation(),

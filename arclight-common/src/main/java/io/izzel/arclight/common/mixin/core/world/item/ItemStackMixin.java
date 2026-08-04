@@ -34,7 +34,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin
     extends CapabilityProvider<ItemStack>
-    implements ItemStackBridge {
+    implements ItemStackBridge
+{
 
     private static final Logger LOG = ArclightI18nLogger.getLogger("ItemStack");
 
@@ -75,7 +76,7 @@ public abstract class ItemStackMixin
             return (
                 tagA == null ||
                 (tagA.isEmpty()
-                    ? (tagB == null || tagB.isEmpty())
+                    ? tagB == null || tagB.isEmpty()
                     : tagA.equals(tagB))
             );
         } else {
@@ -154,7 +155,7 @@ public abstract class ItemStackMixin
     ) {
         if (this.count == 1 && entityIn instanceof Player) {
             CraftEventFactory.callPlayerItemBreakEvent(
-                ((Player) entityIn),
+                (Player) entityIn,
                 (ItemStack) (Object) this
             );
         }

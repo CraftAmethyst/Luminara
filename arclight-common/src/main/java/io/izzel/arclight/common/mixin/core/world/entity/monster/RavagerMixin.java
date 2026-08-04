@@ -32,8 +32,7 @@ public abstract class RavagerMixin extends PathfinderMobMixin {
                 (Ravager) (Object) this,
                 pos,
                 Blocks.AIR.defaultBlockState()
-            ) &&
-            world.destroyBlock(pos, dropBlock, entityIn)
+            ) && world.destroyBlock(pos, dropBlock, entityIn)
         );
     }
 }

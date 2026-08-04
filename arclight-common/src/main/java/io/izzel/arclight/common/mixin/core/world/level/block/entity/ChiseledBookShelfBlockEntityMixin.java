@@ -24,7 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ChiseledBookShelfBlockEntity.class)
 public abstract class ChiseledBookShelfBlockEntityMixin
     extends BlockEntityMixin
-    implements IInventoryBridge, Container {
+    implements IInventoryBridge, Container
+{
 
     public List<HumanEntity> transaction = new ArrayList<>();
 

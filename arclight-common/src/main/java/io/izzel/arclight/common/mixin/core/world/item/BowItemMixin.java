@@ -55,8 +55,7 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
                 EnchantmentHelper.getItemEnchantmentLevel(
                     Enchantments.INFINITY_ARROWS,
                     stack
-                ) >
-                0;
+                ) > 0;
             ItemStack itemstack = playerentity.getProjectile(stack);
 
             int i = this.getUseDuration(stack) - timeLeft;
@@ -85,11 +84,11 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
                                 playerentity
                             ));
                     if (!worldIn.isClientSide) {
-                        ArrowItem arrowitem =
-                            (ArrowItem) (itemstack.getItem() instanceof
-                                    ArrowItem
+                        ArrowItem arrowitem = (ArrowItem) (
+                            itemstack.getItem() instanceof ArrowItem
                                 ? itemstack.getItem()
-                                : Items.ARROW);
+                                : Items.ARROW
+                        );
                         AbstractArrow abstractarrowentity =
                             arrowitem.createArrow(
                                 worldIn,
@@ -133,8 +132,7 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
                             EnchantmentHelper.getItemEnchantmentLevel(
                                 Enchantments.FLAMING_ARROWS,
                                 stack
-                            ) >
-                            0
+                            ) > 0
                         ) {
                             abstractarrowentity.setSecondsOnFire(100);
                         }
@@ -172,14 +170,18 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
 
                         if (
                             event.getProjectile() ==
-                            ((EntityBridge) abstractarrowentity).bridge$getBukkitEntity()
+                            (
+                                (EntityBridge) abstractarrowentity
+                            ).bridge$getBukkitEntity()
                         ) {
                             if (!worldIn.addFreshEntity(abstractarrowentity)) {
                                 if (
                                     playerentity instanceof
                                         ServerPlayerEntityBridge
                                 ) {
-                                    ((ServerPlayerEntityBridge) playerentity).bridge$getBukkitEntity().updateInventory();
+                                    ((ServerPlayerEntityBridge) playerentity)
+                                        .bridge$getBukkitEntity()
+                                        .updateInventory();
                                 }
                                 return;
                             }

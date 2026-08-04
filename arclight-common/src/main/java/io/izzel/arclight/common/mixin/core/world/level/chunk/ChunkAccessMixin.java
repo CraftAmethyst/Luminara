@@ -34,7 +34,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ChunkAccess.class)
 public abstract class ChunkAccessMixin
-    implements BlockGetter, BiomeManager.NoiseBiomeSource, ChunkAccessBridge {
+    implements BlockGetter, BiomeManager.NoiseBiomeSource, ChunkAccessBridge
+{
 
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY =
         new CraftPersistentDataTypeRegistry();

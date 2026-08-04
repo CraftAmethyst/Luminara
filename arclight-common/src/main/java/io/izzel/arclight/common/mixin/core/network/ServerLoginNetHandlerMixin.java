@@ -127,12 +127,13 @@ public abstract class ServerLoginNetHandlerMixin {
             // Spigot end
         }
 
-        ServerPlayer entity =
-            ((PlayerListBridge) this.server.getPlayerList()).bridge$canPlayerLogin(
-                this.connection.getRemoteAddress(),
-                this.gameProfile,
-                (ServerLoginPacketListenerImpl) (Object) this
-            );
+        ServerPlayer entity = (
+            (PlayerListBridge) this.server.getPlayerList()
+        ).bridge$canPlayerLogin(
+            this.connection.getRemoteAddress(),
+            this.gameProfile,
+            (ServerLoginPacketListenerImpl) (Object) this
+        );
         if (entity == null) {
             // this.disconnect(itextcomponent);
         } else {
@@ -157,18 +158,18 @@ public abstract class ServerLoginNetHandlerMixin {
             this.connection.send(
                 new ClientboundGameProfilePacket(this.gameProfile)
             );
-            ServerPlayer serverplayerentity =
-                this.server.getPlayerList().getPlayer(this.gameProfile.getId());
+            ServerPlayer serverplayerentity = this.server
+                .getPlayerList()
+                .getPlayer(this.gameProfile.getId());
             try {
                 if (serverplayerentity != null) {
                     this.state =
                         ServerLoginPacketListenerImpl.State.DELAY_ACCEPT;
                     this.delayedAcceptPlayer = entity;
                 } else {
-                    this.server.getPlayerList().placeNewPlayer(
-                        this.connection,
-                        entity
-                    );
+                    this.server
+                        .getPlayerList()
+                        .placeNewPlayer(this.connection, entity);
                 }
             } catch (Exception exception) {
                 ARCLIGHT_LOGGER.error(
@@ -291,29 +292,31 @@ public abstract class ServerLoginNetHandlerMixin {
             ((NetworkManagerBridge) this.connection).bridge$getSpoofedUUID() !=
             null
         ) {
-            uuid =
-                ((NetworkManagerBridge) this.connection).bridge$getSpoofedUUID();
+            uuid = (
+                (NetworkManagerBridge) this.connection
+            ).bridge$getSpoofedUUID();
         } else {
             uuid = UUIDUtil.createOfflinePlayerUUID(this.gameProfile.getName());
         }
         this.gameProfile = new GameProfile(uuid, this.gameProfile.getName());
         if (
-            ((NetworkManagerBridge) this.connection).bridge$getSpoofedProfile() !=
-            null
+            (
+                (NetworkManagerBridge) this.connection
+            ).bridge$getSpoofedProfile() != null
         ) {
             Property[] spoofedProfile;
             for (
-                int length = (spoofedProfile =
-                            ((NetworkManagerBridge) this.connection).bridge$getSpoofedProfile()).length,
+                int length = (spoofedProfile = (
+                        (NetworkManagerBridge) this.connection
+                    ).bridge$getSpoofedProfile()).length,
                     i = 0;
                 i < length;
                 ++i
             ) {
                 final Property property = spoofedProfile[i];
-                this.gameProfile.getProperties().put(
-                    property.getName(),
-                    property
-                );
+                this.gameProfile
+                    .getProperties()
+                    .put(property.getName(), property);
             }
         }
     }
@@ -339,13 +342,13 @@ public abstract class ServerLoginNetHandlerMixin {
             SecretKey secretKey = packetIn.getSecretKey(privatekey);
             Cipher cipher = Crypt.getCipher(2, secretKey);
             Cipher cipher1 = Crypt.getCipher(1, secretKey);
-            s = (new BigInteger(
-                    Crypt.digestData(
-                        "",
-                        this.server.getKeyPair().getPublic(),
-                        secretKey
-                    )
-                )).toString(16);
+            s = new BigInteger(
+                Crypt.digestData(
+                    "",
+                    this.server.getKeyPair().getPublic(),
+                    secretKey
+                )
+            ).toString(16);
             this.state = ServerLoginPacketListenerImpl.State.AUTHENTICATING;
             this.connection.setEncryptionKey(cipher, cipher1);
         } catch (CryptException cryptexception) {
@@ -423,8 +426,9 @@ public abstract class ServerLoginNetHandlerMixin {
 
     void arclight$preLogin() throws Exception {
         String playerName = gameProfile.getName();
-        InetAddress address =
-            ((InetSocketAddress) connection.getRemoteAddress()).getAddress();
+        InetAddress address = (
+            (InetSocketAddress) connection.getRemoteAddress()
+        ).getAddress();
         UUID uniqueId = gameProfile.getId();
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(
@@ -434,8 +438,9 @@ public abstract class ServerLoginNetHandlerMixin {
         );
         craftServer.getPluginManager().callEvent(asyncEvent);
         if (
-            PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length !=
-            0
+            PlayerPreLoginEvent.getHandlerList()
+                .getRegisteredListeners()
+                .length != 0
         ) {
             PlayerPreLoginEvent event = new PlayerPreLoginEvent(
                 playerName,
@@ -614,9 +619,10 @@ public abstract class ServerLoginNetHandlerMixin {
         buffer.getBytes(idx, rest);
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            String secret = ArclightConfig.spec().getVelocity() != null
-                ? ArclightConfig.spec().getVelocity().getForwardingSecret()
-                : "";
+            String secret =
+                ArclightConfig.spec().getVelocity() != null
+                    ? ArclightConfig.spec().getVelocity().getForwardingSecret()
+                    : "";
             mac.init(
                 new SecretKeySpec(
                     secret.getBytes(java.nio.charset.StandardCharsets.UTF_8),
@@ -643,9 +649,10 @@ public abstract class ServerLoginNetHandlerMixin {
         String ip = data.readUtf();
         try {
             SocketAddress current = this.connection.getRemoteAddress();
-            int port = current instanceof InetSocketAddress
-                ? ((InetSocketAddress) current).getPort()
-                : 0;
+            int port =
+                current instanceof InetSocketAddress
+                    ? ((InetSocketAddress) current).getPort()
+                    : 0;
             ((NetworkManagerBridge) this.connection).bridge$setVelocityAddress(
                 new InetSocketAddress(ip, port)
             );

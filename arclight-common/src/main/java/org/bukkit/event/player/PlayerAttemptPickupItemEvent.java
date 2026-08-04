@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PlayerAttemptPickupItemEvent
     extends PlayerEvent
-    implements Cancellable {
+    implements Cancellable
+{
 
     private static final HandlerList HANDLERS = new HandlerList();
 

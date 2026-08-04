@@ -17,7 +17,7 @@ public final class PaperCompatSupport {
     private PaperCompatSupport() {}
 
     public static int chunkCoord(double coord) {
-        return ((int) Math.floor(coord)) >> 4;
+        return (int) Math.floor(coord) >> 4;
     }
 
     public static Void logChunkCallbackException(Throwable ex) {
