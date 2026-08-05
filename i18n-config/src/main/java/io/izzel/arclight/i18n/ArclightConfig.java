@@ -104,18 +104,25 @@ public class ArclightConfig {
     static ArclightConfig loadExistingConfig(Path path) throws Exception {
         YAMLConfigurationLoader loader = loader(path);
         ConfigurationNode original = loader.load();
+        String originalContent = Files.readString(path, StandardCharsets.UTF_8);
         ConfigurationNode migrated = original.copy();
         ConfigMigration.Result migration = ConfigMigration.migrate(migrated);
         migrated
             .getNode("locale", "current")
             .setValue(ArclightLocale.getInstance().current());
+        String currentLocale = migrated
+            .getNode("locale", "current")
+            .getString("zh_cn");
         ArclightConfig config = new ArclightConfig(migrated);
         if (
             migration.changed() ||
-            !migrated
-                .getNode("locale", "current")
-                .getString("")
-                .equals(original.getNode("locale", "current").getString(""))
+            !currentLocale.equals(
+                original.getNode("locale", "current").getString("")
+            ) ||
+            !I18nCommentInjector.hasInjectedComments(
+                originalContent,
+                currentLocale
+            )
         ) {
             saveAtomically(path, migrated);
         }
@@ -149,6 +156,22 @@ public class ArclightConfig {
         );
         try {
             loader(temporary).save(node);
+            String currentLocale = node
+                .getNode("locale", "current")
+                .getString("zh_cn");
+            String localized;
+            try {
+                localized = I18nCommentInjector.injectComments(
+                    Files.readString(temporary, StandardCharsets.UTF_8),
+                    currentLocale
+                );
+            } catch (Exception exception) {
+                throw new IOException(
+                    "Unable to inject localized configuration comments",
+                    exception
+                );
+            }
+            Files.writeString(temporary, localized, StandardCharsets.UTF_8);
             try (
                 FileChannel channel = FileChannel.open(
                     temporary,

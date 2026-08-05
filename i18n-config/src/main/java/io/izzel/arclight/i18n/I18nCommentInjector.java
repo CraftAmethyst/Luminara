@@ -26,6 +26,31 @@ final class I18nCommentInjector {
         return updateLocaleInContent(withComments, currentLocale);
     }
 
+    static boolean hasInjectedComments(
+        String configContent,
+        String currentLocale
+    ) throws Exception {
+        ConfigurationNode commentsNode = loadCommentsNode(currentLocale);
+        if (commentsNode == null || commentsNode.isVirtual()) return true;
+
+        ConfigurationNode versionComment = findCommentNode(
+            commentsNode,
+            "_v"
+        );
+        if (versionComment == null) return true;
+        String commentText = getCommentText(versionComment);
+        for (String line : commentText.split("\\n")) {
+            String trimmed = line.trim();
+            if (
+                !trimmed.isEmpty() &&
+                !configContent.contains("# " + trimmed)
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static ConfigurationNode loadCommentsNode(String currentLocale)
         throws Exception {
         InputStream i18nStream = I18nCommentInjector.class.getResourceAsStream(
@@ -82,12 +107,13 @@ final class I18nCommentInjector {
                     currentPath.add(key);
 
                     String fullPath = String.join(".", currentPath);
-                    String commentPath = fullPath + ".comment";
 
-                    ConfigurationNode commentNode = commentsNode.getNode(
-                        (Object[]) commentPath.split("\\.")
+                    ConfigurationNode commentNode = findCommentNode(
+                        commentsNode,
+                        fullPath
                     );
                     if (
+                        commentNode != null &&
                         !commentNode.isVirtual() &&
                         commentNode.getValue() != null
                     ) {
@@ -126,6 +152,32 @@ final class I18nCommentInjector {
             return trimmed.substring(0, colonIndex).trim();
         }
         return null;
+    }
+
+    private static ConfigurationNode findCommentNode(
+        ConfigurationNode commentsNode,
+        String fullPath
+    ) {
+        String[] path = (fullPath + ".comment").split("\\.");
+        ConfigurationNode current = commentsNode;
+        for (int index = 0; index < path.length; index++) {
+            ConfigurationNode child = current
+                .getChildrenMap()
+                .get(path[index]);
+            if (child != null) {
+                current = child;
+                continue;
+            }
+
+            StringBuilder flattenedKey = new StringBuilder();
+            for (int suffix = index; suffix < path.length; suffix++) {
+                if (flattenedKey.length() > 0) flattenedKey.append('.');
+                flattenedKey.append(path[suffix]);
+            }
+            child = current.getChildrenMap().get(flattenedKey.toString());
+            return child;
+        }
+        return current;
     }
 
     private static String getCommentText(ConfigurationNode commentNode) {

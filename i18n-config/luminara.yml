@@ -1,38 +1,89 @@
 # Luminara Configuration File
 # This is the YAML version of the configuration
 
+# Repository: https://github.com/CraftAmethyst/Luminara
+# Issue Tracker: https://github.com/CraftAmethyst/Luminara/issues
+# Config version number, do not edit.
 _v: 2
+# Language/I18n settings
 locale:
   fallback: zh_cn
   current: en_us
+# Server optimization related settings
 optimization:
+  # Whether to cache plugin classes for better performance
   cache-plugin-class: true
+  # Entity goal selector update interval
+  # Higher values consume less resources
+  # Causes entities to change goals less frequently
   goal-selector-update-interval: 1
+  # Whether to use Spigot Activation Range and Tracking Range optimization
   use-activation-and-tracking-range: false
 compatibility:
   material-property-overrides: {}
   entity-property-overrides: {}
+  # Create symbol links to mod dimension folder that matches Bukkit world name
+  # Enable this could improve plugin compotibility
+  # Changing this on production server will cause changes to mod world names
+  # and cause data loss on plugins relying world names
+  # See https://github.com/IzzelAliz/Arclight/wiki/World-Symlink for more detail
   symlink-world: false
+  # Extra worlds running logic
+  # If any mods do not function well, try search class names in logs related to [EXT_LOGIC] and add them here
   extra-logic-worlds:
-    - com.example.mod.ExtraLogicWorld
-    - xyz.nucleoid.fantasy.RuntimeWorld
+  - com.example.mod.ExtraLogicWorld
+  - xyz.nucleoid.fantasy.RuntimeWorld
   permission-forwarding: FORGE_TO_BUKKIT
-  valid-username-regex: ""
+  # Regex for valid username check. Leave it blank will fallback to vanilla check
+  # Following allows Chinese characters:
+  # valid-username-regex = "^[ -~\\p{sc=Han}]{1,16}$"
+  # Following allows any username to login:
+  # valid-username-regex = ".+"
+  valid-username-regex: ''
+  # Allows items with an empty nbt tag stack on no tag items
   lenient-item-tag-match: true
+  # Whether to enable preloading of Bungee chat API classes at startup
+  # This helps fix issues where some plugins wouldn't load the BungeeChat API properly
+  # Set to false if you encounter compatibility issues with certain plugins
   preload-bungee-chat-classes: true
   enable-bukkit-reload-command: true
+# Async Catcher related settings
+# There are four modes, and BLOCK is recommended
+# NONE - Do nothing
+# DISPATCH - Non blocking-ly dispatch action to main thread
+# BLOCK - Run in main thread and wait for results
+# EXCEPTION - Raise an error
 async-catcher:
+  # Dump stack trace information in debug.log
   dump: true
   warn: true
   defaultOperation: block
   overrides: {}
+# Velocity Modern Forwarding related settings
 velocity:
+  # Whether to enable Velocity Modern Forwarding support
+  # When enabled, allows integration with Velocity proxy server
   enabled: false
+  # Whether to enable online mode verification
+  # Should typically match the online-mode setting in Velocity configuration
   online-mode: false
-  forwarding-secret: ""
+  # Velocity forwarding secret key
+  # Must exactly match the forwarding-secret in Velocity configuration file
+  # Used to authenticate connection requests from Velocity
+  forwarding-secret: ''
+  # Whether to display Velocity forwarding related debug information in logs
+  # Enable this to help diagnose connection issues
   debug-logging: false
+# Error handling related settings
+# Controls server behavior when encountering crashes and errors
 error-handling:
+  # Whether to continue running the server after a crash (default disabled, recommended to keep disabled)
   continue-on-crash: false
+  # Directory for storing crash report files
   crash-report-directory: crash-reports
+# Logging output related settings
 logging:
+  # Whether to use simplified log output format
+  # true - Use simple format (hide thread names and class names)
+  # false - Use detailed format (show full thread names, class names and other debug info)
   use-simple-format: false

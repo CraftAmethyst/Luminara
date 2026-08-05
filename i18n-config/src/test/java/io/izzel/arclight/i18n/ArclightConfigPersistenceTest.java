@@ -44,16 +44,60 @@ class ArclightConfigPersistenceTest {
         );
         String serialized = Files.readString(config, StandardCharsets.UTF_8);
         assertTrue(
-            serialized.contains("optimization:\n  cache-plugin-class: true")
+            serialized.contains("# Config version number, do not edit.\n_v: 2")
         );
         assertTrue(
-            serialized.contains(
-                "extra-logic-worlds:\n  - example.First\n  - example.Second"
+            serialized.contains("# Language/I18n settings\nlocale:")
+        );
+        assertTrue(serialized.contains("  cache-plugin-class: true"));
+        assertTrue(serialized.contains("  extra-logic-worlds:"));
+        assertTrue(serialized.contains("- example.First"));
+        assertTrue(serialized.contains("- example.Second"));
+        assertFalse(serialized.contains("compatibility: {"));
+        assertFalse(serialized.contains("extra-logic-worlds: ["));
+    }
+
+    @Test
+    void injectsCommentsFromFlattenedLocaleKeys() throws Exception {
+        String injected = I18nCommentInjector.injectComments("_v: 2\n", "es_es");
+
+        assertTrue(
+            injected.contains(
+                "# Repositorio: https://github.com/CraftAmethyst/Luminara"
             )
         );
-        assertFalse(serialized.contains("{"));
-        assertFalse(serialized.contains("["));
-        assertFalse(serialized.contains(","));
+        assertTrue(
+            injected.contains(
+                "# Versión de la configuración, no editar.\n_v: 2"
+            )
+        );
+    }
+
+    @Test
+    void repairsExistingConfigurationWithoutComments() throws Exception {
+        Path config = directory.resolve("luminara.yml");
+        String template;
+        try (
+            var stream = ArclightConfig.class.getResourceAsStream(
+                "/META-INF/luminara.yml"
+            )
+        ) {
+            template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        }
+        String currentLocale = ArclightLocale.getInstance().current();
+        assertFalse(
+            I18nCommentInjector.hasInjectedComments(template, currentLocale)
+        );
+        Files.writeString(config, template, StandardCharsets.UTF_8);
+
+        ArclightConfig.loadExistingConfig(config);
+
+        assertTrue(
+            I18nCommentInjector.hasInjectedComments(
+                Files.readString(config, StandardCharsets.UTF_8),
+                currentLocale
+            )
+        );
     }
 
     @Test

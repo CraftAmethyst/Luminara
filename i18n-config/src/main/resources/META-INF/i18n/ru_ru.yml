@@ -316,8 +316,8 @@ loot:
 # Comments (保留所有俄语注释配置)
 comments:
   _v.comment:
-    - "Репозиторий: https://github.com/QianMo0721/Luminara"
-    - "Баг-трекер: https://github.com/QianMo0721/Luminara/issues"
+    - "Репозиторий: https://github.com/CraftAmethyst/Luminara"
+    - "Баг-трекер: https://github.com/CraftAmethyst/Luminara/issues"
     - ""
     - ""
     - "Версия конфигурации, не исправляйте."

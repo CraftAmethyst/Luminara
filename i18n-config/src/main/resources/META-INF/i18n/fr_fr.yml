@@ -311,8 +311,8 @@ loot:
 # Comments (保留所有注释配置)
 comments:
   _v.comment:
-    - "Dépôt: https://github.com/QianMo0721/Luminara"
-    - "Problèmes: https://github.com/QianMo0721/Luminara/issues"
+    - "Dépôt: https://github.com/CraftAmethyst/Luminara"
+    - "Problèmes: https://github.com/CraftAmethyst/Luminara/issues"
     - ""
     - ""
     - "Numéro de version de la configuration, ne pas modifier."

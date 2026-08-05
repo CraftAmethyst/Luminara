@@ -317,8 +317,8 @@ loot:
 # Comments (保留所有注释配置)
 comments:
   _v.comment:
-    - "Repositorio: https://github.com/QianMo0721/Luminara"
-    - "Rastredor de asuntos y errores: https://github.com/QianMo0721/Luminara/issues"
+    - "Repositorio: https://github.com/CraftAmethyst/Luminara"
+    - "Rastredor de asuntos y errores: https://github.com/CraftAmethyst/Luminara/issues"
     - ""
     - ""
     - "Versión de la configuración, no editar."
