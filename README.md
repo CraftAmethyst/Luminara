@@ -35,9 +35,12 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 - [Sinytra Connector](https://modrinth.com/mod/connector)
 
   > Are you crazy? Forge + Fabric + Bukkit + Spigot + Paper API = a bunch of shit, never be compatible!
+
 - [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
 
-  > The next version will be compatible
+  > Since it's closed-source, we can't read its source code to fix it.
+
+  > You can try [FastChunkGen](https://www.curseforge.com/minecraft/mc-mods/fastchunkgen)
 
 ## Known Incompatible Plugins
 
@@ -50,6 +53,7 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 - 70% of plugins that use the Paper API
 
   > This server supports only a handful of Paper APIs — just over a dozen commonly used ones — so you may encounter missing features, abnormal behavior, or even crashes. We are currently working on implementing more Paper APIs
+  
   > Some plugins offer an alternative "Spigot API" version — that is the best compatibility path
 
 ## How Can I Maximize Optimization on This Server?
@@ -57,11 +61,13 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 - If you want more aggressive performance optimization, I recommend our downstream project [PRTS-SERVER](https://github.com/ElainAwa/PRTS-SERVER)
 
   > PRTS-SERVER aims to implement more performance optimization patches while maintaining compatibility as much as possible. These patches come from [ServerCore](https://modrinth.com/mod/servercore), [Very Many Players](https://modrinth.com/mod/vmp-forge), [Paper](https://papermc.io/), [Mohist](https://www.mohistmc.com/), and others
+  
   > Note that this is only suitable for small to medium modpacks! For large modpacks like ATM9, we recommend staying on this server instead, because large modpacks often require more compatibility
 
 - If you want to optimize a large modpack, I recommend some common optimization mod combinations (all mods mentioned below are compatible with Luminara)
 
   > For most modpacks, just three mods can significantly reduce MSPT: [ModernFix](https://modrinth.com/mod/modernfix), [FerriteCore](https://modrinth.com/mod/ferrite-core), and [Radium](https://modrinth.com/mod/radium) — Luminara is compatible with all three
+
   > For modpacks that involve heavy exploration, two mods can dramatically speed up chunk generation: [FastNoise](https://modrinth.com/mod/zfastnoise) and [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
 
 ## Build from source

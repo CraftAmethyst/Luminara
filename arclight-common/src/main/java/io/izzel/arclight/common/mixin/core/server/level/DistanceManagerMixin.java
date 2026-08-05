@@ -5,8 +5,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.function.Consumer;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.*;
 import net.minecraft.util.SortedArraySet;
@@ -17,7 +15,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -66,36 +63,6 @@ public abstract class DistanceManagerMixin implements TicketManagerBridge {
         if (set == null) {
             ci.cancel();
         }
-    }
-
-    @Redirect(
-        method = "runAllUpdates",
-        at = @At(
-            value = "INVOKE",
-            remap = false,
-            target = "Ljava/util/Set;forEach(Ljava/util/function/Consumer;)V"
-        )
-    )
-    private void arclight$safeIter(
-        Set<ChunkHolder> instance,
-        Consumer<ChunkHolder> consumer
-    ) {
-        // Iterate pending chunk updates with protection against concurrent modification exceptions
-        var iter = instance.iterator();
-        var expectedSize = instance.size();
-        do {
-            var chunkHolder = iter.next();
-            iter.remove();
-            expectedSize--;
-
-            consumer.accept(chunkHolder);
-
-            // Reset iterator if set was modified using add()
-            if (instance.size() != expectedSize) {
-                expectedSize = instance.size();
-                iter = instance.iterator();
-            }
-        } while (iter.hasNext());
     }
 
     public <T> boolean addRegionTicketAtDistance(

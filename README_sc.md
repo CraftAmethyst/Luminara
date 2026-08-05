@@ -36,7 +36,9 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 
 - [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
 
-  > 下一版本将实现兼容
+  > 没找到源码，所以不修
+
+  > 替代品：[FastChunkGen](https://www.curseforge.com/minecraft/mc-mods/fastchunkgen)
 
 ## 已知不兼容的插件
 
@@ -59,7 +61,9 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 - 如果你想要更激进性能优化，我们推荐我们的下游项目 [PRTS-SERVER](https://github.com/ElainAwa/PRTS-SERVER)
 
   > PRTS-SERVER 的目标是在尽可能保持兼容性的同时实现更多性能优化补丁。这些补丁来自 [ServerCore](https://modrinth.com/mod/servercore)、[Very Many Players](https://modrinth.com/mod/vmp-forge)、[Paper](https://papermc.io/)、[Mohist](https://www.mohistmc.com/) 等项目
+  
   > 请注意，它只适合中小型整合包！对于像 ATM9 这样的大型整合包，我们建议继续使用本服务端，因为大型整合包往往需要更高的兼容性
+  
   > ~~我最近才发现这破服务端还有下游~~
 
 - 如果你想优化大型整合包，我们推荐一些常见的优化模组组合（下面提到的所有模组都与本服务端兼容）
