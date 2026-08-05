@@ -2,7 +2,7 @@
 minecraft = "1.20.1"
 java = "17"
 bukkit-package = "v1_20_R1"
-project = "1.0.15"
+project = "1.0.15-hotfix"
 arclight-gradle-plugin = "1.23"
 arclight-api = "1.5.4"
 tools = "1.3.0"

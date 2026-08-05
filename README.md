@@ -14,7 +14,7 @@ Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://
 | Forge               | latest Forge promotion for Minecraft `1.20.1` |
 | CraftBukkit package | `v1_20_R1`                                    |
 | Java                | `17` (64-bit)                                 |
-| Luminara            | `1.0.15`                                      |
+| Luminara            | `1.0.15-hotfix`                                      |
 
 Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations are not supported by this repository.
 
@@ -83,13 +83,13 @@ The build resolves the latest Forge promotion for Minecraft `1.20.1` at configur
 
 The build is single-pass; do not run it twice and do not use `--refresh-dependencies` as a workaround. The distribution outputs are:
 
-- `build/distributions/luminara-1.20.1-1.0.15.jar`
-- `build/distributions/luminara-1.20.1-1.0.15.jar.sha256`
+- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar`
+- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar.sha256`
 
 Verify the checksum with:
 
 ```bash
-(cd build/distributions && sha256sum -c luminara-1.20.1-1.0.15.jar.sha256)
+(cd build/distributions && sha256sum -c luminara-1.20.1-1.0.15-hotfix.jar.sha256)
 ```
 
 Run the end-to-end Forge mod and Bukkit plugin smoke test with:
@@ -102,12 +102,12 @@ Use `gradlew.bat` instead of `./gradlew` on Windows.
 
 ## Run a server
 
-1. Put `luminara-1.20.1-1.0.15.jar` in a new server directory.
+1. Put `luminara-1.20.1-1.0.15-hotfix.jar` in a new server directory.
 2. Read the [Minecraft EULA](https://aka.ms/MinecraftEULA). If you accept it, create `eula.txt` in that directory containing exactly `eula=true`.
 3. Start Luminara from that directory:
 
 ```bash
-java -jar luminara-1.20.1-1.0.15.jar nogui
+java -jar luminara-1.20.1-1.0.15-hotfix.jar nogui
 ```
 
 The launcher exits without prompting when `eula.txt` is missing or does not contain the exact accepted value. It never accepts the EULA on your behalf.

@@ -12,7 +12,7 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 | Forge          | 适用于 Minecraft `1.20.1` 的最新 Forge 正式版 |
 | CraftBukkit 包 | `v1_20_R1`                                    |
 | Java           | `17`（64 位）                                 |
-| Luminara       | `1.0.15`                                      |
+| Luminara       | `1.0.15-hotfix`                                      |
 
 本仓库不支持其他 Minecraft 版本，也不支持 Fabric、NeoForge 或混合加载器等配置。
 
@@ -85,13 +85,13 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 
 构建是单次通过的；不要运行两次，也不要使用 `--refresh-dependencies` 作为变通方案。构建产物包括：
 
-- `build/distributions/luminara-1.20.1-1.0.15.jar`
-- `build/distributions/luminara-1.20.1-1.0.15.jar.sha256`
+- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar`
+- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar.sha256`
 
 使用以下命令校验 SHA256：
 
 ```bash
-(cd build/distributions && sha256sum -c luminara-1.20.1-1.0.15.jar.sha256)
+(cd build/distributions && sha256sum -c luminara-1.20.1-1.0.15-hotfix.jar.sha256)
 ```
 
 使用以下命令运行端到端的 Forge 模组与 Bukkit 插件冒烟测试：
@@ -104,12 +104,12 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 
 ## 运行服务器
 
-1. 将 `luminara-1.20.1-1.0.15.jar` 放入一个新的服务器目录中。
+1. 将 `luminara-1.20.1-1.0.15-hotfix.jar` 放入一个新的服务器目录中。
 2. 阅读 [Minecraft 最终用户许可协议（EULA）](https://aka.ms/MinecraftEULA)。如果你接受该协议，请在该目录中创建 `eula.txt`，内容必须恰好为 `eula=true`。
 3. 在该目录中启动 Luminara：
 
 ```bash
-java -jar luminara-1.20.1-1.0.15.jar nogui
+java -jar luminara-1.20.1-1.0.15-hotfix.jar nogui
 ```
 
 当 `eula.txt` 缺失或内容不恰好为已接受的值时，启动器会不提示直接退出。它绝不会代你接受 EULA。

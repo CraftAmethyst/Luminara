@@ -154,7 +154,7 @@ tasks.register('smokeServer', SmokeServerTask) {
             'LUMINARA_SMOKE_PLUGIN_ENABLED',
             'LUMINARA_SMOKE_COMMAND_OK',
             'Luminara Version: ',
-            '1.0.15',
+            project.version.toString(),
             project.ext.gitHash,
             'Minecraft / Forge / Java: ',
             "${project.ext.minecraftVersion} / ${project.ext.forgeVersion} / ${libs.versions.java.get()}",
