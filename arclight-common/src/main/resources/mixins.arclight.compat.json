@@ -16,6 +16,7 @@
     "RepairCostMixin",
     "RecipeManagerParsingErrorMixin",
     "RecipeManagerModernFixMixin",
+    "ModWorkManagerQueueMixin",
     "PortalForcerSearchRadiusMixin"
   ]
 }
