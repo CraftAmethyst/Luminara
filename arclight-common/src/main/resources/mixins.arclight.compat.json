@@ -12,6 +12,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BlueprintFallingBlockEventMixin",
+    "BootstrapModWorkManagerCompatMixin",
     "DistanceManagerSafeIterMixin",
     "RepairCostMixin",
     "RecipeManagerParsingErrorMixin",
