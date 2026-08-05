@@ -70,7 +70,7 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 
   > 对大多数整合包来说，仅三个模组就能击落 MSPT：[ModernFix](https://modrinth.com/mod/modernfix)、[FerriteCore](https://modrinth.com/mod/ferrite-core) 和 [Radium](https://modrinth.com/mod/radium)
   
-  > 对于涉及大量探索的整合包，两个模组可以大幅加快区块生成速度：[FastNoise](https://modrinth.com/mod/zfastnoise) 和 [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
+  > 对于涉及大量探索的整合包，两个模组可以大幅加快区块生成速度：[FastNoise](https://modrinth.com/mod/zfastnoise) 和 [FastChunkGen](https://www.curseforge.com/minecraft/mc-mods/fastchunkgen)
 
 ## 从源码构建
 

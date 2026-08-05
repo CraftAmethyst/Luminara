@@ -68,7 +68,7 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 
   > For most modpacks, just three mods can significantly reduce MSPT: [ModernFix](https://modrinth.com/mod/modernfix), [FerriteCore](https://modrinth.com/mod/ferrite-core), and [Radium](https://modrinth.com/mod/radium) — Luminara is compatible with all three
 
-  > For modpacks that involve heavy exploration, two mods can dramatically speed up chunk generation: [FastNoise](https://modrinth.com/mod/zfastnoise) and [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
+  > For modpacks that involve heavy exploration, two mods can dramatically speed up chunk generation: [FastNoise](https://modrinth.com/mod/zfastnoise) and [FastChunkGen](https://www.curseforge.com/minecraft/mc-mods/fastchunkgen)
 
 ## Build from source
 
