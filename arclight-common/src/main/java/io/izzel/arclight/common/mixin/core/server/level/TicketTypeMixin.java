@@ -1,12 +1,13 @@
 package io.izzel.arclight.common.mixin.core.server.level;
 
 import io.izzel.arclight.common.bridge.core.world.server.TicketTypeBridge;
-import java.util.Comparator;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.util.Unit;
 import org.bukkit.plugin.Plugin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+
+import java.util.Comparator;
 
 @Mixin(TicketType.class)
 public abstract class TicketTypeMixin implements TicketTypeBridge {

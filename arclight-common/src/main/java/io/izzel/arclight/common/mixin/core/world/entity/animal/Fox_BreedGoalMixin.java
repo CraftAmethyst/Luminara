@@ -65,7 +65,7 @@ public abstract class Fox_BreedGoalMixin extends BreedGoal {
 
             if (
                 serverplayerentity1 != null &&
-                serverplayerentity != serverplayerentity1
+                    serverplayerentity != serverplayerentity1
             ) {
                 ((FoxEntityBridge) foxentity).bridge$addTrustedUUID(
                     serverplayerentity1.getUUID()

@@ -5,7 +5,6 @@ import io.izzel.arclight.common.mod.server.ArclightForgePermissible;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.conf.PermissionForwarding;
-import java.lang.reflect.Field;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -27,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.lang.reflect.Field;
 
 @Mixin(value = CraftHumanEntity.class, remap = false)
 public abstract class CraftHumanEntityMixin extends CraftEntity {
@@ -61,7 +62,7 @@ public abstract class CraftHumanEntityMixin extends CraftEntity {
     private PermissibleBase arclight$forwardPerm(ServerOperator opable) {
         if (
             ArclightConfig.spec().getCompat().getPermissionForwarding() ==
-            PermissionForwarding.BUKKIT_TO_FORGE
+                PermissionForwarding.BUKKIT_TO_FORGE
         ) {
             return new ArclightForgePermissible(opable);
         } else {
@@ -150,6 +151,7 @@ public abstract class CraftHumanEntityMixin extends CraftEntity {
                 .getClass()
                 .getField("checkReachable");
             field.setBoolean(handle.containerMenu, checkReachable);
-        } catch (ReflectiveOperationException ignored) {}
+        } catch (ReflectiveOperationException ignored) {
+        }
     }
 }

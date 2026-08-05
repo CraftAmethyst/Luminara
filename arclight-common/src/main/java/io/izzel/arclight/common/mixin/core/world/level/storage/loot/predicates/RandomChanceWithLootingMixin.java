@@ -32,7 +32,7 @@ public class RandomChanceWithLootingMixin {
         }
         return (
             context.getRandom().nextFloat() <
-            this.percent + (float) i * this.lootingMultiplier
+                this.percent + (float) i * this.lootingMultiplier
         );
     }
 }

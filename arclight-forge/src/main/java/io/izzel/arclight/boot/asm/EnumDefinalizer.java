@@ -1,11 +1,12 @@
 package io.izzel.arclight.boot.asm;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
-import java.lang.reflect.Modifier;
-import java.util.Set;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
+
+import java.lang.reflect.Modifier;
+import java.util.Set;
 
 public class EnumDefinalizer implements Implementer {
 
@@ -36,8 +37,8 @@ public class EnumDefinalizer implements Implementer {
             for (FieldNode field : node.fields) {
                 if (
                     Modifier.isStatic(field.access) &&
-                    Modifier.isFinal(field.access) &&
-                    field.name.equals("ENUM$VALUES")
+                        Modifier.isFinal(field.access) &&
+                        field.name.equals("ENUM$VALUES")
                 ) {
                     field.access &= ~Opcodes.ACC_FINAL;
                     ArclightImplementer.LOGGER.debug(

@@ -12,7 +12,8 @@ public final class CMICompat {
     private static final Map<ClassLoader, ExecutorService> FALLBACK_EXECUTORS =
         new ConcurrentHashMap<>();
 
-    private CMICompat() {}
+    private CMICompat() {
+    }
 
     public static ExecutorService getExecutor(
         Class<?> ownerClass,
@@ -20,8 +21,8 @@ public final class CMICompat {
     ) {
         if (
             original != null &&
-            !original.isShutdown() &&
-            !original.isTerminated()
+                !original.isShutdown() &&
+                !original.isTerminated()
         ) {
             return original;
         }
@@ -33,8 +34,8 @@ public final class CMICompat {
         return FALLBACK_EXECUTORS.compute(loader, (key, existing) -> {
             if (
                 existing != null &&
-                !existing.isShutdown() &&
-                !existing.isTerminated()
+                    !existing.isShutdown() &&
+                    !existing.isTerminated()
             ) {
                 return existing;
             }

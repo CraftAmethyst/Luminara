@@ -1,9 +1,10 @@
 package io.izzel.arclight.common.mixin.core.network.protocol.status;
 
-import java.util.Optional;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.status.ServerStatus;
 import org.spongepowered.asm.mixin.Mixin;
+
+import java.util.Optional;
 
 @Mixin(ServerStatus.class)
 public class ServerStatusMixin {

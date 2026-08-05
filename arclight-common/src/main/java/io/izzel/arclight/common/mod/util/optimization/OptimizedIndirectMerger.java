@@ -83,7 +83,7 @@ public class OptimizedIndirectMerger implements IndexMerger {
 
             boolean flip =
                 aWithinBounds &&
-                (!bWithinBounds || aPoints[aIdx] < bPoints[bIdx] + 1.0E-7D);
+                    (!bWithinBounds || aPoints[aIdx] < bPoints[bIdx] + 1.0E-7D);
 
             double value;
 

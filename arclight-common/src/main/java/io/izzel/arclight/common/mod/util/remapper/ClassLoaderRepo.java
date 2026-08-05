@@ -2,15 +2,16 @@ package io.izzel.arclight.common.mod.util.remapper;
 
 import io.izzel.arclight.api.PluginPatcher;
 import io.izzel.arclight.api.Unsafe;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import net.md_5.specialsource.repo.ClassRepo;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 
 public class ClassLoaderRepo implements ClassRepo, PluginPatcher.ClassRepo {
 
@@ -45,12 +46,12 @@ public class ClassLoaderRepo implements ClassRepo, PluginPatcher.ClassRepo {
             URL url =
                 classLoader instanceof URLClassLoader
                     ? ((URLClassLoader) classLoader).findResource(
-                          internalName + ".class"
-                      ) // search local
+                    internalName + ".class"
+                ) // search local
                     : (URL) H_FIND_RESOURCE.invokeExact(
-                          classLoader,
-                          internalName + ".class"
-                      );
+                    classLoader,
+                    internalName + ".class"
+                );
             if (url == null) return null;
             URLConnection connection = url.openConnection();
             try (InputStream inputStream = connection.getInputStream()) {
@@ -59,7 +60,8 @@ public class ClassLoaderRepo implements ClassRepo, PluginPatcher.ClassRepo {
                 reader.accept(classNode, parsingOptions);
                 return classNode;
             }
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
         return null;
     }
 }

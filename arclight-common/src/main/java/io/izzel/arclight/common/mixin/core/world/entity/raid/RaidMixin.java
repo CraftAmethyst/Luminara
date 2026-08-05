@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.raid;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.raid.RaidBridge;
-import java.util.*;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.*;
 
 @Mixin(Raid.class)
 public class RaidMixin implements RaidBridge {

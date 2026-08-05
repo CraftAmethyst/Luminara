@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.entity.ai.behavior;
 
-import java.util.function.Function;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,6 +15,8 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import java.util.function.Function;
 
 @Mixin(BabyFollowAdult.class)
 public abstract class BabyFollowAdultMixin {
@@ -47,10 +48,10 @@ public abstract class BabyFollowAdultMixin {
                                     ageablemob,
                                     (double) (p_259321_.getMaxValue() + 1)
                                 ) &&
-                                !p_258327_.closerThan(
-                                    ageablemob,
-                                    (double) p_259321_.getMinValue()
-                                )
+                                    !p_258327_.closerThan(
+                                        ageablemob,
+                                        (double) p_259321_.getMinValue()
+                                    )
                             ) {
                                 // CraftBukkit start
                                 EntityTargetLivingEntityEvent event =

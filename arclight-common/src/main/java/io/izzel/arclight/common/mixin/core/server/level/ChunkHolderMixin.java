@@ -6,8 +6,6 @@ import io.izzel.arclight.common.bridge.core.world.server.ChunkHolderBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ChunkMapBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkLevel;
@@ -26,6 +24,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Mixin(ChunkHolder.class)
 public abstract class ChunkHolderMixin implements ChunkHolderBridge {
@@ -57,7 +58,7 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
     public LevelChunk getFullChunkNowUnchecked() {
         CompletableFuture<
             Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>
-        > statusFuture = this.getFutureIfPresentUnchecked(ChunkStatus.FULL);
+            > statusFuture = this.getFutureIfPresentUnchecked(ChunkStatus.FULL);
         Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either =
             statusFuture.getNow(null);
         return either == null ? null : (LevelChunk) either.left().orElse(null);
@@ -112,7 +113,7 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
     ) {
         if (
             locationType.isOrAfter(FullChunkStatus.FULL) &&
-            !locationType1.isOrAfter(FullChunkStatus.FULL)
+                !locationType1.isOrAfter(FullChunkStatus.FULL)
         ) {
             this.getFutureIfPresentUnchecked(ChunkStatus.FULL)
                 .thenAccept(either -> {
@@ -159,7 +160,7 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
     ) {
         if (
             !locationType.isOrAfter(FullChunkStatus.FULL) &&
-            locationType1.isOrAfter(FullChunkStatus.FULL)
+                locationType1.isOrAfter(FullChunkStatus.FULL)
         ) {
             this.getFutureIfPresentUnchecked(ChunkStatus.FULL)
                 .thenAccept(either -> {

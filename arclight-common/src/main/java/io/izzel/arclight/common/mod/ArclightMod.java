@@ -6,8 +6,6 @@ import io.izzel.arclight.common.mod.util.BungeeComponentPreloader;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.LuminaraVersion;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
@@ -21,6 +19,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 @Mod("luminara")
 public class ArclightMod {

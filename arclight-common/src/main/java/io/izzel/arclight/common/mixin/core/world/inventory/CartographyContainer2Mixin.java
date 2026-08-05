@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(targets = "net/minecraft/world/inventory/CartographyTableMenu$2")
 public abstract class CartographyContainer2Mixin implements IInventoryBridge {
 
-    @Shadow(aliases = { "this$0", "f_39182_" }, remap = false)
+    @Shadow(aliases = {"this$0", "f_39182_"}, remap = false)
     private CartographyTableMenu outerThis;
 
     @Override

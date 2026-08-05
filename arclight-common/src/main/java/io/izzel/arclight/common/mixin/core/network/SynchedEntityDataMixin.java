@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.core.network;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.network.datasync.SynchedEntityDataBridge;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,10 +16,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 @Mixin(SynchedEntityData.class)
 public abstract class SynchedEntityDataMixin
-    implements SynchedEntityDataBridge
-{
+    implements SynchedEntityDataBridge {
 
     @Shadow
     private boolean isDirty;
@@ -51,8 +51,8 @@ public abstract class SynchedEntityDataMixin
     ) {
         if (
             key == LivingEntity.DATA_HEALTH_ID &&
-            this.entity instanceof ServerPlayerEntityBridge &&
-            ((ServerPlayerEntityBridge) this.entity).bridge$initialized()
+                this.entity instanceof ServerPlayerEntityBridge &&
+                ((ServerPlayerEntityBridge) this.entity).bridge$initialized()
         ) {
             CraftPlayer player = (
                 (ServerPlayerEntityBridge) this.entity

@@ -5,14 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.i18n.ArclightLocale;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
@@ -21,44 +13,19 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
 public class AbstractBootstrap {
 
     private static boolean dirtyHacksApplied;
     private static boolean setupModApplied;
-
-    protected final void bootstrap() throws Exception {
-        setupMod();
-        dirtyHacks();
-    }
-
-    protected final void dirtyHacks() throws Exception {
-        synchronized (AbstractBootstrap.class) {
-            if (dirtyHacksApplied) return;
-            TypeAdapters.ENUM_FACTORY.create(null, TypeToken.get(Object.class));
-            Field field = TypeAdapters.class.getDeclaredField("ENUM_FACTORY");
-            Object base = Unsafe.staticFieldBase(field);
-            long offset = Unsafe.staticFieldOffset(field);
-            Unsafe.putObjectVolatile(base, offset, new EnumTypeFactory());
-            try (
-                InputStream in = getClass()
-                    .getClassLoader()
-                    .getResourceAsStream(
-                        "com/mojang/brigadier/tree/CommandNode.class"
-                    )
-            ) {
-                byte[] bytes = transformCommandNode(in);
-                Unsafe.defineClass(
-                    "com.mojang.brigadier.tree.CommandNode",
-                    bytes,
-                    0,
-                    bytes.length,
-                    IModLocator.class.getClassLoader(),
-                    getClass().getProtectionDomain()
-                );
-            }
-            dirtyHacksApplied = true;
-        }
-    }
 
     static byte[] transformCommandNode(InputStream input) throws Exception {
         if (input == null) throw compatibilityFailure();
@@ -71,7 +38,7 @@ public class AbstractBootstrap {
             .anyMatch(
                 field ->
                     field.name.equals("CURRENT_COMMAND") &&
-                    field.desc.equals(descriptor)
+                        field.desc.equals(descriptor)
             );
         boolean invocationFound = false;
         for (var method : node.methods) {
@@ -79,9 +46,9 @@ public class AbstractBootstrap {
             for (var instruction : method.instructions) {
                 if (
                     instruction instanceof MethodInsnNode invocation &&
-                    invocation.owner.equals("java/util/function/Predicate") &&
-                    invocation.name.equals("test") &&
-                    invocation.desc.equals("(Ljava/lang/Object;)Z")
+                        invocation.owner.equals("java/util/function/Predicate") &&
+                        invocation.name.equals("test") &&
+                        invocation.desc.equals("(Ljava/lang/Object;)Z")
                 ) {
                     invocationFound = true;
                     if (!hasCurrentCommand) {
@@ -129,7 +96,7 @@ public class AbstractBootstrap {
                 .noneMatch(
                     method ->
                         method.name.equals("removeCommand") &&
-                        method.desc.equals("(Ljava/lang/String;)V")
+                            method.desc.equals("(Ljava/lang/String;)V")
                 )
         ) {
             var removeCommand = new MethodNode(
@@ -208,6 +175,40 @@ public class AbstractBootstrap {
         return new IllegalStateException(
             "Unsupported Brigadier CommandNode for Minecraft 1.20.1 / Forge 47.4.22"
         );
+    }
+
+    protected final void bootstrap() throws Exception {
+        setupMod();
+        dirtyHacks();
+    }
+
+    protected final void dirtyHacks() throws Exception {
+        synchronized (AbstractBootstrap.class) {
+            if (dirtyHacksApplied) return;
+            TypeAdapters.ENUM_FACTORY.create(null, TypeToken.get(Object.class));
+            Field field = TypeAdapters.class.getDeclaredField("ENUM_FACTORY");
+            Object base = Unsafe.staticFieldBase(field);
+            long offset = Unsafe.staticFieldOffset(field);
+            Unsafe.putObjectVolatile(base, offset, new EnumTypeFactory());
+            try (
+                InputStream in = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream(
+                        "com/mojang/brigadier/tree/CommandNode.class"
+                    )
+            ) {
+                byte[] bytes = transformCommandNode(in);
+                Unsafe.defineClass(
+                    "com.mojang.brigadier.tree.CommandNode",
+                    bytes,
+                    0,
+                    bytes.length,
+                    IModLocator.class.getClassLoader(),
+                    getClass().getProtectionDomain()
+                );
+            }
+            dirtyHacksApplied = true;
+        }
     }
 
     protected final void setupMod() throws Exception {

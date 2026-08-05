@@ -1,19 +1,21 @@
 package io.izzel.arclight.common.mod.util.remapper.patcher.integrated;
 
 import io.izzel.arclight.api.PluginPatcher;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import org.objectweb.asm.tree.ClassNode;
 
 public class IntegratedPatcher implements PluginPatcher {
 
     private static final Map<
         String,
         BiConsumer<ClassNode, ClassRepo>
-    > SPECIFIC = new HashMap<>() {};
+        > SPECIFIC = new HashMap<>() {
+    };
     private static final List<BiConsumer<ClassNode, ClassRepo>> GENERAL =
         new ArrayList<>();
 

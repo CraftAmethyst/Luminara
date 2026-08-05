@@ -5,10 +5,6 @@ import io.izzel.arclight.common.mod.util.PaperCompatSupport;
 import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.math.Position;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import net.minecraft.world.entity.RelativeMovement;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
@@ -19,11 +15,16 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 @Mixin(value = Player.class, remap = false)
 public interface Player_PaperCompatMixin {
     default boolean teleport(
         @NotNull Location location,
-        @NotNull TeleportFlag @NotNull... teleportFlags
+        @NotNull TeleportFlag @NotNull ... teleportFlags
     ) {
         return this.teleport(
             location,
@@ -35,7 +36,7 @@ public interface Player_PaperCompatMixin {
     default boolean teleport(
         @NotNull Location location,
         @NotNull PlayerTeleportEvent.TeleportCause cause,
-        @NotNull TeleportFlag @NotNull... teleportFlags
+        @NotNull TeleportFlag @NotNull ... teleportFlags
     ) {
         Objects.requireNonNull(location, "location");
         Objects.requireNonNull(cause, "cause");
@@ -62,7 +63,7 @@ public interface Player_PaperCompatMixin {
         );
         boolean sameWorld =
             target.getWorld() != null &&
-            target.getWorld().equals(player.getWorld());
+                target.getWorld().equals(player.getWorld());
 
         if (
             retainPassengers && !player.getPassengers().isEmpty() && !sameWorld
@@ -96,8 +97,8 @@ public interface Player_PaperCompatMixin {
         boolean success;
         if (
             player instanceof CraftPlayer craftPlayer &&
-            sameWorld &&
-            (retainOpenInventory || !relative.isEmpty())
+                sameWorld &&
+                (retainOpenInventory || !relative.isEmpty())
         ) {
             (
                 (ServerPlayNetHandlerBridge) craftPlayer.getHandle().connection
@@ -188,7 +189,7 @@ public interface Player_PaperCompatMixin {
         Objects.requireNonNull(entityAnchor, "entityAnchor");
         Location target =
             entityAnchor == LookAnchor.EYES &&
-            entity instanceof LivingEntity livingEntity
+                entity instanceof LivingEntity livingEntity
                 ? livingEntity.getEyeLocation()
                 : entity.getLocation();
         this.lookAt(target.getX(), target.getY(), target.getZ(), playerAnchor);

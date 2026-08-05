@@ -12,6 +12,9 @@ import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.boot.AbstractBootstrap;
 import io.izzel.arclight.boot.asm.ArclightImplementer;
 import io.izzel.arclight.forgeinstaller.ForgeInstaller;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.MarkerManager;
+
 import java.io.File;
 import java.io.InputStream;
 import java.lang.invoke.MethodType;
@@ -29,8 +32,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.jar.Manifest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.MarkerManager;
 
 public class ModBootstrap extends AbstractBootstrap {
 
@@ -177,7 +178,8 @@ public class ModBootstrap extends AbstractBootstrap {
     public static record ModBoot(
         Configuration configuration,
         ClassLoader parent
-    ) {}
+    ) {
+    }
 
     private record JarModuleDataProvider(
         Jar jar

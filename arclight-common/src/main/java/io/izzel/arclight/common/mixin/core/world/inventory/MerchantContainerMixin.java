@@ -18,8 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MerchantMenu.class)
 public abstract class MerchantContainerMixin
-    extends AbstractContainerMenuMixin
-{
+    extends AbstractContainerMenuMixin {
 
     // @formatter:off
     @Shadow @Final private Merchant trader;

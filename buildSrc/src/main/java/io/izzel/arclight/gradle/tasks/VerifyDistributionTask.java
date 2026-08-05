@@ -2,6 +2,16 @@ package io.izzel.arclight.gradle.tasks;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.MapProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.TaskAction;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -13,17 +23,96 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.gradle.api.DefaultTask;
-import org.gradle.api.GradleException;
-import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.provider.ListProperty;
-import org.gradle.api.provider.MapProperty;
-import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.TaskAction;
 
 public abstract class VerifyDistributionTask extends DefaultTask {
+
+    private static void ensureUniqueCoordinates(JsonObject libraries) {
+        Map<String, String> versions = new HashMap<>();
+        for (String coordinate : libraries.keySet()) {
+            String[] parts = coordinate.split(":");
+            require(
+                parts.length >= 3,
+                "Malformed installer coordinate: " + coordinate
+            );
+            String ga = parts[0] + ":" + parts[1];
+            String previous = versions.putIfAbsent(ga, parts[2]);
+            require(
+                previous == null || previous.equals(parts[2]),
+                "Multiple installer versions for " +
+                    ga +
+                    ": " +
+                    previous +
+                    " and " +
+                    parts[2]
+            );
+        }
+    }
+
+    private static void verifyNestedJar(
+        JarFile distribution,
+        String nestedName,
+        java.util.List<String> requiredEntries,
+        Set<String> classes
+    ) throws IOException {
+        JarEntry nestedEntry = distribution.getJarEntry(nestedName);
+        java.nio.file.Path temporary = Files.createTempFile(
+            "luminara-nested",
+            ".jar"
+        );
+        try {
+            Files.copy(
+                distribution.getInputStream(nestedEntry),
+                temporary,
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+            );
+            try (JarFile nested = new JarFile(temporary.toFile())) {
+                for (String required : requiredEntries) {
+                    require(
+                        nested.getEntry(required) != null,
+                        "Missing " + required + " from " + nestedName
+                    );
+                }
+                collectClasses(nested, nestedName, classes);
+            }
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
+    }
+
+    private static void collectClasses(
+        JarFile archive,
+        String origin,
+        Set<String> classes
+    ) {
+        var entries = archive.entries();
+        while (entries.hasMoreElements()) {
+            String name = entries.nextElement().getName();
+            if (
+                name.endsWith(".class") && !name.endsWith("module-info.class")
+            ) {
+                require(
+                    classes.add(name),
+                    "Duplicate class path " + name + " in " + origin
+                );
+            }
+        }
+    }
+
+    private static String hash(java.nio.file.Path path, String algorithm)
+        throws Exception {
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        try (var input = Files.newInputStream(path)) {
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = input.read(buffer)) >= 0)
+                digest.update(buffer, 0, length);
+        }
+        return java.util.HexFormat.of().formatHex(digest.digest());
+    }
+
+    private static void require(boolean condition, String message) {
+        if (!condition) throw new GradleException(message);
+    }
 
     @InputFile
     public abstract RegularFileProperty getDistributionJar();
@@ -151,93 +240,5 @@ public abstract class VerifyDistributionTask extends DefaultTask {
                     coordinate.getAsString()
             )
         );
-    }
-
-    private static void ensureUniqueCoordinates(JsonObject libraries) {
-        Map<String, String> versions = new HashMap<>();
-        for (String coordinate : libraries.keySet()) {
-            String[] parts = coordinate.split(":");
-            require(
-                parts.length >= 3,
-                "Malformed installer coordinate: " + coordinate
-            );
-            String ga = parts[0] + ":" + parts[1];
-            String previous = versions.putIfAbsent(ga, parts[2]);
-            require(
-                previous == null || previous.equals(parts[2]),
-                "Multiple installer versions for " +
-                    ga +
-                    ": " +
-                    previous +
-                    " and " +
-                    parts[2]
-            );
-        }
-    }
-
-    private static void verifyNestedJar(
-        JarFile distribution,
-        String nestedName,
-        java.util.List<String> requiredEntries,
-        Set<String> classes
-    ) throws IOException {
-        JarEntry nestedEntry = distribution.getJarEntry(nestedName);
-        java.nio.file.Path temporary = Files.createTempFile(
-            "luminara-nested",
-            ".jar"
-        );
-        try {
-            Files.copy(
-                distribution.getInputStream(nestedEntry),
-                temporary,
-                java.nio.file.StandardCopyOption.REPLACE_EXISTING
-            );
-            try (JarFile nested = new JarFile(temporary.toFile())) {
-                for (String required : requiredEntries) {
-                    require(
-                        nested.getEntry(required) != null,
-                        "Missing " + required + " from " + nestedName
-                    );
-                }
-                collectClasses(nested, nestedName, classes);
-            }
-        } finally {
-            Files.deleteIfExists(temporary);
-        }
-    }
-
-    private static void collectClasses(
-        JarFile archive,
-        String origin,
-        Set<String> classes
-    ) {
-        var entries = archive.entries();
-        while (entries.hasMoreElements()) {
-            String name = entries.nextElement().getName();
-            if (
-                name.endsWith(".class") && !name.endsWith("module-info.class")
-            ) {
-                require(
-                    classes.add(name),
-                    "Duplicate class path " + name + " in " + origin
-                );
-            }
-        }
-    }
-
-    private static String hash(java.nio.file.Path path, String algorithm)
-        throws Exception {
-        MessageDigest digest = MessageDigest.getInstance(algorithm);
-        try (var input = Files.newInputStream(path)) {
-            byte[] buffer = new byte[8192];
-            int length;
-            while ((length = input.read(buffer)) >= 0)
-                digest.update(buffer, 0, length);
-        }
-        return java.util.HexFormat.of().formatHex(digest.digest());
-    }
-
-    private static void require(boolean condition, String message) {
-        if (!condition) throw new GradleException(message);
     }
 }

@@ -6,14 +6,6 @@ import io.izzel.arclight.common.bridge.bukkit.CraftServerBridge;
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.server.api.DefaultArclightServer;
-import java.io.File;
-import java.util.Objects;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.locks.LockSupport;
-import java.util.function.Supplier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -24,6 +16,15 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.command.ColouredConsoleSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.locks.LockSupport;
+import java.util.function.Supplier;
 
 public class ArclightServer {
 
@@ -119,7 +120,7 @@ public class ArclightServer {
         );
         if (
             LockSupport.getBlocker(getMinecraftServer().getRunningThread()) ==
-            "waiting for tasks"
+                "waiting for tasks"
         ) {
             LockSupport.unpark(getMinecraftServer().getRunningThread());
         }
@@ -140,5 +141,6 @@ public class ArclightServer {
         );
     }
 
-    private interface ExecutorWithThread extends Executor, Supplier<Thread> {}
+    private interface ExecutorWithThread extends Executor, Supplier<Thread> {
+    }
 }

@@ -2,20 +2,16 @@ package io.izzel.arclight.i18n;
 
 import com.google.common.reflect.TypeToken;
 import io.izzel.arclight.i18n.conf.ConfigSpec;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 
 public class ArclightConfig {
 
@@ -116,13 +112,13 @@ public class ArclightConfig {
         ArclightConfig config = new ArclightConfig(migrated);
         if (
             migration.changed() ||
-            !currentLocale.equals(
-                original.getNode("locale", "current").getString("")
-            ) ||
-            !I18nCommentInjector.hasInjectedComments(
-                originalContent,
-                currentLocale
-            )
+                !currentLocale.equals(
+                    original.getNode("locale", "current").getString("")
+                ) ||
+                !I18nCommentInjector.hasInjectedComments(
+                    originalContent,
+                    currentLocale
+                )
         ) {
             saveAtomically(path, migrated);
         }

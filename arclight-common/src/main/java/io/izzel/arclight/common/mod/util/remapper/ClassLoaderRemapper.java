@@ -11,6 +11,19 @@ import io.izzel.arclight.common.mod.util.remapper.generated.ArclightReflectionHa
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.JarRemapper;
+import net.md_5.specialsource.RemappingClassAdapter;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.*;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.spongepowered.asm.service.MixinService;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,18 +39,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarFile;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.JarRemapper;
-import net.md_5.specialsource.RemappingClassAdapter;
-import net.md_5.specialsource.repo.ClassRepo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.objectweb.asm.*;
-import org.objectweb.asm.commons.ClassRemapper;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.spongepowered.asm.service.MixinService;
 
 public class ClassLoaderRemapper extends LenientJarRemapper {
 
@@ -61,7 +62,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     private final Map<
         String,
         Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>>
-    > cacheMethods = new ConcurrentHashMap<>();
+        > cacheMethods = new ConcurrentHashMap<>();
     private final Map<String, Boolean> cacheRemap = new ConcurrentHashMap<>();
 
     public ClassLoaderRemapper(
@@ -151,7 +152,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     private Map.Entry<
         Map<Method, String>,
         Map<WrappedMethod, Method>
-    > getMethods(Class<?> cl, String internalName) {
+        > getMethods(Class<?> cl, String internalName) {
         return cacheMethods.computeIfAbsent(internalName, k ->
             this.tryGetMethods(cl)
         );
@@ -160,7 +161,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     private Map.Entry<
         Map<Method, String>,
         Map<WrappedMethod, Method>
-    > tryGetMethods(Class<?> cl) {
+        > tryGetMethods(Class<?> cl) {
         try {
             Map<Method, String> names = new HashMap<>();
             Map<WrappedMethod, Method> types = new HashMap<>();
@@ -263,7 +264,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             normalizedName,
             null,
             "java/lang/Object",
-            new String[] {}
+            new String[]{}
         );
         writer.visitEnd();
         byte[] bytes = writer.toByteArray();
@@ -384,8 +385,8 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         String mapped = map.get(key);
         if (
             mapped == null &&
-            (access == -1 ||
-                (!Modifier.isPrivate(access) && !Modifier.isStatic(access)))
+                (access == -1 ||
+                    (!Modifier.isPrivate(access) && !Modifier.isStatic(access)))
         ) {
             Collection<String> parents;
 
@@ -429,10 +430,10 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                 String name = it.getName().toUpperCase(Locale.ROOT);
                 return (
                     name.startsWith("META-INF") &&
-                    (name.endsWith(".DSA") ||
-                        name.endsWith(".RSA") ||
-                        name.endsWith(".EC") ||
-                        name.endsWith(".SF"))
+                        (name.endsWith(".DSA") ||
+                            name.endsWith(".RSA") ||
+                            name.endsWith(".EC") ||
+                            name.endsWith(".SF"))
                 );
             })
         );
@@ -569,8 +570,8 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             ClassWriter writer = new ClassWriter(0);
             String name =
                 Type.getInternalName(ArclightReflectionHandler.class) +
-                "_" +
-                COUNTER.getAndIncrement();
+                    "_" +
+                    COUNTER.getAndIncrement();
             ClassVisitor visitor = new ClassRemapper(
                 writer,
                 new NameRemapper(name)
@@ -688,7 +689,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             WrappedMethod that = (WrappedMethod) o;
             return (
                 Objects.equals(name, that.name) &&
-                Arrays.equals(pTypes, that.pTypes)
+                    Arrays.equals(pTypes, that.pTypes)
             );
         }
 

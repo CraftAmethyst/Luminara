@@ -83,11 +83,11 @@ public abstract class SmallFireballMixin extends FireballMixin {
     ) {
         if (
             !this.isIncendiary ||
-            CraftEventFactory.callBlockIgniteEvent(
-                this.level(),
-                pos,
-                (SmallFireball) (Object) this
-            ).isCancelled()
+                CraftEventFactory.callBlockIgniteEvent(
+                    this.level(),
+                    pos,
+                    (SmallFireball) (Object) this
+                ).isCancelled()
         ) {
             ci.cancel();
         }

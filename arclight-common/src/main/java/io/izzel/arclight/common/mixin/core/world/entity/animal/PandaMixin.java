@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.entity.animal;
 
-import java.util.function.Predicate;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.Panda;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -10,6 +9,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.function.Predicate;
 
 @Mixin(Panda.class)
 public abstract class PandaMixin extends AnimalMixin {
@@ -26,7 +27,7 @@ public abstract class PandaMixin extends AnimalMixin {
     protected void pickUpItem(ItemEntity itemEntity) {
         boolean cancel =
             this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() &&
-            PANDA_ITEMS.test(itemEntity);
+                PANDA_ITEMS.test(itemEntity);
         if (
             !CraftEventFactory.callEntityPickupItemEvent(
                 (Panda) (Object) this,

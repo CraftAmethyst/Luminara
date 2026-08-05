@@ -3,10 +3,11 @@ package io.izzel.arclight.common.mod.util;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.conf.ErrorHandlingSpec;
-import java.io.File;
 import net.minecraft.CrashReport;
 import net.minecraft.Util;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
 
 /**
  * Simplified crash handler for continue-on-crash functionality

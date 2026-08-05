@@ -1,14 +1,15 @@
 package io.izzel.arclight.common.mixin.core.world.inventory;
 
 import io.izzel.arclight.common.bridge.core.util.IWorldPosCallableBridge;
-import java.util.Optional;
-import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 @Mixin(ContainerLevelAccess.class)
 public interface ContainerLevelAccessMixin extends IWorldPosCallableBridge {
@@ -19,8 +20,7 @@ public interface ContainerLevelAccessMixin extends IWorldPosCallableBridge {
     @Overwrite
     static ContainerLevelAccess create(final Level world, final BlockPos pos) {
         class Anonymous
-            implements ContainerLevelAccess, IWorldPosCallableBridge
-        {
+            implements ContainerLevelAccess, IWorldPosCallableBridge {
 
             @Override
             public <T> Optional<T> evaluate(

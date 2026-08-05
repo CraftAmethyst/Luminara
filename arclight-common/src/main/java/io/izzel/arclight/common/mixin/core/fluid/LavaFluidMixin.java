@@ -63,15 +63,15 @@ public abstract class LavaFluidMixin {
                         if (this.hasFlammableNeighbours(world, blockpos)) {
                             if (
                                 world.getBlockState(blockpos).getBlock() !=
-                                Blocks.FIRE
+                                    Blocks.FIRE
                             ) {
                                 if (
                                     DistValidate.isValid(world) &&
-                                    CraftEventFactory.callBlockIgniteEvent(
-                                        world,
-                                        blockpos,
-                                        pos
-                                    ).isCancelled()
+                                        CraftEventFactory.callBlockIgniteEvent(
+                                            world,
+                                            blockpos,
+                                            pos
+                                        ).isCancelled()
                                 ) {
                                     continue;
                                 }
@@ -104,17 +104,17 @@ public abstract class LavaFluidMixin {
 
                     if (
                         world.isEmptyBlock(blockpos1.above()) &&
-                        this.isFlammable(world, blockpos1, Direction.UP)
+                            this.isFlammable(world, blockpos1, Direction.UP)
                     ) {
                         BlockPos up = blockpos1.above();
                         if (world.getBlockState(up).getBlock() != Blocks.FIRE) {
                             if (
                                 DistValidate.isValid(world) &&
-                                CraftEventFactory.callBlockIgniteEvent(
-                                    world,
-                                    up,
-                                    pos
-                                ).isCancelled()
+                                    CraftEventFactory.callBlockIgniteEvent(
+                                        world,
+                                        up,
+                                        pos
+                                    ).isCancelled()
                             ) {
                                 continue;
                             }

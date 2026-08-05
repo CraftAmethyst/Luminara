@@ -46,10 +46,10 @@ public class PacketThreadUtilMixin {
                             (CraftServer) Bukkit.getServer()
                         ).getServer()
                     ).bridge$hasStopped() ||
-                    (processor instanceof ServerGamePacketListenerImpl &&
-                        (
-                            (ServerPlayNetHandlerBridge) processor
-                        ).bridge$processedDisconnect())
+                        (processor instanceof ServerGamePacketListenerImpl &&
+                            (
+                                (ServerPlayNetHandlerBridge) processor
+                            ).bridge$processedDisconnect())
                 ) {
                     return;
                 }
@@ -79,10 +79,10 @@ public class PacketThreadUtilMixin {
                     (CraftServer) Bukkit.getServer()
                 ).getServer()
             ).bridge$hasStopped() ||
-            (processor instanceof ServerGamePacketListenerImpl &&
-                (
-                    (ServerPlayNetHandlerBridge) processor
-                ).bridge$processedDisconnect())
+                (processor instanceof ServerGamePacketListenerImpl &&
+                    (
+                        (ServerPlayNetHandlerBridge) processor
+                    ).bridge$processedDisconnect())
         ) {
             throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
         }

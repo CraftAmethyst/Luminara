@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.chunk.storage;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.storage.ChunkStorage;
@@ -12,6 +10,9 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @Mixin(ChunkStorage.class)
 public abstract class ChunkLoaderMixin {

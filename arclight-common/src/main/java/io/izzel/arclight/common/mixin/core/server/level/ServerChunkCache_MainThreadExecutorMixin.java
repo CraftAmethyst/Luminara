@@ -15,8 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
     targets = "net.minecraft.server.level.ServerChunkCache$MainThreadExecutor"
 )
 public abstract class ServerChunkCache_MainThreadExecutorMixin
-    extends BlockableEventLoop<Runnable>
-{
+    extends BlockableEventLoop<Runnable> {
 
     // @formatter:off
     @Shadow(aliases = {"this$0", "f_8491_"}, remap = false) @Final private ServerChunkCache outer;

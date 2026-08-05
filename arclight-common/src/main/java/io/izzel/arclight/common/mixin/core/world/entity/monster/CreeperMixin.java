@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 import io.izzel.arclight.common.bridge.core.entity.monster.CreeperEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.PathfinderMobMixin;
-import java.util.Collection;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,11 +24,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.Collection;
+
 @Mixin(Creeper.class)
 public abstract class CreeperMixin
     extends PathfinderMobMixin
-    implements CreeperEntityBridge
-{
+    implements CreeperEntityBridge {
 
     // @formatter:off
     @Shadow @Final private static EntityDataAccessor<Boolean> DATA_IS_POWERED;

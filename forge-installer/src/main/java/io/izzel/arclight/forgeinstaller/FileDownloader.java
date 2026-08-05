@@ -1,23 +1,17 @@
 package io.izzel.arclight.forgeinstaller;
 
+import javax.net.ssl.SSLException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.file.AccessDeniedException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Supplier;
-import javax.net.ssl.SSLException;
 
 public record FileDownloader(
     String url,
@@ -27,11 +21,6 @@ public record FileDownloader(
     static final int CONNECT_TIMEOUT_MILLIS = 15_000;
     static final int READ_TIMEOUT_MILLIS = 15_000;
     static final int MAX_REDIRECTS = 8;
-
-    @FunctionalInterface
-    interface ConnectionFactory {
-        HttpURLConnection open(URL url) throws IOException;
-    }
 
     static InputStream read(String url) throws IOException {
         return read(
@@ -103,7 +92,7 @@ public record FileDownloader(
                 }
                 if (
                     responseCode == HttpURLConnection.HTTP_NOT_FOUND ||
-                    responseCode == HttpURLConnection.HTTP_FORBIDDEN
+                        responseCode == HttpURLConnection.HTTP_FORBIDDEN
                 ) {
                     throw new IOException(
                         "Not found: " + current + " (HTTP " + responseCode + ")"
@@ -121,20 +110,10 @@ public record FileDownloader(
     private static boolean isRedirect(int responseCode) {
         return (
             responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
-            responseCode == HttpURLConnection.HTTP_MOVED_TEMP ||
-            responseCode == HttpURLConnection.HTTP_SEE_OTHER ||
-            responseCode == 307 ||
-            responseCode == 308
-        );
-    }
-
-    @Override
-    public Path get() {
-        return download(
-            url,
-            Paths.get(target),
-            hash,
-            current -> (HttpURLConnection) current.openConnection()
+                responseCode == HttpURLConnection.HTTP_MOVED_TEMP ||
+                responseCode == HttpURLConnection.HTTP_SEE_OTHER ||
+                responseCode == 307 ||
+                responseCode == 308
         );
     }
 
@@ -212,5 +191,20 @@ public record FileDownloader(
                 }
             }
         }
+    }
+
+    @Override
+    public Path get() {
+        return download(
+            url,
+            Paths.get(target),
+            hash,
+            current -> (HttpURLConnection) current.openConnection()
+        );
+    }
+
+    @FunctionalInterface
+    interface ConnectionFactory {
+        HttpURLConnection open(URL url) throws IOException;
     }
 }

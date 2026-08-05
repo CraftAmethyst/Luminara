@@ -9,8 +9,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.mod.compat.CommandNodeHooks;
 import io.izzel.arclight.common.mod.util.BukkitDispatcher;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -24,6 +22,9 @@ import org.spigotmc.SpigotConfig;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 @Mixin(Commands.class)
 public abstract class CommandsMixin {
@@ -75,7 +76,7 @@ public abstract class CommandsMixin {
         Map<
             CommandNode<CommandSourceStack>,
             CommandNode<SharedSuggestionProvider>
-        > map = Maps.newIdentityHashMap();
+            > map = Maps.newIdentityHashMap();
 
         RootCommandNode<SharedSuggestionProvider> vanillaRoot =
             new RootCommandNode<>();

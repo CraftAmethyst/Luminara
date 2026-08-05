@@ -2,15 +2,16 @@ package io.izzel.arclight.common.mixin.optimization.general;
 
 import io.izzel.arclight.common.mod.compat.ModIds;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
-import java.util.*;
 import net.minecraft.util.ClassInstanceMultiMap;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.util.*;
+
 @Mixin(ClassInstanceMultiMap.class)
 @LoadIfMod(
-    modid = { ModIds.RECRUITS, ModIds.RADIUM, ModIds.CANARY },
+    modid = {ModIds.RECRUITS, ModIds.RADIUM, ModIds.CANARY},
     condition = LoadIfMod.ModCondition.ABSENT
 )
 public class ClassInheritanceMultiMapMixin<T> {
@@ -121,7 +122,7 @@ public class ClassInheritanceMultiMapMixin<T> {
     public boolean contains(Object p_contains_1_) {
         return (
             byClass != null &&
-            this.find(p_contains_1_.getClass()).contains(p_contains_1_)
+                this.find(p_contains_1_.getClass()).contains(p_contains_1_)
         );
     }
 

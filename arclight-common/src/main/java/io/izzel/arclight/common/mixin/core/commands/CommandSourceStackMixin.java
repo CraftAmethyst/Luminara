@@ -7,7 +7,6 @@ import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.mod.command.ArclightDummyCommandSender;
 import io.izzel.arclight.common.mod.compat.CommandNodeHooks;
-import java.util.Objects;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
@@ -24,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Objects;
 
 @Mixin(CommandSourceStack.class)
 public abstract class CommandSourceStackMixin implements CommandSourceBridge {
@@ -45,7 +46,7 @@ public abstract class CommandSourceStackMixin implements CommandSourceBridge {
         this.source = source;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Inject(method = "hasPermission", cancellable = true, at = @At("HEAD"))
     public void arclight$checkPermission(
         int level,
@@ -84,7 +85,7 @@ public abstract class CommandSourceStackMixin implements CommandSourceBridge {
             ((getLevel() == null ||
                 !((CraftServer) Bukkit.getServer()).ignoreVanillaPermissions) &&
                 this.permissionLevel >= i) ||
-            getBukkitSender().hasPermission(bukkitPermission)
+                getBukkitSender().hasPermission(bukkitPermission)
         );
     }
 

@@ -12,7 +12,8 @@ public class ArclightDummyPermissible extends PermissibleBase {
         }
 
         @Override
-        public void setOp(boolean b) {}
+        public void setOp(boolean b) {
+        }
     };
 
     public ArclightDummyPermissible() {

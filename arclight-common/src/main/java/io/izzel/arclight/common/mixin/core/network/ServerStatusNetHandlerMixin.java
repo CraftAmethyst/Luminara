@@ -2,10 +2,6 @@ package io.izzel.arclight.common.mixin.core.network;
 
 import com.mojang.authlib.GameProfile;
 import io.izzel.arclight.common.mod.util.ArclightPingEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -21,6 +17,11 @@ import org.spigotmc.SpigotConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Mixin(ServerStatusPacketListenerImpl.class)
 public class ServerStatusNetHandlerMixin {

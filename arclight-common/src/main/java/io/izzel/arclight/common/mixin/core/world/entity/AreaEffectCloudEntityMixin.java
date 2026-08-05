@@ -3,9 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.entity;
 import com.google.common.collect.Lists;
 import io.izzel.arclight.common.bridge.core.entity.AreaEffectCloudEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,11 +23,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+
 @Mixin(AreaEffectCloud.class)
 public abstract class AreaEffectCloudEntityMixin
     extends EntityMixin
-    implements AreaEffectCloudEntityBridge
-{
+    implements AreaEffectCloudEntityBridge {
 
     @Shadow
     @Final
@@ -202,7 +202,7 @@ public abstract class AreaEffectCloudEntityMixin
                         for (LivingEntity livingentity : list1) {
                             if (
                                 !this.victims.containsKey(livingentity) &&
-                                livingentity.isAffectedByPotions()
+                                    livingentity.isAffectedByPotions()
                             ) {
                                 double d8 = livingentity.getX() - this.getX();
                                 double d1 = livingentity.getZ() - this.getZ();

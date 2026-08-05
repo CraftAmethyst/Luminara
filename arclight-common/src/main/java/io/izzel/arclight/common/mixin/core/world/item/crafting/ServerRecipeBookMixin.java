@@ -1,7 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.item.crafting;
 
-import java.util.Collection;
-import java.util.List;
 import net.minecraft.network.protocol.game.ClientboundRecipePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Collection;
+import java.util.List;
 
 @Mixin(ServerRecipeBook.class)
 public class ServerRecipeBookMixin {
@@ -31,10 +32,10 @@ public class ServerRecipeBookMixin {
     ) {
         return (
             recipe.isSpecial() ||
-            !CraftEventFactory.handlePlayerRecipeListUpdateEvent(
-                playerEntity,
-                recipe.getId()
-            )
+                !CraftEventFactory.handlePlayerRecipeListUpdateEvent(
+                    playerEntity,
+                    recipe.getId()
+                )
         );
     }
 

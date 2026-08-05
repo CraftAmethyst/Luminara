@@ -1,8 +1,9 @@
 package io.izzel.arclight.common.bridge.bukkit;
 
-import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+
+import java.util.Map;
 
 public interface ItemMetaBridge {
     CompoundTag bridge$getForgeCaps();

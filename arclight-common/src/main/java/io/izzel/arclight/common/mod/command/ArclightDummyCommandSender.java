@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mod.command;
 
 import io.izzel.arclight.common.adventure.PaperAdventure;
 import io.izzel.arclight.common.mod.permission.ArclightDummyPermissible;
-import java.util.UUID;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -17,10 +16,11 @@ import org.bukkit.craftbukkit.v.util.CraftChatMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class ArclightDummyCommandSender
     extends ArclightDummyPermissible
-    implements CommandSender, Audience
-{
+    implements CommandSender, Audience {
 
     public CommandSourceStack stack;
     public Spigot spigot;

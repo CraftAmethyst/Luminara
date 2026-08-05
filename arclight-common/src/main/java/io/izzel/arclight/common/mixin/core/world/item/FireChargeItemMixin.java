@@ -34,12 +34,12 @@ public class FireChargeItemMixin {
     ) {
         if (
             DistValidate.isValid(context) &&
-            CraftEventFactory.callBlockIgniteEvent(
-                world,
-                blockPos,
-                BlockIgniteEvent.IgniteCause.FIREBALL,
-                context.getPlayer()
-            ).isCancelled()
+                CraftEventFactory.callBlockIgniteEvent(
+                    world,
+                    blockPos,
+                    BlockIgniteEvent.IgniteCause.FIREBALL,
+                    context.getPlayer()
+                ).isCancelled()
         ) {
             if (!context.getPlayer().getAbilities().instabuild) {
                 context.getItemInHand().shrink(1);

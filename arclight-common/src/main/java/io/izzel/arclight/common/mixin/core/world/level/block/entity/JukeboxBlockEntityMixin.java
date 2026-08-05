@@ -3,8 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
@@ -21,11 +19,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(JukeboxBlockEntity.class)
 public abstract class JukeboxBlockEntityMixin
     extends BlockEntityMixin
-    implements IInventoryBridge, Container
-{
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction = new ArrayList<>();
     public boolean opened;

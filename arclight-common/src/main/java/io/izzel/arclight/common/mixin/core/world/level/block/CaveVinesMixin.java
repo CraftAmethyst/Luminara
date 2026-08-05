@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
-import java.util.Collections;
 import jline.internal.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -22,6 +21,8 @@ import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import java.util.Collections;
 
 @Mixin(CaveVines.class)
 public interface CaveVinesMixin {

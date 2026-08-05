@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @LoadIfMod(
-    modid = { ModIds.BLUEPRINT },
+    modid = {ModIds.BLUEPRINT},
     condition = LoadIfMod.ModCondition.PRESENT
 )
 @Pseudo

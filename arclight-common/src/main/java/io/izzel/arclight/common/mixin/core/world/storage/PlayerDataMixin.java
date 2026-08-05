@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.storage;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.storage.PlayerDataBridge;
-import java.io.File;
-import java.io.FileInputStream;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +15,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 @Mixin(PlayerDataStorage.class)
 public class PlayerDataMixin implements PlayerDataBridge {

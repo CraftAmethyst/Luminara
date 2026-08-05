@@ -5,9 +5,6 @@ import io.izzel.arclight.common.bridge.core.block.PortalSizeBridge;
 import io.izzel.arclight.common.bridge.core.world.IWorldBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,6 +33,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(PortalShape.class)
 public abstract class PortalShapeMixin implements PortalSizeBridge {

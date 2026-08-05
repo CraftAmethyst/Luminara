@@ -4,7 +4,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.entity.projectile.TridentEntityBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import io.izzel.arclight.mixin.Eject;
-import java.util.function.Consumer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.function.Consumer;
 
 @Mixin(TridentItem.class)
 public class TridentItemMixin {

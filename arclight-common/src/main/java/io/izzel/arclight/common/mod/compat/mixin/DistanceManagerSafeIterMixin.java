@@ -2,13 +2,14 @@ package io.izzel.arclight.common.mod.compat.mixin;
 
 import io.izzel.arclight.common.mod.compat.ModIds;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
-import java.util.Set;
-import java.util.function.Consumer;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.DistanceManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Iterate pending chunk updates with protection against concurrent modification exceptions.
@@ -23,7 +24,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  * this mixin is skipped while FastChunkGen is present.
  */
 @Mixin(DistanceManager.class)
-@LoadIfMod(modid = ModIds.FASTCHUNKGEN, condition = LoadIfMod.ModCondition.ABSENT)
+@LoadIfMod(
+    modid = ModIds.FASTCHUNKGEN,
+    condition = LoadIfMod.ModCondition.ABSENT
+)
 public class DistanceManagerSafeIterMixin {
 
     @Redirect(

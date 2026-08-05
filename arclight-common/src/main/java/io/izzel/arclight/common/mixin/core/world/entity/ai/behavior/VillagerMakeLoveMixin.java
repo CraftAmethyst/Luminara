@@ -29,14 +29,14 @@ public class VillagerMakeLoveMixin {
         Villager child = lona.getBreedOffspring(world, anonymous);
         if (
             child != null &&
-            !CraftEventFactory.callEntityBreedEvent(
-                child,
-                lona,
-                anonymous,
-                null,
-                null,
-                0
-            ).isCancelled()
+                !CraftEventFactory.callEntityBreedEvent(
+                    child,
+                    lona,
+                    anonymous,
+                    null,
+                    null,
+                    0
+                ).isCancelled()
         ) {
             ((WorldBridge) world).bridge$pushAddEntityReason(
                 CreatureSpawnEvent.SpawnReason.BREEDING

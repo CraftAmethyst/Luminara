@@ -7,11 +7,6 @@ import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.world.ExplosionBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nullable;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -54,6 +49,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Mixin(Explosion.class)
 public abstract class ExplosionMixin implements ExplosionBridge {
@@ -156,11 +157,11 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                 for (int l = 0; l < 16; ++l) {
                     if (
                         j == 0 ||
-                        j == 15 ||
-                        k == 0 ||
-                        k == 15 ||
-                        l == 0 ||
-                        l == 15
+                            j == 15 ||
+                            k == 0 ||
+                            k == 15 ||
+                            l == 0 ||
+                            l == 15
                     ) {
                         double d0 = ((float) j / 15.0F) * 2.0F - 1.0F;
                         double d1 = ((float) k / 15.0F) * 2.0F - 1.0F;
@@ -171,7 +172,7 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                         d2 = d2 / d3;
                         float f =
                             this.radius *
-                            (0.7F + this.level.random.nextFloat() * 0.6F);
+                                (0.7F + this.level.random.nextFloat() * 0.6F);
                         double d4 = this.x;
                         double d6 = this.y;
                         double d8 = this.z;
@@ -203,13 +204,13 @@ public abstract class ExplosionMixin implements ExplosionBridge {
 
                             if (
                                 f > 0.0F &&
-                                this.damageCalculator.shouldBlockExplode(
-                                    (Explosion) (Object) this,
-                                    this.level,
-                                    blockpos,
-                                    blockstate,
-                                    f
-                                )
+                                    this.damageCalculator.shouldBlockExplode(
+                                        (Explosion) (Object) this,
+                                        this.level,
+                                        blockpos,
+                                        blockstate,
+                                        f
+                                    )
                             ) {
                                 set.add(blockpos);
                             }
@@ -280,13 +281,13 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                                 double dist;
                                 if (
                                     list.contains(part) &&
-                                    (dist =
-                                        Math.sqrt(part.distanceToSqr(vec3d)) /
-                                        f3) <= 1.0D
+                                        (dist =
+                                            Math.sqrt(part.distanceToSqr(vec3d)) /
+                                                f3) <= 1.0D
                                 ) {
                                     double dmg =
                                         (1.0D - dist) *
-                                        getSeenPercent(vec3d, part);
+                                            getSeenPercent(vec3d, part);
                                     part.hurt(
                                         this.getDamageSource(),
                                         (float) (int) (((dmg * dmg + dmg) /
@@ -338,8 +339,8 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                         if (entity instanceof Player playerentity) {
                             if (
                                 !playerentity.isSpectator() &&
-                                (!playerentity.isCreative() ||
-                                    !playerentity.getAbilities().flying)
+                                    (!playerentity.isCreative() ||
+                                        !playerentity.getAbilities().flying)
                             ) {
                                 this.hitPlayers.put(playerentity, vec3d1);
                             }
@@ -456,7 +457,7 @@ public abstract class ExplosionMixin implements ExplosionBridge {
                             blockpos,
                             (Explosion) (Object) this
                         ) &&
-                        this.level instanceof ServerLevel serverLevel
+                            this.level instanceof ServerLevel serverLevel
                     ) {
                         BlockEntity tileentity = blockstate.hasBlockEntity()
                             ? this.level.getBlockEntity(blockpos)
@@ -525,10 +526,10 @@ public abstract class ExplosionMixin implements ExplosionBridge {
             for (BlockPos blockpos2 : this.toBlow) {
                 if (
                     this.random.nextInt(3) == 0 &&
-                    this.level.getBlockState(blockpos2).isAir() &&
-                    this.level
-                        .getBlockState(blockpos2.below())
-                        .isSolidRender(this.level, blockpos2.below())
+                        this.level.getBlockState(blockpos2).isAir() &&
+                        this.level
+                            .getBlockState(blockpos2.below())
+                            .isSolidRender(this.level, blockpos2.below())
                 ) {
                     BlockIgniteEvent event =
                         CraftEventFactory.callBlockIgniteEvent(

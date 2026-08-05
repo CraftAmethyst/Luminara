@@ -20,8 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractFurnaceMenu.class)
 public abstract class AbstractFurnaceContainerMixin
-    extends AbstractContainerMenuMixin
-{
+    extends AbstractContainerMenuMixin {
 
     // @formatter:off
     @Shadow @Final private Container container;

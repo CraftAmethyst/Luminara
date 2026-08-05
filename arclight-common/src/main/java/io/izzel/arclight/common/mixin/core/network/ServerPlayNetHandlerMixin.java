@@ -17,15 +17,6 @@ import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import java.net.SocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.UnaryOperator;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.commands.CommandRuntimeException;
@@ -108,10 +99,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.net.SocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.UnaryOperator;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerPlayNetHandlerMixin
-    implements ServerPlayNetHandlerBridge
-{
+    implements ServerPlayNetHandlerBridge {
 
     private static final int SURVIVAL_PLACE_DISTANCE_SQUARED = 6 * 6;
     private static final int CREATIVE_PLACE_DISTANCE_SQUARED = 7 * 7;
@@ -228,6 +228,18 @@ public abstract class ServerPlayNetHandlerMixin
     @Shadow
     private static boolean isChatMessageIllegal(String p_215215_) {
         return false;
+    }
+
+    private static io.papermc.paper.entity.TeleportFlag.Relative arclight$toApiRelative(
+        RelativeMovement relativeMovement
+    ) {
+        return switch (relativeMovement) {
+            case X -> io.papermc.paper.entity.TeleportFlag.Relative.X;
+            case Y -> io.papermc.paper.entity.TeleportFlag.Relative.Y;
+            case Z -> io.papermc.paper.entity.TeleportFlag.Relative.Z;
+            case X_ROT -> io.papermc.paper.entity.TeleportFlag.Relative.PITCH;
+            case Y_ROT -> io.papermc.paper.entity.TeleportFlag.Relative.YAW;
+        };
     }
 
     @Shadow
@@ -385,8 +397,8 @@ public abstract class ServerPlayNetHandlerMixin
         }
         String leaveMessage =
             ChatFormatting.YELLOW +
-            this.player.getScoreboardName() +
-            " left the game.";
+                this.player.getScoreboardName() +
+                " left the game.";
         PlayerKickEvent event = new PlayerKickEvent(
             getCraftPlayer(),
             s,
@@ -445,8 +457,8 @@ public abstract class ServerPlayNetHandlerMixin
             Entity entity = this.player.getRootVehicle();
             if (
                 entity != this.player &&
-                entity.getControllingPassenger() == this.player &&
-                entity == this.lastVehicle
+                    entity.getControllingPassenger() == this.player &&
+                    entity == this.lastVehicle
             ) {
                 ServerLevel worldserver = this.player.serverLevel();
                 double d0 = entity.getX();
@@ -494,7 +506,7 @@ public abstract class ServerPlayNetHandlerMixin
                 if (
                     d11 - d10 >
                         Math.max(100.0, Math.pow(10.0f * i * speed, 2.0)) &&
-                    !this.isSingleplayerOwner()
+                        !this.isSingleplayerOwner()
                 ) {
                     ARCLIGHT_LOGGER.warn(
                         "vehicle-moved-too-quickly",
@@ -595,16 +607,16 @@ public abstract class ServerPlayNetHandlerMixin
                 to.setPitch(packetplayinvehiclemove.getXRot());
                 double delta =
                     Math.pow(this.lastPosX - to.getX(), 2.0) +
-                    Math.pow(this.lastPosY - to.getY(), 2.0) +
-                    Math.pow(this.lastPosZ - to.getZ(), 2.0);
+                        Math.pow(this.lastPosY - to.getY(), 2.0) +
+                        Math.pow(this.lastPosZ - to.getZ(), 2.0);
                 float deltaAngle =
                     Math.abs(this.lastYaw - to.getYaw()) +
-                    Math.abs(this.lastPitch - to.getPitch());
+                        Math.abs(this.lastPitch - to.getPitch());
                 if (
                     (delta > 0.00390625 || deltaAngle > 10.0f) &&
-                    !(
-                        (ServerPlayerEntityBridge) this.player
-                    ).bridge$isMovementBlocked()
+                        !(
+                            (ServerPlayerEntityBridge) this.player
+                        ).bridge$isMovementBlocked()
                 ) {
                     this.lastPosX = to.getX();
                     this.lastPosY = to.getY();
@@ -636,7 +648,7 @@ public abstract class ServerPlayNetHandlerMixin
                         }
                         if (
                             !from.equals(this.getCraftPlayer().getLocation()) &&
-                            this.justTeleported
+                                this.justTeleported
                         ) {
                             this.justTeleported = false;
                             return;
@@ -651,10 +663,10 @@ public abstract class ServerPlayNetHandlerMixin
                 );
                 this.clientVehicleIsFloating =
                     d11 >= -0.03125D &&
-                    !flag1 &&
-                    !this.server.isFlightAllowed() &&
-                    !entity.isNoGravity() &&
-                    this.noBlocksAround(entity);
+                        !flag1 &&
+                        !this.server.isFlightAllowed() &&
+                        !entity.isNoGravity() &&
+                        this.noBlocksAround(entity);
                 this.vehicleLastGoodX = entity.getX();
                 this.vehicleLastGoodY = entity.getY();
                 this.vehicleLastGoodZ = entity.getZ();
@@ -730,6 +742,12 @@ public abstract class ServerPlayNetHandlerMixin
         }
     }
 
+    // So, what is SPIGOT-4706 exactly?
+    // @Inject(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;useItemOn(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
+    // private void arclight$checkDistance(ServerboundUseItemOnPacket packetIn, CallbackInfo ci) {
+    //     this.player.stopUsingItem();
+    // }
+
     @Inject(method = "handleEditBook", at = @At("HEAD"))
     private void arclight$editBookSpam(
         ServerboundEditBookPacket packetIn,
@@ -744,12 +762,6 @@ public abstract class ServerPlayNetHandlerMixin
         }
         this.lastBookTick = ArclightConstants.currentTick;
     }
-
-    // So, what is SPIGOT-4706 exactly?
-    // @Inject(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;useItemOn(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
-    // private void arclight$checkDistance(ServerboundUseItemOnPacket packetIn, CallbackInfo ci) {
-    //     this.player.stopUsingItem();
-    // }
 
     /**
      * @author IzzelAliz
@@ -818,18 +830,6 @@ public abstract class ServerPlayNetHandlerMixin
                     )
                 );
         }
-    }
-
-    private static io.papermc.paper.entity.TeleportFlag.Relative arclight$toApiRelative(
-        RelativeMovement relativeMovement
-    ) {
-        return switch (relativeMovement) {
-            case X -> io.papermc.paper.entity.TeleportFlag.Relative.X;
-            case Y -> io.papermc.paper.entity.TeleportFlag.Relative.Y;
-            case Z -> io.papermc.paper.entity.TeleportFlag.Relative.Z;
-            case X_ROT -> io.papermc.paper.entity.TeleportFlag.Relative.PITCH;
-            case Y_ROT -> io.papermc.paper.entity.TeleportFlag.Relative.YAW;
-        };
     }
 
     /**
@@ -982,8 +982,8 @@ public abstract class ServerPlayNetHandlerMixin
     private boolean checkLimit(long timestamp) {
         if (
             lastLimitedPacket != -1 &&
-            timestamp - lastLimitedPacket < 30 &&
-            limitedPackets++ >= 4
+                timestamp - lastLimitedPacket < 30 &&
+                limitedPackets++ >= 4
         ) {
             return false;
         }
@@ -1023,7 +1023,7 @@ public abstract class ServerPlayNetHandlerMixin
         this.player.resetLastActionTime();
         if (
             !itemstack.isEmpty() &&
-            itemstack.isItemEnabled(worldserver.enabledFeatures())
+                itemstack.isItemEnabled(worldserver.enabledFeatures())
         ) {
             float f1 = this.player.getXRot();
             float f2 = this.player.getYRot();
@@ -1056,7 +1056,7 @@ public abstract class ServerPlayNetHandlerMixin
             boolean cancelled;
             if (
                 movingobjectposition == null ||
-                movingobjectposition.getType() != HitResult.Type.BLOCK
+                    movingobjectposition.getType() != HitResult.Type.BLOCK
             ) {
                 PlayerInteractEvent event =
                     CraftEventFactory.callPlayerInteractEvent(
@@ -1145,7 +1145,7 @@ public abstract class ServerPlayNetHandlerMixin
                     this.getCraftPlayer(),
                     PlayerResourcePackStatusEvent.Status.values()[
                         packetIn.action.ordinal()
-                    ]
+                        ]
                 )
             );
     }
@@ -1237,8 +1237,8 @@ public abstract class ServerPlayNetHandlerMixin
         }
         if (
             packet.getSlot() >= 0 &&
-            packet.getSlot() <
-                net.minecraft.world.entity.player.Inventory.getSelectionSize()
+                packet.getSlot() <
+                    net.minecraft.world.entity.player.Inventory.getSelectionSize()
         ) {
             PlayerItemHeldEvent event = new PlayerItemHeldEvent(
                 this.getCraftPlayer(),
@@ -1257,7 +1257,7 @@ public abstract class ServerPlayNetHandlerMixin
             }
             if (
                 this.player.getInventory().selected != packet.getSlot() &&
-                this.player.getUsedItemHand() == InteractionHand.MAIN_HAND
+                    this.player.getUsedItemHand() == InteractionHand.MAIN_HAND
             ) {
                 this.player.stopUsingItem();
             }
@@ -1381,10 +1381,10 @@ public abstract class ServerPlayNetHandlerMixin
         try {
             map = packet.command().equals(command)
                 ? this.collectSignedArguments(
-                      packet,
-                      SignableCommand.of(parseresults),
-                      lastseenmessages
-                  )
+                packet,
+                SignableCommand.of(parseresults),
+                lastseenmessages
+            )
                 : Collections.emptyMap(); // CraftBukkit
         } catch (SignedMessageChain.DecodeException e) {
             this.handleMessageDecodeFailure(e);
@@ -1431,7 +1431,7 @@ public abstract class ServerPlayNetHandlerMixin
     public void chat(String s, PlayerChatMessage original, boolean async) {
         if (
             s.isEmpty() ||
-            this.player.getChatVisibility() == ChatVisiblity.HIDDEN
+                this.player.getChatVisibility() == ChatVisiblity.HIDDEN
         ) {
             return;
         }
@@ -1483,16 +1483,16 @@ public abstract class ServerPlayNetHandlerMixin
                         ) {
                             if (
                                 !org.spigotmc.SpigotConfig.bungee &&
-                                originalFormat.equals(queueEvent.getFormat()) &&
-                                originalMessage.equals(
-                                    queueEvent.getMessage()
-                                ) &&
-                                queueEvent
-                                    .getPlayer()
-                                    .getName()
-                                    .equalsIgnoreCase(
-                                        queueEvent.getPlayer().getDisplayName()
-                                    )
+                                    originalFormat.equals(queueEvent.getFormat()) &&
+                                    originalMessage.equals(
+                                        queueEvent.getMessage()
+                                    ) &&
+                                    queueEvent
+                                        .getPlayer()
+                                        .getName()
+                                        .equalsIgnoreCase(
+                                            queueEvent.getPlayer().getDisplayName()
+                                        )
                             ) {
                                 // Spigot
                                 server
@@ -1556,12 +1556,12 @@ public abstract class ServerPlayNetHandlerMixin
             if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
                 if (
                     !org.spigotmc.SpigotConfig.bungee &&
-                    originalFormat.equals(event.getFormat()) &&
-                    originalMessage.equals(event.getMessage()) &&
-                    event
-                        .getPlayer()
-                        .getName()
-                        .equalsIgnoreCase(event.getPlayer().getDisplayName())
+                        originalFormat.equals(event.getFormat()) &&
+                        originalMessage.equals(event.getMessage()) &&
+                        event
+                            .getPlayer()
+                            .getName()
+                            .equalsIgnoreCase(event.getPlayer().getDisplayName())
                 ) {
                     // Spigot
                     server
@@ -1705,12 +1705,12 @@ public abstract class ServerPlayNetHandlerMixin
                     Entity handle = ((CraftEntity) entity).getHandle();
                     return (
                         handle != this.player &&
-                        ((ServerPlayerEntityBridge) this.player)
-                            .bridge$getBukkitEntity()
-                            .canSee(entity) &&
-                        !handle.isSpectator() &&
-                        handle.isPickable() &&
-                        !handle.isPassengerOfSameVehicle(player)
+                            ((ServerPlayerEntityBridge) this.player)
+                                .bridge$getBukkitEntity()
+                                .canSee(entity) &&
+                            !handle.isSpectator() &&
+                            handle.isPickable() &&
+                            !handle.isPassengerOfSameVehicle(player)
                     );
                 }
             );
@@ -1754,8 +1754,8 @@ public abstract class ServerPlayNetHandlerMixin
         if (
             packetIn.getAction() ==
                 ServerboundPlayerCommandPacket.Action.PRESS_SHIFT_KEY ||
-            packetIn.getAction() ==
-                ServerboundPlayerCommandPacket.Action.RELEASE_SHIFT_KEY
+                packetIn.getAction() ==
+                    ServerboundPlayerCommandPacket.Action.RELEASE_SHIFT_KEY
         ) {
             PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(
                 this.getCraftPlayer(),
@@ -1769,8 +1769,8 @@ public abstract class ServerPlayNetHandlerMixin
         } else if (
             packetIn.getAction() ==
                 ServerboundPlayerCommandPacket.Action.START_SPRINTING ||
-            packetIn.getAction() ==
-                ServerboundPlayerCommandPacket.Action.STOP_SPRINTING
+                packetIn.getAction() ==
+                    ServerboundPlayerCommandPacket.Action.STOP_SPRINTING
         ) {
             PlayerToggleSprintEvent e2 = new PlayerToggleSprintEvent(
                 this.getCraftPlayer(),
@@ -1815,9 +1815,9 @@ public abstract class ServerPlayNetHandlerMixin
             ServerLevel worldserver = this.player.serverLevel();
             if (
                 !this.player.wonGame &&
-                !(
-                    (ServerPlayerEntityBridge) this.player
-                ).bridge$isMovementBlocked()
+                    !(
+                        (ServerPlayerEntityBridge) this.player
+                    ).bridge$isMovementBlocked()
             ) {
                 if (this.tickCount == 0) {
                     this.resetPosition();
@@ -1897,7 +1897,7 @@ public abstract class ServerPlayNetHandlerMixin
                             ++this.receivedMovePacketCount;
                             int i =
                                 this.receivedMovePacketCount -
-                                this.knownMovePacketCount;
+                                    this.knownMovePacketCount;
 
                             // CraftBukkit start - handle custom speeds and skipped ticks
                             this.allowedPlayerTicks +=
@@ -1933,13 +1933,13 @@ public abstract class ServerPlayNetHandlerMixin
 
                             if (
                                 !this.player.isChangingDimension() &&
-                                (!this.player
-                                    .serverLevel()
-                                    .getGameRules()
-                                    .getBoolean(
-                                        GameRules.RULE_DISABLE_ELYTRA_MOVEMENT_CHECK
-                                    ) ||
-                                    !this.player.isFallFlying())
+                                    (!this.player
+                                        .serverLevel()
+                                        .getGameRules()
+                                        .getBoolean(
+                                            GameRules.RULE_DISABLE_ELYTRA_MOVEMENT_CHECK
+                                        ) ||
+                                        !this.player.isFallFlying())
                             ) {
                                 float f2 = this.player.isFallFlying()
                                     ? 300.0F
@@ -1956,7 +1956,7 @@ public abstract class ServerPlayNetHandlerMixin
                                                 2
                                             )
                                         ) &&
-                                    !this.isSingleplayerOwner()
+                                        !this.isSingleplayerOwner()
                                 ) {
                                     // CraftBukkit end
                                     ARCLIGHT_LOGGER.warn(
@@ -1986,8 +1986,8 @@ public abstract class ServerPlayNetHandlerMixin
 
                             if (
                                 this.player.onGround() &&
-                                !packetplayinflying.isOnGround() &&
-                                flag
+                                    !packetplayinflying.isOnGround() &&
+                                    flag
                             ) {
                                 this.player.jumpFromGround();
                             }
@@ -2012,12 +2012,12 @@ public abstract class ServerPlayNetHandlerMixin
 
                             if (
                                 !this.player.isChangingDimension() &&
-                                d11 >
-                                    org.spigotmc.SpigotConfig.movedWronglyThreshold &&
-                                !this.player.isSleeping() &&
-                                !this.player.gameMode.isCreative() &&
-                                this.player.gameMode.getGameModeForPlayer() !=
-                                    GameType.SPECTATOR
+                                    d11 >
+                                        org.spigotmc.SpigotConfig.movedWronglyThreshold &&
+                                    !this.player.isSleeping() &&
+                                    !this.player.gameMode.isCreative() &&
+                                    this.player.gameMode.getGameModeForPlayer() !=
+                                        GameType.SPECTATOR
                             ) {
                                 // Spigot
                                 flag1 = true;
@@ -2029,19 +2029,19 @@ public abstract class ServerPlayNetHandlerMixin
 
                             if (
                                 !this.player.noPhysics &&
-                                !this.player.isSleeping() &&
-                                ((flag1 &&
-                                    worldserver.noCollision(
-                                        this.player,
-                                        axisalignedbb
-                                    )) ||
-                                    this.isPlayerCollidingWithAnythingNew(
-                                        worldserver,
-                                        axisalignedbb,
-                                        d0,
-                                        d1,
-                                        d2
-                                    ))
+                                    !this.player.isSleeping() &&
+                                    ((flag1 &&
+                                        worldserver.noCollision(
+                                            this.player,
+                                            axisalignedbb
+                                        )) ||
+                                        this.isPlayerCollidingWithAnythingNew(
+                                            worldserver,
+                                            axisalignedbb,
+                                            d0,
+                                            d1,
+                                            d2
+                                        ))
                             ) {
                                 this.internalTeleport(
                                     d3,
@@ -2087,16 +2087,16 @@ public abstract class ServerPlayNetHandlerMixin
                                 }
                                 double delta =
                                     Math.pow(this.lastPosX - to.getX(), 2.0) +
-                                    Math.pow(this.lastPosY - to.getY(), 2.0) +
-                                    Math.pow(this.lastPosZ - to.getZ(), 2.0);
+                                        Math.pow(this.lastPosY - to.getY(), 2.0) +
+                                        Math.pow(this.lastPosZ - to.getZ(), 2.0);
                                 float deltaAngle =
                                     Math.abs(this.lastYaw - to.getYaw()) +
-                                    Math.abs(this.lastPitch - to.getPitch());
+                                        Math.abs(this.lastPitch - to.getPitch());
                                 if (
                                     (delta > 1f / 256 || deltaAngle > 10f) &&
-                                    !(
-                                        (ServerPlayerEntityBridge) this.player
-                                    ).bridge$isMovementBlocked()
+                                        !(
+                                            (ServerPlayerEntityBridge) this.player
+                                        ).bridge$isMovementBlocked()
                                 ) {
                                     this.lastPosX = to.getX();
                                     this.lastPosY = to.getY();
@@ -2120,7 +2120,7 @@ public abstract class ServerPlayNetHandlerMixin
                                         }
                                         if (
                                             !oldTo.equals(event.getTo()) &&
-                                            !event.isCancelled()
+                                                !event.isCancelled()
                                         ) {
                                             getCraftPlayer().teleport(
                                                 event.getTo(),
@@ -2132,7 +2132,7 @@ public abstract class ServerPlayNetHandlerMixin
                                             !from.equals(
                                                 this.getCraftPlayer().getLocation()
                                             ) &&
-                                            this.justTeleported
+                                                this.justTeleported
                                         ) {
                                             this.justTeleported = false;
                                             return;
@@ -2143,16 +2143,16 @@ public abstract class ServerPlayNetHandlerMixin
                                 this.player.absMoveTo(d0, d1, d2, f, f1); // Copied from above
                                 this.clientIsFloating =
                                     d12 >= -0.03125D &&
-                                    this.player.gameMode.getGameModeForPlayer() !=
-                                        GameType.SPECTATOR &&
-                                    !this.server.isFlightAllowed() &&
-                                    !this.player.getAbilities().mayfly &&
-                                    !this.player.hasEffect(
-                                        MobEffects.LEVITATION
-                                    ) &&
-                                    !this.player.isFallFlying() &&
-                                    this.noBlocksAround(this.player) &&
-                                    !this.player.isAutoSpinAttack();
+                                        this.player.gameMode.getGameModeForPlayer() !=
+                                            GameType.SPECTATOR &&
+                                        !this.server.isFlightAllowed() &&
+                                        !this.player.getAbilities().mayfly &&
+                                        !this.player.hasEffect(
+                                            MobEffects.LEVITATION
+                                        ) &&
+                                        !this.player.isFallFlying() &&
+                                        this.noBlocksAround(this.player) &&
+                                        !this.player.isAutoSpinAttack();
                                 // CraftBukkit end
                                 this.player
                                     .serverLevel()
@@ -2231,7 +2231,7 @@ public abstract class ServerPlayNetHandlerMixin
         this.player.resetLastActionTime();
         if (
             this.player.containerMenu.containerId == packet.getContainerId() &&
-            this.player.containerMenu.stillValid(this.player)
+                this.player.containerMenu.stillValid(this.player)
         ) {
             // CraftBukkit
             boolean cancelled = this.player.isSpectator(); // CraftBukkit - see below if
@@ -2247,7 +2247,7 @@ public abstract class ServerPlayNetHandlerMixin
             } else {
                 boolean flag =
                     packet.getStateId() !=
-                    this.player.containerMenu.getStateId();
+                        this.player.containerMenu.getStateId();
 
                 this.player.containerMenu.suppressRemoteUpdates();
                 // CraftBukkit start - Call InventoryClickEvent
@@ -2279,7 +2279,7 @@ public abstract class ServerPlayNetHandlerMixin
                         }
                         if (
                             packet.getButtonNum() == 0 ||
-                            packet.getButtonNum() == 1
+                                packet.getButtonNum() == 1
                         ) {
                             action = InventoryAction.NOTHING; // Don't want to repeat ourselves
                             if (packet.getSlotNum() == -999) {
@@ -2354,7 +2354,7 @@ public abstract class ServerPlayNetHandlerMixin
                                                 }
                                             } else if (
                                                 cursor.getCount() <=
-                                                slot.getMaxStackSize()
+                                                    slot.getMaxStackSize()
                                             ) {
                                                 action =
                                                     InventoryAction.SWAP_WITH_CURSOR;
@@ -2369,7 +2369,7 @@ public abstract class ServerPlayNetHandlerMixin
                                                 if (
                                                     clickedItem.getCount() +
                                                         cursor.getCount() <=
-                                                    cursor.getMaxStackSize()
+                                                        cursor.getMaxStackSize()
                                                 ) {
                                                     // As of 1.5, this is result slots only
                                                     action =
@@ -2391,7 +2391,7 @@ public abstract class ServerPlayNetHandlerMixin
                         }
                         if (
                             packet.getButtonNum() == 0 ||
-                            packet.getButtonNum() == 1
+                                packet.getButtonNum() == 1
                         ) {
                             if (packet.getSlotNum() < 0) {
                                 action = InventoryAction.NOTHING;
@@ -2401,8 +2401,8 @@ public abstract class ServerPlayNetHandlerMixin
                                 );
                                 if (
                                     slot != null &&
-                                    slot.mayPickup(this.player) &&
-                                    slot.hasItem()
+                                        slot.mayPickup(this.player) &&
+                                        slot.hasItem()
                                 ) {
                                     action =
                                         InventoryAction.MOVE_TO_OTHER_INVENTORY;
@@ -2416,7 +2416,7 @@ public abstract class ServerPlayNetHandlerMixin
                         if (
                             (packet.getButtonNum() >= 0 &&
                                 packet.getButtonNum() < 9) ||
-                            packet.getButtonNum() == 40
+                                packet.getButtonNum() == 40
                         ) {
                             click =
                                 packet.getButtonNum() == 40
@@ -2432,9 +2432,9 @@ public abstract class ServerPlayNetHandlerMixin
                                     .getItem(packet.getButtonNum());
                                 boolean canCleanSwap =
                                     hotbar.isEmpty() ||
-                                    (clickedSlot.container ==
-                                        player.getInventory() &&
-                                        clickedSlot.mayPlace(hotbar)); // the slot will accept the hotbar item
+                                        (clickedSlot.container ==
+                                            player.getInventory() &&
+                                            clickedSlot.mayPlace(hotbar)); // the slot will accept the hotbar item
                                 if (clickedSlot.hasItem()) {
                                     if (canCleanSwap) {
                                         action = InventoryAction.HOTBAR_SWAP;
@@ -2444,8 +2444,8 @@ public abstract class ServerPlayNetHandlerMixin
                                     }
                                 } else if (
                                     !clickedSlot.hasItem() &&
-                                    !hotbar.isEmpty() &&
-                                    clickedSlot.mayPlace(hotbar)
+                                        !hotbar.isEmpty() &&
+                                        clickedSlot.mayPlace(hotbar)
                                 ) {
                                     action = InventoryAction.HOTBAR_SWAP;
                                 } else {
@@ -2467,9 +2467,9 @@ public abstract class ServerPlayNetHandlerMixin
                                 );
                                 if (
                                     slot != null &&
-                                    slot.hasItem() &&
-                                    player.getAbilities().instabuild &&
-                                    player.containerMenu.getCarried().isEmpty()
+                                        slot.hasItem() &&
+                                        player.getAbilities().instabuild &&
+                                        player.containerMenu.getCarried().isEmpty()
                                 ) {
                                     action = InventoryAction.CLONE_STACK;
                                 } else {
@@ -2490,11 +2490,11 @@ public abstract class ServerPlayNetHandlerMixin
                                 );
                                 if (
                                     slot != null &&
-                                    slot.hasItem() &&
-                                    slot.mayPickup(player) &&
-                                    !slot.getItem().isEmpty() &&
-                                    slot.getItem().getItem() !=
-                                        Item.byBlock(Blocks.AIR)
+                                        slot.hasItem() &&
+                                        slot.mayPickup(player) &&
+                                        !slot.getItem().isEmpty() &&
+                                        slot.getItem().getItem() !=
+                                            Item.byBlock(Blocks.AIR)
                                 ) {
                                     action = InventoryAction.DROP_ONE_SLOT;
                                 } else {
@@ -2507,11 +2507,11 @@ public abstract class ServerPlayNetHandlerMixin
                                 );
                                 if (
                                     slot != null &&
-                                    slot.hasItem() &&
-                                    slot.mayPickup(player) &&
-                                    !slot.getItem().isEmpty() &&
-                                    slot.getItem().getItem() !=
-                                        Item.byBlock(Blocks.AIR)
+                                        slot.hasItem() &&
+                                        slot.mayPickup(player) &&
+                                        !slot.getItem().isEmpty() &&
+                                        slot.getItem().getItem() !=
+                                            Item.byBlock(Blocks.AIR)
                                 ) {
                                     action = InventoryAction.DROP_ALL_SLOT;
                                 } else {
@@ -2540,7 +2540,7 @@ public abstract class ServerPlayNetHandlerMixin
                         action = InventoryAction.NOTHING;
                         if (
                             packet.getSlotNum() >= 0 &&
-                            !this.player.containerMenu.getCarried().isEmpty()
+                                !this.player.containerMenu.getCarried().isEmpty()
                         ) {
                             ItemStack cursor =
                                 this.player.containerMenu.getCarried();
@@ -2554,13 +2554,13 @@ public abstract class ServerPlayNetHandlerMixin
                                             cursor.getItem()
                                         )
                                     ) ||
-                                inventory
-                                    .getBottomInventory()
-                                    .contains(
-                                        CraftMagicNumbers.getMaterial(
-                                            cursor.getItem()
+                                    inventory
+                                        .getBottomInventory()
+                                        .contains(
+                                            CraftMagicNumbers.getMaterial(
+                                                cursor.getItem()
+                                            )
                                         )
-                                    )
                             ) {
                                 action = InventoryAction.COLLECT_TO_CURSOR;
                             }
@@ -2572,7 +2572,7 @@ public abstract class ServerPlayNetHandlerMixin
 
                 if (
                     packet.getClickType() !=
-                    net.minecraft.world.inventory.ClickType.QUICK_CRAFT
+                        net.minecraft.world.inventory.ClickType.QUICK_CRAFT
                 ) {
                     if (click == ClickType.NUMBER_KEY) {
                         event = new InventoryClickEvent(
@@ -2597,7 +2597,7 @@ public abstract class ServerPlayNetHandlerMixin
                         inventory.getTopInventory();
                     if (
                         packet.getSlotNum() == 0 &&
-                        top instanceof CraftingInventory
+                            top instanceof CraftingInventory
                     ) {
                         org.bukkit.inventory.Recipe recipe = (
                             (CraftingInventory) top
@@ -2628,7 +2628,7 @@ public abstract class ServerPlayNetHandlerMixin
 
                     if (
                         packet.getSlotNum() == 3 &&
-                        top instanceof SmithingInventory
+                            top instanceof SmithingInventory
                     ) {
                         org.bukkit.inventory.ItemStack result = (
                             (SmithingInventory) top
@@ -2757,7 +2757,7 @@ public abstract class ServerPlayNetHandlerMixin
 
                     if (
                         event instanceof CraftItemEvent ||
-                        event instanceof SmithItemEvent
+                            event instanceof SmithItemEvent
                     ) {
                         // Need to update the inventory on crafting to
                         // correctly support custom recipes
@@ -2854,10 +2854,10 @@ public abstract class ServerPlayNetHandlerMixin
             );
             if (
                 !itemstack.isEmpty() &&
-                nbttagcompound != null &&
-                nbttagcompound.contains("x") &&
-                nbttagcompound.contains("y") &&
-                nbttagcompound.contains("z")
+                    nbttagcompound != null &&
+                    nbttagcompound.contains("x") &&
+                    nbttagcompound.contains("y") &&
+                    nbttagcompound.contains("z")
             ) {
                 BlockPos blockpos = BlockEntity.getPosFromTag(nbttagcompound);
                 if (this.player.level().isLoaded(blockpos)) {
@@ -2871,21 +2871,21 @@ public abstract class ServerPlayNetHandlerMixin
             }
             final boolean flag2 =
                 packetplayinsetcreativeslot.getSlotNum() >= 1 &&
-                packetplayinsetcreativeslot.getSlotNum() <= 45;
+                    packetplayinsetcreativeslot.getSlotNum() <= 45;
             boolean flag3 =
                 itemstack.isEmpty() ||
-                (itemstack.getDamageValue() >= 0 &&
-                    itemstack.getCount() <= 64 &&
-                    !itemstack.isEmpty());
+                    (itemstack.getDamageValue() >= 0 &&
+                        itemstack.getCount() <= 64 &&
+                        !itemstack.isEmpty());
             if (
                 flag ||
-                (flag2 &&
-                    !ItemStack.matches(
-                        this.player.inventoryMenu
-                            .getSlot(packetplayinsetcreativeslot.getSlotNum())
-                            .getItem(),
-                        packetplayinsetcreativeslot.getItem()
-                    ))
+                    (flag2 &&
+                        !ItemStack.matches(
+                            this.player.inventoryMenu
+                                .getSlot(packetplayinsetcreativeslot.getSlotNum())
+                                .getItem(),
+                            packetplayinsetcreativeslot.getItem()
+                        ))
             ) {
                 final InventoryView inventory = (
                     (ContainerBridge) this.player.inventoryMenu
@@ -2900,7 +2900,7 @@ public abstract class ServerPlayNetHandlerMixin
                 } else if (packetplayinsetcreativeslot.getSlotNum() < 36) {
                     if (
                         packetplayinsetcreativeslot.getSlotNum() >= 5 &&
-                        packetplayinsetcreativeslot.getSlotNum() < 9
+                            packetplayinsetcreativeslot.getSlotNum() < 9
                     ) {
                         type = InventoryType.SlotType.ARMOR;
                     } else {
@@ -2985,7 +2985,7 @@ public abstract class ServerPlayNetHandlerMixin
         );
         if (
             this.player.getAbilities().mayfly &&
-            this.player.getAbilities().flying != packet.isFlying()
+                this.player.getAbilities().flying != packet.isFlying()
         ) {
             PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(
                 getCraftPlayer(),
@@ -3021,7 +3021,7 @@ public abstract class ServerPlayNetHandlerMixin
                 (
                     (MinecraftServerBridge) ServerLifecycleHooks.getCurrentServer()
                 ).bridge$hasStopped() ||
-                bridge$processedDisconnect()
+                    bridge$processedDisconnect()
             ) {
                 return;
             }
@@ -3055,7 +3055,7 @@ public abstract class ServerPlayNetHandlerMixin
                         for (String channel : channels.split("\0")) {
                             if (
                                 !StringUtil.isNullOrEmpty(channel) &&
-                                channel.length() <= 256
+                                    channel.length() <= 256
                             ) {
                                 // Validate channel name length
                                 this.getCraftPlayer().addChannel(channel);
@@ -3097,7 +3097,7 @@ public abstract class ServerPlayNetHandlerMixin
                         for (String channel : channels.split("\0")) {
                             if (
                                 !StringUtil.isNullOrEmpty(channel) &&
-                                channel.length() <= 256
+                                    channel.length() <= 256
                             ) {
                                 // Validate channel name length
                                 this.getCraftPlayer().removeChannel(channel);
@@ -3136,7 +3136,7 @@ public abstract class ServerPlayNetHandlerMixin
     public final boolean isDisconnected() {
         return (
             !((ServerPlayerEntityBridge) this.player).bridge$isJoining() &&
-            !this.connection.isConnected()
+                !this.connection.isConnected()
         );
     }
 
@@ -3190,8 +3190,8 @@ public abstract class ServerPlayNetHandlerMixin
                     ItemStack itemInHand = player.getItemInHand(hand);
                     boolean triggerLeashUpdate =
                         itemInHand != null &&
-                        itemInHand.getItem() == Items.LEAD &&
-                        entity instanceof Mob;
+                            itemInHand.getItem() == Items.LEAD &&
+                            entity instanceof Mob;
                     Item origItem =
                         player.getInventory().getSelected() == null
                             ? null
@@ -3202,13 +3202,13 @@ public abstract class ServerPlayNetHandlerMixin
                     // Fish bucket - SPIGOT-4048
                     if (
                         entity instanceof Bucketable &&
-                        entity instanceof LivingEntity &&
-                        origItem != null &&
-                        origItem.asItem() == Items.WATER_BUCKET &&
-                        (event.isCancelled() ||
-                            player.getInventory().getSelected() == null ||
-                            player.getInventory().getSelected().getItem() !=
-                                origItem)
+                            entity instanceof LivingEntity &&
+                            origItem != null &&
+                            origItem.asItem() == Items.WATER_BUCKET &&
+                            (event.isCancelled() ||
+                                player.getInventory().getSelected() == null ||
+                                player.getInventory().getSelected().getItem() !=
+                                    origItem)
                     ) {
                         send(new ClientboundAddEntityPacket(entity));
                         player.containerMenu.sendAllDataToRemote();
@@ -3216,10 +3216,10 @@ public abstract class ServerPlayNetHandlerMixin
 
                     if (
                         triggerLeashUpdate &&
-                        (event.isCancelled() ||
-                            player.getInventory().getSelected() == null ||
-                            player.getInventory().getSelected().getItem() !=
-                                origItem)
+                            (event.isCancelled() ||
+                                player.getInventory().getSelected() == null ||
+                                player.getInventory().getSelected().getItem() !=
+                                    origItem)
                     ) {
                         // Refresh the current leash state
                         send(
@@ -3232,9 +3232,9 @@ public abstract class ServerPlayNetHandlerMixin
 
                     if (
                         event.isCancelled() ||
-                        player.getInventory().getSelected() == null ||
-                        player.getInventory().getSelected().getItem() !=
-                            origItem
+                            player.getInventory().getSelected() == null ||
+                            player.getInventory().getSelected().getItem() !=
+                                origItem
                     ) {
                         // Refresh the current entity metadata
                         (
@@ -3245,8 +3245,8 @@ public abstract class ServerPlayNetHandlerMixin
                                 new ClientboundSetEquipmentPacket(
                                     entity.getId(),
                                     Arrays.stream(
-                                        net.minecraft.world.entity.EquipmentSlot.values()
-                                    )
+                                            net.minecraft.world.entity.EquipmentSlot.values()
+                                        )
                                         .map(slot ->
                                             Pair.of(
                                                 slot,
@@ -3338,9 +3338,9 @@ public abstract class ServerPlayNetHandlerMixin
                 public void onAttack() {
                     if (
                         !(entity instanceof ItemEntity) &&
-                        !(entity instanceof ExperienceOrb) &&
-                        !(entity instanceof AbstractArrow) &&
-                        (entity != player || player.isSpectator())
+                            !(entity instanceof ExperienceOrb) &&
+                            !(entity instanceof AbstractArrow) &&
+                            (entity != player || player.isSpectator())
                     ) {
                         ItemStack itemInHand = player.getMainHandItem();
                         if (

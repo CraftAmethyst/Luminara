@@ -16,8 +16,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ThrownTrident.class)
 public abstract class ThrownTridentMixin
     extends AbstractArrowMixin
-    implements TridentEntityBridge
-{
+    implements TridentEntityBridge {
 
     @Shadow
     public ItemStack tridentItem;

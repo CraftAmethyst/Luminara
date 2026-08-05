@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.entity.animal;
 
 import io.izzel.arclight.common.bridge.core.network.datasync.SynchedEntityDataBridge;
-import java.util.Optional;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +19,8 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+import java.util.Optional;
+
 @Mixin(Bucketable.class)
 public interface BucketableMixin {
     /**
@@ -29,7 +30,7 @@ public interface BucketableMixin {
     @Overwrite
     static <
         T extends LivingEntity & Bucketable
-    > Optional<InteractionResult> bucketMobPickup(
+        > Optional<InteractionResult> bucketMobPickup(
         Player player,
         InteractionHand hand,
         LivingEntity livingEntity

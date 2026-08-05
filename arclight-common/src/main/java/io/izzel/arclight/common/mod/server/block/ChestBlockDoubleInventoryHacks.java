@@ -1,8 +1,9 @@
 package io.izzel.arclight.common.mod.server.block;
 
 import io.izzel.arclight.api.Unsafe;
-import java.lang.reflect.Field;
 import net.minecraft.world.CompoundContainer;
+
+import java.lang.reflect.Field;
 
 public class ChestBlockDoubleInventoryHacks {
 

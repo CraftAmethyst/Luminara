@@ -12,12 +12,14 @@ public class WatchdogThreadMixin {
      * @reason
      */
     @Overwrite
-    public static void doStart(int timeoutTime, boolean restart) {}
+    public static void doStart(int timeoutTime, boolean restart) {
+    }
 
     /**
      * @author IzzelAliz
      * @reason
      */
     @Overwrite
-    public static void tick() {}
+    public static void tick() {
+    }
 }

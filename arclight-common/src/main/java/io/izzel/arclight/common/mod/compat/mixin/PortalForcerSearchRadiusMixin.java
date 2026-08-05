@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mod.compat.mixin;
 import io.izzel.arclight.common.mod.compat.ModIds;
 import io.izzel.arclight.common.mod.compat.PortalForcerSearchRadiusAccess;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
-import java.util.Optional;
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.border.WorldBorder;
@@ -13,11 +12,12 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
+import java.util.Optional;
+
 @Mixin(PortalForcer.class)
 @LoadIfMod(modid = ModIds.RADIUM, condition = LoadIfMod.ModCondition.ABSENT)
 public abstract class PortalForcerSearchRadiusMixin
-    implements PortalForcerSearchRadiusAccess
-{
+    implements PortalForcerSearchRadiusAccess {
 
     private transient int arclight$searchRadius = -1;
 

@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PlayerAttemptPickupItemEvent
     extends PlayerEvent
-    implements Cancellable
-{
+    implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
@@ -42,6 +41,11 @@ public class PlayerAttemptPickupItemEvent
         this.remaining = remaining;
     }
 
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     /**
      * Gets the item the player attempted to pick up.
      *
@@ -62,16 +66,6 @@ public class PlayerAttemptPickupItemEvent
     }
 
     /**
-     * Sets whether the item pickup animation is sent to the player when this
-     * event prevents pickup.
-     *
-     * @param flyAtPlayer whether the item should fly at the player
-     */
-    public void setFlyAtPlayer(boolean flyAtPlayer) {
-        this.flyAtPlayer = flyAtPlayer;
-    }
-
-    /**
      * Gets whether the item pickup animation is sent to the player when this
      * event prevents pickup.
      *
@@ -79,6 +73,16 @@ public class PlayerAttemptPickupItemEvent
      */
     public boolean getFlyAtPlayer() {
         return this.flyAtPlayer;
+    }
+
+    /**
+     * Sets whether the item pickup animation is sent to the player when this
+     * event prevents pickup.
+     *
+     * @param flyAtPlayer whether the item should fly at the player
+     */
+    public void setFlyAtPlayer(boolean flyAtPlayer) {
+        this.flyAtPlayer = flyAtPlayer;
     }
 
     @Override
@@ -95,11 +99,6 @@ public class PlayerAttemptPickupItemEvent
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    @NotNull
-    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 }

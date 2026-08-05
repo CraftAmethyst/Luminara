@@ -40,11 +40,11 @@ public class BigDripleafBlockMixin {
     ) {
         if (
             !DistValidate.isValid(level) &&
-            CraftEventFactory.callEntityChangeBlockEvent(
-                projectile,
-                hitResult.getBlockPos(),
-                state.setValue(TILT, Tilt.FULL)
-            )
+                CraftEventFactory.callEntityChangeBlockEvent(
+                    projectile,
+                    hitResult.getBlockPos(),
+                    state.setValue(TILT, Tilt.FULL)
+                )
         ) {
             ci.cancel();
         }

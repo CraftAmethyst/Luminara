@@ -4,9 +4,6 @@ import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import io.izzel.arclight.boot.log.ArclightI18nLogger;
 import io.izzel.arclight.boot.mod.ModBootstrap;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.function.Consumer;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -14,6 +11,10 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class ArclightImplementer implements ILaunchPluginService {
 
@@ -41,7 +42,7 @@ public class ArclightImplementer implements ILaunchPluginService {
                 org.apache.logging.log4j.jul.LogManager);
         if (
             transformLogger &&
-            !System.getProperties().contains("log4j.jul.LoggerAdapter")
+                !System.getProperties().contains("log4j.jul.LoggerAdapter")
         ) {
             System.setProperty(
                 "log4j.jul.LoggerAdapter",
@@ -135,7 +136,7 @@ public class ArclightImplementer implements ILaunchPluginService {
             }
         }
         if (this.auditAcceptor != null && !trails.isEmpty()) {
-            this.auditAcceptor.accept(new String[] {
+            this.auditAcceptor.accept(new String[]{
                 String.join(",", trails),
             });
         }

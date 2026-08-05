@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +21,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
 
 @Mixin(ChorusFlowerBlock.class)
 public abstract class ChorusFlowerBlockMixin extends BlockMixin {
@@ -63,12 +64,12 @@ public abstract class ChorusFlowerBlockMixin extends BlockMixin {
             int i = state.getValue(AGE);
             if (
                 i < 5 &&
-                net.minecraftforge.common.ForgeHooks.onCropsGrowPre(
-                    worldIn,
-                    blockpos,
-                    state,
-                    true
-                )
+                    net.minecraftforge.common.ForgeHooks.onCropsGrowPre(
+                        worldIn,
+                        blockpos,
+                        state,
+                        true
+                    )
             ) {
                 boolean flag = false;
                 boolean flag1 = false;
@@ -102,8 +103,8 @@ public abstract class ChorusFlowerBlockMixin extends BlockMixin {
 
                 if (
                     flag &&
-                    allNeighborsEmpty(worldIn, blockpos, (Direction) null) &&
-                    worldIn.isEmptyBlock(pos.above(2))
+                        allNeighborsEmpty(worldIn, blockpos, (Direction) null) &&
+                        worldIn.isEmptyBlock(pos.above(2))
                 ) {
                     if (
                         CraftEventFactory.handleBlockSpreadEvent(
@@ -140,12 +141,12 @@ public abstract class ChorusFlowerBlockMixin extends BlockMixin {
                         BlockPos blockpos1 = pos.relative(direction);
                         if (
                             worldIn.isEmptyBlock(blockpos1) &&
-                            worldIn.isEmptyBlock(blockpos1.below()) &&
-                            allNeighborsEmpty(
-                                worldIn,
-                                blockpos1,
-                                direction.getOpposite()
-                            )
+                                worldIn.isEmptyBlock(blockpos1.below()) &&
+                                allNeighborsEmpty(
+                                    worldIn,
+                                    blockpos1,
+                                    direction.getOpposite()
+                                )
                         ) {
                             if (
                                 CraftEventFactory.handleBlockSpreadEvent(

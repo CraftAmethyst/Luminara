@@ -1,10 +1,11 @@
 package io.izzel.arclight.common.adventure.providers;
 
-import java.util.function.Consumer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 // Enhanced MiniMessage provider implementation
 @SuppressWarnings("UnstableApiUsage") // permitted provider

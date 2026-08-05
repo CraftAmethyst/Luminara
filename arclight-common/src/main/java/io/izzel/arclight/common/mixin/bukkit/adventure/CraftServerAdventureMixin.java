@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.bukkit.adventure;
 
 import io.izzel.arclight.common.adventure.PaperAdventure;
-import java.io.IOException;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
@@ -21,10 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
+import java.io.IOException;
+
 @Mixin(value = CraftServer.class, remap = false)
 public abstract class CraftServerAdventureMixin
-    implements net.kyori.adventure.audience.ForwardingAudience
-{
+    implements net.kyori.adventure.audience.ForwardingAudience {
 
     private static final String BROADCAST_CHANNEL_USERS =
         "bukkit.broadcast.user";

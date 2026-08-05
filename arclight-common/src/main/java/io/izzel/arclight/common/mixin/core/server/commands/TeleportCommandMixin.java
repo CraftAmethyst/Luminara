@@ -5,8 +5,6 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
-import java.util.Set;
-import javax.annotation.Nullable;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.commands.TeleportCommand;
@@ -28,6 +26,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
+import java.util.Set;
 
 @Mixin(TeleportCommand.class)
 public class TeleportCommandMixin {
@@ -111,7 +112,8 @@ public class TeleportCommandMixin {
                     p_139024_.perform(source, entity);
                 }
 
-                label23: {
+                label23:
+                {
                     if (entity instanceof LivingEntity) {
                         LivingEntity livingentity = (LivingEntity) entity;
                         if (livingentity.isFallFlying()) {

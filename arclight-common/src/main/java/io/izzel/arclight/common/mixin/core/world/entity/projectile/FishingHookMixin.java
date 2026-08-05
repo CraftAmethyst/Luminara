@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.projectile;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -38,6 +36,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Collections;
+import java.util.List;
 
 @Mixin(FishingHook.class)
 public abstract class FishingHookMixin extends ProjectileMixin {
@@ -144,8 +145,8 @@ public abstract class FishingHookMixin extends ProjectileMixin {
     ) {
         if (
             this.nibble <= 0 &&
-            this.timeUntilHooked <= 0 &&
-            this.timeUntilLured <= 0
+                this.timeUntilHooked <= 0 &&
+                this.timeUntilLured <= 0
         ) {
             this.timeUntilLured = Mth.nextInt(
                 this.random,

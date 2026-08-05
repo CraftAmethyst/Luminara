@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.optimization.general.activationrange;
 
 import io.izzel.arclight.common.bridge.optimization.EntityBridge_ActivationRange;
 import io.izzel.arclight.i18n.ArclightConfig;
-import java.util.function.BooleanSupplier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import org.spigotmc.ActivationRange;
@@ -11,6 +10,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.function.BooleanSupplier;
 
 @Mixin(ServerLevel.class)
 public class ServerWorldMixin_ActivationRange {

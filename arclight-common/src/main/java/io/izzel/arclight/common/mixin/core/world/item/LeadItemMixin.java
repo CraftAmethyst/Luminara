@@ -70,8 +70,8 @@ public class LeadItemMixin {
                         ).bridge$getBukkitEntity(),
                         player != null
                             ? (Player) (
-                                  (PlayerEntityBridge) player
-                              ).bridge$getBukkitEntity()
+                            (PlayerEntityBridge) player
+                        ).bridge$getBukkitEntity()
                             : null,
                         CraftBlock.at(worldIn, fence),
                         BlockFace.SELF,

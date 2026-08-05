@@ -7,7 +7,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.network.datasync.SynchedEntityDataBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.EntityMixin;
-import java.util.UUID;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,6 +30,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.UUID;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends EntityMixin {
@@ -184,9 +185,9 @@ public abstract class ItemEntityMixin extends EntityMixin {
             ItemStack copy = itemstack.copy();
             if (
                 this.pickupDelay == 0 &&
-                (this.target == null /*|| 6000 - this.age <= 200*/ ||
-                    this.target.equals(entity.getUUID())) &&
-                (hook == 1 || entity.getInventory().add(itemstack))
+                    (this.target == null /*|| 6000 - this.age <= 200*/ ||
+                        this.target.equals(entity.getUUID())) &&
+                    (hook == 1 || entity.getInventory().add(itemstack))
             ) {
                 copy.setCount(copy.getCount() - itemstack.getCount());
                 ForgeEventFactory.firePlayerItemPickupEvent(

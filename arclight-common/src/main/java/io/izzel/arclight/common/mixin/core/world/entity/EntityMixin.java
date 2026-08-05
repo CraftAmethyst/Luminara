@@ -13,8 +13,6 @@ import io.izzel.arclight.common.bridge.core.world.TeleporterBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import java.util.*;
-import javax.annotation.Nullable;
 import net.minecraft.BlockUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
@@ -85,11 +83,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import javax.annotation.Nullable;
+import java.util.*;
+
 @SuppressWarnings("ConstantConditions")
 @Mixin(Entity.class)
 public abstract class EntityMixin
-    implements InternalEntityBridge, EntityBridge, ICommandSourceBridge
-{
+    implements InternalEntityBridge, EntityBridge, ICommandSourceBridge {
 
     private static final int CURRENT_LEVEL = 2;
 
@@ -753,7 +753,7 @@ public abstract class EntityMixin
     ) {
         if (
             horizontalCollision &&
-            this.bridge$getBukkitEntity() instanceof Vehicle vehicle
+                this.bridge$getBukkitEntity() instanceof Vehicle vehicle
         ) {
             org.bukkit.block.Block block = ((WorldBridge) this.level())
                 .bridge$getWorld()
@@ -911,10 +911,10 @@ public abstract class EntityMixin
         }
         this.persist =
             !compound.contains("Bukkit.persist") ||
-            compound.getBoolean("Bukkit.persist");
+                compound.getBoolean("Bukkit.persist");
         this.visibleByDefault =
             !compound.contains("Bukkit.visibleByDefault") ||
-            compound.getBoolean("Bukkit.visibleByDefault");
+                compound.getBoolean("Bukkit.visibleByDefault");
         // CraftBukkit end
 
         // CraftBukkit start - Reset world
@@ -926,7 +926,7 @@ public abstract class EntityMixin
 
             if (
                 compound.contains("WorldUUIDMost") &&
-                compound.contains("WorldUUIDLeast")
+                    compound.contains("WorldUUIDLeast")
             ) {
                 UUID uid = new UUID(
                     compound.getLong("WorldUUIDMost"),
@@ -981,7 +981,7 @@ public abstract class EntityMixin
         Collection<ItemEntity> drops = entity.captureDrops();
         if (
             this instanceof LivingEntityBridge &&
-            ((LivingEntityBridge) this).bridge$isForceDrops()
+                ((LivingEntityBridge) this).bridge$isForceDrops()
         ) {
             drops = null;
         }
@@ -1071,8 +1071,8 @@ public abstract class EntityMixin
             Entity orig = craft == null ? null : craft.getHandle();
             if (
                 getBukkitEntity() instanceof Vehicle &&
-                ((EntityBridge) entity).bridge$getBukkitEntity() instanceof
-                    org.bukkit.entity.LivingEntity
+                    ((EntityBridge) entity).bridge$getBukkitEntity() instanceof
+                        org.bukkit.entity.LivingEntity
             ) {
                 VehicleEnterEvent event = new VehicleEnterEvent(
                     (Vehicle) getBukkitEntity(),
@@ -1112,8 +1112,8 @@ public abstract class EntityMixin
 
                 if (
                     !this.level().isClientSide &&
-                    entity instanceof Player &&
-                    !(this.getFirstPassenger() instanceof Player)
+                        entity instanceof Player &&
+                        !(this.getFirstPassenger() instanceof Player)
                 ) {
                     list.add(0, entity);
                 } else {
@@ -1147,8 +1147,8 @@ public abstract class EntityMixin
             Entity orig = craft == null ? null : craft.getHandle();
             if (
                 getBukkitEntity() instanceof Vehicle &&
-                ((EntityBridge) entity).bridge$getBukkitEntity() instanceof
-                    org.bukkit.entity.LivingEntity
+                    ((EntityBridge) entity).bridge$getBukkitEntity() instanceof
+                        org.bukkit.entity.LivingEntity
             ) {
                 VehicleExitEvent event = new VehicleExitEvent(
                     (Vehicle) getBukkitEntity(),
@@ -1227,8 +1227,8 @@ public abstract class EntityMixin
         // CraftBukkit start
         if (
             this.isValid() &&
-            this.isSwimming() != flag &&
-            (Object) this instanceof LivingEntity
+                this.isSwimming() != flag &&
+                (Object) this instanceof LivingEntity
         ) {
             if (
                 CraftEventFactory.callToggleSwimEvent(
@@ -1401,16 +1401,16 @@ public abstract class EntityMixin
             PortalInfo portalinfo =
                 bukkitPos == null
                     ? teleporter.getPortalInfo(
-                          (Entity) (Object) this,
-                          server,
-                          this::findDimensionEntryPoint
-                      )
+                    (Entity) (Object) this,
+                    server,
+                    this::findDimensionEntryPoint
+                )
                     : new PortalInfo(
-                          new Vec3(bukkitPos.x(), bukkitPos.y(), bukkitPos.z()),
-                          Vec3.ZERO,
-                          this.yRot,
-                          this.xRot
-                      );
+                    new Vec3(bukkitPos.x(), bukkitPos.y(), bukkitPos.z()),
+                    Vec3.ZERO,
+                    this.yRot,
+                    this.xRot
+                );
             if (portalinfo == null) {
                 return null;
             } else {
@@ -1453,7 +1453,7 @@ public abstract class EntityMixin
                             if (
                                 ((WorldBridge) world).bridge$getTypeKey() ==
                                     LevelStem.END &&
-                                Level.END != null /* fabric dimensions v1 */
+                                    Level.END != null /* fabric dimensions v1 */
                             ) {
                                 ArclightCaptures.captureEndPortalEntity(
                                     (Entity) (Object) this,
@@ -1503,7 +1503,7 @@ public abstract class EntityMixin
         }
         boolean flag =
             ((WorldBridge) this.level()).bridge$getTypeKey() == LevelStem.END &&
-            ((WorldBridge) world).bridge$getTypeKey() == LevelStem.OVERWORLD;
+                ((WorldBridge) world).bridge$getTypeKey() == LevelStem.OVERWORLD;
         boolean flag1 =
             ((WorldBridge) world).bridge$getTypeKey() == LevelStem.END;
         if (!flag && !flag1) {
@@ -1550,14 +1550,14 @@ public abstract class EntityMixin
                     );
 
                 return this.getExitPortal(
-                    world,
-                    blockpos1,
-                    flag2,
-                    worldborder,
-                    event.getSearchRadius(),
-                    event.getCanCreatePortal(),
-                    event.getCreationRadius()
-                )
+                        world,
+                        blockpos1,
+                        flag2,
+                        worldborder,
+                        event.getSearchRadius(),
+                        event.getCanCreatePortal(),
+                        event.getCreationRadius()
+                    )
                     .map(result -> {
                         BlockState blockstate = this.level().getBlockState(
                             this.portalEntrancePos
@@ -1582,7 +1582,7 @@ public abstract class EntityMixin
                                     pos -> {
                                         return (
                                             this.level().getBlockState(pos) ==
-                                            blockstate
+                                                blockstate
                                         );
                                     }
                                 );
@@ -1681,9 +1681,9 @@ public abstract class EntityMixin
         Bukkit.getPluginManager().callEvent(event);
         if (
             event.isCancelled() ||
-            event.getTo() == null ||
-            event.getTo().getWorld() == null ||
-            !entity.isAlive()
+                event.getTo() == null ||
+                event.getTo().getWorld() == null ||
+                !entity.isAlive()
         ) {
             return null;
         }

@@ -3,8 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.player;
 import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.PlayerInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -19,10 +17,12 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(Inventory.class)
 public abstract class InventoryMixin
-    implements Container, IInventoryBridge, PlayerInventoryBridge
-{
+    implements Container, IInventoryBridge, PlayerInventoryBridge {
 
     // @formatter:off
     @Shadow @Final public NonNullList<ItemStack> items;
@@ -115,7 +115,8 @@ public abstract class InventoryMixin
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {}
+    public void setOwner(InventoryHolder owner) {
+    }
 
     @Override
     public int getMaxStackSize() {
@@ -143,5 +144,6 @@ public abstract class InventoryMixin
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {}
+    public void setCurrentRecipe(Recipe<?> recipe) {
+    }
 }

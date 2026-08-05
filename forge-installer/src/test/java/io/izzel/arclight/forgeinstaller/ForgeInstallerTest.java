@@ -1,27 +1,39 @@
 package io.izzel.arclight.forgeinstaller;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ForgeInstallerTest {
 
     @TempDir
     Path directory;
 
+    private static InstallInfo installInfo() {
+        InstallInfo info = new InstallInfo();
+        info.installer = new InstallInfo.Installer();
+        info.installer.minecraft = "1.20.1";
+        info.installer.forge = "47.4.22";
+        info.installer.hash = "abc";
+        info.libraries = new LinkedHashMap<>();
+        info.runtimeLibraries = List.of();
+        return info;
+    }
+
     @Test
     void readsCompleteInstallerMetadata() {
         InstallInfo info = ForgeInstaller.readInstallInfo(
             new StringReader(
                 """
-                {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"libraries":{},"runtimeLibraries":[]}
-                """
+                    {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"libraries":{},"runtimeLibraries":[]}
+                    """
             )
         );
 
@@ -38,8 +50,8 @@ class ForgeInstallerTest {
                 ForgeInstaller.readInstallInfo(
                     new StringReader(
                         """
-                        {"installer":{"forge":"47.4.22","hash":"abc"},"libraries":{},"runtimeLibraries":[]}
-                        """
+                            {"installer":{"forge":"47.4.22","hash":"abc"},"libraries":{},"runtimeLibraries":[]}
+                            """
                     )
                 )
         );
@@ -51,8 +63,8 @@ class ForgeInstallerTest {
                 ForgeInstaller.readInstallInfo(
                     new StringReader(
                         """
-                        {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"runtimeLibraries":[]}
-                        """
+                            {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"runtimeLibraries":[]}
+                            """
                     )
                 )
         );
@@ -64,8 +76,8 @@ class ForgeInstallerTest {
                 ForgeInstaller.readInstallInfo(
                     new StringReader(
                         """
-                        {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"libraries":{}}
-                        """
+                            {"installer":{"minecraft":"1.20.1","forge":"47.4.22","hash":"abc"},"libraries":{}}
+                            """
                     )
                 )
         );
@@ -217,16 +229,5 @@ class ForgeInstallerTest {
                 "example.Main"
         );
         assertTrue(ForgeInstaller.isForgeInstallRequired(argsFile));
-    }
-
-    private static InstallInfo installInfo() {
-        InstallInfo info = new InstallInfo();
-        info.installer = new InstallInfo.Installer();
-        info.installer.minecraft = "1.20.1";
-        info.installer.forge = "47.4.22";
-        info.installer.hash = "abc";
-        info.libraries = new LinkedHashMap<>();
-        info.runtimeLibraries = List.of();
-        return info;
     }
 }

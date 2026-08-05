@@ -22,8 +22,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PressurePlateBlock.class)
 public abstract class PressurePlateBlockMixin
-    extends BasePressurePlateBlockMixin
-{
+    extends BasePressurePlateBlockMixin {
 
     // @formatter:off
     @Shadow @Final private PressurePlateBlock.Sensitivity sensitivity;

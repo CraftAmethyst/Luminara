@@ -1,6 +1,7 @@
 package io.izzel.arclight.forgeinstaller;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,13 +16,19 @@ import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class FileDownloaderTest {
 
     @TempDir
     Path directory;
+
+    private static String sha1(byte[] bytes) throws Exception {
+        return HexFormat.of().formatHex(
+            MessageDigest.getInstance("SHA-1").digest(bytes)
+        );
+    }
 
     @Test
     void configuresTimeoutsAndDisconnectsAfterRead() throws Exception {
@@ -168,12 +175,6 @@ class FileDownloaderTest {
         assertTrue(connection.disconnected);
     }
 
-    private static String sha1(byte[] bytes) throws Exception {
-        return HexFormat.of().formatHex(
-            MessageDigest.getInstance("SHA-1").digest(bytes)
-        );
-    }
-
     private static class FakeConnection extends HttpURLConnection {
 
         private final int status;
@@ -214,6 +215,7 @@ class FileDownloaderTest {
         }
 
         @Override
-        public void connect() {}
+        public void connect() {
+        }
     }
 }

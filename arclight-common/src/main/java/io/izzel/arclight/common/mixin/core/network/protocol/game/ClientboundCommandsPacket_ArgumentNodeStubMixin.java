@@ -29,7 +29,7 @@ public class ClientboundCommandsPacket_ArgumentNodeStubMixin {
     private static <
         A extends ArgumentType<?>,
         T extends ArgumentTypeInfo.Template<A>
-    > void arclight$wrapArgument(
+        > void arclight$wrapArgument(
         FriendlyByteBuf buf,
         ArgumentTypeInfo<A, T> type,
         ArgumentTypeInfo.Template<A> node,
@@ -39,15 +39,16 @@ public class ClientboundCommandsPacket_ArgumentNodeStubMixin {
         try {
             var spec = ArclightConfig.spec().getVelocity();
             velocityEnabled = spec != null && spec.isEnabled();
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
         if (!(SpigotConfig.bungee || velocityEnabled)) {
             return;
         }
         var key = ForgeRegistries.COMMAND_ARGUMENT_TYPES.getKey(type);
         if (
             key != null &&
-            (key.getNamespace().equals("minecraft") ||
-                key.getNamespace().equals("brigadier"))
+                (key.getNamespace().equals("minecraft") ||
+                    key.getNamespace().equals("brigadier"))
         ) {
             return;
         }

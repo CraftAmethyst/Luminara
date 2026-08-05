@@ -1,9 +1,10 @@
 package io.papermc.paper.util;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
 
 public class StackWalkerUtil {
 
@@ -44,7 +45,8 @@ public class StackWalkerUtil {
             if (plugin instanceof JavaPlugin javaPlugin) {
                 return Optional.of(javaPlugin);
             }
-        } catch (ReflectiveOperationException ignored) {}
+        } catch (ReflectiveOperationException ignored) {
+        }
         return Optional.empty();
     }
 }

@@ -1,41 +1,34 @@
 package io.izzel.arclight.i18n.conf;
 
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class CompatSpec {
 
     @Setting("preload-bungee-chat-classes")
     private final boolean preloadBungeeChatClasses = true;
-
+    @Setting("enable-bukkit-reload-command")
+    private final boolean enableBukkitReloadCommand = true;
     @Setting("material-property-overrides")
     private Map<String, MaterialPropertySpec> materials = Map.of();
-
     @Setting("entity-property-overrides")
     private Map<String, EntityPropertySpec> entities = Map.of();
-
     @Setting("symlink-world")
     private boolean symlinkWorld;
-
     @Setting("extra-logic-worlds")
     private List<String> extraLogicWorlds = List.of();
-
     @Setting("permission-forwarding")
     private PermissionForwarding permissionForwarding =
         PermissionForwarding.DISABLED;
-
     @Setting("valid-username-regex")
     private String validUsernameRegex = "";
-
     @Setting("lenient-item-tag-match")
     private boolean lenientItemTagMatch;
-
-    @Setting("enable-bukkit-reload-command")
-    private final boolean enableBukkitReloadCommand = true;
 
     public Map<String, MaterialPropertySpec> getMaterials() {
         return materials == null ? Map.of() : materials;

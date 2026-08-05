@@ -11,8 +11,6 @@ import io.izzel.arclight.common.bridge.core.util.FoodStatsBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.LivingEntityMixin;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -76,11 +74,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.List;
+import java.util.Optional;
+
 @Mixin(net.minecraft.world.entity.player.Player.class)
 public abstract class PlayerMixin
     extends LivingEntityMixin
-    implements PlayerEntityBridge, IForgePlayer
-{
+    implements PlayerEntityBridge, IForgePlayer {
 
     @Shadow
     public int experienceLevel;
@@ -253,9 +253,9 @@ public abstract class PlayerMixin
                 player.getInventory().setItemInHand(drop.getItemStack());
             } else if (
                 traceItem &&
-                cur.isSimilar(drop.getItemStack()) &&
-                cur.getAmount() < cur.getMaxStackSize() &&
-                drop.getItemStack().getAmount() == 1
+                    cur.isSimilar(drop.getItemStack()) &&
+                    cur.getAmount() < cur.getMaxStackSize() &&
+                    drop.getItemStack().getAmount() == 1
             ) {
                 // Only one item is dropped
                 cur.setAmount(cur.getAmount() + 1);
@@ -360,9 +360,9 @@ public abstract class PlayerMixin
         ) return;
         if (
             entity.isAttackable() &&
-            !entity.skipAttackInteraction(
-                (net.minecraft.world.entity.player.Player) (Object) this
-            )
+                !entity.skipAttackInteraction(
+                    (net.minecraft.world.entity.player.Player) (Object) this
+                )
         ) {
             float f = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
             float f2;
@@ -406,13 +406,13 @@ public abstract class PlayerMixin
                 }
                 boolean flag3 =
                     flag &&
-                    this.fallDistance > 0.0f &&
-                    !this.onGround &&
-                    !this.onClimbable() &&
-                    !this.isInWater() &&
-                    !this.hasEffect(MobEffects.BLINDNESS) &&
-                    !this.isPassenger() &&
-                    entity instanceof LivingEntity;
+                        this.fallDistance > 0.0f &&
+                        !this.onGround &&
+                        !this.onClimbable() &&
+                        !this.isInWater() &&
+                        !this.hasEffect(MobEffects.BLINDNESS) &&
+                        !this.isPassenger() &&
+                        entity instanceof LivingEntity;
                 flag3 = flag3 && !this.isSprinting();
                 net.minecraftforge.event.entity.player.CriticalHitEvent hitResult =
                     net.minecraftforge.common.ForgeHooks.getCriticalHit(
@@ -430,10 +430,10 @@ public abstract class PlayerMixin
                 final double d0 = this.walkDist - this.walkDistO;
                 if (
                     flag &&
-                    !flag3 &&
-                    !flag2 &&
-                    this.onGround &&
-                    d0 < this.getSpeed()
+                        !flag3 &&
+                        !flag2 &&
+                        this.onGround &&
+                        d0 < this.getSpeed()
                 ) {
                     final ItemStack itemstack = this.getItemInHand(
                         InteractionHand.MAIN_HAND
@@ -502,10 +502,10 @@ public abstract class PlayerMixin
                     if (flag4) {
                         final float f5 =
                             1.0f +
-                            EnchantmentHelper.getSweepingDamageRatio(
-                                (net.minecraft.world.entity.player.Player) (Object) this
-                            ) *
-                                f;
+                                EnchantmentHelper.getSweepingDamageRatio(
+                                    (net.minecraft.world.entity.player.Player) (Object) this
+                                ) *
+                                    f;
                         final List<LivingEntity> list =
                             this.level().getEntitiesOfClass(
                                 LivingEntity.class,
@@ -522,20 +522,20 @@ public abstract class PlayerMixin
                         for (final LivingEntity entityliving : list) {
                             if (
                                 entityliving != (Object) this &&
-                                entityliving != entity &&
-                                !this.isAlliedTo(entityliving) &&
-                                (!(entityliving instanceof ArmorStand) ||
-                                    !((ArmorStand) entityliving).isMarker()) &&
-                                this.distanceToSqr(entityliving) <
-                                    entityReachSq &&
-                                entityliving.hurt(
-                                    (
-                                        (DamageSourceBridge) this.damageSources().playerAttack(
-                                            (net.minecraft.world.entity.player.Player) (Object) this
-                                        )
-                                    ).bridge$sweep(),
-                                    f5
-                                )
+                                    entityliving != entity &&
+                                    !this.isAlliedTo(entityliving) &&
+                                    (!(entityliving instanceof ArmorStand) ||
+                                        !((ArmorStand) entityliving).isMarker()) &&
+                                    this.distanceToSqr(entityliving) <
+                                        entityReachSq &&
+                                    entityliving.hurt(
+                                        (
+                                            (DamageSourceBridge) this.damageSources().playerAttack(
+                                                (net.minecraft.world.entity.player.Player) (Object) this
+                                            )
+                                        ).bridge$sweep(),
+                                        f5
+                                    )
                             ) {
                                 entityliving.knockback(
                                     0.4f,
@@ -637,8 +637,8 @@ public abstract class PlayerMixin
                     }
                     if (
                         !this.level().isClientSide &&
-                        !itemstack2.isEmpty() &&
-                        object instanceof LivingEntity
+                            !itemstack2.isEmpty() &&
+                            object instanceof LivingEntity
                     ) {
                         ItemStack copy = itemstack2.copy();
                         itemstack2.hurtEnemy(
@@ -731,7 +731,7 @@ public abstract class PlayerMixin
     public Either<
         net.minecraft.world.entity.player.Player.BedSleepingProblem,
         Unit
-    > startSleepInBed(BlockPos at, boolean force) {
+        > startSleepInBed(BlockPos at, boolean force) {
         this.arclight$forceSleep = force;
         try {
             return this.startSleepInBed(at);
@@ -744,7 +744,7 @@ public abstract class PlayerMixin
     public Either<
         net.minecraft.world.entity.player.Player.BedSleepingProblem,
         Unit
-    > bridge$trySleep(BlockPos at, boolean force) {
+        > bridge$trySleep(BlockPos at, boolean force) {
         return startSleepInBed(at, force);
     }
 
@@ -817,10 +817,10 @@ public abstract class PlayerMixin
     ) {
         if (
             playerEntity.getSharedFlag(flag) != set &&
-            !CraftEventFactory.callToggleGlideEvent(
-                (net.minecraft.world.entity.player.Player) (Object) this,
-                set
-            ).isCancelled()
+                !CraftEventFactory.callToggleGlideEvent(
+                    (net.minecraft.world.entity.player.Player) (Object) this,
+                    set
+                ).isCancelled()
         ) {
             playerEntity.setSharedFlag(flag, set);
         }
@@ -977,25 +977,25 @@ public abstract class PlayerMixin
     private boolean respawnEntityOnShoulder(final CompoundTag nbttagcompound) {
         return (
             this.level().isClientSide ||
-            nbttagcompound.isEmpty() ||
-            EntityType.create(nbttagcompound, this.level())
-                .map(entity -> {
-                    if (entity instanceof TamableAnimal) {
-                        ((TamableAnimal) entity).setOwnerUUID(this.uuid);
-                    }
-                    entity.setPos(
-                        this.getX(),
-                        this.getY() + 0.699999988079071,
-                        this.getZ()
-                    );
-                    return (
-                        (ServerWorldBridge) this.level()
-                    ).bridge$addEntitySerialized(
-                        entity,
-                        CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY
-                    );
-                })
-                .orElse(true)
+                nbttagcompound.isEmpty() ||
+                EntityType.create(nbttagcompound, this.level())
+                    .map(entity -> {
+                        if (entity instanceof TamableAnimal) {
+                            ((TamableAnimal) entity).setOwnerUUID(this.uuid);
+                        }
+                        entity.setPos(
+                            this.getX(),
+                            this.getY() + 0.699999988079071,
+                            this.getZ()
+                        );
+                        return (
+                            (ServerWorldBridge) this.level()
+                        ).bridge$addEntitySerialized(
+                            entity,
+                            CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY
+                        );
+                    })
+                    .orElse(true)
         );
     }
 

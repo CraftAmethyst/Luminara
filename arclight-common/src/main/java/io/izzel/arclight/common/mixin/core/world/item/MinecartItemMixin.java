@@ -32,10 +32,10 @@ public class MinecartItemMixin {
     ) {
         if (
             DistValidate.isValid(world) &&
-            CraftEventFactory.callEntityPlaceEvent(
-                context,
-                entityIn
-            ).isCancelled()
+                CraftEventFactory.callEntityPlaceEvent(
+                    context,
+                    entityIn
+                ).isCancelled()
         ) {
             cir.setReturnValue(InteractionResult.FAIL);
             return false;

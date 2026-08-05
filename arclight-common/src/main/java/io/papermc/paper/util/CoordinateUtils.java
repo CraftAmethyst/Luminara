@@ -47,7 +47,7 @@ public final class CoordinateUtils {
     public static long getChunkKey(final Entity entity) {
         return (
             ((Mth.lfloor(entity.getZ()) >> 4) << 32) |
-            ((Mth.lfloor(entity.getX()) >> 4) & 0xFFFFFFFFL)
+                ((Mth.lfloor(entity.getX()) >> 4) & 0xFFFFFFFFL)
         );
     }
 
@@ -82,24 +82,24 @@ public final class CoordinateUtils {
     ) {
         return (
             ((x & SECTION_X_MASK) << SECTION_X_SHIFT) |
-            ((y & SECTION_Y_MASK) << SECTION_Y_SHIFT) |
-            ((z & SECTION_Z_MASK) << SECTION_Z_SHIFT)
+                ((y & SECTION_Y_MASK) << SECTION_Y_SHIFT) |
+                ((z & SECTION_Z_MASK) << SECTION_Z_SHIFT)
         );
     }
 
     public static long getChunkSectionKey(final SectionPos pos) {
         return (
             ((pos.getX() & SECTION_X_MASK) << SECTION_X_SHIFT) |
-            ((pos.getY() & SECTION_Y_MASK) << SECTION_Y_SHIFT) |
-            ((pos.getZ() & SECTION_Z_MASK) << SECTION_Z_SHIFT)
+                ((pos.getY() & SECTION_Y_MASK) << SECTION_Y_SHIFT) |
+                ((pos.getZ() & SECTION_Z_MASK) << SECTION_Z_SHIFT)
         );
     }
 
     public static long getChunkSectionKey(final ChunkPos pos, final int y) {
         return (
             ((pos.x & SECTION_X_MASK) << SECTION_X_SHIFT) |
-            ((y & SECTION_Y_MASK) << SECTION_Y_SHIFT) |
-            ((pos.z & SECTION_Z_MASK) << SECTION_Z_SHIFT)
+                ((y & SECTION_Y_MASK) << SECTION_Y_SHIFT) |
+                ((pos.z & SECTION_Z_MASK) << SECTION_Z_SHIFT)
         );
     }
 
@@ -107,10 +107,10 @@ public final class CoordinateUtils {
         return (
             (((long) pos.getX() << (SECTION_X_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
                 (SECTION_X_MASK << SECTION_X_SHIFT)) |
-            ((pos.getY() >> SECTION_TO_BLOCK_SHIFT) &
-                (SECTION_Y_MASK << SECTION_Y_SHIFT)) |
-            (((long) pos.getZ() << (SECTION_Z_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
-                (SECTION_Z_MASK << SECTION_Z_SHIFT))
+                ((pos.getY() >> SECTION_TO_BLOCK_SHIFT) &
+                    (SECTION_Y_MASK << SECTION_Y_SHIFT)) |
+                (((long) pos.getZ() << (SECTION_Z_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
+                    (SECTION_Z_MASK << SECTION_Z_SHIFT))
         );
     }
 
@@ -119,11 +119,11 @@ public final class CoordinateUtils {
             ((Mth.lfloor(entity.getX()) <<
                 (SECTION_X_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
                 (SECTION_X_MASK << SECTION_X_SHIFT)) |
-            ((Mth.lfloor(entity.getY()) >> SECTION_TO_BLOCK_SHIFT) &
-                (SECTION_Y_MASK << SECTION_Y_SHIFT)) |
-            ((Mth.lfloor(entity.getZ()) <<
-                (SECTION_Z_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
-                (SECTION_Z_MASK << SECTION_Z_SHIFT))
+                ((Mth.lfloor(entity.getY()) >> SECTION_TO_BLOCK_SHIFT) &
+                    (SECTION_Y_MASK << SECTION_Y_SHIFT)) |
+                ((Mth.lfloor(entity.getZ()) <<
+                    (SECTION_Z_SHIFT - SECTION_TO_BLOCK_SHIFT)) &
+                    (SECTION_Z_MASK << SECTION_Z_SHIFT))
         );
     }
 
@@ -154,24 +154,24 @@ public final class CoordinateUtils {
     public static long getBlockKey(final int x, final int y, final int z) {
         return (
             ((long) x & 0x7FFFFFF) |
-            (((long) z & 0x7FFFFFF) << 27) |
-            ((long) y << 54)
+                (((long) z & 0x7FFFFFF) << 27) |
+                ((long) y << 54)
         );
     }
 
     public static long getBlockKey(final BlockPos pos) {
         return (
             ((long) pos.getX() & 0x7FFFFFF) |
-            (((long) pos.getZ() & 0x7FFFFFF) << 27) |
-            ((long) pos.getY() << 54)
+                (((long) pos.getZ() & 0x7FFFFFF) << 27) |
+                ((long) pos.getY() << 54)
         );
     }
 
     public static long getBlockKey(final Entity entity) {
         return (
             ((long) entity.getX() & 0x7FFFFFF) |
-            (((long) entity.getZ() & 0x7FFFFFF) << 27) |
-            ((long) entity.getY() << 54)
+                (((long) entity.getZ() & 0x7FFFFFF) << 27) |
+                ((long) entity.getY() << 54)
         );
     }
 }

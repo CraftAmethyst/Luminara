@@ -3,8 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.mixin.Eject;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Containers;
@@ -32,10 +30,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(BrewingStandBlockEntity.class)
 public abstract class BrewingStandBlockEntityMixin
-    extends LockableBlockEntityMixin
-{
+    extends LockableBlockEntityMixin {
 
     public List<HumanEntity> transaction = new ArrayList<>();
 

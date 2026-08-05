@@ -1,19 +1,5 @@
 package io.izzel.arclight.gradle.tasks;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
@@ -25,7 +11,77 @@ import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 public abstract class SmokeServerTask extends DefaultTask {
+
+    private static String javaExecutable() {
+        return Path.of(
+            System.getProperty("java.home"),
+            "bin",
+            isWindows() ? "java.exe" : "java"
+        ).toString();
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name")
+            .toLowerCase(java.util.Locale.ROOT)
+            .contains("win");
+    }
+
+    private static void cleanFixture(Path directory) throws IOException {
+        if (Files.exists(directory)) {
+            try (var paths = Files.list(directory)) {
+                paths
+                    .filter(
+                        path ->
+                            !path
+                                .getFileName()
+                                .toString()
+                                .equals("libraries") &&
+                                !path
+                                    .getFileName()
+                                    .toString()
+                                    .equals("forge-installer.jar")
+                    )
+                    .forEach(SmokeServerTask::deleteRecursively);
+            }
+        }
+        Files.createDirectories(directory);
+    }
+
+    private static void deleteRecursively(Path path) {
+        try {
+            if (Files.isDirectory(path)) {
+                try (var nested = Files.walk(path)) {
+                    nested
+                        .sorted(java.util.Comparator.reverseOrder())
+                        .forEach(SmokeServerTask::deleteSingle);
+                }
+            } else {
+                Files.deleteIfExists(path);
+            }
+        } catch (IOException exception) {
+            throw new java.io.UncheckedIOException(exception);
+        }
+    }
+
+    private static void deleteSingle(Path path) {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException exception) {
+            throw new java.io.UncheckedIOException(exception);
+        }
+    }
 
     @InputFile
     public abstract RegularFileProperty getDistributionJar();
@@ -118,8 +174,8 @@ public abstract class SmokeServerTask extends DefaultTask {
                     missing.removeIf(line::contains);
                     if (
                         !commandsSent &&
-                        line.contains("Done (") &&
-                        line.contains("For help, type \"help\"")
+                            line.contains("Done (") &&
+                            line.contains("For help, type \"help\"")
                     ) {
                         input.write("luminara info\n");
                         input.write("luminara-smoke\n");
@@ -139,8 +195,8 @@ public abstract class SmokeServerTask extends DefaultTask {
             }
             if (
                 missing.isEmpty() &&
-                process.waitFor(30, TimeUnit.SECONDS) &&
-                process.exitValue() == 0
+                    process.waitFor(30, TimeUnit.SECONDS) &&
+                    process.exitValue() == 0
             ) return;
         } finally {
             if (process.isAlive()) {
@@ -156,64 +212,5 @@ public abstract class SmokeServerTask extends DefaultTask {
                 ". Fixture preserved at " +
                 fixture
         );
-    }
-
-    private static String javaExecutable() {
-        return Path.of(
-            System.getProperty("java.home"),
-            "bin",
-            isWindows() ? "java.exe" : "java"
-        ).toString();
-    }
-
-    private static boolean isWindows() {
-        return System.getProperty("os.name")
-            .toLowerCase(java.util.Locale.ROOT)
-            .contains("win");
-    }
-
-    private static void cleanFixture(Path directory) throws IOException {
-        if (Files.exists(directory)) {
-            try (var paths = Files.list(directory)) {
-                paths
-                    .filter(
-                        path ->
-                            !path
-                                .getFileName()
-                                .toString()
-                                .equals("libraries") &&
-                            !path
-                                .getFileName()
-                                .toString()
-                                .equals("forge-installer.jar")
-                    )
-                    .forEach(SmokeServerTask::deleteRecursively);
-            }
-        }
-        Files.createDirectories(directory);
-    }
-
-    private static void deleteRecursively(Path path) {
-        try {
-            if (Files.isDirectory(path)) {
-                try (var nested = Files.walk(path)) {
-                    nested
-                        .sorted(java.util.Comparator.reverseOrder())
-                        .forEach(SmokeServerTask::deleteSingle);
-                }
-            } else {
-                Files.deleteIfExists(path);
-            }
-        } catch (IOException exception) {
-            throw new java.io.UncheckedIOException(exception);
-        }
-    }
-
-    private static void deleteSingle(Path path) {
-        try {
-            Files.deleteIfExists(path);
-        } catch (IOException exception) {
-            throw new java.io.UncheckedIOException(exception);
-        }
     }
 }

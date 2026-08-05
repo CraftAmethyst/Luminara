@@ -2,13 +2,14 @@ package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.common.mod.ArclightMod;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.world.entity.monster.SpellcasterIllager;
 import org.bukkit.craftbukkit.v.entity.CraftSpellcaster;
 import org.bukkit.entity.Spellcaster;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(value = CraftSpellcaster.class, remap = false)
 public class CraftSpellcasterMixin {

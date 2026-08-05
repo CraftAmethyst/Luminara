@@ -1,9 +1,6 @@
 package io.papermc.paper.chunk.system;
 
 import ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ServerLevel;
@@ -13,6 +10,10 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.bukkit.Bukkit;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 public final class ChunkSystem {
 
@@ -67,7 +68,8 @@ public final class ChunkSystem {
                 ChunkAccess chunk = null;
                 try {
                     chunk = level.getChunk(chunkX, chunkZ);
-                } catch (Throwable ignored) {}
+                } catch (Throwable ignored) {
+                }
                 onComplete.accept(chunk);
             },
             priority
@@ -112,7 +114,8 @@ public final class ChunkSystem {
                 LevelChunk chunk = null;
                 try {
                     chunk = level.getChunk(chunkX, chunkZ);
-                } catch (Throwable ignored) {}
+                } catch (Throwable ignored) {
+                }
                 onComplete.accept(chunk);
             },
             priority
@@ -146,47 +149,56 @@ public final class ChunkSystem {
     public static void onEntityPreAdd(
         final ServerLevel level,
         final Entity entity
-    ) {}
+    ) {
+    }
 
     public static void onChunkHolderCreate(
         final ServerLevel level,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static void onChunkHolderDelete(
         final ServerLevel level,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static void onChunkBorder(
         final LevelChunk chunk,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static void onChunkNotBorder(
         final LevelChunk chunk,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static void onChunkTicking(
         final LevelChunk chunk,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static void onChunkNotTicking(
         final LevelChunk chunk,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static void onChunkEntityTicking(
         final LevelChunk chunk,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static void onChunkNotEntityTicking(
         final LevelChunk chunk,
         final ChunkHolder holder
-    ) {}
+    ) {
+    }
 
     public static ChunkHolder getUnloadingChunkHolder(
         final ServerLevel level,

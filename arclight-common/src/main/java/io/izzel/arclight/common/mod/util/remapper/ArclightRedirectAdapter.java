@@ -10,6 +10,16 @@ import io.izzel.arclight.common.util.ArrayUtil;
 import io.izzel.tools.func.Func4;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.*;
+import org.spongepowered.asm.util.Bytecode;
+
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
@@ -21,15 +31,6 @@ import java.security.ProtectionDomain;
 import java.security.SecureClassLoader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
-import org.spongepowered.asm.util.Bytecode;
 
 public class ArclightRedirectAdapter implements PluginTransformer {
 
@@ -42,15 +43,15 @@ public class ArclightRedirectAdapter implements PluginTransformer {
     private static final Multimap<
         String,
         Product2<String, MethodInsnNode>
-    > METHOD_MODIFY = HashMultimap.create();
+        > METHOD_MODIFY = HashMultimap.create();
     private static final Multimap<
         String,
         Product2<String, MethodInsnNode>
-    > METHOD_REDIRECT = HashMultimap.create();
+        > METHOD_REDIRECT = HashMultimap.create();
     private static final Map<
         String,
         Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]>
-    > METHOD_TO_HANDLER = new ConcurrentHashMap<>();
+        > METHOD_TO_HANDLER = new ConcurrentHashMap<>();
 
     static {
         redirect(Field.class, "getName", "fieldGetName");
@@ -360,7 +361,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
         for (MethodNode method : node.methods) {
             for (
                 ListIterator<AbstractInsnNode> iterator =
-                    method.instructions.iterator();
+                method.instructions.iterator();
                 iterator.hasNext();
 
             ) {
@@ -368,7 +369,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                 int opcode = instruction.getOpcode();
                 if (
                     opcode >= Opcodes.INVOKEVIRTUAL &&
-                    opcode <= Opcodes.INVOKEINTERFACE
+                        opcode <= Opcodes.INVOKEINTERFACE
                 ) {
                     if (iterator.nextIndex() < method.instructions.size() - 1) {
                         break;
@@ -377,7 +378,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                     String key = insnNode.name + insnNode.desc;
                     if (
                         METHOD_MODIFY.containsKey(key) ||
-                        METHOD_REDIRECT.containsKey(key)
+                            METHOD_REDIRECT.containsKey(key)
                     ) {
                         try {
                             Class<?> cl = Class.forName(
@@ -390,7 +391,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                                 new Class<?>[argumentTypes.length];
                             for (
                                 int i = 0,
-                                    argumentTypesLength = argumentTypes.length;
+                                argumentTypesLength = argumentTypes.length;
                                 i < argumentTypesLength;
                                 i++
                             ) {
@@ -411,7 +412,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                                     Object,
                                     Object[],
                                     Object[]
-                                > bridge = METHOD_TO_HANDLER.get(
+                                    > bridge = METHOD_TO_HANDLER.get(
                                     methodToString(target)
                                 );
                                 if (bridge != null) {
@@ -452,9 +453,9 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                 if (insnNode instanceof MethodInsnNode from) {
                     if (
                         from.getOpcode() == Opcodes.INVOKESPECIAL &&
-                        Objects.equals(from.owner, classNode.superName) &&
-                        Objects.equals(from.name, methodNode.name) &&
-                        Objects.equals(from.desc, methodNode.desc)
+                            Objects.equals(from.owner, classNode.superName) &&
+                            Objects.equals(from.name, methodNode.name) &&
+                            Objects.equals(from.desc, methodNode.desc)
                     ) {
                         continue;
                     }
@@ -531,7 +532,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
         for (Product2<
             String,
             MethodInsnNode
-        > methodRedirect : methodRedirectCol) {
+            > methodRedirect : methodRedirectCol) {
             if (isSuperType(node.owner, methodRedirect._1)) {
                 MethodInsnNode handlerNode;
                 if (REPLACED_NAME.equals(methodRedirect._2.owner)) {
@@ -551,7 +552,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
     private static boolean isSuperType(String sub, String sup) {
         return (
             sub.equals(sup) ||
-            GlobalClassRepo.inheritanceProvider().getAll(sub).contains(sup)
+                GlobalClassRepo.inheritanceProvider().getAll(sub).contains(sup)
         );
     }
 
@@ -785,9 +786,9 @@ public class ArclightRedirectAdapter implements PluginTransformer {
     private static String methodToString(Method method) {
         return (
             Type.getInternalName(method.getDeclaringClass()) +
-            "/" +
-            method.getName() +
-            Type.getMethodDescriptor(method)
+                "/" +
+                method.getName() +
+                Type.getMethodDescriptor(method)
         );
     }
 
@@ -836,8 +837,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
 
     private static class ModifyHandler
         implements
-            Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]>
-    {
+        Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
 
         private final String handlerName;
         private final Class<?>[] handlerArgs;
@@ -861,29 +861,29 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                 if (method.getParameterCount() > 0) {
                     if (
                         handleMethod.getReturnType().isArray() &&
-                        !Modifier.isStatic(method.getModifiers())
+                            !Modifier.isStatic(method.getModifiers())
                     ) {
                         Object[] invoke = (Object[]) handleMethod.invoke(
                             null,
                             ArrayUtil.prepend(param, src)
                         );
-                        return new Object[] {
+                        return new Object[]{
                             method,
                             invoke[0],
                             Arrays.copyOfRange(invoke, 1, invoke.length),
                         };
                     } else {
-                        return new Object[] {
+                        return new Object[]{
                             method,
                             src,
                             handleMethod.invoke(null, param),
                         };
                     }
                 } else {
-                    return new Object[] {
+                    return new Object[]{
                         handleMethod,
                         null,
-                        new Object[] { method.invoke(src, param) },
+                        new Object[]{method.invoke(src, param)},
                     };
                 }
             } catch (Exception e) {
@@ -895,8 +895,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
 
     private static class RedirectHandler
         implements
-            Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]>
-    {
+        Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
 
         private final String handlerName;
         private final Class<?>[] handlerArgs;
@@ -917,7 +916,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                 Method redirectMethod = remapper
                     .getGeneratedHandlerClass()
                     .getMethod(handlerName, handlerArgs);
-                return new Object[] {
+                return new Object[]{
                     redirectMethod,
                     null,
                     Modifier.isStatic(method.getModifiers())
@@ -933,8 +932,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
 
     private static class BridgeHandler
         implements
-            Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]>
-    {
+        Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
 
         private final Func4<
             ClassLoaderRemapper,
@@ -942,7 +940,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
             Object,
             Object[],
             Object[]
-        > bridge;
+            > bridge;
         private final Method targetMethod;
 
         private BridgeHandler(
@@ -952,7 +950,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                 Object,
                 Object[],
                 Object[]
-            > bridge,
+                > bridge,
             Method targetMethod
         ) {
             this.bridge = bridge;
@@ -976,7 +974,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                     null,
                     param
                 );
-                return new Object[] { method, src, ret[2] };
+                return new Object[]{method, src, ret[2]};
             } else {
                 Object[] ret = bridge.apply(
                     remapper,
@@ -984,7 +982,7 @@ public class ArclightRedirectAdapter implements PluginTransformer {
                     param[0],
                     Arrays.copyOfRange(param, 1, param.length)
                 );
-                return new Object[] {
+                return new Object[]{
                     method,
                     src,
                     ArrayUtil.prepend((Object[]) ret[2], ret[1]),

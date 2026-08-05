@@ -7,16 +7,17 @@ import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.mod.util.remapper.patcher.ArclightPluginPatcher;
 import io.izzel.arclight.common.mod.util.remapper.resource.RemapSourceHandler;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.function.Function;
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.JarRemapper;
 import net.md_5.specialsource.provider.ClassLoaderProvider;
 import net.md_5.specialsource.provider.JointProvider;
 import org.apache.commons.io.FileUtils;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
 public class ArclightRemapper {
@@ -38,13 +39,14 @@ public class ArclightRemapper {
                 }
                 try {
                     FileUtils.forceDelete(DUMP);
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                }
             } else {
                 DUMP = null;
             }
             SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName(
-                "io.izzel.arclight.boot.asm.SwitchTableFixer"
-            )
+                    "io.izzel.arclight.boot.asm.SwitchTableFixer"
+                )
                 .getField("INSTANCE")
                 .get(null);
         } catch (Exception e) {

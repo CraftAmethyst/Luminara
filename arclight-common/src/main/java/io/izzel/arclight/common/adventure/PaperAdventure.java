@@ -1,8 +1,5 @@
 package io.izzel.arclight.common.adventure;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
@@ -14,6 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 // Adventure integration for Luminara
 public final class PaperAdventure {

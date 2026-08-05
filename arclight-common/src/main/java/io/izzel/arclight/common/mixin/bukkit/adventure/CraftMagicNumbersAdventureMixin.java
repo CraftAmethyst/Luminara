@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.bukkit.adventure;
 
 import io.izzel.arclight.common.adventure.PaperAdventure;
-import java.io.IOException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -15,6 +14,8 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+
+import java.io.IOException;
 
 @Mixin(value = CraftMagicNumbers.class, remap = false)
 public class CraftMagicNumbersAdventureMixin {

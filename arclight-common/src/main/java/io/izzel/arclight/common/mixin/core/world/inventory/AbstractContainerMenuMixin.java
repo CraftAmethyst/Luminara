@@ -1,15 +1,9 @@
 package io.izzel.arclight.common.mixin.core.world.inventory;
 
-import static net.minecraft.world.inventory.AbstractContainerMenu.getQuickCraftPlaceCount;
-
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.ContainerBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.SlotBridge;
 import io.izzel.arclight.common.mod.server.ArclightContainer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -34,6 +28,13 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static net.minecraft.world.inventory.AbstractContainerMenu.getQuickCraftPlaceCount;
 
 @Mixin(AbstractContainerMenu.class)
 public abstract class AbstractContainerMenuMixin implements ContainerBridge {
@@ -226,7 +227,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
             this.quickcraftStatus = getQuickcraftHeader(dragType);
             if (
                 (j1 != 1 || this.quickcraftStatus != 2) &&
-                j1 != this.quickcraftStatus
+                    j1 != this.quickcraftStatus
             ) {
                 this.resetQuickCraft();
             } else if (this.getCarried().isEmpty()) {
@@ -244,10 +245,10 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 ItemStack itemstack12 = this.getCarried();
                 if (
                     canItemQuickReplace(slot7, itemstack12, true) &&
-                    slot7.mayPlace(itemstack12) &&
-                    (this.quickcraftType == 2 ||
-                        itemstack12.getCount() > this.quickcraftSlots.size()) &&
-                    this.canDragTo(slot7)
+                        slot7.mayPlace(itemstack12) &&
+                        (this.quickcraftType == 2 ||
+                            itemstack12.getCount() > this.quickcraftSlots.size()) &&
+                        this.canDragTo(slot7)
                 ) {
                     this.quickcraftSlots.add(slot7);
                 }
@@ -278,12 +279,12 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                         ItemStack itemstack13 = this.getCarried();
                         if (
                             slot8 != null &&
-                            canItemQuickReplace(slot8, itemstack13, true) &&
-                            slot8.mayPlace(itemstack13) &&
-                            (this.quickcraftType == 2 ||
-                                itemstack13.getCount() >=
-                                    this.quickcraftSlots.size()) &&
-                            this.canDragTo(slot8)
+                                canItemQuickReplace(slot8, itemstack13, true) &&
+                                slot8.mayPlace(itemstack13) &&
+                                (this.quickcraftType == 2 ||
+                                    itemstack13.getCount() >=
+                                        this.quickcraftSlots.size()) &&
+                                this.canDragTo(slot8)
                         ) {
                             int j3 = slot8.hasItem()
                                 ? slot8.getItem().getCount()
@@ -319,7 +320,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                     for (Map.Entry<
                         Integer,
                         ItemStack
-                    > ditem : draggedSlots.entrySet()) {
+                        > ditem : draggedSlots.entrySet()) {
                         eventmap.put(
                             ditem.getKey(),
                             CraftItemStack.asBukkitCopy(ditem.getValue())
@@ -343,7 +344,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                         for (Map.Entry<
                             Integer,
                             ItemStack
-                        > dslot : draggedSlots.entrySet()) {
+                            > dslot : draggedSlots.entrySet()) {
                             view.setItem(
                                 dslot.getKey(),
                                 CraftItemStack.asBukkitCopy(dslot.getValue())
@@ -371,7 +372,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
         } else if (
             (clickType == ClickType.PICKUP ||
                 clickType == ClickType.QUICK_MOVE) &&
-            (dragType == 0 || dragType == 1)
+                (dragType == 0 || dragType == 1)
         ) {
             ClickAction clickaction =
                 dragType == 0 ? ClickAction.PRIMARY : ClickAction.SECONDARY;
@@ -398,9 +399,10 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 for (
                     ItemStack itemstack9 = this.quickMoveStack(player, slotId);
                     !itemstack9.isEmpty() &&
-                    ItemStack.isSameItem(slot6.getItem(), itemstack9);
+                        ItemStack.isSameItem(slot6.getItem(), itemstack9);
                     itemstack9 = this.quickMoveStack(player, slotId)
-                ) {}
+                ) {
+                }
             } else {
                 if (slotId < 0) {
                     return;
@@ -422,14 +424,14 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                         itemstack10,
                         itemstack11
                     ) &&
-                    !ForgeHooks.onItemStackedOn(
-                        itemstack10,
-                        itemstack11,
-                        slot7,
-                        clickaction,
-                        player,
-                        this.createCarriedSlotAccess()
-                    )
+                        !ForgeHooks.onItemStackedOn(
+                            itemstack10,
+                            itemstack11,
+                            slot7,
+                            clickaction,
+                            player,
+                            this.createCarriedSlotAccess()
+                        )
                 ) {
                     if (itemstack10.isEmpty()) {
                         if (!itemstack11.isEmpty()) {
@@ -470,7 +472,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                                 );
                             } else if (
                                 itemstack11.getCount() <=
-                                slot7.getMaxStackSize(itemstack11)
+                                    slot7.getMaxStackSize(itemstack11)
                             ) {
                                 this.setCarried(itemstack10);
                                 slot7.setByPlayer(itemstack11);
@@ -499,7 +501,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
 
                 if (
                     player instanceof ServerPlayer &&
-                    slot7.getMaxStackSize() != 64
+                        slot7.getMaxStackSize() != 64
                 ) {
                     ((ServerPlayer) player).connection.send(
                         new ClientboundContainerSetSlotPacket(
@@ -513,7 +515,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                     if (
                         this.getBukkitView().getType() ==
                             InventoryType.WORKBENCH ||
-                        this.getBukkitView().getType() == InventoryType.CRAFTING
+                            this.getBukkitView().getType() == InventoryType.CRAFTING
                     ) {
                         ((ServerPlayer) player).connection.send(
                             new ClientboundContainerSetSlotPacket(
@@ -569,9 +571,9 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
             }
         } else if (
             clickType == ClickType.CLONE &&
-            player.getAbilities().instabuild &&
-            this.getCarried().isEmpty() &&
-            slotId >= 0
+                player.getAbilities().instabuild &&
+                this.getCarried().isEmpty() &&
+                slotId >= 0
         ) {
             Slot slot5 = this.slots.get(slotId);
             if (slot5.hasItem()) {
@@ -582,8 +584,8 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
             }
         } else if (
             clickType == ClickType.THROW &&
-            this.getCarried().isEmpty() &&
-            slotId >= 0
+                this.getCarried().isEmpty() &&
+                slotId >= 0
         ) {
             Slot slot4 = this.slots.get(slotId);
             int i1 = dragType == 0 ? 1 : slot4.getItem().getCount();
@@ -598,7 +600,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
             ItemStack itemstack5 = this.getCarried();
             if (
                 !itemstack5.isEmpty() &&
-                (!slot3.hasItem() || !slot3.mayPickup(player))
+                    (!slot3.hasItem() || !slot3.mayPickup(player))
             ) {
                 int k1 = dragType == 0 ? 0 : this.slots.size() - 1;
                 int j2 = dragType == 0 ? 1 : -1;
@@ -607,22 +609,22 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                     for (
                         int k3 = k1;
                         k3 >= 0 &&
-                        k3 < this.slots.size() &&
-                        itemstack5.getCount() < itemstack5.getMaxStackSize();
+                            k3 < this.slots.size() &&
+                            itemstack5.getCount() < itemstack5.getMaxStackSize();
                         k3 += j2
                     ) {
                         Slot slot8 = this.slots.get(k3);
                         if (
                             slot8.hasItem() &&
-                            canItemQuickReplace(slot8, itemstack5, true) &&
-                            slot8.mayPickup(player) &&
-                            this.canTakeItemForPickAll(itemstack5, slot8)
+                                canItemQuickReplace(slot8, itemstack5, true) &&
+                                slot8.mayPickup(player) &&
+                                this.canTakeItemForPickAll(itemstack5, slot8)
                         ) {
                             ItemStack itemstack12 = slot8.getItem();
                             if (
                                 k2 != 0 ||
-                                itemstack12.getCount() !=
-                                    itemstack12.getMaxStackSize()
+                                    itemstack12.getCount() !=
+                                        itemstack12.getMaxStackSize()
                             ) {
                                 ItemStack itemstack13 = slot8.safeTake(
                                     itemstack12.getCount(),
@@ -652,7 +654,7 @@ public abstract class AbstractContainerMenuMixin implements ContainerBridge {
                 this.setCarried(ItemStack.EMPTY); // CraftBukkit - SPIGOT-4556 - from below
                 if (
                     player.isAlive() &&
-                    !((ServerPlayer) player).hasDisconnected()
+                        !((ServerPlayer) player).hasDisconnected()
                 ) {
                     player.getInventory().placeItemBackInInventory(itemstack);
                 } else {

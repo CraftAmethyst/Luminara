@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.entity.vehicle;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EntityType;
@@ -20,11 +18,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(AbstractMinecartContainer.class)
 public abstract class AbstractMinecartContainerMixin
     extends AbstractMinecartMixin
-    implements IInventoryBridge, Container
-{
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction;
 
@@ -98,7 +98,8 @@ public abstract class AbstractMinecartContainerMixin
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {}
+    public void setOwner(InventoryHolder owner) {
+    }
 
     @Override
     public int getMaxStackSize() {
@@ -122,5 +123,6 @@ public abstract class AbstractMinecartContainerMixin
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {}
+    public void setCurrentRecipe(Recipe<?> recipe) {
+    }
 }

@@ -61,7 +61,7 @@ public abstract class VineBlockMixin extends BlockMixin {
             BlockPos blockpos = pos.above();
             if (
                 direction.getAxis().isHorizontal() &&
-                !state.getValue(getPropertyForFace(direction))
+                    !state.getValue(getPropertyForFace(direction))
             ) {
                 if (this.canSpread(worldIn, pos)) {
                     BlockPos blockpos4 = pos.relative(direction);
@@ -79,11 +79,11 @@ public abstract class VineBlockMixin extends BlockMixin {
                         BlockPos blockpos3 = blockpos4.relative(direction4);
                         if (
                             flag &&
-                            isAcceptableNeighbour(
-                                worldIn,
-                                blockpos2,
-                                direction3
-                            )
+                                isAcceptableNeighbour(
+                                    worldIn,
+                                    blockpos2,
+                                    direction3
+                                )
                         ) {
                             CraftEventFactory.handleBlockSpreadEvent(
                                 worldIn,
@@ -97,11 +97,11 @@ public abstract class VineBlockMixin extends BlockMixin {
                             );
                         } else if (
                             flag1 &&
-                            isAcceptableNeighbour(
-                                worldIn,
-                                blockpos3,
-                                direction4
-                            )
+                                isAcceptableNeighbour(
+                                    worldIn,
+                                    blockpos3,
+                                    direction4
+                                )
                         ) {
                             CraftEventFactory.handleBlockSpreadEvent(
                                 worldIn,
@@ -117,12 +117,12 @@ public abstract class VineBlockMixin extends BlockMixin {
                             Direction direction1 = direction.getOpposite();
                             if (
                                 flag &&
-                                worldIn.isEmptyBlock(blockpos2) &&
-                                isAcceptableNeighbour(
-                                    worldIn,
-                                    pos.relative(direction3),
-                                    direction1
-                                )
+                                    worldIn.isEmptyBlock(blockpos2) &&
+                                    isAcceptableNeighbour(
+                                        worldIn,
+                                        pos.relative(direction3),
+                                        direction1
+                                    )
                             ) {
                                 CraftEventFactory.handleBlockSpreadEvent(
                                     worldIn,
@@ -136,12 +136,12 @@ public abstract class VineBlockMixin extends BlockMixin {
                                 );
                             } else if (
                                 flag1 &&
-                                worldIn.isEmptyBlock(blockpos3) &&
-                                isAcceptableNeighbour(
-                                    worldIn,
-                                    pos.relative(direction4),
-                                    direction1
-                                )
+                                    worldIn.isEmptyBlock(blockpos3) &&
+                                    isAcceptableNeighbour(
+                                        worldIn,
+                                        pos.relative(direction4),
+                                        direction1
+                                    )
                             ) {
                                 CraftEventFactory.handleBlockSpreadEvent(
                                     worldIn,
@@ -155,11 +155,11 @@ public abstract class VineBlockMixin extends BlockMixin {
                                 );
                             } else if (
                                 (double) worldIn.random.nextFloat() < 0.05D &&
-                                isAcceptableNeighbour(
-                                    worldIn,
-                                    blockpos4.above(),
-                                    Direction.UP
-                                )
+                                    isAcceptableNeighbour(
+                                        worldIn,
+                                        blockpos4.above(),
+                                        Direction.UP
+                                    )
                             ) {
                                 CraftEventFactory.handleBlockSpreadEvent(
                                     worldIn,
@@ -190,7 +190,7 @@ public abstract class VineBlockMixin extends BlockMixin {
             } else {
                 if (
                     direction == Direction.UP &&
-                    pos.getY() < worldIn.getMaxBuildHeight() - 1
+                        pos.getY() < worldIn.getMaxBuildHeight() - 1
                 ) {
                     if (this.canSupportAtFace(worldIn, pos, direction)) {
                         CraftEventFactory.handleBlockGrowEvent(
@@ -212,11 +212,11 @@ public abstract class VineBlockMixin extends BlockMixin {
                         for (Direction direction2 : Direction.Plane.HORIZONTAL) {
                             if (
                                 random.nextBoolean() ||
-                                !isAcceptableNeighbour(
-                                    worldIn,
-                                    blockpos.relative(direction2),
-                                    Direction.UP
-                                )
+                                    !isAcceptableNeighbour(
+                                        worldIn,
+                                        blockpos.relative(direction2),
+                                        Direction.UP
+                                    )
                             ) {
                                 blockstate3 = blockstate3.setValue(
                                     getPropertyForFace(direction2),
@@ -254,7 +254,7 @@ public abstract class VineBlockMixin extends BlockMixin {
                         );
                         if (
                             blockstate1 != blockstate2 &&
-                            this.hasHorizontalConnection(blockstate2)
+                                this.hasHorizontalConnection(blockstate2)
                         ) {
                             CraftEventFactory.handleBlockSpreadEvent(
                                 worldIn,

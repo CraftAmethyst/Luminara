@@ -2,14 +2,15 @@ package io.izzel.arclight.common.mod.util.remapper;
 
 import com.google.common.collect.Maps;
 import io.izzel.arclight.common.mod.ArclightMod;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import net.md_5.specialsource.provider.InheritanceProvider;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class ArclightInterfaceInvokerGen implements PluginTransformer {
 
@@ -39,7 +40,7 @@ public class ArclightInterfaceInvokerGen implements PluginTransformer {
                     for (MethodNode methodNode : classNode.methods) {
                         if (
                             methodNode.name.equals(name) &&
-                            methodNode.desc.equals(desc)
+                                methodNode.desc.equals(desc)
                         ) {
                             extend = true;
                             break;
@@ -114,8 +115,8 @@ public class ArclightInterfaceInvokerGen implements PluginTransformer {
     ) {
         if (
             internalName == null ||
-            internalName.equals("java/lang/Object") ||
-            internalName.startsWith(PREFIX)
+                internalName.equals("java/lang/Object") ||
+                internalName.startsWith(PREFIX)
         ) return;
         ClassNode classNode = classRepo.findClass(internalName);
         if (classNode == null) return;

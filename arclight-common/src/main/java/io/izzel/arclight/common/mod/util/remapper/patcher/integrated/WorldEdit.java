@@ -1,12 +1,13 @@
 package io.izzel.arclight.common.mod.util.remapper.patcher.integrated;
 
 import io.izzel.arclight.api.PluginPatcher;
-import java.util.Locale;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.tree.*;
+
+import java.util.Locale;
 
 public class WorldEdit {
 
@@ -112,7 +113,7 @@ public class WorldEdit {
         for (MethodNode method : node.methods) {
             if (
                 !method.name.equals("addFromJar") &&
-                !method.name.equals("addFromPath")
+                    !method.name.equals("addFromPath")
             ) {
                 continue;
             }
@@ -122,7 +123,7 @@ public class WorldEdit {
                 }
                 if (
                     !methodInsn.owner.equals("java/util/List") ||
-                    !methodInsn.name.equals("add")
+                        !methodInsn.name.equals("add")
                 ) {
                     continue;
                 }
@@ -150,7 +151,7 @@ public class WorldEdit {
         for (MethodNode method : node.methods) {
             if (
                 method.name.equals("getPackageVersion") &&
-                method.desc.equals("()Ljava/lang/String;")
+                    method.desc.equals("()Ljava/lang/String;")
             ) {
                 method.instructions.clear();
                 method.instructions.add(
@@ -177,7 +178,7 @@ public class WorldEdit {
         for (MethodNode method : node.methods) {
             if (
                 !method.name.equals("getCommandMap") ||
-                !method.desc.equals("()Lorg/bukkit/command/CommandMap;")
+                    !method.desc.equals("()Lorg/bukkit/command/CommandMap;")
             ) {
                 continue;
             }
@@ -187,8 +188,8 @@ public class WorldEdit {
                 }
                 if (
                     methodInsn.owner.equals("io/papermc/lib/PaperLib") &&
-                    methodInsn.name.equals("isPaper") &&
-                    methodInsn.desc.equals("()Z")
+                        methodInsn.name.equals("isPaper") &&
+                        methodInsn.desc.equals("()Z")
                 ) {
                     method.instructions.set(
                         methodInsn,
@@ -293,10 +294,10 @@ public class WorldEdit {
     ) {
         if (
             node.interfaces.size() == 1 &&
-            node.interfaces
-                .get(0)
-                .equals("com/sk89q/worldedit/extension/platform/Watchdog") &&
-            node.name.contains("SpigotWatchdog")
+                node.interfaces
+                    .get(0)
+                    .equals("com/sk89q/worldedit/extension/platform/Watchdog") &&
+                node.name.contains("SpigotWatchdog")
         ) {
             for (MethodNode method : node.methods) {
                 if (method.name.equals("<init>")) {

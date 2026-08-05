@@ -45,13 +45,13 @@ public class DropperBlockMixin {
             ItemStack itemstack = dispensertileentity.getItem(i);
             if (
                 !itemstack.isEmpty() &&
-                net.minecraftforge.items.VanillaInventoryCodeHooks.dropperInsertHook(
-                    worldIn,
-                    pos,
-                    dispensertileentity,
-                    i,
-                    itemstack
-                )
+                    net.minecraftforge.items.VanillaInventoryCodeHooks.dropperInsertHook(
+                        worldIn,
+                        pos,
+                        dispensertileentity,
+                        i,
+                        itemstack
+                    )
             ) {
                 Direction direction = worldIn
                     .getBlockState(pos)
@@ -101,7 +101,7 @@ public class DropperBlockMixin {
                     );
                     if (
                         event.getItem().equals(craftItemStack) &&
-                        itemstack1.isEmpty()
+                            itemstack1.isEmpty()
                     ) {
                         itemstack1 = itemstack.copy();
                         itemstack1.shrink(1);

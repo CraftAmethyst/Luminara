@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(targets = "net/minecraft/world/inventory/GrindstoneMenu$1")
 public abstract class GrindstoneContainer1Mixin extends SimpleContainerMixin {
 
-    @Shadow(aliases = { "this$0", "f_39594_" }, remap = false)
+    @Shadow(aliases = {"this$0", "f_39594_"}, remap = false)
     private GrindstoneMenu outerThis;
 
     @Override

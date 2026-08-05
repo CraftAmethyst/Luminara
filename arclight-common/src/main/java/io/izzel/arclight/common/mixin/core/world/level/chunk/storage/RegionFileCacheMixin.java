@@ -1,9 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.chunk.storage;
 
 import io.izzel.arclight.common.bridge.core.world.chunk.storage.RegionFileCacheBridge;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StreamTagVisitor;
 import net.minecraft.world.level.ChunkPos;
@@ -16,6 +13,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Mixin(RegionFileStorage.class)
 public abstract class RegionFileCacheMixin implements RegionFileCacheBridge {

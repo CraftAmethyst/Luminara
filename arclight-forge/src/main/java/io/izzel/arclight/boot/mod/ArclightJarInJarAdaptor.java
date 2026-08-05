@@ -1,9 +1,5 @@
 package io.izzel.arclight.boot.mod;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
@@ -11,6 +7,11 @@ import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class ArclightJarInJarAdaptor implements IDependencyLocator {
 

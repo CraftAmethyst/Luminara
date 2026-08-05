@@ -1,8 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.entity.ai.behavior;
 
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -17,6 +14,10 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Mixin(StartAttacking.class)
 public class StartAttackingMixin {

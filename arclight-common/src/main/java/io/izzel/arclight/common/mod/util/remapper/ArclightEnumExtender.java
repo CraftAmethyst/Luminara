@@ -1,15 +1,16 @@
 package io.izzel.arclight.common.mod.util.remapper;
 
-import static io.izzel.arclight.common.mod.util.remapper.ArclightRedirectAdapter.loadInt;
-
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
-import java.lang.reflect.Modifier;
-import java.util.*;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.NamespacedKey;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+
+import java.lang.reflect.Modifier;
+import java.util.*;
+
+import static io.izzel.arclight.common.mod.util.remapper.ArclightRedirectAdapter.loadInt;
 
 // 你好
 // 不要抄（笑）
@@ -153,7 +154,7 @@ public class ArclightEnumExtender {
         for (MethodNode method : node.methods) {
             if (
                 method.name.equals("<init>") &&
-                method.desc.equals("(Ljava/lang/String;I)V")
+                    method.desc.equals("(Ljava/lang/String;I)V")
             ) {
                 found = true;
                 break;

@@ -23,8 +23,8 @@ public class CraftLegacyLegacyMixin {
                 Material material = Material.valueOf(name);
                 if (
                     material != null &&
-                    ((MaterialBridge) (Object) material).bridge$getType() ==
-                        MaterialPropertySpec.MaterialType.FORGE
+                        ((MaterialBridge) (Object) material).bridge$getType() ==
+                            MaterialPropertySpec.MaterialType.FORGE
                 ) {
                     return material;
                 } else {
@@ -49,8 +49,8 @@ public class CraftLegacyLegacyMixin {
                 Material material = Material.getMaterial(name);
                 if (
                     material != null &&
-                    ((MaterialBridge) (Object) material).bridge$getType() ==
-                        MaterialPropertySpec.MaterialType.FORGE
+                        ((MaterialBridge) (Object) material).bridge$getType() ==
+                            MaterialPropertySpec.MaterialType.FORGE
                 ) {
                     return material;
                 } else {
@@ -75,7 +75,7 @@ public class CraftLegacyLegacyMixin {
                 Material material = Material.matchMaterial(name);
                 if (
                     ((MaterialBridge) (Object) material).bridge$getType() ==
-                    MaterialPropertySpec.MaterialType.FORGE
+                        MaterialPropertySpec.MaterialType.FORGE
                 ) {
                     return material;
                 } else {
@@ -95,7 +95,7 @@ public class CraftLegacyLegacyMixin {
     public static String name(Material material) {
         if (
             ((MaterialBridge) (Object) material).bridge$getType() ==
-            MaterialPropertySpec.MaterialType.FORGE
+                MaterialPropertySpec.MaterialType.FORGE
         ) {
             return material.name();
         } else {

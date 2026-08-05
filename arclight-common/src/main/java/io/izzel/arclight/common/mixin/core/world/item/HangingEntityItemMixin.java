@@ -54,8 +54,8 @@ public class HangingEntityItemMixin {
             context.getPlayer() == null
                 ? null
                 : (Player) (
-                      (PlayerEntityBridge) context.getPlayer()
-                  ).bridge$getBukkitEntity();
+                (PlayerEntityBridge) context.getPlayer()
+            ).bridge$getBukkitEntity();
         Block blockClicked = CraftBlock.at(world, blockPos);
         BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
 

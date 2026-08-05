@@ -71,8 +71,8 @@ public abstract class ThrownEggMixin extends ThrowableProjectileMixin {
                     if (entity != null) {
                         if (
                             (
-                                    (EntityBridge) entity
-                                ).bridge$getBukkitEntity() instanceof
+                                (EntityBridge) entity
+                            ).bridge$getBukkitEntity() instanceof
                                 Ageable
                         ) {
                             (

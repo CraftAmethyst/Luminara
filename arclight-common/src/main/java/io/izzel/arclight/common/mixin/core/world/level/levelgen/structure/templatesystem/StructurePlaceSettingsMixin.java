@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.level.levelgen.structure.templatesystem;
 
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -10,6 +9,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(StructurePlaceSettings.class)
 public class StructurePlaceSettingsMixin {

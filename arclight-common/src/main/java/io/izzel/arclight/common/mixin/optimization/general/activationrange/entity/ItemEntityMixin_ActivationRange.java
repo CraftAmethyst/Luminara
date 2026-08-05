@@ -17,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange
-{
+    extends EntityMixin_ActivationRange {
 
     // @formatter:off
     @Shadow public int pickupDelay;
@@ -75,8 +74,8 @@ public abstract class ItemEntityMixin_ActivationRange
         int elapsedTicks = ArclightConstants.currentTick - this.lastTick;
         if (
             this.pickupDelay > 0 &&
-            this.pickupDelay != 32767 &&
-            elapsedTicks > 0
+                this.pickupDelay != 32767 &&
+                elapsedTicks > 0
         ) this.pickupDelay -= elapsedTicks;
         if (this.age != -32768) this.age += elapsedTicks;
         this.lastTick = ArclightConstants.currentTick;

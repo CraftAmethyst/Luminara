@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.core.network.chat;
 
-import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
 import org.spongepowered.asm.mixin.Final;
@@ -10,6 +9,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
 
 @Mixin(TextColor.class)
 public class TextColorMixin {

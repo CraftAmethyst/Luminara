@@ -4,10 +4,6 @@ import com.mojang.datafixers.DataFixer;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ChunkMapBridge;
 import io.izzel.arclight.common.mod.util.ArclightCallbackExecutor;
-import java.util.concurrent.Executor;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ChunkHolder;
@@ -34,6 +30,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
+import java.util.concurrent.Executor;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 @Mixin(ChunkMap.class)
 public abstract class ChunkMapMixin implements ChunkMapBridge {

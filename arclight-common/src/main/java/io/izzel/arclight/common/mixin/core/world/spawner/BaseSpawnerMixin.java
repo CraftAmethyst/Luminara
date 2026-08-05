@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.spawner;
 import io.izzel.arclight.common.bridge.core.entity.MobEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,6 +26,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Optional;
 
 @Mixin(BaseSpawner.class)
 public abstract class BaseSpawnerMixin {
@@ -95,28 +96,28 @@ public abstract class BaseSpawnerMixin {
                             : (double) pos.getX() +
                               (level.random.nextDouble() -
                                   level.random.nextDouble()) *
-                                  (double) this.spawnRange +
+                              (double) this.spawnRange +
                               0.5D;
                     double d1 =
                         j >= 2
                             ? listtag.getDouble(1)
                             : (double) (pos.getY() +
-                                  level.random.nextInt(3) -
-                                  1);
+                            level.random.nextInt(3) -
+                                        1);
                     double d2 =
                         j >= 3
                             ? listtag.getDouble(2)
                             : (double) pos.getZ() +
                               (level.random.nextDouble() -
                                   level.random.nextDouble()) *
-                                  (double) this.spawnRange +
+                              (double) this.spawnRange +
                               0.5D;
                     if (level.noCollision(optional.get().getAABB(d0, d1, d2))) {
                         BlockPos blockpos = BlockPos.containing(d0, d1, d2);
                         if (spawnData.getCustomSpawnRules().isPresent()) {
                             if (
                                 !optional.get().getCategory().isFriendly() &&
-                                level.getDifficulty() == Difficulty.PEACEFUL
+                                    level.getDifficulty() == Difficulty.PEACEFUL
                             ) {
                                 continue;
                             }
@@ -132,14 +133,14 @@ public abstract class BaseSpawnerMixin {
                                             blockpos
                                         )
                                     ) ||
-                                !spawndata$customspawnrules
-                                    .skyLightLimit()
-                                    .isValueInRange(
-                                        level.getBrightness(
-                                            LightLayer.SKY,
-                                            blockpos
+                                    !spawndata$customspawnrules
+                                        .skyLightLimit()
+                                        .isValueInRange(
+                                            level.getBrightness(
+                                                LightLayer.SKY,
+                                                blockpos
+                                            )
                                         )
-                                    )
                             ) {
                                 continue;
                             }
@@ -225,8 +226,8 @@ public abstract class BaseSpawnerMixin {
                                 );
                             if (
                                 event != null &&
-                                spawnData.getEntityToSpawn().size() == 1 &&
-                                spawnData.getEntityToSpawn().contains("id", 8)
+                                    spawnData.getEntityToSpawn().size() == 1 &&
+                                    spawnData.getEntityToSpawn().contains("id", 8)
                             ) {
                                 ((Mob) entity).finalizeSpawn(
                                     level,

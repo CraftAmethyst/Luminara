@@ -40,7 +40,7 @@ public class TrapDoorBlockMixin {
 
             if (
                 (oldPower == 0) ^ (power == 0) ||
-                blockIn.defaultBlockState().isSignalSource()
+                    blockIn.defaultBlockState().isSignalSource()
             ) {
                 BlockRedstoneEvent event = new BlockRedstoneEvent(
                     craftBlock,

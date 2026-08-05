@@ -34,7 +34,8 @@ public interface Position {
         double x,
         double y,
         double z
-    ) implements FinePosition {}
+    ) implements FinePosition {
+    }
 
     record BlockPositionImpl(
         int blockX,

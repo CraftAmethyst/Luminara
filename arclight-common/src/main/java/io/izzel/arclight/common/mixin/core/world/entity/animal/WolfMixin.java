@@ -23,7 +23,8 @@ public abstract class WolfMixin extends TameableAnimalMixin {
             target = "Lnet/minecraft/world/entity/animal/Wolf;setOrderedToSit(Z)V"
         )
     )
-    private void arclight$handledBy(Wolf wolfEntity, boolean p_233687_1_) {}
+    private void arclight$handledBy(Wolf wolfEntity, boolean p_233687_1_) {
+    }
 
     @Inject(method = "setTame", at = @At("RETURN"))
     private void arclight$healToMax(boolean tamed, CallbackInfo ci) {

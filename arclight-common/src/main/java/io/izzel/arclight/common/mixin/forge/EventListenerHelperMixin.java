@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.forge;
 
-import java.lang.reflect.Modifier;
 import net.minecraftforge.eventbus.ListenerList;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventListenerHelper;
@@ -8,6 +7,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.lang.reflect.Modifier;
 
 @Mixin(EventListenerHelper.class)
 public class EventListenerHelperMixin {
@@ -25,8 +26,8 @@ public class EventListenerHelperMixin {
     ) {
         if (
             useSuper ||
-            eventClass == Event.class ||
-            Modifier.isAbstract(eventClass.getModifiers())
+                eventClass == Event.class ||
+                Modifier.isAbstract(eventClass.getModifiers())
         ) {
             return;
         }

@@ -1,22 +1,23 @@
 package io.izzel.arclight.common.mod.util.remapper;
 
 import com.google.common.collect.ImmutableSet;
+import net.md_5.specialsource.provider.InheritanceProvider;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import net.md_5.specialsource.provider.InheritanceProvider;
-import net.md_5.specialsource.repo.ClassRepo;
-import org.objectweb.asm.tree.ClassNode;
 
 public class PluginInheritanceProvider implements InheritanceProvider {
 
     private static final Map<
         String,
         Collection<String>
-    > SHARED_INHERITANCE_MAP = new ConcurrentHashMap<>();
+        > SHARED_INHERITANCE_MAP = new ConcurrentHashMap<>();
 
     private final ClassRepo classRepo;
 

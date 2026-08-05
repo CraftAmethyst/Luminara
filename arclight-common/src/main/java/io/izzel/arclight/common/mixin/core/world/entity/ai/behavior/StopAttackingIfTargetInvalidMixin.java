@@ -1,8 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.entity.ai.behavior;
 
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
@@ -15,6 +12,10 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 @Mixin(StopAttackingIfTargetInvalid.class)
 public abstract class StopAttackingIfTargetInvalidMixin {
@@ -47,14 +48,14 @@ public abstract class StopAttackingIfTargetInvalidMixin {
                         LivingEntity livingentity = p_258801_.get(p_258787_);
                         if (
                             p_258796_.canAttack(livingentity) &&
-                            (!p_260319_ ||
-                                !isTiredOfTryingToReachTarget(
-                                    p_258796_,
-                                    p_258801_.tryGet(p_258788_)
-                                )) &&
-                            livingentity.isAlive() &&
-                            livingentity.level() == p_258796_.level() &&
-                            !p_260357_.test(livingentity)
+                                (!p_260319_ ||
+                                    !isTiredOfTryingToReachTarget(
+                                        p_258796_,
+                                        p_258801_.tryGet(p_258788_)
+                                    )) &&
+                                livingentity.isAlive() &&
+                                livingentity.level() == p_258796_.level() &&
+                                !p_260357_.test(livingentity)
                         ) {
                             return true;
                         } else {

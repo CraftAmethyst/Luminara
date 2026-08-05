@@ -1,10 +1,6 @@
 package io.izzel.arclight.common.mod.util;
 
 import io.papermc.paper.entity.TeleportFlag;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
 import net.minecraft.world.entity.RelativeMovement;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,9 +8,15 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+
 public final class PaperCompatSupport {
 
-    private PaperCompatSupport() {}
+    private PaperCompatSupport() {
+    }
 
     public static int chunkCoord(double coord) {
         return (int) Math.floor(coord) >> 4;
@@ -55,7 +57,7 @@ public final class PaperCompatSupport {
     ) {
         if (
             previousVehicle != null &&
-            entity.getWorld().equals(previousVehicle.getWorld())
+                entity.getWorld().equals(previousVehicle.getWorld())
         ) {
             previousVehicle.addPassenger(entity);
         }
@@ -75,7 +77,7 @@ public final class PaperCompatSupport {
     ) {
         if (
             previousVehicle != null &&
-            player.getWorld().equals(previousVehicle.getWorld())
+                player.getWorld().equals(previousVehicle.getWorld())
         ) {
             previousVehicle.addPassenger(player);
         }

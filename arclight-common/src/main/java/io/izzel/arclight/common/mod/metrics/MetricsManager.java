@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mod.metrics;
 
 import io.izzel.arclight.common.mod.ArclightMod;
+import org.bukkit.Bukkit;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -9,7 +11,6 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Bukkit;
 
 public class MetricsManager {
 
@@ -60,8 +61,8 @@ public class MetricsManager {
                     "os",
                     () ->
                         System.getProperty("os.name") +
-                        " " +
-                        System.getProperty("os.version")
+                            " " +
+                            System.getProperty("os.version")
                 )
             );
 
@@ -126,8 +127,8 @@ public class MetricsManager {
                 String country = reader.readLine();
                 if (
                     country != null &&
-                    !country.isEmpty() &&
-                    country.length() <= 3
+                        !country.isEmpty() &&
+                        country.length() <= 3
                 ) {
                     return country.trim().toUpperCase();
                 }

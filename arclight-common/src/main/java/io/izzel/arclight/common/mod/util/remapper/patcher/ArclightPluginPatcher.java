@@ -7,6 +7,9 @@ import io.izzel.arclight.common.mod.util.remapper.ClassLoaderRemapper;
 import io.izzel.arclight.common.mod.util.remapper.GlobalClassRepo;
 import io.izzel.arclight.common.mod.util.remapper.PluginTransformer;
 import io.izzel.arclight.common.mod.util.remapper.patcher.integrated.IntegratedPatcher;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,8 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.objectweb.asm.tree.ClassNode;
 
 public class ArclightPluginPatcher implements PluginTransformer {
 
@@ -63,7 +64,7 @@ public class ArclightPluginPatcher implements PluginTransformer {
                     String name = configuration.getString("arclight.patcher");
                     if (name != null) {
                         URLClassLoader loader = new URLClassLoader(
-                            new URL[] { file.toURI().toURL() },
+                            new URL[]{file.toURI().toURL()},
                             ArclightPluginPatcher.class.getClassLoader()
                         );
                         Class<?> clazz = Class.forName(name, false, loader);

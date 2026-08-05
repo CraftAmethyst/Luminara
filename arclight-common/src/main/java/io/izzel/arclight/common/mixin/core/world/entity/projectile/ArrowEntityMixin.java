@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.projectile;
 
 import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.projectile.ArrowEntityBridge;
-import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
@@ -20,11 +19,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Set;
+
 @Mixin(Arrow.class)
 public abstract class ArrowEntityMixin
     extends AbstractArrowMixin
-    implements ArrowEntityBridge
-{
+    implements ArrowEntityBridge {
 
     // @formatter:off
     @Shadow @Final private static EntityDataAccessor<Integer> ID_EFFECT_COLOR;

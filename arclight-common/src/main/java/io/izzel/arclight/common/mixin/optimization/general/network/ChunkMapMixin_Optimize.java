@@ -8,9 +8,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Set;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
@@ -24,8 +21,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Set;
+
 @LoadIfMod(
-    modid = { ModIds.C2ME, ModIds.NOISIUM },
+    modid = {ModIds.C2ME, ModIds.NOISIUM},
     condition = LoadIfMod.ModCondition.ABSENT
 )
 @Mixin(ChunkMap.class)
@@ -66,7 +67,7 @@ public class ChunkMapMixin_Optimize {
             ).bridge$getEntity();
             if (
                 entity instanceof ServerPlayer player &&
-                ((ServerPlayerEntityBridge) player).bridge$isTrackerDirty()
+                    ((ServerPlayerEntityBridge) player).bridge$isTrackerDirty()
             ) {
                 list.add(trackedEntity);
                 ((ServerPlayerEntityBridge) player).bridge$setTrackerDirty(

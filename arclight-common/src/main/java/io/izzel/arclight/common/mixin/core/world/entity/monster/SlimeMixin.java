@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.MobMixin;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -17,6 +15,9 @@ import org.bukkit.event.entity.SlimeSplitEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(net.minecraft.world.entity.monster.Slime.class)
 public abstract class SlimeMixin extends MobMixin {

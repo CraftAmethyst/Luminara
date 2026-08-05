@@ -1,11 +1,12 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import java.util.concurrent.ThreadFactory;
 import org.bukkit.craftbukkit.v.scheduler.CraftScheduler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.concurrent.ThreadFactory;
 
 @Mixin(value = CraftScheduler.class, remap = false)
 public class CraftSchedulerMixin {

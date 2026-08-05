@@ -2,10 +2,6 @@ package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.common.mod.util.PaperCompatSupport;
 import io.papermc.paper.entity.TeleportFlag;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+
 @Mixin(value = Entity.class, remap = false)
 public interface Entity_PaperCompatMixin {
     @Shadow
@@ -27,7 +28,7 @@ public interface Entity_PaperCompatMixin {
 
     default boolean teleport(
         @NotNull Location location,
-        @NotNull TeleportFlag @NotNull... teleportFlags
+        @NotNull TeleportFlag @NotNull ... teleportFlags
     ) {
         return this.teleport(
             location,
@@ -39,7 +40,7 @@ public interface Entity_PaperCompatMixin {
     default boolean teleport(
         @NotNull Location location,
         @NotNull PlayerTeleportEvent.TeleportCause cause,
-        @NotNull TeleportFlag @NotNull... teleportFlags
+        @NotNull TeleportFlag @NotNull ... teleportFlags
     ) {
         Objects.requireNonNull(location, "location");
         Objects.requireNonNull(cause, "cause");

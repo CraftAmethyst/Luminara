@@ -4,10 +4,6 @@ import com.google.common.collect.Lists;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.LivingEntityMixin;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.InteractionHand;
@@ -32,6 +28,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mixin(net.minecraft.world.entity.decoration.ArmorStand.class)
 public abstract class ArmorStandMixin extends LivingEntityMixin {
@@ -175,7 +176,8 @@ public abstract class ArmorStandMixin extends LivingEntityMixin {
     private void arclight$dropLater(
         net.minecraft.world.entity.decoration.ArmorStand entity,
         DamageSource damageSourceIn
-    ) {}
+    ) {
+    }
 
     @Redirect(
         method = "brokenByAnything",
@@ -214,9 +216,9 @@ public abstract class ArmorStandMixin extends LivingEntityMixin {
     ) {
         if (
             !worldIn.isClientSide &&
-            !stack.isEmpty() &&
-            worldIn.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) &&
-            !worldIn.restoringBlockSnapshots
+                !stack.isEmpty() &&
+                worldIn.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) &&
+                !worldIn.restoringBlockSnapshots
         ) {
             // do not drop items while restoring blockstates, prevents item dupe
             ItemEntity itementity = new ItemEntity(

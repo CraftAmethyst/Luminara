@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.projectile;
 
 import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.EntityMixin;
-import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import javax.annotation.Nullable;
 
 @Mixin(ShulkerBullet.class)
 public abstract class ShulkerBulletMixin extends EntityMixin {

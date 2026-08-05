@@ -5,9 +5,6 @@ import io.izzel.arclight.common.bridge.core.item.crafting.IRecipeBridge;
 import io.izzel.arclight.common.bridge.core.tileentity.AbstractFurnaceTileEntityBridge;
 import io.izzel.arclight.mixin.Eject;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -48,11 +45,14 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityMixin
     extends LockableBlockEntityMixin
-    implements AbstractFurnaceTileEntityBridge
-{
+    implements AbstractFurnaceTileEntityBridge {
 
     private static AbstractFurnaceBlockEntity arclight$captureFurnace;
     private static Player arclight$capturePlayer;
@@ -112,7 +112,7 @@ public abstract class AbstractFurnaceBlockEntityMixin
         }
         return (
             ((AbstractFurnaceTileEntityBridge) furnace).bridge$isLit() &&
-            furnaceBurnEvent.isBurning()
+                furnaceBurnEvent.isBurning()
         );
     }
 
@@ -256,8 +256,8 @@ public abstract class AbstractFurnaceBlockEntityMixin
 
             if (
                 itemstack.is(Blocks.WET_SPONGE.asItem()) &&
-                !items.get(1).isEmpty() &&
-                items.get(1).is(Items.BUCKET)
+                    !items.get(1).isEmpty() &&
+                    items.get(1).is(Items.BUCKET)
             ) {
                 items.set(1, new ItemStack(Items.WATER_BUCKET));
             }
@@ -335,7 +335,8 @@ public abstract class AbstractFurnaceBlockEntityMixin
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {}
+    public void setOwner(InventoryHolder owner) {
+    }
 
     @Override
     public int getMaxStackSize() {

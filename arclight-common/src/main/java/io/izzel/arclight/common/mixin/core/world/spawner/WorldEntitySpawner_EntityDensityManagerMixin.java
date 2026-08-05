@@ -16,8 +16,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NaturalSpawner.SpawnState.class)
 public abstract class WorldEntitySpawner_EntityDensityManagerMixin
-    implements WorldEntitySpawnerBridge.EntityDensityManagerBridge
-{
+    implements WorldEntitySpawnerBridge.EntityDensityManagerBridge {
 
     @Shadow
     @Final

@@ -83,8 +83,8 @@ public abstract class CraftPlayerPaperPlayerMixin {
         String listName = player.getPlayerListName();
         return listName != null
             ? net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(
-                  listName
-              )
+            listName
+        )
             : null;
     }
 

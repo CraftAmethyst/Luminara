@@ -68,7 +68,7 @@ public class CrossbowItemMixin {
         }
         arclight$capturedBoolean =
             event.getProjectile() ==
-            ((EntityBridge) proj).bridge$getBukkitEntity();
+                ((EntityBridge) proj).bridge$getBukkitEntity();
     }
 
     @Eject(

@@ -4,8 +4,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public sealed interface TeleportFlag
-    permits TeleportFlag.EntityState, TeleportFlag.Relative
-{
+    permits TeleportFlag.EntityState, TeleportFlag.Relative {
     @ApiStatus.Experimental
     enum Relative implements TeleportFlag {
         X,

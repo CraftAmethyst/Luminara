@@ -4,10 +4,6 @@ import com.google.gson.Gson;
 import com.mojang.authlib.properties.Property;
 import com.mojang.util.UUIDTypeAdapter;
 import io.izzel.arclight.common.bridge.core.network.NetworkManagerBridge;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.text.MessageFormat;
-import java.util.HashMap;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
@@ -27,6 +23,11 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.text.MessageFormat;
+import java.util.HashMap;
 
 @Mixin(ServerHandshakePacketListenerImpl.class)
 public class ServerHandshakeNetHandlerMixin {
@@ -73,9 +74,9 @@ public class ServerHandshakeNetHandlerMixin {
                     synchronized (throttleTracker) {
                         if (
                             throttleTracker.containsKey(address) &&
-                            !"127.0.0.1".equals(address.getHostAddress()) &&
-                            currentTime - throttleTracker.get(address) <
-                                connectionThrottle
+                                !"127.0.0.1".equals(address.getHostAddress()) &&
+                                currentTime - throttleTracker.get(address) <
+                                    connectionThrottle
                         ) {
                             throttleTracker.put(address, currentTime);
                             var component = Component.translatable(
@@ -108,7 +109,7 @@ public class ServerHandshakeNetHandlerMixin {
 
                 if (
                     packetIn.getProtocolVersion() >
-                    SharedConstants.getCurrentVersion().getProtocolVersion()
+                        SharedConstants.getCurrentVersion().getProtocolVersion()
                 ) {
                     var component = Component.translatable(
                         MessageFormat.format(
@@ -127,7 +128,7 @@ public class ServerHandshakeNetHandlerMixin {
                 }
                 if (
                     packetIn.getProtocolVersion() <
-                    SharedConstants.getCurrentVersion().getProtocolVersion()
+                        SharedConstants.getCurrentVersion().getProtocolVersion()
                 ) {
                     var component = Component.translatable(
                         MessageFormat.format(

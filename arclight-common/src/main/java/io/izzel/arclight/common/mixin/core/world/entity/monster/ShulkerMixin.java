@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.PathfinderMobMixin;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -24,6 +23,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
 
 @Mixin(Shulker.class)
 public abstract class ShulkerMixin extends PathfinderMobMixin {
@@ -56,12 +57,12 @@ public abstract class ShulkerMixin extends PathfinderMobMixin {
                 );
                 if (
                     blockpos1.getY() > this.level().getMinBuildHeight() &&
-                    this.level().isEmptyBlock(blockpos1) &&
-                    this.level().getWorldBorder().isWithinBounds(blockpos1) &&
-                    this.level().noCollision(
-                        (Shulker) (Object) this,
-                        new AABB(blockpos1).deflate(1.0E-6D)
-                    )
+                        this.level().isEmptyBlock(blockpos1) &&
+                        this.level().getWorldBorder().isWithinBounds(blockpos1) &&
+                        this.level().noCollision(
+                            (Shulker) (Object) this,
+                            new AABB(blockpos1).deflate(1.0E-6D)
+                        )
                 ) {
                     Direction direction = this.findAttachableSurface(blockpos1);
                     if (direction != null) {

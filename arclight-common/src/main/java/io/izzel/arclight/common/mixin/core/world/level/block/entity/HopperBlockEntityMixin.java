@@ -6,9 +6,6 @@ import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import io.izzel.arclight.mixin.Eject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BooleanSupplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -40,6 +37,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
 
 @Mixin(HopperBlockEntity.class)
 public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
@@ -81,8 +82,8 @@ public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
         var result = tryMoveItems(level, pos, state, hopper, flag);
         if (
             !result &&
-            DistValidate.isValid(level) &&
-            ((WorldBridge) level).bridge$spigotConfig().hopperCheck > 1
+                DistValidate.isValid(level) &&
+                ((WorldBridge) level).bridge$spigotConfig().hopperCheck > 1
         ) {
             hopper.setCooldown(
                 ((WorldBridge) level).bridge$spigotConfig().hopperCheck
@@ -318,7 +319,8 @@ public abstract class HopperBlockEntityMixin extends LockableBlockEntityMixin {
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {}
+    public void setOwner(InventoryHolder owner) {
+    }
 
     @Override
     public int getMaxStackSize() {

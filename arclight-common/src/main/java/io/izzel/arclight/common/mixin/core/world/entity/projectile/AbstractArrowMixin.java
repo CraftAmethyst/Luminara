@@ -91,17 +91,17 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
     public void playerTouch(Player playerEntity) {
         if (
             !this.level().isClientSide &&
-            (this.inGround || this.isNoPhysics()) &&
-            this.shakeTime <= 0
+                (this.inGround || this.isNoPhysics()) &&
+                this.shakeTime <= 0
         ) {
             ItemStack itemstack = this.getPickupItem();
             if (
                 this.pickup ==
                     net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED &&
-                !itemstack.isEmpty() &&
-                (
-                    (PlayerInventoryBridge) playerEntity.getInventory()
-                ).bridge$canHold(itemstack) > 0
+                    !itemstack.isEmpty() &&
+                    (
+                        (PlayerInventoryBridge) playerEntity.getInventory()
+                    ).bridge$canHold(itemstack) > 0
             ) {
                 ItemEntity item = new ItemEntity(
                     this.level(),
@@ -131,9 +131,9 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
                 (this.pickup ==
                     net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED &&
                     playerEntity.getInventory().add(itemstack)) ||
-                (this.pickup ==
-                    net.minecraft.world.entity.projectile.AbstractArrow.Pickup.CREATIVE_ONLY &&
-                    playerEntity.getAbilities().instabuild)
+                    (this.pickup ==
+                        net.minecraft.world.entity.projectile.AbstractArrow.Pickup.CREATIVE_ONLY &&
+                        playerEntity.getAbilities().instabuild)
             ) {
                 playerEntity.take(
                     (net.minecraft.world.entity.projectile.AbstractArrow) (Object) this,
@@ -150,7 +150,7 @@ public abstract class AbstractArrowMixin extends ProjectileMixin {
             entityIn == null
                 ? null
                 : (ProjectileSource) (
-                      (EntityBridge) entityIn
-                  ).bridge$getBukkitEntity();
+                (EntityBridge) entityIn
+            ).bridge$getBukkitEntity();
     }
 }

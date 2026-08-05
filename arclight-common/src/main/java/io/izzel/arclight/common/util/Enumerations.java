@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.util;
 
 import io.izzel.arclight.api.Unsafe;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;

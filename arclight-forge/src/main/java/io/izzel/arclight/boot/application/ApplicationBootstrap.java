@@ -5,14 +5,14 @@ import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.boot.AbstractBootstrap;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.ArclightLocale;
+
 import java.util.Arrays;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
 
 public class ApplicationBootstrap
     extends AbstractBootstrap
-    implements Consumer<String[]>
-{
+    implements Consumer<String[]> {
 
     private static final int MIN_DEPRECATED_VERSION = 60;
     private static final int MIN_DEPRECATED_JAVA_VERSION = 16;
@@ -59,9 +59,9 @@ public class ApplicationBootstrap
                 args[targetIndex + 1] = "arclightserver";
             }
             ServiceLoader.load(
-                getClass().getModule().getLayer(),
-                Consumer.class
-            )
+                    getClass().getModule().getLayer(),
+                    Consumer.class
+                )
                 .stream()
                 .filter(it -> !it.type().getName().contains("arclight"))
                 .findFirst()

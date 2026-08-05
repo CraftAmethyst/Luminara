@@ -3,12 +3,6 @@ package io.izzel.arclight.common.mixin.bukkit;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import io.izzel.arclight.common.bridge.bukkit.ItemMetaBridge;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Map;
-import java.util.Set;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
@@ -24,6 +18,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Set;
 
 @Mixin(value = CraftMetaItem.class, remap = false)
 public class CraftMetaItemMixin implements ItemMetaBridge {

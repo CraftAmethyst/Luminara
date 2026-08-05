@@ -35,13 +35,13 @@ public abstract class TntBlockMixin {
     private boolean arclight$redstone1(Level instance, BlockPos pos) {
         return (
             instance.hasNeighborSignal(pos) &&
-            CraftEventFactory.callTNTPrimeEvent(
-                instance,
-                pos,
-                TNTPrimeEvent.PrimeCause.REDSTONE,
-                null,
-                null
-            )
+                CraftEventFactory.callTNTPrimeEvent(
+                    instance,
+                    pos,
+                    TNTPrimeEvent.PrimeCause.REDSTONE,
+                    null,
+                    null
+                )
         );
     }
 
@@ -63,13 +63,13 @@ public abstract class TntBlockMixin {
     ) {
         return (
             instance.hasNeighborSignal(pos) &&
-            CraftEventFactory.callTNTPrimeEvent(
-                instance,
-                pos,
-                TNTPrimeEvent.PrimeCause.REDSTONE,
-                null,
-                source
-            )
+                CraftEventFactory.callTNTPrimeEvent(
+                    instance,
+                    pos,
+                    TNTPrimeEvent.PrimeCause.REDSTONE,
+                    null,
+                    source
+                )
         );
     }
 
@@ -157,13 +157,13 @@ public abstract class TntBlockMixin {
                 hit.getBlockPos(),
                 Blocks.AIR.defaultBlockState()
             ) ||
-            !CraftEventFactory.callTNTPrimeEvent(
-                worldIn,
-                hit.getBlockPos(),
-                TNTPrimeEvent.PrimeCause.PROJECTILE,
-                projectile,
-                null
-            )
+                !CraftEventFactory.callTNTPrimeEvent(
+                    worldIn,
+                    hit.getBlockPos(),
+                    TNTPrimeEvent.PrimeCause.PROJECTILE,
+                    projectile,
+                    null
+                )
         ) {
             ci.cancel();
         }

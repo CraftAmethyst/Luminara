@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.forge;
 
 import io.izzel.arclight.common.bridge.core.inventory.container.ContainerBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import java.util.Set;
-import java.util.function.Consumer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +17,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.Set;
+import java.util.function.Consumer;
 
 @Mixin(NetworkHooks.class)
 public class NetworkHooksMixin {

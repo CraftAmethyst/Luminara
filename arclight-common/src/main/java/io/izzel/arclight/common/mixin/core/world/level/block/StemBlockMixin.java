@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(StemBlock.class)
 public class StemBlockMixin {
 
+    @Unique
+    private transient boolean arclight$fruitGrew;
+
     @Redirect(
         method = "randomTick",
         at = @At(
@@ -33,9 +36,6 @@ public class StemBlockMixin {
             flags
         );
     }
-
-    @Unique
-    private transient boolean arclight$fruitGrew;
 
     @Redirect(
         method = "randomTick",

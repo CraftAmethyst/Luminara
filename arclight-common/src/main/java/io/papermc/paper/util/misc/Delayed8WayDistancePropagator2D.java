@@ -430,13 +430,13 @@ public final class Delayed8WayDistancePropagator2D {
     private void propagateIncreases() {
         for (
             int queueIndex =
-                63 ^
+            63 ^
                 Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset);
             this.levelIncreaseWorkQueueBitset != 0L;
             this.levelIncreaseWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
-                    Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)
+                        Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)
         ) {
             final WorkQueue queue = this.levelIncreaseWorkQueues[queueIndex];
             while (!queue.queuedLevels.isEmpty()) {
@@ -511,12 +511,12 @@ public final class Delayed8WayDistancePropagator2D {
     private void propagateDecreases() {
         for (
             int queueIndex =
-                63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
+            63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
             this.levelRemoveWorkQueueBitset != 0L;
             this.levelRemoveWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
-                    Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)
+                        Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)
         ) {
             final WorkQueue queue = this.levelRemoveWorkQueues[queueIndex];
             while (!queue.queuedLevels.isEmpty()) {
@@ -628,7 +628,7 @@ public final class Delayed8WayDistancePropagator2D {
                 int pos;
                 if (
                     (curr = key[(pos = (int) HashCommon.mix(k) & this.mask)]) ==
-                    0L
+                        0L
                 ) {
                     return -(pos + 1);
                 } else if (k == curr) {
@@ -682,8 +682,8 @@ public final class Delayed8WayDistancePropagator2D {
             this.shiftKeys(pos);
             if (
                 this.n > this.minN &&
-                this.size < this.maxFill / 4 &&
-                this.n > 16
+                    this.size < this.maxFill / 4 &&
+                    this.n > 16
             ) {
                 this.rehash(this.n / 2);
             }
@@ -695,8 +695,8 @@ public final class Delayed8WayDistancePropagator2D {
             --this.size;
             if (
                 this.n > this.minN &&
-                this.size < this.maxFill / 4 &&
-                this.n > 16
+                    this.size < this.maxFill / 4 &&
+                    this.n > 16
             ) {
                 this.rehash(this.n / 2);
             }
@@ -722,7 +722,7 @@ public final class Delayed8WayDistancePropagator2D {
                 if (
                     (curr = keys[
                         (pos = (int) HashCommon.mix(key) & this.mask)
-                    ]) == 0L
+                        ]) == 0L
                 ) {
                     return this.defRetValue;
                 } else if (key == curr) {
@@ -759,8 +759,7 @@ public final class Delayed8WayDistancePropagator2D {
     }
 
     protected static final class NoResizeLongArrayFIFODeque
-        extends LongArrayFIFOQueue
-    {
+        extends LongArrayFIFOQueue {
 
         /**
          * Assumes non-empty. If empty, undefined behaviour.
@@ -777,8 +776,7 @@ public final class Delayed8WayDistancePropagator2D {
     }
 
     protected static final class NoResizeByteArrayFIFODeque
-        extends ByteArrayFIFOQueue
-    {
+        extends ByteArrayFIFOQueue {
 
         /**
          * Assumes non-empty. If empty, undefined behaviour.

@@ -5,8 +5,6 @@ import io.izzel.arclight.common.bridge.core.world.storage.loot.LootTableBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.mixin.Eject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
@@ -24,6 +22,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @Mixin(LootTable.class)
 public abstract class LootTableMixin implements LootTableBridge {
@@ -66,7 +67,7 @@ public abstract class LootTableMixin implements LootTableBridge {
         ObjectArrayList<ItemStack> list = this.getRandomItems(context);
         if (
             !context.hasParam(LootContextParams.ORIGIN) &&
-            !context.hasParam(LootContextParams.THIS_ENTITY)
+                !context.hasParam(LootContextParams.THIS_ENTITY)
         ) {
             return list;
         }

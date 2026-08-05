@@ -2,11 +2,12 @@ package io.izzel.arclight.common.mod.mixins;
 
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
-import java.util.List;
-import java.util.Objects;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.util.List;
+import java.util.Objects;
 
 public class LoadIfModProcessor {
 
@@ -63,5 +64,6 @@ public class LoadIfModProcessor {
     private record LoadIfModData(
         LoadIfMod.ModCondition condition,
         List<String> modids
-    ) {}
+    ) {
+    }
 }

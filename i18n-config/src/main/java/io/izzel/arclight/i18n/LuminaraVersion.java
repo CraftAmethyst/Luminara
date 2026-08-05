@@ -13,7 +13,8 @@ public final class LuminaraVersion {
         LuminaraVersion.class.getResourceAsStream(RESOURCE)
     );
 
-    private LuminaraVersion() {}
+    private LuminaraVersion() {
+    }
 
     public static String minecraftVersion() {
         return required("minecraftVersion");
@@ -42,7 +43,7 @@ public final class LuminaraVersion {
     public static void verify(String minecraftVersion, String forgeVersion) {
         if (
             !minecraftVersion().equals(minecraftVersion) ||
-            !forgeVersion().equals(forgeVersion)
+                !forgeVersion().equals(forgeVersion)
         ) {
             throw new IllegalStateException(
                 "Unsupported installer metadata: Minecraft " +
@@ -70,18 +71,18 @@ public final class LuminaraVersion {
     public static String compatibilityLine() {
         return (
             "Luminara " +
-            version() +
-            " (Minecraft " +
-            minecraftVersion() +
-            ", Forge " +
-            forgeVersion() +
-            ", Java " +
-            javaVersion() +
-            ", Bukkit " +
-            bukkitPackage() +
-            ", commit " +
-            gitCommit() +
-            ")"
+                version() +
+                " (Minecraft " +
+                minecraftVersion() +
+                ", Forge " +
+                forgeVersion() +
+                ", Java " +
+                javaVersion() +
+                ", Bukkit " +
+                bukkitPackage() +
+                ", commit " +
+                gitCommit() +
+                ")"
         );
     }
 

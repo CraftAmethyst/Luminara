@@ -3,9 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -18,14 +15,17 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Mixin(targets = "net/minecraft/world/level/block/entity/LecternBlockEntity$1")
 public abstract class LecternTileEntity1Mixin
-    implements IInventoryBridge, Container
-{
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction = new ArrayList<>();
 
-    @Shadow(aliases = { "this$0", "f_59572_" }, remap = false)
+    @Shadow(aliases = {"this$0", "f_59572_"}, remap = false)
     private LecternBlockEntity outerThis;
 
     private int maxStack = 1;
@@ -72,7 +72,8 @@ public abstract class LecternTileEntity1Mixin
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {}
+    public void setOwner(InventoryHolder owner) {
+    }
 
     @Override
     public int getMaxStackSize() {
@@ -102,7 +103,8 @@ public abstract class LecternTileEntity1Mixin
     }
 
     @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {}
+    public void setCurrentRecipe(Recipe<?> recipe) {
+    }
 
     public LecternBlockEntity getLectern() {
         return outerThis;

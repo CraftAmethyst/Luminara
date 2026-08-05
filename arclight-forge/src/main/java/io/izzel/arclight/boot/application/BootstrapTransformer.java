@@ -1,16 +1,17 @@
 package io.izzel.arclight.boot.application;
 
 import cpw.mods.cl.ModuleClassLoader;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProtectionDomain;
 import java.util.HexFormat;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
 
 /*
  * The implementation is affected by BootstrapLauncher and ModLauncher
@@ -31,7 +32,7 @@ public class BootstrapTransformer extends ClassLoader {
         super("arclight_bootstrap", appClassLoader);
     }
 
-    @SuppressWarnings({ "unused", "unchecked" })
+    @SuppressWarnings({"unused", "unchecked"})
     public static void onInvoke$BootstrapLauncher(
         String[] args,
         ModuleClassLoader moduleCl
@@ -48,6 +49,101 @@ public class BootstrapTransformer extends ClassLoader {
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static boolean isLauncherConsumerCall(MethodInsnNode accept) {
+        AbstractInsnNode args = previousInstruction(accept);
+        AbstractInsnNode consumerCast = previousInstruction(args);
+        AbstractInsnNode providerGet = previousInstruction(consumerCast);
+        return (
+            args instanceof VarInsnNode loadArgs &&
+                loadArgs.getOpcode() == Opcodes.ALOAD &&
+                loadArgs.var == 0 &&
+                consumerCast instanceof TypeInsnNode cast &&
+                cast.getOpcode() == Opcodes.CHECKCAST &&
+                cast.desc.equals("java/util/function/Consumer") &&
+                providerGet instanceof MethodInsnNode get &&
+                get.getOpcode() == Opcodes.INVOKEINTERFACE &&
+                get.owner.equals("java/util/ServiceLoader$Provider") &&
+                get.name.equals("get") &&
+                get.desc.equals("()Ljava/lang/Object;")
+        );
+    }
+
+    private static int findModuleClassLoaderVariable(MethodNode method) {
+        for (var instruction : method.instructions) {
+            if (
+                instruction instanceof MethodInsnNode invoke &&
+                    invoke.getOpcode() == Opcodes.INVOKEVIRTUAL &&
+                    invoke.owner.equals("java/lang/Thread") &&
+                    invoke.name.equals("setContextClassLoader") &&
+                    invoke.desc.equals("(Ljava/lang/ClassLoader;)V")
+            ) {
+                AbstractInsnNode load = previousInstruction(invoke);
+                if (
+                    !(load instanceof VarInsnNode variable) ||
+                        variable.getOpcode() != Opcodes.ALOAD
+                ) continue;
+                if (
+                    isStoredModuleClassLoader(method, variable.var, instruction)
+                ) return variable.var;
+            }
+        }
+        throw unsupportedBootstrap();
+    }
+
+    private static boolean isStoredModuleClassLoader(
+        MethodNode method,
+        int variable,
+        AbstractInsnNode before
+    ) {
+        for (
+            AbstractInsnNode instruction = previousInstruction(before);
+            instruction != null;
+            instruction = previousInstruction(instruction)
+        ) {
+            if (
+                instruction instanceof VarInsnNode store &&
+                    store.getOpcode() == Opcodes.ASTORE &&
+                    store.var == variable
+            ) {
+                AbstractInsnNode constructor = previousInstruction(store);
+                return (
+                    constructor instanceof MethodInsnNode invoke &&
+                        invoke.getOpcode() == Opcodes.INVOKESPECIAL &&
+                        invoke.owner.equals("cpw/mods/cl/ModuleClassLoader") &&
+                        invoke.name.equals("<init>") &&
+                        invoke.desc.equals(
+                            "(Ljava/lang/String;Ljava/lang/module/Configuration;Ljava/util/List;)V"
+                        )
+                );
+            }
+        }
+        return false;
+    }
+
+    private static AbstractInsnNode previousInstruction(
+        AbstractInsnNode instruction
+    ) {
+        if (instruction == null) return null;
+        AbstractInsnNode previous = instruction.getPrevious();
+        while (previous != null && previous.getOpcode() < 0)
+            previous = previous.getPrevious();
+        return previous;
+    }
+
+    private static String sha256(byte[] bytes) {
+        try {
+            return HexFormat.of().formatHex(
+                MessageDigest.getInstance("SHA-256").digest(bytes)
+            );
+        } catch (NoSuchAlgorithmException impossible) {
+            throw new AssertionError(impossible);
+        }
+    }
+
+    private static IllegalStateException unsupportedBootstrap() {
+        return new IllegalStateException(UNSUPPORTED_BOOTSTRAP);
     }
 
     /*
@@ -160,8 +256,8 @@ public class BootstrapTransformer extends ClassLoader {
             .filter(
                 method ->
                     method.name.equals("main") &&
-                    method.desc.equals("([Ljava/lang/String;)V") &&
-                    (method.access & Opcodes.ACC_STATIC) != 0
+                        method.desc.equals("([Ljava/lang/String;)V") &&
+                        (method.access & Opcodes.ACC_STATIC) != 0
             )
             .findFirst()
             .orElseThrow(BootstrapTransformer::unsupportedBootstrap);
@@ -171,10 +267,10 @@ public class BootstrapTransformer extends ClassLoader {
         for (var instruction : asmMain.instructions) {
             if (
                 instruction instanceof MethodInsnNode invoke &&
-                invoke.getOpcode() == Opcodes.INVOKEINTERFACE &&
-                invoke.owner.equals("java/util/function/Consumer") &&
-                invoke.name.equals("accept") &&
-                invoke.desc.equals("(Ljava/lang/Object;)V")
+                    invoke.getOpcode() == Opcodes.INVOKEINTERFACE &&
+                    invoke.owner.equals("java/util/function/Consumer") &&
+                    invoke.name.equals("accept") &&
+                    invoke.desc.equals("(Ljava/lang/Object;)V")
             ) {
                 acceptCount++;
                 injectionPoint = invoke;
@@ -182,8 +278,8 @@ public class BootstrapTransformer extends ClassLoader {
         }
         if (
             acceptCount != 1 ||
-            injectionPoint == null ||
-            !isLauncherConsumerCall(injectionPoint)
+                injectionPoint == null ||
+                !isLauncherConsumerCall(injectionPoint)
         ) {
             throw unsupportedBootstrap();
         }
@@ -210,100 +306,5 @@ public class BootstrapTransformer extends ClassLoader {
         var writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         asmClass.accept(writer);
         return writer.toByteArray();
-    }
-
-    private static boolean isLauncherConsumerCall(MethodInsnNode accept) {
-        AbstractInsnNode args = previousInstruction(accept);
-        AbstractInsnNode consumerCast = previousInstruction(args);
-        AbstractInsnNode providerGet = previousInstruction(consumerCast);
-        return (
-            args instanceof VarInsnNode loadArgs &&
-            loadArgs.getOpcode() == Opcodes.ALOAD &&
-            loadArgs.var == 0 &&
-            consumerCast instanceof TypeInsnNode cast &&
-            cast.getOpcode() == Opcodes.CHECKCAST &&
-            cast.desc.equals("java/util/function/Consumer") &&
-            providerGet instanceof MethodInsnNode get &&
-            get.getOpcode() == Opcodes.INVOKEINTERFACE &&
-            get.owner.equals("java/util/ServiceLoader$Provider") &&
-            get.name.equals("get") &&
-            get.desc.equals("()Ljava/lang/Object;")
-        );
-    }
-
-    private static int findModuleClassLoaderVariable(MethodNode method) {
-        for (var instruction : method.instructions) {
-            if (
-                instruction instanceof MethodInsnNode invoke &&
-                invoke.getOpcode() == Opcodes.INVOKEVIRTUAL &&
-                invoke.owner.equals("java/lang/Thread") &&
-                invoke.name.equals("setContextClassLoader") &&
-                invoke.desc.equals("(Ljava/lang/ClassLoader;)V")
-            ) {
-                AbstractInsnNode load = previousInstruction(invoke);
-                if (
-                    !(load instanceof VarInsnNode variable) ||
-                    variable.getOpcode() != Opcodes.ALOAD
-                ) continue;
-                if (
-                    isStoredModuleClassLoader(method, variable.var, instruction)
-                ) return variable.var;
-            }
-        }
-        throw unsupportedBootstrap();
-    }
-
-    private static boolean isStoredModuleClassLoader(
-        MethodNode method,
-        int variable,
-        AbstractInsnNode before
-    ) {
-        for (
-            AbstractInsnNode instruction = previousInstruction(before);
-            instruction != null;
-            instruction = previousInstruction(instruction)
-        ) {
-            if (
-                instruction instanceof VarInsnNode store &&
-                store.getOpcode() == Opcodes.ASTORE &&
-                store.var == variable
-            ) {
-                AbstractInsnNode constructor = previousInstruction(store);
-                return (
-                    constructor instanceof MethodInsnNode invoke &&
-                    invoke.getOpcode() == Opcodes.INVOKESPECIAL &&
-                    invoke.owner.equals("cpw/mods/cl/ModuleClassLoader") &&
-                    invoke.name.equals("<init>") &&
-                    invoke.desc.equals(
-                        "(Ljava/lang/String;Ljava/lang/module/Configuration;Ljava/util/List;)V"
-                    )
-                );
-            }
-        }
-        return false;
-    }
-
-    private static AbstractInsnNode previousInstruction(
-        AbstractInsnNode instruction
-    ) {
-        if (instruction == null) return null;
-        AbstractInsnNode previous = instruction.getPrevious();
-        while (previous != null && previous.getOpcode() < 0)
-            previous = previous.getPrevious();
-        return previous;
-    }
-
-    private static String sha256(byte[] bytes) {
-        try {
-            return HexFormat.of().formatHex(
-                MessageDigest.getInstance("SHA-256").digest(bytes)
-            );
-        } catch (NoSuchAlgorithmException impossible) {
-            throw new AssertionError(impossible);
-        }
-    }
-
-    private static IllegalStateException unsupportedBootstrap() {
-        return new IllegalStateException(UNSUPPORTED_BOOTSTRAP);
     }
 }

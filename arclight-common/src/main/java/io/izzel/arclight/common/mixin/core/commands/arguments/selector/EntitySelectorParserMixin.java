@@ -12,8 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntitySelectorParser.class)
 public abstract class EntitySelectorParserMixin
-    implements EntitySelectorParserBridge
-{
+    implements EntitySelectorParserBridge {
 
     // @formatter:off
     @Shadow private boolean usesSelectors;

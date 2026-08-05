@@ -46,10 +46,10 @@ public class EnderCrystalItemMixin {
     ) {
         if (
             DistValidate.isValid(context) &&
-            CraftEventFactory.callEntityPlaceEvent(
-                context,
-                arclight$enderCrystalEntity
-            ).isCancelled()
+                CraftEventFactory.callEntityPlaceEvent(
+                    context,
+                    arclight$enderCrystalEntity
+                ).isCancelled()
         ) {
             cir.setReturnValue(InteractionResult.FAIL);
         }

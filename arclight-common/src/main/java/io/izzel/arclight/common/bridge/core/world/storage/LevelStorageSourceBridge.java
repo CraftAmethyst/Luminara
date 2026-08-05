@@ -1,9 +1,10 @@
 package io.izzel.arclight.common.bridge.core.world.storage;
 
-import java.io.IOException;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.LevelStorageSource;
+
+import java.io.IOException;
 
 public interface LevelStorageSourceBridge {
     LevelStorageSource.LevelStorageAccess bridge$getLevelSave(

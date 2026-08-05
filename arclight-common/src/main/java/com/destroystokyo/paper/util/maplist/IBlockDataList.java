@@ -2,10 +2,11 @@ package com.destroystokyo.paper.util.maplist;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.shorts.Short2LongOpenHashMap;
-import java.util.Arrays;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.GlobalPalette;
+
+import java.util.Arrays;
 
 /**
  * @author Spottedleaf
@@ -51,8 +52,8 @@ public final class IBlockDataList {
     ) {
         return (
             (long) index |
-            ((long) location << 16) |
-            ((long) GLOBAL_PALETTE.idFor(data) << 32)
+                ((long) location << 16) |
+                ((long) GLOBAL_PALETTE.idFor(data) << 32)
         );
     }
 

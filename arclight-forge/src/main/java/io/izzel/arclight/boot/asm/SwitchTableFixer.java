@@ -1,9 +1,6 @@
 package io.izzel.arclight.boot.asm;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
-import java.lang.reflect.Modifier;
-import java.util.Set;
-import java.util.function.Function;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.ClassReader;
@@ -11,6 +8,10 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+
+import java.lang.reflect.Modifier;
+import java.util.Set;
+import java.util.function.Function;
 
 public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
 
@@ -97,8 +98,8 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
     private boolean inject1(ClassNode node, MethodNode method) {
         if (
             Modifier.isStatic(method.access) &&
-            (method.access & Opcodes.ACC_SYNTHETIC) != 0 &&
-            method.desc.equals("()[I")
+                (method.access & Opcodes.ACC_SYNTHETIC) != 0 &&
+                method.desc.equals("()[I")
         ) {
             boolean foundTryCatch = false;
             for (TryCatchBlockNode tryCatchBlock : method.tryCatchBlocks) {
@@ -121,13 +122,13 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                 } else {
                     if (
                         insnNode.getOpcode() == Opcodes.GETSTATIC &&
-                        ((FieldInsnNode) insnNode).desc.equals("[I")
+                            ((FieldInsnNode) insnNode).desc.equals("[I")
                     ) {
                         fieldInsnNode = (FieldInsnNode) insnNode;
                     }
                     if (
                         insnNode.getOpcode() == Opcodes.INVOKESTATIC &&
-                        ((MethodInsnNode) insnNode).name.equals("values")
+                            ((MethodInsnNode) insnNode).name.equals("values")
                     ) {
                         Type methodType = Type.getMethodType(
                             ((MethodInsnNode) insnNode).desc
@@ -135,7 +136,7 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                         Type returnType = methodType.getReturnType();
                         if (
                             returnType.getSort() == Type.ARRAY &&
-                            returnType.getDimensions() == 1
+                                returnType.getDimensions() == 1
                         ) {
                             String retType = returnType
                                 .getElementType()
@@ -147,8 +148,8 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                                     if (
                                         newArray.getOpcode() ==
                                             Opcodes.NEWARRAY &&
-                                        ((IntInsnNode) newArray).operand ==
-                                            Opcodes.T_INT
+                                            ((IntInsnNode) newArray).operand ==
+                                                Opcodes.T_INT
                                     ) {
                                         enumType = retType;
                                     }
@@ -209,8 +210,8 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
         if ((node.access & Opcodes.ACC_SYNTHETIC) != 0) {
             if (
                 node.methods.size() == 1 &&
-                Modifier.isStatic(method.access) &&
-                method.name.equals("<clinit>")
+                    Modifier.isStatic(method.access) &&
+                    method.name.equals("<clinit>")
             ) {
                 boolean foundTryCatch = false;
                 for (TryCatchBlockNode tryCatchBlock : method.tryCatchBlocks) {
@@ -232,7 +233,7 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                 for (AbstractInsnNode insnNode : method.instructions) {
                     if (
                         insnNode.getOpcode() == Opcodes.INVOKESTATIC &&
-                        ((MethodInsnNode) insnNode).name.equals("values")
+                            ((MethodInsnNode) insnNode).name.equals("values")
                     ) {
                         Type methodType = Type.getMethodType(
                             ((MethodInsnNode) insnNode).desc
@@ -240,7 +241,7 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                         Type returnType = methodType.getReturnType();
                         if (
                             returnType.getSort() == Type.ARRAY &&
-                            returnType.getDimensions() == 1
+                                returnType.getDimensions() == 1
                         ) {
                             String retType = returnType
                                 .getElementType()
@@ -252,17 +253,17 @@ public class SwitchTableFixer implements Implementer, Function<byte[], byte[]> {
                                     if (
                                         newArray.getOpcode() ==
                                             Opcodes.NEWARRAY &&
-                                        ((IntInsnNode) newArray).operand ==
-                                            Opcodes.T_INT
+                                            ((IntInsnNode) newArray).operand ==
+                                                Opcodes.T_INT
                                     ) {
                                         AbstractInsnNode putStatic =
                                             newArray.getNext();
                                         if (
                                             putStatic.getOpcode() ==
                                                 Opcodes.PUTSTATIC &&
-                                            (
-                                                (FieldInsnNode) putStatic
-                                            ).desc.equals("[I")
+                                                (
+                                                    (FieldInsnNode) putStatic
+                                                ).desc.equals("[I")
                                         ) {
                                             enumType = retType;
                                             fieldInsnNode =

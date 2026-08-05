@@ -17,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin_ActivationRange
-    implements EntityBridge_ActivationRange
-{
+    implements EntityBridge_ActivationRange {
 
     @Shadow
     public int tickCount;
@@ -66,7 +65,8 @@ public abstract class EntityMixin_ActivationRange
         }
     }
 
-    public void inactiveTick() {}
+    public void inactiveTick() {
+    }
 
     @Override
     public void bridge$inactiveTick() {

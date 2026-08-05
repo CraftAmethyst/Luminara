@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -12,6 +11,8 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
 
 @Mixin(MultifaceSpreader.SpreadConfig.class)
 public interface MultifaceSpreader_SpreadConfigMixin {

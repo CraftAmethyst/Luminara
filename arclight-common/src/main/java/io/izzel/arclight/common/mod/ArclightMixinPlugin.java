@@ -6,21 +6,22 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import io.izzel.arclight.common.mod.mixins.BukkitPaperApiPatcher;
 import io.izzel.arclight.common.mod.mixins.ShouldApplyProcessor;
-import java.util.*;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+
+import java.util.*;
 
 public class ArclightMixinPlugin implements IMixinConfigPlugin {
 
     private final Map<
         String,
         Map.Entry<List<FieldNode>, List<MethodNode>>
-    > accessTransformer = ImmutableMap.<
-        String,
-        Map.Entry<List<FieldNode>, List<MethodNode>>
-    >builder()
+        > accessTransformer = ImmutableMap.<
+            String,
+            Map.Entry<List<FieldNode>, List<MethodNode>>
+            >builder()
         .put(
             "net.minecraft.world.level.Level",
             Maps.immutableEntry(
@@ -228,7 +229,8 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
         .build();
 
     @Override
-    public void onLoad(String mixinPackage) {}
+    public void onLoad(String mixinPackage) {
+    }
 
     @Override
     public String getRefMapperConfig() {
@@ -247,7 +249,8 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
     public void acceptTargets(
         Set<String> myTargets,
         Set<String> otherTargets
-    ) {}
+    ) {
+    }
 
     @Override
     public List<String> getMixins() {
@@ -260,7 +263,8 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
         ClassNode targetClass,
         String mixinClassName,
         IMixinInfo mixinInfo
-    ) {}
+    ) {
+    }
 
     @Override
     public void postApply(
@@ -319,7 +323,7 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
                 }
                 if (
                     methodNode.name.equals("<init>") &&
-                    overrideCtor.contains(methodNode.desc)
+                        overrideCtor.contains(methodNode.desc)
                 ) {
                     iterator.remove();
                 } else if (
@@ -387,7 +391,7 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
         for (FieldNode field : fields) {
             if (
                 Objects.equals(fieldNode.name, field.name) &&
-                Objects.equals(fieldNode.desc, field.desc)
+                    Objects.equals(fieldNode.desc, field.desc)
             ) {
                 fieldNode.access = field.access;
             }
@@ -398,7 +402,7 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
         for (MethodNode method : methods) {
             if (
                 Objects.equals(methodNode.name, method.name) &&
-                Objects.equals(methodNode.desc, method.desc)
+                    Objects.equals(methodNode.desc, method.desc)
             ) {
                 methodNode.access = method.access;
             }

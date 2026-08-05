@@ -1,10 +1,11 @@
 package io.izzel.arclight.i18n;
 
 import io.izzel.arclight.i18n.conf.PermissionForwarding;
+import ninja.leaping.configurate.ConfigurationNode;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import ninja.leaping.configurate.ConfigurationNode;
 
 final class ConfigMigration {
 
@@ -18,7 +19,8 @@ final class ConfigMigration {
         "async-world-save"
     );
 
-    private ConfigMigration() {}
+    private ConfigMigration() {
+    }
 
     static Result migrate(ConfigurationNode root) {
         int version = root.getNode("_v").getInt(1);
@@ -93,5 +95,6 @@ final class ConfigMigration {
         ConfigurationNode root,
         List<String> removedUnsafeSettings,
         boolean changed
-    ) {}
+    ) {
+    }
 }

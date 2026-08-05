@@ -31,15 +31,15 @@ compatibility:
   # Extra worlds running logic
   # If any mods do not function well, try search class names in logs related to [EXT_LOGIC] and add them here
   extra-logic-worlds:
-  - com.example.mod.ExtraLogicWorld
-  - xyz.nucleoid.fantasy.RuntimeWorld
+    - com.example.mod.ExtraLogicWorld
+    - xyz.nucleoid.fantasy.RuntimeWorld
   permission-forwarding: FORGE_TO_BUKKIT
   # Regex for valid username check. Leave it blank will fallback to vanilla check
   # Following allows Chinese characters:
   # valid-username-regex = "^[ -~\\p{sc=Han}]{1,16}$"
   # Following allows any username to login:
   # valid-username-regex = ".+"
-  valid-username-regex: ''
+  valid-username-regex: ""
   # Allows items with an empty nbt tag stack on no tag items
   lenient-item-tag-match: true
   # Whether to enable preloading of Bungee chat API classes at startup
@@ -70,7 +70,7 @@ velocity:
   # Velocity forwarding secret key
   # Must exactly match the forwarding-secret in Velocity configuration file
   # Used to authenticate connection requests from Velocity
-  forwarding-secret: ''
+  forwarding-secret: ""
   # Whether to display Velocity forwarding related debug information in logs
   # Enable this to help diagnose connection issues
   debug-logging: false

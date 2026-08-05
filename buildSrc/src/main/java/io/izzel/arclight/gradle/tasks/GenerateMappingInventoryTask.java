@@ -2,34 +2,120 @@ package io.izzel.arclight.gradle.tasks;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.jar.JarFile;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.jar.JarFile;
+
 public abstract class GenerateMappingInventoryTask extends DefaultTask {
+
+    private final ConfigurableFileCollection minecraftClasspath =
+        getProject().files();
+    private final ConfigurableFileCollection referenceSources =
+        getProject().files();
+    private final ConfigurableFileCollection generatedRemapperInputs =
+        getProject().files();
+
+    private static String toBukkitDescriptor(
+        String descriptor,
+        SrgIndex mappings
+    ) {
+        StringBuilder mapped = new StringBuilder();
+        for (int index = 0; index < descriptor.length(); index++) {
+            char current = descriptor.charAt(index);
+            mapped.append(current);
+            if (current != 'L') continue;
+            int end = descriptor.indexOf(';', index);
+            if (end < 0) return descriptor;
+            String className = descriptor.substring(index + 1, end);
+            SrgClass mapping = mappings.findClass(className);
+            mapped
+                .append(mapping == null ? className : mapping.namedClass)
+                .append(';');
+            index = end;
+        }
+        return mapped.toString();
+    }
+
+    private static Map<String, Object> row(
+        String source,
+        int line,
+        String kind,
+        String className,
+        String member,
+        String descriptor,
+        String status
+    ) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("source", source);
+        row.put("line", line);
+        row.put("kind", kind);
+        row.put("class", className);
+        row.put("member", member);
+        row.put("descriptor", descriptor);
+        row.put("status", status);
+        return row;
+    }
+
+    private static String rowKey(Map<String, Object> row) {
+        return (
+            row.get("source") +
+                "\u0000" +
+                String.format("%08d", row.get("line"))
+        );
+    }
+
+    private static String stripComment(String line) {
+        int comment = line.indexOf('#');
+        return (comment < 0 ? line : line.substring(0, comment)).trim();
+    }
+
+    private static String memberName(String member) {
+        int descriptor = member.indexOf('(');
+        return descriptor < 0 ? member : member.substring(0, descriptor);
+    }
+
+    private static String descriptor(String member) {
+        int descriptor = member.indexOf('(');
+        return descriptor < 0 ? "" : member.substring(descriptor);
+    }
+
+    private static boolean hasField(ClassNode node, String name) {
+        return (
+            name != null &&
+                node.fields.stream().anyMatch(field -> field.name.equals(name))
+        );
+    }
+
+    private static boolean hasMethod(
+        ClassNode node,
+        String name,
+        String descriptor
+    ) {
+        if (name == null) return false;
+        for (MethodNode method : node.methods) {
+            if (
+                method.name.equals(name) &&
+                    (descriptor.isEmpty() || method.desc.equals(descriptor))
+            ) return true;
+        }
+        return false;
+    }
+
+    private static <T> T firstNonNull(T first, T second) {
+        return first != null ? first : second;
+    }
 
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -62,13 +148,6 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
     public abstract RegularFileProperty getBukkitMappings();
-
-    private final ConfigurableFileCollection minecraftClasspath =
-        getProject().files();
-    private final ConfigurableFileCollection referenceSources =
-        getProject().files();
-    private final ConfigurableFileCollection generatedRemapperInputs =
-        getProject().files();
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -211,9 +290,9 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                     transformLog.contains(
                         "Transforming " + className + " CLASS"
                     ) ||
-                    transformLog.contains(
-                        "Transforming class L" + className + ";"
-                    );
+                        transformLog.contains(
+                            "Transforming class L" + className + ";"
+                        );
             } else if (descriptor.isEmpty()) {
                 active = transformLog.contains(
                     "Transforming " + className + " FIELD " + memberName + " "
@@ -229,8 +308,8 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                     index + 1,
                     descriptor.isEmpty()
                         ? memberName.isEmpty()
-                            ? "class"
-                            : "field"
+                          ? "class"
+                          : "field"
                         : "method",
                     className.replace('/', '.'),
                     memberName,
@@ -287,8 +366,8 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
             ClassNode targetClass = bukkit.read(className);
             boolean active =
                 targetClass != null &&
-                (memberName.isEmpty() ||
-                    hasMethod(targetClass, memberName, descriptor));
+                    (memberName.isEmpty() ||
+                        hasMethod(targetClass, memberName, descriptor));
             rows.add(
                 row(
                     input.getName(),
@@ -301,27 +380,6 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                 )
             );
         }
-    }
-
-    private static String toBukkitDescriptor(
-        String descriptor,
-        SrgIndex mappings
-    ) {
-        StringBuilder mapped = new StringBuilder();
-        for (int index = 0; index < descriptor.length(); index++) {
-            char current = descriptor.charAt(index);
-            mapped.append(current);
-            if (current != 'L') continue;
-            int end = descriptor.indexOf(';', index);
-            if (end < 0) return descriptor;
-            String className = descriptor.substring(index + 1, end);
-            SrgClass mapping = mappings.findClass(className);
-            mapped
-                .append(mapping == null ? className : mapping.namedClass)
-                .append(';');
-            index = end;
-        }
-        return mapped.toString();
     }
 
     private void inventoryExtraMappings(
@@ -371,11 +429,11 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                 rightNode = minecraft.read(namedRight);
                 boolean hasFieldMappings =
                     index + 1 < lines.size() &&
-                    !lines.get(index + 1).isBlank() &&
-                    Character.isWhitespace(lines.get(index + 1).charAt(0));
+                        !lines.get(index + 1).isBlank() &&
+                        Character.isWhitespace(lines.get(index + 1).charAt(0));
                 boolean active =
                     rightNode != null &&
-                    (leftNode != null || !hasFieldMappings);
+                        (leftNode != null || !hasFieldMappings);
                 rows.add(
                     row(
                         input.getName(),
@@ -404,8 +462,8 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                 }
                 boolean active =
                     leftNode != null &&
-                    hasField(leftNode, parts[0]) &&
-                    rightNode != null;
+                        hasField(leftNode, parts[0]) &&
+                        rightNode != null;
                 rows.add(
                     row(
                         input.getName(),
@@ -444,79 +502,10 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
             );
             if (
                 !term.isBlank() &&
-                (text.contains(term) || text.contains(term.replace('.', '/')))
+                    (text.contains(term) || text.contains(term.replace('.', '/')))
             ) return true;
         }
         return false;
-    }
-
-    private static Map<String, Object> row(
-        String source,
-        int line,
-        String kind,
-        String className,
-        String member,
-        String descriptor,
-        String status
-    ) {
-        Map<String, Object> row = new LinkedHashMap<>();
-        row.put("source", source);
-        row.put("line", line);
-        row.put("kind", kind);
-        row.put("class", className);
-        row.put("member", member);
-        row.put("descriptor", descriptor);
-        row.put("status", status);
-        return row;
-    }
-
-    private static String rowKey(Map<String, Object> row) {
-        return (
-            row.get("source") +
-            "\u0000" +
-            String.format("%08d", row.get("line"))
-        );
-    }
-
-    private static String stripComment(String line) {
-        int comment = line.indexOf('#');
-        return (comment < 0 ? line : line.substring(0, comment)).trim();
-    }
-
-    private static String memberName(String member) {
-        int descriptor = member.indexOf('(');
-        return descriptor < 0 ? member : member.substring(0, descriptor);
-    }
-
-    private static String descriptor(String member) {
-        int descriptor = member.indexOf('(');
-        return descriptor < 0 ? "" : member.substring(descriptor);
-    }
-
-    private static boolean hasField(ClassNode node, String name) {
-        return (
-            name != null &&
-            node.fields.stream().anyMatch(field -> field.name.equals(name))
-        );
-    }
-
-    private static boolean hasMethod(
-        ClassNode node,
-        String name,
-        String descriptor
-    ) {
-        if (name == null) return false;
-        for (MethodNode method : node.methods) {
-            if (
-                method.name.equals(name) &&
-                (descriptor.isEmpty() || method.desc.equals(descriptor))
-            ) return true;
-        }
-        return false;
-    }
-
-    private static <T> T firstNonNull(T first, T second) {
-        return first != null ? first : second;
     }
 
     private static final class SrgIndex {
@@ -532,8 +521,8 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
             )) {
                 if (
                     line.isBlank() ||
-                    line.startsWith("tsrg2") ||
-                    line.startsWith("\t\t")
+                        line.startsWith("tsrg2") ||
+                        line.startsWith("\t\t")
                 ) continue;
                 String[] parts = line.trim().split("\\s+");
                 if (!Character.isWhitespace(line.charAt(0))) {
@@ -580,7 +569,7 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                 .filter(
                     method ->
                         method.srgName.equals(srgName) &&
-                        method.descriptor.equals(descriptor)
+                            method.descriptor.equals(descriptor)
                 )
                 .map(method -> method.namedName)
                 .findFirst()
@@ -599,7 +588,8 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
         String namedName,
         String descriptor,
         String srgName
-    ) {}
+    ) {
+    }
 
     private static final class ClassLookup {
 

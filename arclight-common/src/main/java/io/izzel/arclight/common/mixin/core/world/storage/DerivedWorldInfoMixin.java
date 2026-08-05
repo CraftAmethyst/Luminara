@@ -39,8 +39,8 @@ public class DerivedWorldInfoMixin implements DerivedWorldInfoBridge {
                 } else {
                     suffix = (
                         typeKey.location().getNamespace() +
-                        "_" +
-                        typeKey.location().getPath()
+                            "_" +
+                            typeKey.location().getPath()
                     ).replace('/', '_');
                 }
                 return worldName + suffix;
@@ -54,8 +54,8 @@ public class DerivedWorldInfoMixin implements DerivedWorldInfoBridge {
                 } else {
                     suffix =
                         typeKey.location().getNamespace() +
-                        "/" +
-                        typeKey.location().getPath();
+                            "/" +
+                            typeKey.location().getPath();
                 }
                 return worldName + suffix;
             }

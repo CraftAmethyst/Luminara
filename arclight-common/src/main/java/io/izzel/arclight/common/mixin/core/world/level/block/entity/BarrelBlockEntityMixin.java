@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -13,11 +11,13 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(BarrelBlockEntity.class)
 public abstract class BarrelBlockEntityMixin
     extends LockableBlockEntityMixin
-    implements IInventoryBridge, Container
-{
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction = new ArrayList<>();
 

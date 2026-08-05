@@ -2,9 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.level.saveddata.maps;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.storage.MapDataBridge;
-import java.util.ArrayList;
-import java.util.Collection;
-import javax.annotation.Nullable;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +14,10 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Mixin(MapItemSavedData.HoldingPlayer.class)
 public abstract class MapItemSavedData_HoldingPlayerMixin {
@@ -96,11 +97,11 @@ public abstract class MapItemSavedData_HoldingPlayerMixin {
         return icons == null && patch == null
             ? null
             : new ClientboundMapItemDataPacket(
-                  i,
-                  outerThis.scale,
-                  outerThis.locked,
-                  icons,
-                  patch
-              );
+            i,
+            outerThis.scale,
+            outerThis.locked,
+            icons,
+            patch
+        );
     }
 }

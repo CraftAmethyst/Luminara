@@ -38,10 +38,10 @@ public abstract class ShapedRecipeMixin implements IRecipeBridge {
     public Recipe bridge$toBukkitRecipe() {
         if (
             this.getWidth() < 1 ||
-            this.getWidth() > 3 ||
-            this.getHeight() < 1 ||
-            this.getHeight() > 3 ||
-            this.result.isEmpty()
+                this.getWidth() > 3 ||
+                this.getHeight() < 1 ||
+                this.getHeight() > 3 ||
+                this.result.isEmpty()
         ) {
             return new ArclightSpecialRecipe(
                 (net.minecraft.world.item.crafting.Recipe<?>) this

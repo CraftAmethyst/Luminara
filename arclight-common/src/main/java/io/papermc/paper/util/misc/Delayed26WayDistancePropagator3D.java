@@ -181,13 +181,13 @@ public final class Delayed26WayDistancePropagator3D {
     private void propagateIncreases() {
         for (
             int queueIndex =
-                63 ^
+            63 ^
                 Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset);
             this.levelIncreaseWorkQueueBitset != 0L;
             this.levelIncreaseWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
-                    Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)
+                        Long.numberOfLeadingZeros(this.levelIncreaseWorkQueueBitset)
         ) {
             final Delayed8WayDistancePropagator2D.WorkQueue queue =
                 this.levelIncreaseWorkQueues[queueIndex];
@@ -270,12 +270,12 @@ public final class Delayed26WayDistancePropagator3D {
     private void propagateDecreases() {
         for (
             int queueIndex =
-                63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
+            63 ^ Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset);
             this.levelRemoveWorkQueueBitset != 0L;
             this.levelRemoveWorkQueueBitset ^= 1L << queueIndex,
                 queueIndex =
                     63 ^
-                    Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)
+                        Long.numberOfLeadingZeros(this.levelRemoveWorkQueueBitset)
         ) {
             final Delayed8WayDistancePropagator2D.WorkQueue queue =
                 this.levelRemoveWorkQueues[queueIndex];

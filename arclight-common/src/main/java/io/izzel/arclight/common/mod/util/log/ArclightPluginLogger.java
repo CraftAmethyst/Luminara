@@ -1,10 +1,11 @@
 package io.izzel.arclight.common.mod.util.log;
 
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import org.apache.logging.log4j.jul.LogManager;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLogger;
+
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class ArclightPluginLogger extends PluginLogger {
 

@@ -3,7 +3,11 @@ package io.izzel.arclight.forgeinstaller;
 import com.google.gson.*;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.i18n.LuminaraVersion;
-import java.io.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -42,7 +46,7 @@ public class ForgeInstaller {
         }
         if (
             info.installer.minecraft == null ||
-            info.installer.minecraft.isBlank()
+                info.installer.minecraft.isBlank()
         ) {
             throw new IllegalArgumentException(
                 "Missing Minecraft metadata in META-INF/installer.json"
@@ -50,9 +54,9 @@ public class ForgeInstaller {
         }
         if (
             info.installer.forge == null ||
-            info.installer.forge.isBlank() ||
-            info.installer.hash == null ||
-            info.installer.hash.isBlank()
+                info.installer.forge.isBlank() ||
+                info.installer.hash == null ||
+                info.installer.hash.isBlank()
         ) {
             throw new IllegalArgumentException(
                 "Missing Forge download metadata in META-INF/installer.json"
@@ -204,7 +208,7 @@ public class ForgeInstaller {
     private static Function<
         Supplier<Path>,
         CompletableFuture<Path>
-    > reportSupply(ExecutorService service, Consumer<String> logger) {
+        > reportSupply(ExecutorService service, Consumer<String> logger) {
         return it ->
             CompletableFuture.supplyAsync(it, service).thenApply(path -> {
                 logger.accept("Downloaded " + path);
@@ -223,7 +227,7 @@ public class ForgeInstaller {
             for (Map.Entry<
                 String,
                 String
-            > entry : Mirrors.getVersionManifest()) {
+                > entry : Mirrors.getVersionManifest()) {
                 try (var stream = FileDownloader.read(entry.getValue())) {
                     var bytes = stream.readAllBytes();
                     var element = JsonParser.parseString(
@@ -371,7 +375,7 @@ public class ForgeInstaller {
                 )
             )
         );
-        return new CompletableFuture[] { installerFuture, serverFuture };
+        return new CompletableFuture[]{installerFuture, serverFuture};
     }
 
     private static Path stripDownloadMapping(
@@ -398,8 +402,8 @@ public class ForgeInstaller {
                     var name = entry.getName();
                     if (
                         name.endsWith(".SF") ||
-                        name.endsWith(".DSA") ||
-                        name.endsWith(".RSA")
+                            name.endsWith(".DSA") ||
+                            name.endsWith(".RSA")
                     ) {
                         continue;
                     }
@@ -410,7 +414,8 @@ public class ForgeInstaller {
                         var processors = element
                             .getAsJsonObject()
                             .getAsJsonArray("processors");
-                        outer: for (var i = 0; i < processors.size(); i++) {
+                        outer:
+                        for (var i = 0; i < processors.size(); i++) {
                             var processor = processors.get(i).getAsJsonObject();
                             var args = processor.getAsJsonArray("args");
                             for (var arg : args) {
@@ -516,7 +521,7 @@ public class ForgeInstaller {
         for (Map.Entry<
             String,
             Map.Entry<String, String>
-        > entry : map.entrySet()) {
+            > entry : map.entrySet()) {
             String maven = entry.getKey();
             String hash = entry.getValue().getKey();
             String url = entry.getValue().getValue();
@@ -576,13 +581,13 @@ public class ForgeInstaller {
                 }
                 if (
                     pathList != null &&
-                    Arrays.stream(
-                        pathList.split(
-                            java.util.regex.Pattern.quote(File.pathSeparator)
-                        )
-                    )
-                        .map(path -> resolvePath(serverDirectory, path))
-                        .anyMatch(path -> !Files.exists(path))
+                        Arrays.stream(
+                                pathList.split(
+                                    java.util.regex.Pattern.quote(File.pathSeparator)
+                                )
+                            )
+                            .map(path -> resolvePath(serverDirectory, path))
+                            .anyMatch(path -> !Files.exists(path))
                 ) {
                     return true;
                 }
@@ -710,12 +715,12 @@ public class ForgeInstaller {
         try {
             legacyClassPath.add(
                 Paths.get(
-                    ForgeInstaller.class
-                        .getProtectionDomain()
-                        .getCodeSource()
-                        .getLocation()
-                        .toURI()
-                )
+                        ForgeInstaller.class
+                            .getProtectionDomain()
+                            .getCodeSource()
+                            .getLocation()
+                            .toURI()
+                    )
                     .toAbsolutePath()
                     .normalize()
             );
@@ -808,8 +813,8 @@ public class ForgeInstaller {
             "Empty " + source + " in Forge argument file"
         );
         return Arrays.stream(
-            value.split(java.util.regex.Pattern.quote(File.pathSeparator))
-        )
+                value.split(java.util.regex.Pattern.quote(File.pathSeparator))
+            )
             .map(path -> resolvePath(root, path))
             .collect(Collectors.toList());
     }
@@ -859,7 +864,7 @@ public class ForgeInstaller {
                         AccessControlContext.class
                     )
                 );
-                ucp = handle.invoke(new URL[] {}, (AccessControlContext) null);
+                ucp = handle.invoke(new URL[]{}, (AccessControlContext) null);
                 Unsafe.putObjectVolatile(loader, offset, ucp);
             }
             Method method = ucp
@@ -921,7 +926,7 @@ public class ForgeInstaller {
         String normalized = path.replace('\\', '/');
         return (
             normalized.contains("/com/google/code/gson/") ||
-            normalized.contains("/gson-")
+                normalized.contains("/gson-")
         );
     }
 
@@ -1014,7 +1019,7 @@ public class ForgeInstaller {
             (Map<
                 ResolvedModule,
                 Set<ResolvedModule>
-            >) graphGetter.invokeWithArguments(config)
+                >) graphGetter.invokeWithArguments(config)
         );
         MethodHandle cfSetter = IMPL_LOOKUP.findSetter(
             ResolvedModule.class,
@@ -1046,7 +1051,7 @@ public class ForgeInstaller {
             (Map<
                 ResolvedModule,
                 Set<ResolvedModule>
-            >) graphGetter.invokeWithArguments(
+                >) graphGetter.invokeWithArguments(
                 ModuleLayer.boot().configuration()
             )
         );
@@ -1084,7 +1089,7 @@ public class ForgeInstaller {
             (Map<
                 String,
                 ResolvedModule
-            >) nameToModuleGetter.invokeWithArguments(
+                >) nameToModuleGetter.invokeWithArguments(
                 ModuleLayer.boot().configuration()
             )
         );
@@ -1092,7 +1097,7 @@ public class ForgeInstaller {
             (Map<
                 String,
                 ResolvedModule
-            >) nameToModuleGetter.invokeWithArguments(config)
+                >) nameToModuleGetter.invokeWithArguments(config)
         );
         IMPL_LOOKUP.findSetter(
             Configuration.class,
@@ -1202,7 +1207,9 @@ public class ForgeInstaller {
         String serverHash,
         String mappingUrl,
         String mappingHash
-    ) {}
+    ) {
+    }
 
-    private record ParserData(String module, String packages, String target) {}
+    private record ParserData(String module, String packages, String target) {
+    }
 }

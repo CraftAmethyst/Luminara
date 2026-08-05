@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mixin.core.network.chat;
 
-import javax.annotation.Nullable;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
@@ -9,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
 
 @Mixin(Style.class)
 public class StyleMixin {

@@ -6,8 +6,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
-import java.util.Map;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -43,6 +41,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+
 @Mixin(value = CraftEventFactory.class, remap = false)
 public class CraftEventFactoryMixin {
 
@@ -63,7 +64,7 @@ public class CraftEventFactoryMixin {
         Map<
             EntityDamageEvent.DamageModifier,
             Function<? super Double, Double>
-        > modifierFunctions,
+            > modifierFunctions,
         boolean cancelled,
         CallbackInfoReturnable<EntityDamageEvent> cir
     ) {
@@ -77,8 +78,8 @@ public class CraftEventFactoryMixin {
         if (damageEventBlock != null && blockDamage == null) {
             if (
                 source.is(DamageTypes.CACTUS) ||
-                source.is(DamageTypes.SWEET_BERRY_BUSH) ||
-                source.is(DamageTypes.HOT_FLOOR)
+                    source.is(DamageTypes.SWEET_BERRY_BUSH) ||
+                    source.is(DamageTypes.HOT_FLOOR)
             ) {
                 blockDamage = CraftBlock.at(
                     entity.getCommandSenderWorld(),
@@ -100,7 +101,7 @@ public class CraftEventFactoryMixin {
         Map<
             EntityDamageEvent.DamageModifier,
             Function<? super Double, Double>
-        > modifierFunctions,
+            > modifierFunctions,
         boolean cancelled,
         CallbackInfoReturnable<EntityDamageEvent> cir
     ) {
@@ -232,10 +233,10 @@ public class CraftEventFactoryMixin {
             entity == null
                 ? new BlockFormEvent(blockState.getBlock(), blockState)
                 : new EntityBlockFormEvent(
-                      ((EntityBridge) entity).bridge$getBukkitEntity(),
-                      blockState.getBlock(),
-                      blockState
-                  );
+                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                blockState.getBlock(),
+                blockState
+            );
         Bukkit.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {

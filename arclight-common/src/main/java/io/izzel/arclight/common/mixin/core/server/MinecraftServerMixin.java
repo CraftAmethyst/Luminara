@@ -12,14 +12,6 @@ import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.BukkitOptionParser;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.longs.LongIterator;
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.Proxy;
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.function.BooleanSupplier;
-import javax.annotation.Nullable;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.minecraft.CrashReport;
@@ -80,11 +72,21 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.net.Proxy;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.function.BooleanSupplier;
+
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin
     extends ReentrantBlockableEventLoop<TickTask>
-    implements MinecraftServerBridge, ICommandSourceBridge
-{
+    implements MinecraftServerBridge, ICommandSourceBridge {
 
     private static final int TPS = 20;
     private static final int TICK_TIME = 1000000000 / TPS;
@@ -332,7 +334,7 @@ public abstract class MinecraftServerMixin
                 long i = (curTime = Util.getMillis()) - this.nextTickTime;
                 if (
                     i > 2000L &&
-                    this.nextTickTime - this.lastOverloadWarning >= 15000L
+                        this.nextTickTime - this.lastOverloadWarning >= 15000L
                 ) {
                     long j = i / 50L;
 
@@ -835,8 +837,8 @@ public abstract class MinecraftServerMixin
     public String getServerModName() {
         return (
             BrandingControl.getServerBranding() +
-            " luminara/" +
-            ArclightVersion.current().getReleaseName()
+                " luminara/" +
+                ArclightVersion.current().getReleaseName()
         );
     }
 

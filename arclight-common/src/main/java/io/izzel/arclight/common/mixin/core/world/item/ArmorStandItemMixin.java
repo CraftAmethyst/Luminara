@@ -50,10 +50,10 @@ public class ArmorStandItemMixin {
     ) {
         if (
             DistValidate.isValid(context) &&
-            CraftEventFactory.callEntityPlaceEvent(
-                context,
-                arclight$entity
-            ).isCancelled()
+                CraftEventFactory.callEntityPlaceEvent(
+                    context,
+                    arclight$entity
+                ).isCancelled()
         ) {
             cir.setReturnValue(InteractionResult.FAIL);
         }

@@ -29,9 +29,9 @@ public class SWorldBorderPacketMixin {
         var level = ((WorldBorderBridge) border).bridge$getWorld();
         this.newCenterX =
             border.getCenterX() *
-            (level != null ? level.dimensionType().coordinateScale() : 1.0);
+                (level != null ? level.dimensionType().coordinateScale() : 1.0);
         this.newCenterZ =
             border.getCenterZ() *
-            (level != null ? level.dimensionType().coordinateScale() : 1.0);
+                (level != null ? level.dimensionType().coordinateScale() : 1.0);
     }
 }

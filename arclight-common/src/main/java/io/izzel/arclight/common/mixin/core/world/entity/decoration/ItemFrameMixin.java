@@ -82,7 +82,7 @@ public abstract class ItemFrameMixin extends HangingEntityMixin {
                 amount,
                 false
             ) ||
-            this.isRemoved()
+                this.isRemoved()
         ) {
             cir.setReturnValue(true);
         }

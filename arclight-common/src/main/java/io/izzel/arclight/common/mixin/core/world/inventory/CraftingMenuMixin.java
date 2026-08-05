@@ -5,7 +5,6 @@ import io.izzel.arclight.common.bridge.core.inventory.CraftingInventoryBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.ContainerBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.PosContainerBridge;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import java.util.Optional;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -28,11 +27,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
+
 @Mixin(CraftingMenu.class)
 public abstract class CraftingMenuMixin
     extends AbstractContainerMenuMixin
-    implements PosContainerBridge
-{
+    implements PosContainerBridge {
 
     private static transient boolean arclight$isRepair;
 

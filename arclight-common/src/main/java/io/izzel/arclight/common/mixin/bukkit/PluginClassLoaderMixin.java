@@ -8,6 +8,14 @@ import io.izzel.arclight.common.mod.util.remapper.ArclightRemapper;
 import io.izzel.arclight.common.mod.util.remapper.ClassLoaderRemapper;
 import io.izzel.arclight.common.mod.util.remapper.RemappingClassLoader;
 import io.izzel.tools.product.Product2;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPluginLoader;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -19,19 +27,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.jar.Manifest;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPluginLoader;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(targets = "org.bukkit.plugin.java.PluginClassLoader", remap = false)
 public class PluginClassLoaderMixin
     extends URLClassLoader
-    implements RemappingClassLoader
-{
+    implements RemappingClassLoader {
 
     // @formatter:off
     @Shadow @Final private Map<String, Class<?>> classes;

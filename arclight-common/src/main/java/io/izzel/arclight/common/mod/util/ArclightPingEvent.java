@@ -2,9 +2,6 @@ package io.izzel.arclight.common.mod.util;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.network.NetworkManagerBridge;
-import java.net.InetSocketAddress;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,6 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.util.CachedServerIcon;
 import org.jetbrains.annotations.NotNull;
+
+import java.net.InetSocketAddress;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ArclightPingEvent extends ServerListPingEvent {
 

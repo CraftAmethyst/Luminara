@@ -13,8 +13,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(ThrownExperienceBottle.class)
 public abstract class ThrownExperienceBottleMixin
-    extends ThrowableItemProjectileMixin
-{
+    extends ThrowableItemProjectileMixin {
 
     /**
      * @author IzzelAliz
@@ -26,8 +25,8 @@ public abstract class ThrownExperienceBottleMixin
         if (!this.level().isClientSide) {
             int i =
                 3 +
-                this.level().random.nextInt(5) +
-                this.level().random.nextInt(5);
+                    this.level().random.nextInt(5) +
+                    this.level().random.nextInt(5);
             ExpBottleEvent event = CraftEventFactory.callExpBottleEvent(
                 (ThrownExperienceBottle) (Object) this,
                 i

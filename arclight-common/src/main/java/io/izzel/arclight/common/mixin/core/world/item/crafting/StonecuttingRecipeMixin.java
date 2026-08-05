@@ -15,8 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(StonecutterRecipe.class)
 public abstract class StonecuttingRecipeMixin
     extends SingleItemRecipe
-    implements IRecipeBridge
-{
+    implements IRecipeBridge {
 
     public StonecuttingRecipeMixin(
         RecipeType<?> type,

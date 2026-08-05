@@ -1,9 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.entity.boss.enderdragon;
 
 import io.izzel.arclight.common.mixin.core.world.entity.MobMixin;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -31,6 +28,10 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(EnderDragon.class)
 public abstract class EnderDragonMixin extends MobMixin {
@@ -113,7 +114,7 @@ public abstract class EnderDragonMixin extends MobMixin {
                     );
                     if (
                         !iblockdata.isAir() &&
-                        !iblockdata.is(BlockTags.DRAGON_TRANSPARENT)
+                            !iblockdata.is(BlockTags.DRAGON_TRANSPARENT)
                     ) {
                         if (
                             net.minecraftforge.common.ForgeHooks.canEntityDestroy(
@@ -121,7 +122,7 @@ public abstract class EnderDragonMixin extends MobMixin {
                                 blockposition,
                                 (EnderDragon) (Object) this
                             ) &&
-                            !iblockdata.is(BlockTags.DRAGON_IMMUNE)
+                                !iblockdata.is(BlockTags.DRAGON_IMMUNE)
                         ) {
                             flag2 = true;
                             destroyedBlocks.add(
@@ -234,7 +235,7 @@ public abstract class EnderDragonMixin extends MobMixin {
 
         if (
             this.dragonFight != null &&
-            !this.dragonFight.hasPreviouslyKilledDragon()
+                !this.dragonFight.hasPreviouslyKilledDragon()
         ) {
             short0 = 12000;
         }

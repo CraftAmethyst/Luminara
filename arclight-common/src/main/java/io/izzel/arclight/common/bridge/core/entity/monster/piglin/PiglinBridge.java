@@ -1,7 +1,8 @@
 package io.izzel.arclight.common.bridge.core.entity.monster.piglin;
 
-import java.util.Set;
 import net.minecraft.world.item.Item;
+
+import java.util.Set;
 
 public interface PiglinBridge {
     Set<Item> bridge$getAllowedBarterItems();

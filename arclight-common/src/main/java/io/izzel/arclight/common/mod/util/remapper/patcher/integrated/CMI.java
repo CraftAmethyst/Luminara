@@ -20,7 +20,7 @@ public class CMI {
         for (MethodNode method : node.methods) {
             if (
                 method.name.equals("getExecutor") &&
-                method.desc.equals("()Ljava/util/concurrent/ExecutorService;")
+                    method.desc.equals("()Ljava/util/concurrent/ExecutorService;")
             ) {
                 InsnList list = new InsnList();
                 list.add(new LdcInsnNode(Type.getObjectType(node.name)));

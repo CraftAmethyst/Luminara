@@ -1,7 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.entity.ai.behavior;
 
-import java.util.Optional;
-import java.util.function.Consumer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,6 +11,9 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Mixin(PrepareRamNearestTarget.class)
 public class PrepareRamNearestTargetMixin {

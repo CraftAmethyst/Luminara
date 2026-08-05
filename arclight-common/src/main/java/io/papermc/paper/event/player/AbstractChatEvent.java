@@ -1,9 +1,6 @@
 package io.papermc.paper.event.player;
 
-import static java.util.Objects.requireNonNull;
-
 import io.papermc.paper.chat.ChatRenderer;
-import java.util.Set;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
@@ -13,11 +10,14 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
+import static java.util.Objects.requireNonNull;
+
 @ApiStatus.NonExtendable
 public abstract class AbstractChatEvent
     extends PlayerEvent
-    implements Cancellable
-{
+    implements Cancellable {
 
     private final Set<Audience> viewers;
     private final Component originalMessage;

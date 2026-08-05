@@ -5,8 +5,6 @@ import io.izzel.arclight.common.bridge.core.world.server.ChunkHolderBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ChunkMapBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerChunkProviderBridge;
 import io.izzel.arclight.common.bridge.core.world.server.TicketManagerBridge;
-import java.io.IOException;
-import javax.annotation.Nullable;
 import net.minecraft.server.level.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -22,10 +20,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
+
 @Mixin(ServerChunkCache.class)
 public abstract class ServerChunkCacheMixin
-    implements ServerChunkProviderBridge
-{
+    implements ServerChunkProviderBridge {
 
     @Shadow
     @Final
@@ -62,7 +62,7 @@ public abstract class ServerChunkCacheMixin
         ).bridge$chunkHolderAt(ChunkPos.asLong(chunkX, chunkZ));
         return (
             chunk != null &&
-            ((ChunkHolderBridge) chunk).bridge$getFullChunk() != null
+                ((ChunkHolderBridge) chunk).bridge$getFullChunk() != null
         );
     }
 
@@ -116,7 +116,7 @@ public abstract class ServerChunkCacheMixin
                 );
                 return (
                     !chunkStatus.isOrAfter(FullChunkStatus.FULL) ||
-                    currentStatus.isOrAfter(FullChunkStatus.FULL)
+                        currentStatus.isOrAfter(FullChunkStatus.FULL)
                 );
             } else {
                 return true;

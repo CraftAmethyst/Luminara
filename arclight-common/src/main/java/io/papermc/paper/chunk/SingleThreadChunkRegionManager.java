@@ -5,13 +5,14 @@ import io.papermc.paper.util.maplist.IteratorSafeOrderedReferenceSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
 
 public final class SingleThreadChunkRegionManager {
 
@@ -230,7 +231,7 @@ public final class SingleThreadChunkRegionManager {
         // clear unused regions
         for (
             final Iterator<RegionSection> iterator =
-                region.deadSections.iterator();
+            region.deadSections.iterator();
             iterator.hasNext();
 
         ) {
@@ -282,9 +283,9 @@ public final class SingleThreadChunkRegionManager {
         // destroy region state
         for (
             final Iterator<RegionSection> iterator =
-                region.sections.unsafeIterator(
-                    IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
-                );
+            region.sections.unsafeIterator(
+                IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
+            );
             iterator.hasNext();
 
         ) {
@@ -314,9 +315,9 @@ public final class SingleThreadChunkRegionManager {
         // rebuild regions
         for (
             final Iterator<RegionSection> iterator =
-                region.sections.unsafeIterator(
-                    IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
-                );
+            region.sections.unsafeIterator(
+                IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
+            );
             iterator.hasNext();
 
         ) {
@@ -329,7 +330,8 @@ public final class SingleThreadChunkRegionManager {
         }
     }
 
-    public interface RegionData {}
+    public interface RegionData {
+    }
 
     public interface RegionSectionData {
         void removeFromRegion(final RegionSection section, final Region from);
@@ -367,7 +369,7 @@ public final class SingleThreadChunkRegionManager {
         private double getDeadSectionPercent() {
             return (
                 (double) this.deadSections.size() /
-                (double) this.sections.size()
+                    (double) this.sections.size()
             );
         }
 
@@ -439,9 +441,9 @@ public final class SingleThreadChunkRegionManager {
 
             for (
                 final Iterator<RegionSection> iterator =
-                    this.sections.unsafeIterator(
-                        IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
-                    );
+                this.sections.unsafeIterator(
+                    IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
+                );
                 iterator.hasNext();
 
             ) {
@@ -475,10 +477,10 @@ public final class SingleThreadChunkRegionManager {
             this.deadSections.remove(section);
             if (
                 this.markedForRecalc &&
-                (this.sections.size() <
-                    this.regionManager.minSectionRecalcCount ||
-                    this.getDeadSectionPercent() <
-                        this.regionManager.maxDeadRegionPercent)
+                    (this.sections.size() <
+                        this.regionManager.minSectionRecalcCount ||
+                        this.getDeadSectionPercent() <
+                            this.regionManager.maxDeadRegionPercent)
             ) {
                 this.regionManager.removeFromRecalcQueue(this);
                 this.markedForRecalc = false;
@@ -489,11 +491,11 @@ public final class SingleThreadChunkRegionManager {
             this.deadSections.add(section);
             if (
                 !this.markedForRecalc &&
-                (this.sections.size() >=
-                    this.regionManager.minSectionRecalcCount ||
-                    this.sections.size() == this.deadSections.size()) &&
-                this.getDeadSectionPercent() >=
-                    this.regionManager.maxDeadRegionPercent
+                    (this.sections.size() >=
+                        this.regionManager.minSectionRecalcCount ||
+                        this.sections.size() == this.deadSections.size()) &&
+                    this.getDeadSectionPercent() >=
+                        this.regionManager.maxDeadRegionPercent
             ) {
                 this.regionManager.addToRecalcQueue(this);
                 this.markedForRecalc = true;
@@ -516,9 +518,9 @@ public final class SingleThreadChunkRegionManager {
             ret.append("sections=[");
             for (
                 final Iterator<RegionSection> iterator =
-                    this.sections.unsafeIterator(
-                        IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
-                    );
+                this.sections.unsafeIterator(
+                    IteratorSafeOrderedReferenceSet.ITERATOR_FLAG_SEE_ADDITIONS
+                );
                 iterator.hasNext();
 
             ) {
@@ -595,8 +597,8 @@ public final class SingleThreadChunkRegionManager {
         private int getChunkIndex(final int chunkX, final int chunkZ) {
             return (
                 (chunkX & (this.regionManager.regionSectionChunkSize - 1)) |
-                ((chunkZ & (this.regionManager.regionSectionChunkSize - 1)) <<
-                    this.regionManager.regionChunkShift)
+                    ((chunkZ & (this.regionManager.regionSectionChunkSize - 1)) <<
+                        this.regionManager.regionChunkShift)
             );
         }
 
@@ -646,39 +648,39 @@ public final class SingleThreadChunkRegionManager {
         public String toString() {
             return (
                 "RegionSection{" +
-                "regionCoordinate=" +
-                new ChunkPos(this.regionCoordinate) +
-                "," +
-                "chunkCount=" +
-                this.chunkCount +
-                "," +
-                "chunksBitset=" +
-                toString(this.chunksBitset) +
-                "," +
-                "hash=" +
-                this.hashCode() +
-                "}"
+                    "regionCoordinate=" +
+                    new ChunkPos(this.regionCoordinate) +
+                    "," +
+                    "chunkCount=" +
+                    this.chunkCount +
+                    "," +
+                    "chunksBitset=" +
+                    toString(this.chunksBitset) +
+                    "," +
+                    "hash=" +
+                    this.hashCode() +
+                    "}"
             );
         }
 
         public String toStringWithRegion() {
             return (
                 "RegionSection{" +
-                "regionCoordinate=" +
-                new ChunkPos(this.regionCoordinate) +
-                "," +
-                "chunkCount=" +
-                this.chunkCount +
-                "," +
-                "chunksBitset=" +
-                toString(this.chunksBitset) +
-                "," +
-                "hash=" +
-                this.hashCode() +
-                "," +
-                "region=" +
-                this.region +
-                "}"
+                    "regionCoordinate=" +
+                    new ChunkPos(this.regionCoordinate) +
+                    "," +
+                    "chunkCount=" +
+                    this.chunkCount +
+                    "," +
+                    "chunksBitset=" +
+                    toString(this.chunksBitset) +
+                    "," +
+                    "hash=" +
+                    this.hashCode() +
+                    "," +
+                    "region=" +
+                    this.region +
+                    "}"
             );
         }
     }

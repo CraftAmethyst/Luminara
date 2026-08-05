@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.animal;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
@@ -23,6 +21,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.Collections;
+import java.util.List;
+
 @Mixin(MushroomCow.class)
 public abstract class MushroomCowMixin extends AnimalMixin {
 
@@ -38,7 +39,8 @@ public abstract class MushroomCowMixin extends AnimalMixin {
             target = "Lnet/minecraft/world/entity/animal/MushroomCow;discard()V"
         )
     )
-    private void arclight$animalTransformPre(MushroomCow mushroomCow) {}
+    private void arclight$animalTransformPre(MushroomCow mushroomCow) {
+    }
 
     @Inject(
         method = "shearInternal",

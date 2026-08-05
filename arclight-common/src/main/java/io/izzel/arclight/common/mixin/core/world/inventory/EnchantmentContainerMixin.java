@@ -4,8 +4,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.inventory.container.PosContainerBridge;
 import io.izzel.arclight.common.bridge.core.util.IWorldPosCallableBridge;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -49,12 +47,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+import java.util.Map;
+
 // morejs https://github.com/AlmostReliable/morejs/blob/fd738a28a054d780031c7666fc8a01533c86f63b/Common/src/main/java/com/almostreliable/morejs/mixin/enchanting/EnchantmentMenuMixin.java
 @Mixin(value = EnchantmentMenu.class, priority = 39)
 public abstract class EnchantmentContainerMixin
     extends AbstractContainerMenuMixin
-    implements PosContainerBridge
-{
+    implements PosContainerBridge {
 
     @Shadow
     @Final
@@ -195,22 +195,22 @@ public abstract class EnchantmentContainerMixin
                         org.bukkit.enchantments.Enchantment enchantment =
                             this.enchantClue[j] >= 0
                                 ? org.bukkit.enchantments.Enchantment.getByKey(
-                                      CraftNamespacedKey.fromMinecraft(
-                                          ForgeRegistries.ENCHANTMENTS.getKey(
-                                              BuiltInRegistries.ENCHANTMENT.byId(
-                                                  this.enchantClue[j]
-                                              )
-                                          )
-                                      )
-                                  )
+                                CraftNamespacedKey.fromMinecraft(
+                                    ForgeRegistries.ENCHANTMENTS.getKey(
+                                        BuiltInRegistries.ENCHANTMENT.byId(
+                                            this.enchantClue[j]
+                                        )
+                                    )
+                                )
+                            )
                                 : null;
                         offers[j] =
                             enchantment != null
                                 ? new EnchantmentOffer(
-                                      enchantment,
-                                      this.levelClue[j],
-                                      this.costs[j]
-                                  )
+                                enchantment,
+                                this.levelClue[j],
+                                this.costs[j]
+                            )
                                 : null;
                     }
 
@@ -284,15 +284,15 @@ public abstract class EnchantmentContainerMixin
         int i = id + 1;
         if (
             (itemstack1.isEmpty() || itemstack1.getCount() < i) &&
-            !playerIn.getAbilities().instabuild
+                !playerIn.getAbilities().instabuild
         ) {
             return false;
         } else if (
             this.costs[id] <= 0 ||
-            itemstack.isEmpty() ||
-            ((playerIn.experienceLevel < i ||
-                playerIn.experienceLevel < this.costs[id]) &&
-                !playerIn.getAbilities().instabuild)
+                itemstack.isEmpty() ||
+                ((playerIn.experienceLevel < i ||
+                    playerIn.experienceLevel < this.costs[id]) &&
+                    !playerIn.getAbilities().instabuild)
         ) {
             return false;
         } else {
@@ -355,9 +355,9 @@ public abstract class EnchantmentContainerMixin
                     int level = event.getExpLevelCost();
                     if (
                         event.isCancelled() ||
-                        (level > playerIn.experienceLevel &&
-                            !playerIn.getAbilities().instabuild) ||
-                        event.getEnchantsToAdd().isEmpty()
+                            (level > playerIn.experienceLevel &&
+                                !playerIn.getAbilities().instabuild) ||
+                            event.getEnchantsToAdd().isEmpty()
                     ) {
                         return;
                     }
@@ -376,7 +376,7 @@ public abstract class EnchantmentContainerMixin
                     for (Map.Entry<
                         org.bukkit.enchantments.Enchantment,
                         Integer
-                    > entry : event.getEnchantsToAdd().entrySet()) {
+                        > entry : event.getEnchantsToAdd().entrySet()) {
                         try {
                             if (flag) {
                                 NamespacedKey enchantId = entry

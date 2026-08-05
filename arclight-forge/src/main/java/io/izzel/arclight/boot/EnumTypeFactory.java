@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class EnumTypeFactory implements TypeAdapterFactory {
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         Class<? super T> rawType = type.getRawType();
         if (!Enum.class.isAssignableFrom(rawType) || rawType == Enum.class) {

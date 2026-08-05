@@ -61,14 +61,14 @@ public class CommandBlockLogicMixin {
 
         if (
             cmd.equalsIgnoreCase("stop") ||
-            cmd.equalsIgnoreCase("kick") ||
-            cmd.equalsIgnoreCase("op") ||
-            cmd.equalsIgnoreCase("deop") ||
-            cmd.equalsIgnoreCase("ban") ||
-            cmd.equalsIgnoreCase("ban-ip") ||
-            cmd.equalsIgnoreCase("pardon") ||
-            cmd.equalsIgnoreCase("pardon-ip") ||
-            cmd.equalsIgnoreCase("reload")
+                cmd.equalsIgnoreCase("kick") ||
+                cmd.equalsIgnoreCase("op") ||
+                cmd.equalsIgnoreCase("deop") ||
+                cmd.equalsIgnoreCase("ban") ||
+                cmd.equalsIgnoreCase("ban-ip") ||
+                cmd.equalsIgnoreCase("pardon") ||
+                cmd.equalsIgnoreCase("pardon-ip") ||
+                cmd.equalsIgnoreCase("reload")
         ) {
             return 0;
         }

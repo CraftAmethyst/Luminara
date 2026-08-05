@@ -1,13 +1,14 @@
 package io.izzel.arclight.boot.application;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayInputStream;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+
+import java.io.ByteArrayInputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class BootstrapTransformerTest {
 
@@ -35,7 +36,7 @@ class BootstrapTransformerTest {
                 .filter(
                     method ->
                         method.name.equals("main") &&
-                        method.desc.equals("([Ljava/lang/String;)V")
+                            method.desc.equals("([Ljava/lang/String;)V")
                 )
                 .findFirst()
                 .orElseThrow();
@@ -45,20 +46,20 @@ class BootstrapTransformerTest {
                 if (!(instruction instanceof MethodInsnNode invoke)) continue;
                 if (
                     invoke.getOpcode() == Opcodes.INVOKESTATIC &&
-                    invoke.owner.equals(
-                        "io/izzel/arclight/boot/application/BootstrapTransformer"
-                    ) &&
-                    invoke.name.equals("onInvoke$BootstrapLauncher") &&
-                    invoke.desc.equals(
-                        "([Ljava/lang/String;Lcpw/mods/cl/ModuleClassLoader;)V"
-                    )
+                        invoke.owner.equals(
+                            "io/izzel/arclight/boot/application/BootstrapTransformer"
+                        ) &&
+                        invoke.name.equals("onInvoke$BootstrapLauncher") &&
+                        invoke.desc.equals(
+                            "([Ljava/lang/String;Lcpw/mods/cl/ModuleClassLoader;)V"
+                        )
                 ) {
                     arclightInvocations++;
                 }
                 if (
                     invoke.owner.equals("java/util/function/Consumer") &&
-                    invoke.name.equals("accept") &&
-                    invoke.desc.equals("(Ljava/lang/Object;)V")
+                        invoke.name.equals("accept") &&
+                        invoke.desc.equals("(Ljava/lang/Object;)V")
                 ) {
                     consumerInvocations++;
                 }
@@ -76,7 +77,7 @@ class BootstrapTransformerTest {
                 new BootstrapTransformer(
                     getClass().getClassLoader()
                 ).transformBootstrapLauncher(
-                    new ByteArrayInputStream(new byte[] { 0 })
+                    new ByteArrayInputStream(new byte[]{0})
                 )
         );
 

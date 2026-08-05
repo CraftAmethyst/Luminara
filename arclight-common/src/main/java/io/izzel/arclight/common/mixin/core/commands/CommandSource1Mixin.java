@@ -22,13 +22,16 @@ public class CommandSource1Mixin implements ICommandSourceBridge {
             }
 
             @Override
-            public void setOp(boolean value) {}
+            public void setOp(boolean value) {
+            }
 
             @Override
-            public void sendMessage(@NotNull String message) {}
+            public void sendMessage(@NotNull String message) {
+            }
 
             @Override
-            public void sendMessage(@NotNull String[] messages) {}
+            public void sendMessage(@NotNull String[] messages) {
+            }
 
             @NotNull
             @Override

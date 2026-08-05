@@ -6,7 +6,6 @@ import io.izzel.arclight.common.bridge.core.entity.MobEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.mixin.Eject;
-import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -34,11 +33,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nullable;
+
 @Mixin(Mob.class)
 public abstract class MobMixin
     extends LivingEntityMixin
-    implements MobEntityBridge
-{
+    implements MobEntityBridge {
 
     // @formatter:off
     @Shadow public boolean persistenceRequired;
@@ -130,7 +130,8 @@ public abstract class MobMixin
     }
 
     @Shadow
-    protected void customServerAiStep() {}
+    protected void customServerAiStep() {
+    }
 
     @Shadow
     public abstract boolean isNoAi();
@@ -302,7 +303,7 @@ public abstract class MobMixin
             double d0 = this.getEquipmentDropChance(equipmentslottype);
             if (
                 !itemstack.isEmpty() &&
-                (double) Math.max(this.random.nextFloat() - 0.1F, 0.0F) < d0
+                    (double) Math.max(this.random.nextFloat() - 0.1F, 0.0F) < d0
             ) {
                 forceDrops = true;
                 this.spawnAtLocation(itemstack);

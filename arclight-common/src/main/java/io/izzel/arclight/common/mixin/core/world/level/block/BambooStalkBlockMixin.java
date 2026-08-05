@@ -73,11 +73,11 @@ public abstract class BambooStalkBlockMixin extends BlockMixin {
         if (height >= 1) {
             if (
                 blockstate.is(Blocks.BAMBOO) &&
-                blockstate.getValue(LEAVES) != BambooLeaves.NONE
+                    blockstate.getValue(LEAVES) != BambooLeaves.NONE
             ) {
                 if (
                     blockstate.is(Blocks.BAMBOO) &&
-                    blockstate.getValue(LEAVES) != BambooLeaves.NONE
+                        blockstate.getValue(LEAVES) != BambooLeaves.NONE
                 ) {
                     bambooleaves = BambooLeaves.LARGE;
                     if (blockstate1.is(Blocks.BAMBOO)) {

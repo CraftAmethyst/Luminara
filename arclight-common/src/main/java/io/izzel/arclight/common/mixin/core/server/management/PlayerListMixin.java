@@ -13,16 +13,6 @@ import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.mixin.Eject;
-import java.io.File;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.UUIDUtil;
@@ -73,6 +63,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Mixin(PlayerList.class)
 public abstract class PlayerListMixin implements PlayerListBridge {
@@ -386,14 +387,14 @@ public abstract class PlayerListMixin implements PlayerListBridge {
             handler == null
                 ? ""
                 : (
-                      (NetworkManagerBridge) handler.connection
-                  ).bridge$getHostname();
+                (NetworkManagerBridge) handler.connection
+            ).bridge$getHostname();
         InetAddress realAddress =
             handler == null
                 ? ((InetSocketAddress) socketAddress).getAddress()
                 : (
-                      (InetSocketAddress) handler.connection.channel.remoteAddress()
-                  ).getAddress();
+                (InetSocketAddress) handler.connection.channel.remoteAddress()
+            ).getAddress();
 
         PlayerLoginEvent event = new PlayerLoginEvent(
             player,
@@ -403,7 +404,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         );
         if (
             this.getBans().isBanned(gameProfile) &&
-            !this.getBans().get(gameProfile).hasExpired()
+                !this.getBans().get(gameProfile).hasExpired()
         ) {
             UserBanListEntry gameprofilebanentry = this.bans.get(gameProfile);
             var chatmessage = Component.translatable(
@@ -429,7 +430,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
             );
         } else if (
             this.getIpBans().isBanned(socketAddress) &&
-            !this.getIpBans().get(socketAddress).hasExpired()
+                !this.getIpBans().get(socketAddress).hasExpired()
         ) {
             IpBanListEntry ipbanentry = this.ipBans.get(socketAddress);
             var chatmessage = Component.translatable(
@@ -450,7 +451,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
             );
         } else if (
             this.players.size() >= this.maxPlayers &&
-            !this.canBypassPlayerLimit(gameProfile)
+                !this.canBypassPlayerLimit(gameProfile)
         ) {
             event.disallow(
                 PlayerLoginEvent.Result.KICK_FULL,
@@ -630,8 +631,8 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         playerIn.connection.resetPosition();
         while (
             avoidSuffocation &&
-            !serverWorld.noCollision(playerIn) &&
-            playerIn.getY() < serverWorld.getMaxBuildHeight()
+                !serverWorld.noCollision(playerIn) &&
+                playerIn.getY() < serverWorld.getMaxBuildHeight()
         ) {
             playerIn.setPos(
                 playerIn.getX(),
@@ -952,8 +953,8 @@ public abstract class PlayerListMixin implements PlayerListBridge {
 
         while (
             avoidSuffocation &&
-            !serverWorld.noCollision(serverplayerentity) &&
-            serverplayerentity.getY() < serverWorld.getMaxBuildHeight()
+                !serverWorld.noCollision(serverplayerentity) &&
+                serverplayerentity.getY() < serverWorld.getMaxBuildHeight()
         ) {
             serverplayerentity.setPos(
                 serverplayerentity.getX(),
@@ -1098,13 +1099,13 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         for (ServerPlayer entityplayer : this.players) {
             if (
                 !(entityhuman instanceof ServerPlayer) ||
-                ((ServerPlayerEntityBridge) entityplayer)
-                    .bridge$getBukkitEntity()
-                    .canSee(
-                        (
-                            (ServerPlayerEntityBridge) entityhuman
-                        ).bridge$getBukkitEntity()
-                    )
+                    ((ServerPlayerEntityBridge) entityplayer)
+                        .bridge$getBukkitEntity()
+                        .canSee(
+                            (
+                                (ServerPlayerEntityBridge) entityhuman
+                            ).bridge$getBukkitEntity()
+                        )
             ) {
                 entityplayer.connection.send(packet);
             }
@@ -1186,9 +1187,9 @@ public abstract class PlayerListMixin implements PlayerListBridge {
         ServerStatsCounter serverstatisticmanager = entityhuman.getStats();
         return serverstatisticmanager == null
             ? this.getPlayerStats(
-                  entityhuman.getUUID(),
-                  entityhuman.getName().getString()
-              )
+            entityhuman.getUUID(),
+            entityhuman.getName().getString()
+        )
             : serverstatisticmanager;
     }
 
@@ -1205,8 +1206,8 @@ public abstract class PlayerListMixin implements PlayerListBridge {
             File file1 = new File(file, uuid + ".json");
             if (
                 !file1.exists() &&
-                (file2 = new File(file, displayName + ".json")).exists() &&
-                file2.isFile()
+                    (file2 = new File(file, displayName + ".json")).exists() &&
+                    file2.isFile()
             ) {
                 file2.renameTo(file1);
             }

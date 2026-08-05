@@ -2,10 +2,11 @@ package com.destroystokyo.paper.util.maplist;
 
 import io.papermc.paper.util.MCUtil;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import net.minecraft.world.level.chunk.LevelChunk;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import net.minecraft.world.level.chunk.LevelChunk;
 
 // list with O(1) remove & contains
 

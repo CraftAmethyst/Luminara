@@ -1,6 +1,5 @@
 package io.papermc.paper.text;
 
-import java.io.IOException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -12,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 // Paper API methods for working with Components
 public final class PaperComponents {

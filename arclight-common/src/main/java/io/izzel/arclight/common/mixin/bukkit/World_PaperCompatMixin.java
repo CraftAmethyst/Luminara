@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.common.mod.util.PaperCompatSupport;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -13,6 +11,9 @@ import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.CraftWorld;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 @Mixin(value = World.class, remap = false)
 public interface World_PaperCompatMixin {

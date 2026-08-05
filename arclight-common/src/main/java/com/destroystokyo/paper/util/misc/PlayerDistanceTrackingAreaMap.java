@@ -3,8 +3,7 @@ package com.destroystokyo.paper.util.misc;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PlayerDistanceTrackingAreaMap
-    extends DistanceTrackingAreaMap<ServerPlayer>
-{
+    extends DistanceTrackingAreaMap<ServerPlayer> {
 
     public PlayerDistanceTrackingAreaMap() {
         super();

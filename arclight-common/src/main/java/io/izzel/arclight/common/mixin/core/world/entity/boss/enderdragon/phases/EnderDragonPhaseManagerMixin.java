@@ -48,8 +48,8 @@ public abstract class EnderDragonPhaseManagerMixin {
                 this.currentPhase == null
                     ? null
                     : CraftEnderDragon.getBukkitPhase(
-                          this.currentPhase.getPhase()
-                      ),
+                    this.currentPhase.getPhase()
+                ),
                 CraftEnderDragon.getBukkitPhase(phaseIn)
             );
             Bukkit.getPluginManager().callEvent(event);

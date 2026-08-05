@@ -2,10 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.projectile;
 
 import io.izzel.arclight.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -33,6 +29,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Mixin(ThrownPotion.class)
 public abstract class ThrownPotionMixin extends ThrowableItemProjectileMixin {
@@ -102,18 +103,18 @@ public abstract class ThrownPotionMixin extends ThrowableItemProjectileMixin {
                     MobEffect mobeffectlist = mobeffect.getEffect();
                     if (
                         !((WorldBridge) this.level()).bridge$isPvpMode() &&
-                        this.getOwner() instanceof ServerPlayer &&
-                        entityliving2 instanceof ServerPlayer &&
-                        entityliving2 != this.getOwner()
+                            this.getOwner() instanceof ServerPlayer &&
+                            entityliving2 instanceof ServerPlayer &&
+                            entityliving2 != this.getOwner()
                     ) {
                         int i = MobEffect.getId(mobeffectlist);
                         if (
                             i == 2 ||
-                            i == 4 ||
-                            i == 7 ||
-                            i == 15 ||
-                            i == 17 ||
-                            i == 18
+                                i == 4 ||
+                                i == 7 ||
+                                i == 15 ||
+                                i == 17 ||
+                                i == 18
                         ) {
                             continue;
                         }

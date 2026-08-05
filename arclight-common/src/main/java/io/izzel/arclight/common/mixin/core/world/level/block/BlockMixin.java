@@ -5,8 +5,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
 import io.izzel.arclight.common.mixin.core.world.level.block.state.BlockBehaviourMixin;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,11 +33,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 @Mixin(Block.class)
 public abstract class BlockMixin
     extends BlockBehaviourMixin
-    implements BlockBridge
-{
+    implements BlockBridge {
 
     /**
      * @author IzzelAliz
@@ -53,9 +53,9 @@ public abstract class BlockMixin
     ) {
         if (
             !worldIn.isClientSide &&
-            !stack.isEmpty() &&
-            worldIn.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) &&
-            !worldIn.restoringBlockSnapshots
+                !stack.isEmpty() &&
+                worldIn.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) &&
+                !worldIn.restoringBlockSnapshots
         ) {
             float f = 0.5F;
             double d0 = (double) (worldIn.random.nextFloat() * 0.5F) + 0.25D;
@@ -180,9 +180,9 @@ public abstract class BlockMixin
 
             if (
                 player instanceof ServerPlayer &&
-                blockDrops != null &&
-                (breakEvent == null || breakEvent.isDropItems()) &&
-                DistValidate.isValid(worldIn)
+                    blockDrops != null &&
+                    (breakEvent == null || breakEvent.isDropItems()) &&
+                    DistValidate.isValid(worldIn)
             ) {
                 CraftBlock craftBlock = CraftBlock.at(
                     ((CraftWorld) state.getWorld()).getHandle(),

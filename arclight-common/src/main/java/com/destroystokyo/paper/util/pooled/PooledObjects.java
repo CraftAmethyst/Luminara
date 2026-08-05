@@ -1,10 +1,11 @@
 package com.destroystokyo.paper.util.pooled;
 
 import io.papermc.paper.util.MCUtil;
+import org.apache.commons.lang3.mutable.MutableInt;
+
 import java.util.ArrayDeque;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import org.apache.commons.lang3.mutable.MutableInt;
 
 public final class PooledObjects<E> {
 

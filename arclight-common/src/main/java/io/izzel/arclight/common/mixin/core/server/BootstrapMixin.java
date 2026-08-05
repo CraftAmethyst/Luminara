@@ -1,15 +1,16 @@
 package io.izzel.arclight.common.mixin.core.server;
 
 import io.izzel.arclight.api.Unsafe;
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Set;
 import net.minecraft.server.Bootstrap;
 import org.bukkit.craftbukkit.v.util.CraftLegacy;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
 @Mixin(Bootstrap.class)
 public class BootstrapMixin {

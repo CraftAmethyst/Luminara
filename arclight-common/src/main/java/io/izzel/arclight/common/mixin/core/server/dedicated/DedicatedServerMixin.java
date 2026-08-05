@@ -3,9 +3,6 @@ package io.izzel.arclight.common.mixin.core.server.dedicated;
 import io.izzel.arclight.common.mixin.core.server.MinecraftServerMixin;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.ConsoleInput;
@@ -27,6 +24,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(DedicatedServer.class)
 public abstract class DedicatedServerMixin extends MinecraftServerMixin {

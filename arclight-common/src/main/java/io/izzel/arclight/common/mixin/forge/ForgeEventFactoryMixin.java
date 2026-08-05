@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.forge;
 
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -10,6 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(ForgeEventFactory.class)
 public class ForgeEventFactoryMixin {

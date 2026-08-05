@@ -11,7 +11,8 @@ public final class BukkitApiSupport {
         "(\\d+)\\.(\\d+)(?:\\.(\\d+))?"
     );
 
-    private BukkitApiSupport() {}
+    private BukkitApiSupport() {
+    }
 
     public static String getMinecraftVersion(Object server) {
         if (server != null) {
@@ -23,7 +24,8 @@ public final class BukkitApiSupport {
                 if (result instanceof String version && !version.isBlank()) {
                     return version;
                 }
-            } catch (ReflectiveOperationException ignored) {}
+            } catch (ReflectiveOperationException ignored) {
+            }
         }
 
         try {
@@ -42,7 +44,8 @@ public final class BukkitApiSupport {
                         : major + "." + minor + "." + release;
                 }
             }
-        } catch (ReflectiveOperationException ignored) {}
+        } catch (ReflectiveOperationException ignored) {
+        }
         return "1.20.1";
     }
 
@@ -54,7 +57,8 @@ public final class BukkitApiSupport {
                 if (result != null) {
                     return result;
                 }
-            } catch (ReflectiveOperationException ignored) {}
+            } catch (ReflectiveOperationException ignored) {
+            }
         }
 
         try {
@@ -80,7 +84,8 @@ public final class BukkitApiSupport {
                     }
                 }
             }
-        } catch (ReflectiveOperationException ignored) {}
+        } catch (ReflectiveOperationException ignored) {
+        }
         throw new IllegalStateException("Failed to retrieve command map");
     }
 }

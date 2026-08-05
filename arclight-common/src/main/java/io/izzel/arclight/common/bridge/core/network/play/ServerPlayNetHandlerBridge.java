@@ -1,9 +1,10 @@
 package io.izzel.arclight.common.bridge.core.network.play;
 
-import java.util.Set;
 import net.minecraft.world.entity.RelativeMovement;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
+
+import java.util.Set;
 
 public interface ServerPlayNetHandlerBridge {
     void bridge$pushTeleportCause(PlayerTeleportEvent.TeleportCause cause);

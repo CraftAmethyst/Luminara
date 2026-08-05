@@ -4,8 +4,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.item.ItemStackBridge;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
-import java.util.Objects;
-import java.util.function.Consumer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -31,11 +29,13 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin
     extends CapabilityProvider<ItemStack>
-    implements ItemStackBridge
-{
+    implements ItemStackBridge {
 
     private static final Logger LOG = ArclightI18nLogger.getLogger("ItemStack");
 
@@ -75,9 +75,9 @@ public abstract class ItemStackMixin
             }
             return (
                 tagA == null ||
-                (tagA.isEmpty()
-                    ? tagB == null || tagB.isEmpty()
-                    : tagA.equals(tagB))
+                    (tagA.isEmpty()
+                        ? tagB == null || tagB.isEmpty()
+                        : tagA.equals(tagB))
             );
         } else {
             return Objects.equals(a, b);

@@ -7,6 +7,17 @@ import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.conf.AsyncCatcherSpec;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.GeneratorAdapter;
+import org.objectweb.asm.tree.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.util.Constants;
+
 import java.io.InputStreamReader;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -19,16 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.GeneratorAdapter;
-import org.objectweb.asm.tree.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.util.Constants;
 
 public class AsyncCatcher implements Implementer {
 
@@ -52,7 +53,8 @@ public class AsyncCatcher implements Implementer {
             new InputStreamReader(
                 AsyncCatcher.class.getResourceAsStream("/async_catcher.json")
             ),
-            new TypeToken<Map<String, Map<String, String>>>() {}.getType()
+            new TypeToken<Map<String, Map<String, String>>>() {
+            }.getType()
         );
         this.defaultOp = ArclightConfig.spec().getAsyncCatcher().getDefaultOp();
         this.dump = ArclightConfig.spec().getAsyncCatcher().isDump();
@@ -63,7 +65,7 @@ public class AsyncCatcher implements Implementer {
     static String getReturnAccessor(org.objectweb.asm.Type returnType) {
         if (
             returnType.getSort() == org.objectweb.asm.Type.OBJECT ||
-            returnType.getSort() == org.objectweb.asm.Type.ARRAY
+                returnType.getSort() == org.objectweb.asm.Type.ARRAY
         ) {
             return "getReturnValue";
         }
@@ -73,7 +75,7 @@ public class AsyncCatcher implements Implementer {
     static String getReturnDescriptor(org.objectweb.asm.Type returnType) {
         if (
             returnType.getSort() == org.objectweb.asm.Type.OBJECT ||
-            returnType.getSort() == org.objectweb.asm.Type.ARRAY
+                returnType.getSort() == org.objectweb.asm.Type.ARRAY
         ) {
             return String.format("()%s", Constants.OBJECT_DESC);
         }

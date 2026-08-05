@@ -24,7 +24,8 @@ public class CarvedPumpkinBlockMixin {
     private static void arclight$clearLater(
         Level level,
         BlockPattern.BlockPatternMatch match
-    ) {}
+    ) {
+    }
 
     @Inject(
         method = "spawnGolemInWorld",

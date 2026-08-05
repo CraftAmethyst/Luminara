@@ -6,10 +6,11 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-import java.util.Iterator;
-import javax.annotation.Nullable;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.ChunkPos;
+
+import javax.annotation.Nullable;
+import java.util.Iterator;
 
 /**
  * @author Spottedleaf
@@ -26,7 +27,7 @@ public abstract class AreaMap<E> {
     // map of: coordinate to set of objects in coordinate
     protected final Long2ObjectOpenHashMap<
         PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>
-    > areaMap = new Long2ObjectOpenHashMap<>(1024, 0.7f);
+        > areaMap = new Long2ObjectOpenHashMap<>(1024, 0.7f);
     protected final PooledLinkedHashSets<E> pooledHashSets;
     protected final ChangeCallback<E> addCallback;
     protected final ChangeCallback<E> removeCallback;
@@ -234,7 +235,8 @@ public abstract class AreaMap<E> {
         final int chunkX,
         final int chunkZ,
         final int viewDistance
-    ) {}
+    ) {
+    }
 
     public final boolean remove(final E object) {
         final long position = this.objectToLastCoordinate.removeLong(object);
@@ -266,7 +268,8 @@ public abstract class AreaMap<E> {
         final int chunkX,
         final int chunkZ,
         final int viewDistance
-    ) {}
+    ) {
+    }
 
     protected abstract PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> getEmptySetFor(
         final E object
@@ -290,14 +293,14 @@ public abstract class AreaMap<E> {
             Iterator<
                 Long2ObjectLinkedOpenHashMap.Entry<
                     PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>
-                >
-            > iterator = this.areaMap.long2ObjectEntrySet().fastIterator();
+                    >
+                > iterator = this.areaMap.long2ObjectEntrySet().fastIterator();
             iterator.hasNext();
 
         ) {
             final Long2ObjectLinkedOpenHashMap.Entry<
                 PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>
-            > entry = iterator.next();
+                > entry = iterator.next();
             final long key = entry.getLongKey();
             final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> map =
                 entry.getValue();
@@ -538,7 +541,7 @@ public abstract class AreaMap<E> {
 
         if (
             Math.max(totalX, totalZ) >
-            2 * Math.max(newViewDistance, oldViewDistance)
+                2 * Math.max(newViewDistance, oldViewDistance)
         ) {
             // teleported?
             this.removeObject(

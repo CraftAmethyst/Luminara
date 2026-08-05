@@ -2,6 +2,10 @@ package io.izzel.arclight.common.bridge.network.chat;
 
 import io.izzel.arclight.common.bridge.core.util.text.ITextComponentBridge;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
+import net.minecraft.network.chat.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -10,9 +14,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
-import net.minecraft.network.chat.Component;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ComponentBridgeHandler {
 
@@ -58,9 +59,9 @@ public class ComponentBridgeHandler {
                     // Only accept the abstract sibling accessor, never default helper methods (e.g. toFlatList)
                     if (
                         method.getReturnType().equals(List.class) &&
-                        method.getParameterCount() == 0 &&
-                        Modifier.isAbstract(method.getModifiers()) &&
-                        returnsComponentList(method)
+                            method.getParameterCount() == 0 &&
+                            Modifier.isAbstract(method.getModifiers()) &&
+                            returnsComponentList(method)
                     ) {
                         getSiblingsMethod = method;
                         getSiblingsMethod.setAccessible(true);
@@ -128,9 +129,9 @@ public class ComponentBridgeHandler {
         Type[] args = pType.getActualTypeArguments();
         return (
             args.length == 1 &&
-            args[0]
-                .getTypeName()
-                .contains("net.minecraft.network.chat.Component")
+                args[0]
+                    .getTypeName()
+                    .contains("net.minecraft.network.chat.Component")
         );
     }
 

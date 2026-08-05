@@ -1,6 +1,7 @@
 package com.destroystokyo.paper.util.maplist;
 
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -112,7 +113,7 @@ public final class ReferenceList<E> implements Iterable<E> {
                 }
                 return (this.lastRet = (E) ReferenceList.this.references[
                     this.current++
-                ]);
+                    ]);
             }
 
             @Override

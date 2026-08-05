@@ -43,7 +43,8 @@ public abstract class EggItemMixin extends Item {
         SoundSource category,
         float volume,
         float pitch
-    ) {}
+    ) {
+    }
 
     @Eject(
         method = "m_7203_",

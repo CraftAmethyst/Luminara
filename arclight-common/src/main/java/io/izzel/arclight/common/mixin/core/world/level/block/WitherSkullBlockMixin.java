@@ -31,7 +31,8 @@ public class WitherSkullBlockMixin {
     private static void arclight$clearLater(
         Level p_249604_,
         BlockPattern.BlockPatternMatch p_251190_
-    ) {}
+    ) {
+    }
 
     @Inject(
         method = "checkSpawn",

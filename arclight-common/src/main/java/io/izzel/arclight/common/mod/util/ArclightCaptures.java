@@ -1,10 +1,6 @@
 package io.izzel.arclight.common.mod.util;
 
 import io.izzel.arclight.common.mod.ArclightConstants;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Stack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.WorldLoader;
@@ -20,6 +16,11 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v.event.CraftPortalEvent;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Stack;
 
 public class ArclightCaptures {
 

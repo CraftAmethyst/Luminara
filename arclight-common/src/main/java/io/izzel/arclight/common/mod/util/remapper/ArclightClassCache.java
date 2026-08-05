@@ -9,6 +9,11 @@ import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product3;
 import io.izzel.tools.product.Product5;
+import net.minecraftforge.fml.ModList;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URLConnection;
@@ -22,10 +27,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.jar.JarFile;
-import net.minecraftforge.fml.ModList;
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 public abstract class ArclightClassCache implements AutoCloseable {
 
@@ -221,10 +222,12 @@ public abstract class ArclightClassCache implements AutoCloseable {
                 String name,
                 byte[] value,
                 ArclightRemapConfig config
-            ) {}
+            ) {
+            }
 
             @Override
-            public void save() {}
+            public void save() {
+            }
         }
 
         private class JarSegment implements CacheSegment {
@@ -232,10 +235,10 @@ public abstract class ArclightClassCache implements AutoCloseable {
             private final Map<
                 String,
                 Product3<Long, Integer, ArclightRemapConfig>
-            > rangeMap = new ConcurrentHashMap<>();
+                > rangeMap = new ConcurrentHashMap<>();
             private final ConcurrentLinkedQueue<
                 Product5<String, byte[], Long, Integer, ArclightRemapConfig>
-            > savingQueue = new ConcurrentLinkedQueue<>();
+                > savingQueue = new ConcurrentLinkedQueue<>();
             private final AtomicLong sizeAllocator;
             private final Path indexPath, blobPath;
 
@@ -303,7 +306,7 @@ public abstract class ArclightClassCache implements AutoCloseable {
                 if (savingQueue.isEmpty()) return;
                 List<
                     Product5<String, byte[], Long, Integer, ArclightRemapConfig>
-                > list = new ArrayList<>();
+                    > list = new ArrayList<>();
                 while (!savingQueue.isEmpty()) {
                     list.add(savingQueue.poll());
                 }
@@ -326,7 +329,7 @@ public abstract class ArclightClassCache implements AutoCloseable {
                         Long,
                         Integer,
                         ArclightRemapConfig
-                    > product : list) {
+                        > product : list) {
                         channel.position(product._3);
                         channel.write(ByteBuffer.wrap(product._2));
                         dataOutIndex.writeUTF(product._1);

@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.item;
 
 import io.izzel.arclight.common.mod.util.DistValidate;
-import java.util.List;
-import java.util.function.Predicate;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -27,6 +25,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 @Mixin(BoatItem.class)
 public abstract class BoatItemMixin extends Item {
@@ -132,14 +133,14 @@ public abstract class BoatItemMixin extends Item {
                     if (!worldIn.isClientSide) {
                         if (
                             DistValidate.isValid(worldIn) &&
-                            CraftEventFactory.callEntityPlaceEvent(
-                                worldIn,
-                                result.getBlockPos(),
-                                result.getDirection(),
-                                playerIn,
-                                boatentity,
-                                handIn
-                            ).isCancelled()
+                                CraftEventFactory.callEntityPlaceEvent(
+                                    worldIn,
+                                    result.getBlockPos(),
+                                    result.getDirection(),
+                                    playerIn,
+                                    boatentity,
+                                    handIn
+                                ).isCancelled()
                         ) {
                             return new InteractionResultHolder<>(
                                 InteractionResult.FAIL,

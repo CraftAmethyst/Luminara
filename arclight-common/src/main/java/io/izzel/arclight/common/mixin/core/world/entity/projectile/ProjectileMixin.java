@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.projectile;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.EntityMixin;
-import javax.annotation.Nullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.BlockHitResult;
@@ -16,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
+
 @Mixin(Projectile.class)
 public abstract class ProjectileMixin extends EntityMixin {
 
@@ -27,7 +28,8 @@ public abstract class ProjectileMixin extends EntityMixin {
     // @formatter:on
 
     @Shadow
-    protected void onHit(HitResult result) {}
+    protected void onHit(HitResult result) {
+    }
 
     @Inject(method = "setOwner", at = @At("RETURN"))
     private void arclight$updateSource(Entity entityIn, CallbackInfo ci) {

@@ -15,9 +15,6 @@ import io.izzel.arclight.common.mod.util.types.ArclightPotionEffect;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.conf.EntityPropertySpec;
 import io.izzel.arclight.i18n.conf.MaterialPropertySpec;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -57,7 +54,11 @@ import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-@SuppressWarnings({ "ConstantConditions", "deprecation" })
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+
+@SuppressWarnings({"ConstantConditions", "deprecation"})
 public class BukkitRegistry {
 
     static final BiMap<ResourceKey<LevelStem>, World.Environment> DIM_MAP =
@@ -158,8 +159,8 @@ public class BukkitRegistry {
         var id = org.bukkit.Fluid.values().length;
         var newTypes = new ArrayList<org.bukkit.Fluid>();
         Field keyField = Arrays.stream(
-            org.bukkit.Fluid.class.getDeclaredFields()
-        )
+                org.bukkit.Fluid.class.getDeclaredFields()
+            )
             .filter(it -> it.getName().equals("key"))
             .findAny()
             .orElse(null);
@@ -488,7 +489,7 @@ public class BukkitRegistry {
         for (Map.Entry<
             ResourceKey<LevelStem>,
             LevelStem
-        > entry : registry.entrySet()) {
+            > entry : registry.entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             World.Environment environment = DIM_MAP.get(key);
             if (environment == null) {
@@ -644,7 +645,7 @@ public class BukkitRegistry {
             if (
                 CraftPotionUtil.toBukkit(location.toString()).getType() ==
                     PotionType.UNCRAFTABLE &&
-                potion != Potions.EMPTY
+                    potion != Potions.EMPTY
             ) {
                 String name = ResourceLocationUtil.standardize(location);
                 MobEffectInstance effectInstance = potion.getEffects().isEmpty()
@@ -663,8 +664,8 @@ public class BukkitRegistry {
                         effectInstance == null
                             ? null
                             : PotionEffectType.getById(
-                                  MobEffect.getId(effectInstance.getEffect())
-                              ),
+                            MobEffect.getId(effectInstance.getEffect())
+                        ),
                         false,
                         false
                     )

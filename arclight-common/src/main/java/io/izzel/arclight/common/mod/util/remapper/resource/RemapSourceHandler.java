@@ -6,6 +6,8 @@ import cpw.mods.modlauncher.TransformingClassLoader;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.mod.util.remapper.ArclightRemapper;
 import io.izzel.arclight.common.mod.util.remapper.GlobalClassRepo;
+import org.objectweb.asm.ClassReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,7 +19,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.Hashtable;
-import org.objectweb.asm.ClassReader;
 
 public class RemapSourceHandler extends URLStreamHandler {
 
@@ -33,7 +34,7 @@ public class RemapSourceHandler extends URLStreamHandler {
             Hashtable<String, URLStreamHandler> handlers = (Hashtable<
                 String,
                 URLStreamHandler
-            >) getter.invokeExact();
+                >) getter.invokeExact();
             handlers.put("remap", new RemapSourceHandler());
         } catch (Throwable e) {
             throw new RuntimeException(e);
@@ -91,7 +92,7 @@ public class RemapSourceHandler extends URLStreamHandler {
             String className = new ClassReader(bytes).getClassName();
             if (
                 className.startsWith("net/minecraft/") ||
-                className.equals("com/mojang/brigadier/tree/CommandNode")
+                    className.equals("com/mojang/brigadier/tree/CommandNode")
             ) {
                 try {
                     bytes = (byte[]) MH_TRANSFORM.invokeExact(

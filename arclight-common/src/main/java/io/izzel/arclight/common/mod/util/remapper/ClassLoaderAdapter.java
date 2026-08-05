@@ -3,14 +3,15 @@ package io.izzel.arclight.common.mod.util.remapper;
 import com.google.common.collect.ImmutableMap;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.util.remapper.generated.RemappingURLClassLoader;
-import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.Map;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+
+import java.net.URLClassLoader;
+import java.util.Collection;
+import java.util.Map;
 
 public class ClassLoaderAdapter implements PluginTransformer {
 
@@ -19,9 +20,9 @@ public class ClassLoaderAdapter implements PluginTransformer {
     private static final String CLASSLOADER = "java/lang/ClassLoader";
 
     private final Map<String, String> classLoaderTypes = ImmutableMap.<
-        String,
-        String
-    >builder()
+            String,
+            String
+            >builder()
         .put(
             Type.getInternalName(URLClassLoader.class),
             Type.getInternalName(RemappingURLClassLoader.class)
@@ -44,13 +45,13 @@ public class ClassLoaderAdapter implements PluginTransformer {
                         AbstractInsnNode next = typeInsnNode.getNext();
                         while (
                             next != null &&
-                            (next.getOpcode() != Opcodes.INVOKESPECIAL ||
-                                !((MethodInsnNode) next).name.equals(
-                                    "<init>"
-                                ) ||
-                                !((MethodInsnNode) next).owner.equals(
-                                    typeInsnNode.desc
-                                ))
+                                (next.getOpcode() != Opcodes.INVOKESPECIAL ||
+                                    !((MethodInsnNode) next).name.equals(
+                                        "<init>"
+                                    ) ||
+                                    !((MethodInsnNode) next).owner.equals(
+                                        typeInsnNode.desc
+                                    ))
                         ) {
                             next = next.getNext();
                         }
@@ -85,9 +86,9 @@ public class ClassLoaderAdapter implements PluginTransformer {
                 if (insnNode instanceof MethodInsnNode methodInsnNode) {
                     if (
                         methodInsnNode.getOpcode() == Opcodes.INVOKESPECIAL &&
-                        methodNode.name.equals("<init>") &&
-                        methodInsnNode.name.equals("<init>") &&
-                        methodInsnNode.owner.equals(node.superName)
+                            methodNode.name.equals("<init>") &&
+                            methodInsnNode.name.equals("<init>") &&
+                            methodInsnNode.owner.equals(node.superName)
                     ) {
                         methodInsnNode.owner = info.superName;
                     }

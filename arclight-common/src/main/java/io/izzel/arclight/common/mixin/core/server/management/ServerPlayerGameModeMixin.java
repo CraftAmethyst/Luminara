@@ -4,8 +4,6 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.server.management.PlayerInteractionManagerBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import java.util.List;
-import java.util.Objects;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,10 +49,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+import java.util.Objects;
+
 @Mixin(ServerPlayerGameMode.class)
 public abstract class ServerPlayerGameModeMixin
-    implements PlayerInteractionManagerBridge
-{
+    implements PlayerInteractionManagerBridge {
 
     public boolean interactResult = false;
     public boolean firedInteract = false;
@@ -147,9 +147,9 @@ public abstract class ServerPlayerGameModeMixin
             );
         if (
             forgeEvent.isCanceled() ||
-            (!this.isCreative() &&
-                forgeEvent.getUseItem() ==
-                    net.minecraftforge.eventbus.api.Event.Result.DENY)
+                (!this.isCreative() &&
+                    forgeEvent.getUseItem() ==
+                        net.minecraftforge.eventbus.api.Event.Result.DENY)
         ) {
             // Restore block and te data
             level.sendBlockUpdated(
@@ -224,16 +224,16 @@ public abstract class ServerPlayerGameModeMixin
                 this.player
                     .getMainHandItem()
                     .is(net.minecraft.world.item.Items.DEBUG_STICK) &&
-                (
-                    (net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.DEBUG_STICK
-                ).handleInteraction(
-                    this.player,
-                    this.level.getBlockState(blockPos),
-                    this.level,
-                    blockPos,
-                    false,
-                    this.player.getMainHandItem()
-                )
+                    (
+                        (net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.DEBUG_STICK
+                    ).handleInteraction(
+                        this.player,
+                        this.level.getBlockState(blockPos),
+                        this.level,
+                        blockPos,
+                        false,
+                        this.player.getMainHandItem()
+                    )
             ) {
                 this.player.connection.send(
                     new ClientboundBlockUpdatePacket(this.level, blockPos)
@@ -289,7 +289,7 @@ public abstract class ServerPlayerGameModeMixin
             } else if (!iblockdata.isAir()) {
                 if (
                     forgeEvent.getUseBlock() !=
-                    net.minecraftforge.eventbus.api.Event.Result.DENY
+                        net.minecraftforge.eventbus.api.Event.Result.DENY
                 ) {
                     iblockdata.attack(this.level, blockPos, this.player);
                 }
@@ -374,7 +374,7 @@ public abstract class ServerPlayerGameModeMixin
                             this.player.level(),
                             blockPos
                         ) *
-                        (k + 1);
+                            (k + 1);
                     if (f2 >= 0.7f) {
                         this.isDestroyingBlock = false;
                         this.level.destroyBlockProgress(
@@ -477,7 +477,7 @@ public abstract class ServerPlayerGameModeMixin
     }
 
     @Inject(
-        method = { "tick", "destroyAndAck" },
+        method = {"tick", "destroyAndAck"},
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/server/level/ServerPlayerGameMode;destroyBlock(Lnet/minecraft/core/BlockPos;)Z"
@@ -500,7 +500,7 @@ public abstract class ServerPlayerGameModeMixin
 
         if (
             blockDrops != null &&
-            (breakEvent == null || breakEvent.isDropItems())
+                (breakEvent == null || breakEvent.isDropItems())
         ) {
             CraftBlock craftBlock = CraftBlock.at(this.level, pos);
             CraftEventFactory.handleBlockDropItemEvent(
@@ -583,7 +583,7 @@ public abstract class ServerPlayerGameModeMixin
                 if (blockstate.getBlock() instanceof DoorBlock) {
                     boolean bottom =
                         blockstate.getValue(DoorBlock.HALF) ==
-                        DoubleBlockHalf.LOWER;
+                            DoubleBlockHalf.LOWER;
                     playerIn.connection.send(
                         new ClientboundBlockUpdatePacket(
                             this.level,
@@ -647,7 +647,7 @@ public abstract class ServerPlayerGameModeMixin
             );
             if (
                 event.getUseItem() !=
-                net.minecraftforge.eventbus.api.Event.Result.DENY
+                    net.minecraftforge.eventbus.api.Event.Result.DENY
             ) {
                 InteractionResult result = stackIn.onItemUseFirst(
                     itemusecontext
@@ -656,26 +656,26 @@ public abstract class ServerPlayerGameModeMixin
             }
             boolean flag =
                 !playerIn.getMainHandItem().isEmpty() ||
-                !playerIn.getOffhandItem().isEmpty();
+                    !playerIn.getOffhandItem().isEmpty();
             boolean flag1 =
                 playerIn.isSecondaryUseActive() &&
-                flag &&
-                !(
-                    playerIn
-                        .getMainHandItem()
-                        .doesSneakBypassUse(worldIn, blockpos, playerIn) &&
-                    playerIn
-                        .getOffhandItem()
-                        .doesSneakBypassUse(worldIn, blockpos, playerIn)
-                );
+                    flag &&
+                    !(
+                        playerIn
+                            .getMainHandItem()
+                            .doesSneakBypassUse(worldIn, blockpos, playerIn) &&
+                            playerIn
+                                .getOffhandItem()
+                                .doesSneakBypassUse(worldIn, blockpos, playerIn)
+                    );
             ItemStack itemstack = stackIn.copy();
             InteractionResult resultType = InteractionResult.PASS;
             if (
                 event.getUseBlock() ==
                     net.minecraftforge.eventbus.api.Event.Result.ALLOW ||
-                (event.getUseBlock() !=
-                    net.minecraftforge.eventbus.api.Event.Result.DENY &&
-                    !flag1)
+                    (event.getUseBlock() !=
+                        net.minecraftforge.eventbus.api.Event.Result.DENY &&
+                        !flag1)
             ) {
                 resultType = blockstate.use(
                     worldIn,
@@ -695,13 +695,13 @@ public abstract class ServerPlayerGameModeMixin
             if (
                 event.getUseItem() ==
                     net.minecraftforge.eventbus.api.Event.Result.ALLOW ||
-                (!stackIn.isEmpty() &&
-                    resultType != InteractionResult.SUCCESS &&
-                    !bridge$getInteractResult())
+                    (!stackIn.isEmpty() &&
+                        resultType != InteractionResult.SUCCESS &&
+                        !bridge$getInteractResult())
             ) {
                 if (
                     event.getUseItem() ==
-                    net.minecraftforge.eventbus.api.Event.Result.DENY
+                        net.minecraftforge.eventbus.api.Event.Result.DENY
                 ) {
                     return InteractionResult.PASS;
                 }

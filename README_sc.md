@@ -12,7 +12,7 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 | Forge          | 适用于 Minecraft `1.20.1` 的最新 Forge 正式版 |
 | CraftBukkit 包 | `v1_20_R1`                                    |
 | Java           | `17`（64 位）                                 |
-| Luminara       | `1.0.15-hotfix`                                      |
+| Luminara       | `1.0.15-hotfix`                               |
 
 本仓库不支持其他 Minecraft 版本，也不支持 Fabric、NeoForge 或混合加载器等配置。
 
@@ -30,6 +30,7 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 - [ServerCore](https://modrinth.com/mod/servercore)
 
   > 它的大部分优化方法源自 Spigot 或 Paper。本服务端本身就是一个 Forge + Spigot + Paper API 服务器，强行加入会导致行为异常或崩溃，因此永远不会兼容
+
 - [Sinytra Connector](https://modrinth.com/mod/connector)
 
   > 恩情课文：Connector 爷爷使用大量 Fabric API 转译层击落 Forge 服务端兼容性。
@@ -61,15 +62,15 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 - 如果你想要更激进性能优化，我们推荐我们的下游项目 [PRTS-SERVER](https://github.com/ElainAwa/PRTS-SERVER)
 
   > PRTS-SERVER 的目标是在尽可能保持兼容性的同时实现更多性能优化补丁。这些补丁来自 [ServerCore](https://modrinth.com/mod/servercore)、[Very Many Players](https://modrinth.com/mod/vmp-forge)、[Paper](https://papermc.io/)、[Mohist](https://www.mohistmc.com/) 等项目
-  
+
   > 请注意，它只适合中小型整合包！对于像 ATM9 这样的大型整合包，我们建议继续使用本服务端，因为大型整合包往往需要更高的兼容性
-  
+
   > ~~我最近才发现这破服务端还有下游~~
 
 - 如果你想优化大型整合包，我们推荐一些常见的优化模组组合（下面提到的所有模组都与本服务端兼容）
 
   > 对大多数整合包来说，仅三个模组就能击落 MSPT：[ModernFix](https://modrinth.com/mod/modernfix)、[FerriteCore](https://modrinth.com/mod/ferrite-core) 和 [Radium](https://modrinth.com/mod/radium)
-  
+
   > 对于涉及大量探索的整合包，两个模组可以大幅加快区块生成速度：[FastNoise](https://modrinth.com/mod/zfastnoise) 和 [FastChunkGen](https://www.curseforge.com/minecraft/mc-mods/fastchunkgen)
 
 ## 从源码构建

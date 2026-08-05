@@ -47,7 +47,8 @@ public class LayeredCauldronBlockMixin {
             target = "Lnet/minecraft/world/entity/Entity;clearFire()V"
         )
     )
-    private void arclight$extinguish1(Entity entity) {}
+    private void arclight$extinguish1(Entity entity) {
+    }
 
     @Inject(
         method = "entityInside",

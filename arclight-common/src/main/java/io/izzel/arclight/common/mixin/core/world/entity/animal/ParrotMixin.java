@@ -40,7 +40,8 @@ public abstract class ParrotMixin extends AnimalMixin {
     private void arclight$handledInSuper(
         Parrot parrotEntity,
         boolean p_233687_1_
-    ) {}
+    ) {
+    }
 
     /**
      * @author IzzelAliz

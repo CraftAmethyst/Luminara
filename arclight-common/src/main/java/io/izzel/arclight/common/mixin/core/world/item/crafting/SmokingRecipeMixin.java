@@ -15,8 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(SmokingRecipe.class)
 public abstract class SmokingRecipeMixin
     extends AbstractCookingRecipe
-    implements IRecipeBridge
-{
+    implements IRecipeBridge {
 
     public SmokingRecipeMixin(
         RecipeType<?> p_250197_,

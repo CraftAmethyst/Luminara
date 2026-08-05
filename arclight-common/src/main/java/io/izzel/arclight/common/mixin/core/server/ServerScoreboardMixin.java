@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mixin.core.server;
 
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import java.util.List;
-import java.util.stream.Collectors;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,6 +8,9 @@ import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mixin(ServerScoreboard.class)
 public class ServerScoreboardMixin {

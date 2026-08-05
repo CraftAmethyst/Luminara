@@ -4,8 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Deprecated
 public interface World$ChunkLoadCallback
-    extends java.util.function.Consumer<Chunk>
-{
+    extends java.util.function.Consumer<Chunk> {
     void onLoad(@NotNull Chunk chunk);
 
     @Override

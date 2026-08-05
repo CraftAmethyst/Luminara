@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
 import io.izzel.arclight.common.bridge.core.entity.player.PlayerEntityBridge;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(ConduitBlockEntity.class)
 public abstract class ConduitBlockEntityMixin extends BlockEntityMixin {

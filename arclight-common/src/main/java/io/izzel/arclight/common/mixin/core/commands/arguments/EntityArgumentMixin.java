@@ -1,7 +1,5 @@
 package io.izzel.arclight.common.mixin.core.commands.arguments;
 
-import static net.minecraft.commands.arguments.EntityArgument.*;
-
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.izzel.arclight.common.bridge.core.command.arguments.EntityArgumentBridge;
@@ -12,6 +10,8 @@ import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import static net.minecraft.commands.arguments.EntityArgument.*;
 
 @Mixin(EntityArgument.class)
 public class EntityArgumentMixin implements EntityArgumentBridge {
@@ -52,8 +52,8 @@ public class EntityArgumentMixin implements EntityArgumentBridge {
             }
         } else if (
             entityselector.includesEntities() &&
-            this.playersOnly &&
-            !entityselector.isSelfSelector()
+                this.playersOnly &&
+                !entityselector.isSelfSelector()
         ) {
             reader.setCursor(0);
             throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(reader);

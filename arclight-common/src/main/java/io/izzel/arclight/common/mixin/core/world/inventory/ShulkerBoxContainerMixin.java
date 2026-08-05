@@ -17,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ShulkerBoxMenu.class)
 public abstract class ShulkerBoxContainerMixin
-    extends AbstractContainerMenuMixin
-{
+    extends AbstractContainerMenuMixin {
 
     // @formatter:off
     @Shadow @Final private Container container;

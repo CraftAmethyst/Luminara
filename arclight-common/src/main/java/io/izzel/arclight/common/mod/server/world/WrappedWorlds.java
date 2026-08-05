@@ -1,13 +1,14 @@
 package io.izzel.arclight.common.mod.server.world;
 
 import io.izzel.arclight.common.mod.ArclightMod;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Function;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 
 public class WrappedWorlds {
 

@@ -1,13 +1,14 @@
 package io.izzel.arclight.common.mixin.core.nbt;
 
-import java.util.Map;
-import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 @Mixin(CompoundTag.class)
 public class CompoundTagMixin {

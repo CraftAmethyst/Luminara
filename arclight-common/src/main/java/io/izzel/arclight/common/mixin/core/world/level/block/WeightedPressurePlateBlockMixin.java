@@ -19,8 +19,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(WeightedPressurePlateBlock.class)
 public abstract class WeightedPressurePlateBlockMixin
-    extends BasePressurePlateBlockMixin
-{
+    extends BasePressurePlateBlockMixin {
 
     private static <T extends Entity> java.util.List<T> getEntities(
         Level world,

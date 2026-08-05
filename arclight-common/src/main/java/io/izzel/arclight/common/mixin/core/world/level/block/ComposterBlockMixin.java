@@ -65,12 +65,12 @@ public abstract class ComposterBlockMixin {
 
             if (
                 state == state1 ||
-                (entity != null &&
-                    !CraftEventFactory.callEntityChangeBlockEvent(
-                        entity,
-                        pos,
-                        state1
-                    ))
+                    (entity != null &&
+                        !CraftEventFactory.callEntityChangeBlockEvent(
+                            entity,
+                            pos,
+                            state1
+                        ))
             ) {
                 return state;
             }

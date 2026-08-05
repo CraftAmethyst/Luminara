@@ -20,7 +20,7 @@ public class CraftSpawnCategoryMixin {
     public static boolean isValidForLimits(SpawnCategory spawnCategory) {
         return (
             spawnCategory != null &&
-            spawnCategory.ordinal() < SpawnCategory.MISC.ordinal()
+                spawnCategory.ordinal() < SpawnCategory.MISC.ordinal()
         );
     }
 

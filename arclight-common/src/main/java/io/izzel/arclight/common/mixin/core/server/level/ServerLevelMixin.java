@@ -20,11 +20,6 @@ import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DelegateWorldInfo;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import io.izzel.arclight.i18n.ArclightConfig;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Executor;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -84,11 +79,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Executor;
+
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin
     extends LevelMixin
-    implements ServerWorldBridge
-{
+    implements ServerWorldBridge {
 
     @Shadow
     @Final
@@ -98,7 +98,7 @@ public abstract class ServerLevelMixin
     @Final
     public ServerLevelData serverLevelData;
 
-    @SuppressWarnings({ "FieldCanBeLocal", "unused" })
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     public PrimaryLevelData K; // Stupid CraftBukkit patch.
 
     public LevelStorageSource.LevelStorageAccess convertable;
@@ -128,7 +128,7 @@ public abstract class ServerLevelMixin
      * @author IzzelAliz
      * @reason
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Overwrite
     public static void makeObsidianPlatform(ServerLevel world) {
         BlockPos blockpos = END_SPAWN_POINT;
@@ -327,7 +327,7 @@ public abstract class ServerLevelMixin
     }
 
     @ModifyArg(method = "tickChunk",
-               at = @At(value = "INVOKE", 
+               at = @At(value = "INVOKE",
                         target = "Lnet/minecraft/server/level/ServerLevel;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"),
                index = 1)
     private BlockState arclight$handleBlockFormEvent(BlockPos pos, BlockState state) {

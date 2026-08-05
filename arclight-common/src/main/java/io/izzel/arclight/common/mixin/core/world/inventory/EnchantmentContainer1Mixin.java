@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(targets = "net/minecraft/world/inventory/EnchantmentMenu$1")
 public abstract class EnchantmentContainer1Mixin extends SimpleContainerMixin {
 
-    @Shadow(aliases = { "this$0", "f_39494_" }, remap = false)
+    @Shadow(aliases = {"this$0", "f_39494_"}, remap = false)
     private EnchantmentMenu outerThis;
 
     @Override

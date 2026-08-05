@@ -54,7 +54,7 @@ public class ChorusFruitItemMixin extends Item {
             for (int i = 0; i < 16; ++i) {
                 double d3 =
                     entityLiving.getX() +
-                    (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
+                        (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
                 double d4 = Mth.clamp(
                     entityLiving.getY() +
                         (double) (entityLiving.getRandom().nextInt(16) - 8),
@@ -63,11 +63,11 @@ public class ChorusFruitItemMixin extends Item {
                 );
                 double d5 =
                     entityLiving.getZ() +
-                    (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
+                        (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
 
                 if (
                     entityLiving instanceof ServerPlayer &&
-                    DistValidate.isValid(worldIn)
+                        DistValidate.isValid(worldIn)
                 ) {
                     Player player = (
                         (ServerPlayerEntityBridge) entityLiving

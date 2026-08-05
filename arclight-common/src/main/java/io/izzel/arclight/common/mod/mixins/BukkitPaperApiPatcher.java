@@ -28,7 +28,8 @@ public final class BukkitPaperApiPatcher {
     private static final String SET_DESC = "Ljava/util/Set;";
     private static final String BOOLEAN_DESC = "Z";
 
-    private BukkitPaperApiPatcher() {}
+    private BukkitPaperApiPatcher() {
+    }
 
     public static void patch(String targetClassName, ClassNode targetClass) {
         if (BUKKIT_CLASS.equals(targetClassName)) {
@@ -81,7 +82,7 @@ public final class BukkitPaperApiPatcher {
             "createInventory",
             CREATE_INV_COMPONENT_DESC,
             null,
-            new String[] { "java/lang/IllegalArgumentException" }
+            new String[]{"java/lang/IllegalArgumentException"}
         );
 
         method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
@@ -243,8 +244,8 @@ public final class BukkitPaperApiPatcher {
         for (MethodNode method : targetClass.methods) {
             if (
                 "<init>".equals(method.name) &&
-                (ctor3.equals(method.desc) ||
-                    PLAYER_TELEPORT_EVENT_CTOR_DESC.equals(method.desc))
+                    (ctor3.equals(method.desc) ||
+                        PLAYER_TELEPORT_EVENT_CTOR_DESC.equals(method.desc))
             ) {
                 initializeFlagsField(targetClass, method, false);
             }

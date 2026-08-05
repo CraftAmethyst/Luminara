@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mod.compat;
 import com.mojang.brigadier.tree.CommandNode;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
+
 import java.util.Map;
 
 public class CommandNodeHooks {

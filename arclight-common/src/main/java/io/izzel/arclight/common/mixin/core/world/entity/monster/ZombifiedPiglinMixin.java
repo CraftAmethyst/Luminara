@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.MobEntityBridge;
-import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -17,6 +16,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+
+import java.util.UUID;
 
 @Mixin(ZombifiedPiglin.class)
 public abstract class ZombifiedPiglinMixin extends ZombieMixin {

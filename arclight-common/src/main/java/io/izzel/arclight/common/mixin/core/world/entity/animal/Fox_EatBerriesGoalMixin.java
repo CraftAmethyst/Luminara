@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public abstract class Fox_EatBerriesGoalMixin extends MoveToBlockGoal {
 
     @SuppressWarnings("target")
-    @Shadow(aliases = { "this$0", "f_28672_" }, remap = false)
+    @Shadow(aliases = {"this$0", "f_28672_"}, remap = false)
     private Fox outerThis;
 
     public Fox_EatBerriesGoalMixin(

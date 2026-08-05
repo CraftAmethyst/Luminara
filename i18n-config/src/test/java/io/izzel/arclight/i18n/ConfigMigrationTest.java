@@ -1,17 +1,25 @@
 package io.izzel.arclight.i18n;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.izzel.arclight.i18n.conf.PermissionForwarding;
-import java.io.BufferedReader;
-import java.io.StringReader;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class ConfigMigrationTest {
+
+    private static ConfigurationNode load(String yaml) throws Exception {
+        return YAMLConfigurationLoader.builder()
+            .setSource(() -> new BufferedReader(new StringReader(yaml)))
+            .build()
+            .load();
+    }
 
     @ParameterizedTest
     @CsvSource({
@@ -26,26 +34,26 @@ class ConfigMigrationTest {
     ) throws Exception {
         ConfigurationNode root = load(
             """
-            _v: 1
-            locale:
-              fallback: en_us
-            optimization:
-              cache-plugin-class: true
-              async-system:
-                enabled: true
-              entity-optimization:
-                reduce-entity-updates: true
-              memory-optimization:
-                cache-cleanup-enabled: true
-              world-creation:
-                skip-spawn-chunk-loading: true
-              chunk-optimization:
-                aggressive-chunk-unloading: true
-            compatibility:
-              forward-permission: %s
-            async-world-save:
-              enabled: true
-            """.formatted(legacy)
+                _v: 1
+                locale:
+                  fallback: en_us
+                optimization:
+                  cache-plugin-class: true
+                  async-system:
+                    enabled: true
+                  entity-optimization:
+                    reduce-entity-updates: true
+                  memory-optimization:
+                    cache-cleanup-enabled: true
+                  world-creation:
+                    skip-spawn-chunk-loading: true
+                  chunk-optimization:
+                    aggressive-chunk-unloading: true
+                compatibility:
+                  forward-permission: %s
+                async-world-save:
+                  enabled: true
+                """.formatted(legacy)
         );
 
         ConfigMigration.Result result = ConfigMigration.migrate(root);
@@ -65,12 +73,5 @@ class ConfigMigrationTest {
                 path
             );
         }
-    }
-
-    private static ConfigurationNode load(String yaml) throws Exception {
-        return YAMLConfigurationLoader.builder()
-            .setSource(() -> new BufferedReader(new StringReader(yaml)))
-            .build()
-            .load();
     }
 }

@@ -2,9 +2,6 @@ package io.izzel.arclight.common.mod.server.event;
 
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.tools.collection.XmapList;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,6 +13,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class EntityEventDispatcher {
 

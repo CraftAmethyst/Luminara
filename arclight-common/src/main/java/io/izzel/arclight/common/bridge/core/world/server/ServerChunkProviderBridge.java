@@ -1,8 +1,9 @@
 package io.izzel.arclight.common.bridge.core.world.server;
 
-import java.io.IOException;
 import net.minecraft.server.level.ThreadedLevelLightEngine;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+
+import java.io.IOException;
 
 public interface ServerChunkProviderBridge {
     void bridge$close(boolean save) throws IOException;

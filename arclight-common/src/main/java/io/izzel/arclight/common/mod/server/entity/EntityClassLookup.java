@@ -2,12 +2,6 @@ package io.izzel.arclight.common.mod.server.entity;
 
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.mod.ArclightMod;
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ambient.AmbientCreature;
@@ -44,6 +38,13 @@ import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.entity.vehicle.*;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
+
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 public class EntityClassLookup {
 
@@ -1368,12 +1369,12 @@ public class EntityClassLookup {
         CraftServer,
         T,
         org.bukkit.entity.Entity
-    > getConvert(T entity) {
+        > getConvert(T entity) {
         return (BiFunction<
             CraftServer,
             T,
             org.bukkit.entity.Entity
-        >) nmsClassMap
+            >) nmsClassMap
             .computeIfAbsent(entity.getClass(), k ->
                 getEntityTypeData(k, entity.getType())
             )
@@ -1419,7 +1420,7 @@ public class EntityClassLookup {
         CraftServer,
         T,
         org.bukkit.entity.Entity
-    > convert(String name) {
+        > convert(String name) {
         try {
             Class<? extends CraftEntity> cl = forName(name);
             for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
@@ -1427,7 +1428,7 @@ public class EntityClassLookup {
                     var pTypes = constructor.getParameterTypes();
                     if (
                         pTypes[0].equals(CraftServer.class) &&
-                        Entity.class.isAssignableFrom(pTypes[1])
+                            Entity.class.isAssignableFrom(pTypes[1])
                     ) {
                         constructor.setAccessible(true);
                         var lookup = Unsafe.lookup().in(
@@ -1437,18 +1438,18 @@ public class EntityClassLookup {
                             CraftServer,
                             T,
                             org.bukkit.entity.Entity
-                        >) LambdaMetafactory.metafactory(
-                            lookup,
-                            "apply",
-                            MethodType.methodType(BiFunction.class),
-                            MethodType.methodType(
-                                Object.class,
-                                Object.class,
-                                Object.class
-                            ),
-                            lookup.unreflectConstructor(constructor),
-                            lookup.unreflectConstructor(constructor).type()
-                        )
+                            >) LambdaMetafactory.metafactory(
+                                lookup,
+                                "apply",
+                                MethodType.methodType(BiFunction.class),
+                                MethodType.methodType(
+                                    Object.class,
+                                    Object.class,
+                                    Object.class
+                                ),
+                                lookup.unreflectConstructor(constructor),
+                                lookup.unreflectConstructor(constructor).type()
+                            )
                             .dynamicInvoker()
                             .invoke();
                     }

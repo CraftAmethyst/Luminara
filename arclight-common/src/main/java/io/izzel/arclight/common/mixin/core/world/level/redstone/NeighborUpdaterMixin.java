@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.redstone;
 
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
-import java.util.Locale;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -17,6 +16,8 @@ import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+
+import java.util.Locale;
 
 @Mixin(NeighborUpdater.class)
 public interface NeighborUpdaterMixin {

@@ -7,14 +7,6 @@ import io.izzel.arclight.common.bridge.bukkit.CraftServerBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jline.console.ConsoleReader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
@@ -48,6 +40,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Mixin(value = CraftServer.class, remap = false)
 public abstract class CraftServerMixin implements CraftServerBridge {
@@ -285,7 +286,8 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         ) {
             try {
                 Thread.sleep(50L);
-            } catch (InterruptedException var10) {}
+            } catch (InterruptedException var10) {
+            }
         }
 
         List<BukkitWorker> overdueWorkers =

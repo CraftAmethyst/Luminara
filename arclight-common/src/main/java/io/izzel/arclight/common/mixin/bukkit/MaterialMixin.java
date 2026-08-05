@@ -6,10 +6,6 @@ import io.izzel.arclight.common.bridge.core.block.FireBlockBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.i18n.LocalizedException;
 import io.izzel.arclight.i18n.conf.MaterialPropertySpec;
-import java.lang.reflect.Constructor;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,16 +32,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 @Mixin(value = Material.class, remap = false)
 public abstract class MaterialMixin implements MaterialBridge {
 
     private static final Map<
         String,
         BiFunction<Material, CraftMetaItem, ItemMeta>
-    > TYPES = ImmutableMap.<
-        String,
-        BiFunction<Material, CraftMetaItem, ItemMeta>
-    >builder()
+        > TYPES = ImmutableMap.<
+            String,
+            BiFunction<Material, CraftMetaItem, ItemMeta>
+            >builder()
         .put("ARMOR_STAND", (a, b) ->
             b instanceof CraftMetaArmorStand ? b : new CraftMetaArmorStand(b)
         )
@@ -381,8 +382,8 @@ public abstract class MaterialMixin implements MaterialBridge {
     public boolean bridge$shouldApplyStateFactory() {
         return (
             this.arclight$type != MaterialPropertySpec.MaterialType.VANILLA ||
-            (this.arclight$spec != null &&
-                this.arclight$spec.blockStateClass != null)
+                (this.arclight$spec != null &&
+                    this.arclight$spec.blockStateClass != null)
         );
     }
 
@@ -436,17 +437,17 @@ public abstract class MaterialMixin implements MaterialBridge {
         if (arclight$spec.transparent == null) {
             arclight$spec.transparent =
                 block != null &&
-                block.defaultBlockState().useShapeForLightOcclusion();
+                    block.defaultBlockState().useShapeForLightOcclusion();
         }
         if (arclight$spec.flammable == null) {
             arclight$spec.flammable =
                 block != null &&
-                ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
+                    ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
         }
         if (arclight$spec.burnable == null) {
             arclight$spec.burnable =
                 block != null &&
-                ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
+                    ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
         }
         if (arclight$spec.fuel == null) {
             arclight$spec.fuel =
@@ -474,8 +475,8 @@ public abstract class MaterialMixin implements MaterialBridge {
             arclight$spec.craftingRemainingItem =
                 item != null && item.hasCraftingRemainingItem()
                     ? ForgeRegistries.ITEMS.getKey(
-                          item.getCraftingRemainingItem()
-                      ).toString()
+                    item.getCraftingRemainingItem()
+                ).toString()
                     : null;
         }
         if (arclight$spec.itemMetaType == null) {
@@ -498,7 +499,7 @@ public abstract class MaterialMixin implements MaterialBridge {
     private void setupBlockStateFunc() {
         if (
             arclight$spec.blockStateClass != null &&
-            !arclight$spec.blockStateClass.equalsIgnoreCase("auto")
+                !arclight$spec.blockStateClass.equalsIgnoreCase("auto")
         ) {
             try {
                 Class<?> cl = Class.forName(arclight$spec.blockStateClass);
@@ -512,9 +513,9 @@ public abstract class MaterialMixin implements MaterialBridge {
                 for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
                     if (
                         constructor.getParameterTypes().length == 1 &&
-                        org.bukkit.block.Block.class.isAssignableFrom(
-                            constructor.getParameterTypes()[0]
-                        )
+                            org.bukkit.block.Block.class.isAssignableFrom(
+                                constructor.getParameterTypes()[0]
+                            )
                     ) {
                         constructor.setAccessible(true);
                         this.arclight$stateFunc = b -> {
@@ -594,7 +595,7 @@ public abstract class MaterialMixin implements MaterialBridge {
                 } else if (parameterTypes.length == 2) {
                     if (
                         parameterTypes[0] == Material.class &&
-                        CraftMetaItem.class.isAssignableFrom(parameterTypes[1])
+                            CraftMetaItem.class.isAssignableFrom(parameterTypes[1])
                     ) {
                         constructor.setAccessible(true);
                         candidate = meta -> {
@@ -610,7 +611,7 @@ public abstract class MaterialMixin implements MaterialBridge {
                         break;
                     } else if (
                         parameterTypes[1] == Material.class &&
-                        CraftMetaItem.class.isAssignableFrom(parameterTypes[0])
+                            CraftMetaItem.class.isAssignableFrom(parameterTypes[0])
                     ) {
                         constructor.setAccessible(true);
                         candidate = meta -> {

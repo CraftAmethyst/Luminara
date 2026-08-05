@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityTypeBridge;
 import io.izzel.arclight.common.bridge.core.world.IWorldWriterBridge;
-import java.util.function.Consumer;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +18,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 @Mixin(EntityType.class)
 public abstract class EntityTypeMixin<T extends Entity> implements

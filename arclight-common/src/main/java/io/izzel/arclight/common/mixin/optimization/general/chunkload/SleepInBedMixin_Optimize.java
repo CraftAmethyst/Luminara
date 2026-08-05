@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @LoadIfMod(
-    modid = { ModIds.C2ME, ModIds.NOISIUM },
+    modid = {ModIds.C2ME, ModIds.NOISIUM},
     condition = LoadIfMod.ModCondition.ABSENT
 )
 @Mixin(SleepInBed.class)

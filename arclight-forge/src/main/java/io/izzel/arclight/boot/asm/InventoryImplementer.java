@@ -1,12 +1,13 @@
 package io.izzel.arclight.boot.asm;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
-import java.lang.reflect.Modifier;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+
+import java.lang.reflect.Modifier;
 
 public class InventoryImplementer implements Implementer {
 
@@ -14,7 +15,8 @@ public class InventoryImplementer implements Implementer {
     private static final String BRIDGE_TYPE =
         "io/izzel/arclight/common/bridge/core/inventory/IInventoryBridge";
 
-    public InventoryImplementer() {}
+    public InventoryImplementer() {
+    }
 
     @Override
     public boolean processClass(
@@ -23,7 +25,7 @@ public class InventoryImplementer implements Implementer {
     ) {
         if (
             Modifier.isInterface(node.access) ||
-            node.interfaces.contains(BRIDGE_TYPE)
+                node.interfaces.contains(BRIDGE_TYPE)
         ) {
             return false;
         }
@@ -35,8 +37,8 @@ public class InventoryImplementer implements Implementer {
         for (MethodNode method : node.methods) {
             if (
                 !Modifier.isAbstract(method.access) &&
-                method.name.equals("m_6893_") &&
-                method.desc.equals("()I")
+                    method.name.equals("m_6893_") &&
+                    method.desc.equals("()I")
             ) {
                 // getMaxStackSize
                 stackLimitMethod = method;
@@ -49,7 +51,7 @@ public class InventoryImplementer implements Implementer {
             for (MethodNode method : node.methods) {
                 if (
                     method.name.equals("setMaxStackSize") &&
-                    method.desc.equals("(I)V")
+                        method.desc.equals("(I)V")
                 ) {
                     ArclightImplementer.LOGGER.debug(
                         MARKER,

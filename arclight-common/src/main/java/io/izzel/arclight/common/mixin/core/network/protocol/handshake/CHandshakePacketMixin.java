@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.network.protocol.handshake;
 
 import com.google.gson.Gson;
 import com.mojang.authlib.properties.Property;
-import java.util.Objects;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraftforge.network.NetworkConstants;
@@ -14,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Objects;
 
 @Mixin(ClientIntentionPacket.class)
 public class CHandshakePacketMixin {
@@ -79,7 +80,7 @@ public class CHandshakePacketMixin {
             String fmlVersion = NetworkHooks.getFMLVersion(ip);
             if (
                 SpigotConfig.bungee &&
-                !Objects.equals(fmlVersion, NetworkConstants.NETVERSION)
+                    !Objects.equals(fmlVersion, NetworkConstants.NETVERSION)
             ) {
                 if (ip == null || ip.isEmpty()) {
                     return fmlVersion;
@@ -98,10 +99,10 @@ public class CHandshakePacketMixin {
                             for (Property property : properties) {
                                 if (
                                     property != null &&
-                                    Objects.equals(
-                                        property.getName(),
-                                        EXTRA_DATA
-                                    )
+                                        Objects.equals(
+                                            property.getName(),
+                                            EXTRA_DATA
+                                        )
                                 ) {
                                     String value = property.getValue();
                                     if (value != null) {

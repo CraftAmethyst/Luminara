@@ -18,8 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(DispenserMenu.class)
 public abstract class DispenserContainerMixin
-    extends AbstractContainerMenuMixin
-{
+    extends AbstractContainerMenuMixin {
 
     // @formatter:off
     @Shadow @Final public Container dispenser;

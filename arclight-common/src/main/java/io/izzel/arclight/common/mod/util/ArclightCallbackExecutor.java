@@ -15,7 +15,7 @@ public class ArclightCallbackExecutor implements Executor, Runnable {
 
     @Override
     public void run() {
-        for (;;) {
+        for (; ; ) {
             var poll = queue.poll();
             if (poll != null) {
                 poll.run();

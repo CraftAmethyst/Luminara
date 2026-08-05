@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
-import java.io.File;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
 import org.bukkit.craftbukkit.v.CraftWorld;
@@ -11,6 +10,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.io.File;
 
 @Mixin(value = CraftWorld.class, remap = false)
 public abstract class CraftWorldMixin {

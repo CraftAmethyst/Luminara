@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "net/minecraft/server/level/ServerLevel$EntityCallbacks")
 public class ServerLevel_EntityCallbacksMixin {
 
-    @Shadow(aliases = { "f_143351_", "this$0" })
+    @Shadow(aliases = {"f_143351_", "this$0"})
     private ServerLevel outerThis;
 
     @Inject(

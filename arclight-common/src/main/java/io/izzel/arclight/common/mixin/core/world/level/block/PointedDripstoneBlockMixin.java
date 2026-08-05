@@ -1,7 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
-import static net.minecraft.world.level.block.PointedDripstoneBlock.*;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static net.minecraft.world.level.block.PointedDripstoneBlock.*;
 
 @Mixin(PointedDripstoneBlock.class)
 public class PointedDripstoneBlockMixin {

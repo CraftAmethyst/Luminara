@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.entity.boss.wither;
 
 import io.izzel.arclight.common.mixin.core.world.entity.PathfinderMobMixin;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.util.Mth;
@@ -22,6 +21,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.List;
 
 @Mixin(WitherBoss.class)
 public abstract class WitherBossMixin extends PathfinderMobMixin {
@@ -112,7 +113,7 @@ public abstract class WitherBossMixin extends PathfinderMobMixin {
                         this.tickCount + 10 + this.random.nextInt(10);
                     if (
                         this.level().getDifficulty() == Difficulty.NORMAL ||
-                        this.level().getDifficulty() == Difficulty.HARD
+                            this.level().getDifficulty() == Difficulty.HARD
                     ) {
                         int i3 = i - 1;
                         int j3 = this.idleHeadUpdates[i - 1];
@@ -145,9 +146,9 @@ public abstract class WitherBossMixin extends PathfinderMobMixin {
                             (LivingEntity) this.level().getEntity(l1);
                         if (
                             livingentity != null &&
-                            this.canAttack(livingentity) &&
-                            !(this.distanceToSqr(livingentity) > 900.0D) &&
-                            this.hasLineOfSight(livingentity)
+                                this.canAttack(livingentity) &&
+                                !(this.distanceToSqr(livingentity) > 900.0D) &&
+                                this.hasLineOfSight(livingentity)
                         ) {
                             this.performRangedAttack(i + 1, livingentity);
                             this.nextHeadUpdate[i - 1] =
@@ -202,10 +203,10 @@ public abstract class WitherBossMixin extends PathfinderMobMixin {
                 --this.destroyBlocksTick;
                 if (
                     this.destroyBlocksTick == 0 &&
-                    ForgeEventFactory.getMobGriefingEvent(
-                        this.level(),
-                        (WitherBoss) (Object) this
-                    )
+                        ForgeEventFactory.getMobGriefingEvent(
+                            this.level(),
+                            (WitherBoss) (Object) this
+                        )
                 ) {
                     int j1 = Mth.floor(this.getY());
                     int i2 = Mth.floor(this.getX());
@@ -227,11 +228,11 @@ public abstract class WitherBossMixin extends PathfinderMobMixin {
                                         blockpos,
                                         (WitherBoss) (Object) this
                                     ) &&
-                                    ForgeEventFactory.onEntityDestroyBlock(
-                                        (WitherBoss) (Object) this,
-                                        blockpos,
-                                        blockstate
-                                    )
+                                        ForgeEventFactory.onEntityDestroyBlock(
+                                            (WitherBoss) (Object) this,
+                                            blockpos,
+                                            blockstate
+                                        )
                                 ) {
                                     if (
                                         !CraftEventFactory.callEntityChangeBlockEvent(

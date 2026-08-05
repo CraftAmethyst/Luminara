@@ -5,10 +5,6 @@ import com.mojang.datafixers.util.Pair;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.ServerEntityBridge;
 import io.izzel.arclight.common.mod.ArclightConstants;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -37,6 +33,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 @Mixin(ServerEntity.class)
 public abstract class ServerEntityMixin implements ServerEntityBridge {
@@ -180,7 +181,7 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
             ItemStack itemstack = itemFrame.getItem();
             if (
                 this.tickCount / 10 != this.lastMapUpdate &&
-                itemstack.getItem() instanceof MapItem
+                    itemstack.getItem() instanceof MapItem
             ) {
                 MapItemSavedData mapdata = MapItem.getSavedData(
                     itemstack,
@@ -207,15 +208,15 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
         }
         if (
             this.tickCount / this.updateInterval != this.lastUpdate ||
-            this.entity.hasImpulse ||
-            this.entity.getEntityData().isDirty()
+                this.entity.hasImpulse ||
+                this.entity.getEntityData().isDirty()
         ) {
             if (this.entity.isPassenger()) {
                 int i1 = Mth.floor((this.entity.getYRot() * 256.0F) / 360.0F);
                 int l1 = Mth.floor((this.entity.getXRot() * 256.0F) / 360.0F);
                 boolean flag2 =
                     Math.abs(i1 - this.yRotp) >= 1 ||
-                    Math.abs(l1 - this.xRotp) >= 1;
+                        Math.abs(l1 - this.xRotp) >= 1;
                 if (flag2) {
                     this.broadcast.accept(
                         new ClientboundMoveEntityPacket.Rot(
@@ -238,13 +239,13 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
                 Vec3 vector3d = this.entity.trackingPosition();
                 boolean flag3 =
                     this.positionCodec.delta(vector3d).lengthSqr() >=
-                    7.62939453125E-6D;
+                        7.62939453125E-6D;
                 Packet<?> ipacket1 = null;
                 boolean flag4 =
                     flag3 || this.tickCount / 60 != this.lastPosUpdate;
                 boolean flag =
                     Math.abs(l - this.yRotp) >= 1 ||
-                    Math.abs(k1 - this.xRotp) >= 1;
+                        Math.abs(k1 - this.xRotp) >= 1;
                 boolean pos = false;
                 boolean rot = false;
                 if (
@@ -255,20 +256,20 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
                     long k = this.positionCodec.encodeZ(vector3d);
                     boolean flag1 =
                         i < -32768L ||
-                        i > 32767L ||
-                        j < -32768L ||
-                        j > 32767L ||
-                        k < -32768L ||
-                        k > 32767L;
+                            i > 32767L ||
+                            j < -32768L ||
+                            j > 32767L ||
+                            k < -32768L ||
+                            k > 32767L;
                     if (
                         !flag1 &&
-                        this.teleportDelay <= 400 &&
-                        !this.wasRiding &&
-                        this.wasOnGround == this.entity.onGround()
+                            this.teleportDelay <= 400 &&
+                            !this.wasRiding &&
+                            this.wasOnGround == this.entity.onGround()
                     ) {
                         if (
                             (!flag4 || !flag) &&
-                            !(this.entity instanceof AbstractArrow)
+                                !(this.entity instanceof AbstractArrow)
                         ) {
                             if (flag4) {
                                 ipacket1 = new ClientboundMoveEntityPacket.Pos(
@@ -314,13 +315,13 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
                         this.entity.hasImpulse ||
                         (this.entity instanceof LivingEntity &&
                             ((LivingEntity) this.entity).isFallFlying())) &&
-                    this.tickCount > 0
+                        this.tickCount > 0
                 ) {
                     Vec3 vector3d1 = this.entity.getDeltaMovement();
                     double d0 = vector3d1.distanceToSqr(this.ap);
                     if (
                         d0 > 1.0E-7D ||
-                        (d0 > 0.0D && vector3d1.lengthSqr() == 0.0D)
+                            (d0 > 0.0D && vector3d1.lengthSqr() == 0.0D)
                     ) {
                         this.ap = vector3d1;
                         this.broadcast.accept(
@@ -480,7 +481,7 @@ public abstract class ServerEntityMixin implements ServerEntityBridge {
         }
         if (
             this.entity instanceof Mob &&
-            (entityinsentient = (Mob) this.entity).isLeashed()
+                (entityinsentient = (Mob) this.entity).isLeashed()
         ) {
             consumer.accept(
                 new ClientboundSetEntityLinkPacket(

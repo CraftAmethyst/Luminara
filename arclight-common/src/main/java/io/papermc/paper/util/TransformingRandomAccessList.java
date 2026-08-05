@@ -1,9 +1,10 @@
 package io.papermc.paper.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A mutable transforming view backed by another list.
@@ -13,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class TransformingRandomAccessList<F, T>
     extends AbstractList<T>
-    implements RandomAccess
-{
+    implements RandomAccess {
 
     private final List<F> fromList;
     private final Function<? super F, ? extends T> toFunction;
@@ -103,7 +103,7 @@ public final class TransformingRandomAccessList<F, T>
     abstract static class TransformedListIterator<
         F,
         T
-    > implements ListIterator<T>, Iterator<T> {
+        > implements ListIterator<T>, Iterator<T> {
 
         final Iterator<F> backingIterator;
 

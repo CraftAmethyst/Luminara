@@ -65,11 +65,11 @@ public abstract class NaturalSpawnerMixin {
                     ((WorldBridge) world)
                         .bridge$ticksPerSpawnCategory()
                         .getLong(spawnCategory) != 0 &&
-                    worldInfo.getGameTime() %
-                        ((WorldBridge) world)
-                            .bridge$ticksPerSpawnCategory()
-                            .getLong(spawnCategory) ==
-                        0;
+                        worldInfo.getGameTime() %
+                            ((WorldBridge) world)
+                                .bridge$ticksPerSpawnCategory()
+                                .getLong(spawnCategory) ==
+                            0;
                 limit = ((WorldBridge) world)
                     .bridge$getWorld()
                     .getSpawnLimit(spawnCategory);
@@ -78,11 +78,11 @@ public abstract class NaturalSpawnerMixin {
                 if (limit != 0) {
                     if (
                         (flag || !classification.isFriendly()) &&
-                        (flag1 || classification.isFriendly()) &&
-                        (flag2 || !classification.isPersistent()) &&
-                        (
-                            (WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager
-                        ).bridge$canSpawn(classification, chunk.getPos(), limit)
+                            (flag1 || classification.isFriendly()) &&
+                            (flag2 || !classification.isPersistent()) &&
+                            (
+                                (WorldEntitySpawnerBridge.EntityDensityManagerBridge) manager
+                            ).bridge$canSpawn(classification, chunk.getPos(), limit)
                     ) {
                         spawnCategoryForChunk(
                             classification,

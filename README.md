@@ -14,7 +14,7 @@ Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://
 | Forge               | latest Forge promotion for Minecraft `1.20.1` |
 | CraftBukkit package | `v1_20_R1`                                    |
 | Java                | `17` (64-bit)                                 |
-| Luminara            | `1.0.15-hotfix`                                      |
+| Luminara            | `1.0.15-hotfix`                               |
 
 Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations are not supported by this repository.
 
@@ -32,6 +32,7 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 - [ServerCore](https://modrinth.com/mod/servercore)
 
   > Most of its optimization methods originate from Spigot or Paper. This server is itself a Forge + Spigot + Paper API server, so forcing it in will cause abnormal behavior or crashes, and thus will never be compatible
+
 - [Sinytra Connector](https://modrinth.com/mod/connector)
 
   > Are you crazy? Forge + Fabric + Bukkit + Spigot + Paper API = a bunch of shit, never be compatible!
@@ -47,13 +48,15 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 - Any plugin that claims to optimize server performance (e.g., LaggRemover)
 
   > Most of these plugins offer fake optimizations — they either don't help performance or actively harm it
+
 - Any anti-cheat plugin (e.g., GrimAC, Matrix, Vulcan)
 
   > Anti-cheat plugins sometimes misjudge player interactions with modded items (since these plugins only detect vanilla behavior)
+
 - 70% of plugins that use the Paper API
 
   > This server supports only a handful of Paper APIs — just over a dozen commonly used ones — so you may encounter missing features, abnormal behavior, or even crashes. We are currently working on implementing more Paper APIs
-  
+
   > Some plugins offer an alternative "Spigot API" version — that is the best compatibility path
 
 ## How Can I Maximize Optimization on This Server?
@@ -61,7 +64,7 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 - If you want more aggressive performance optimization, I recommend our downstream project [PRTS-SERVER](https://github.com/ElainAwa/PRTS-SERVER)
 
   > PRTS-SERVER aims to implement more performance optimization patches while maintaining compatibility as much as possible. These patches come from [ServerCore](https://modrinth.com/mod/servercore), [Very Many Players](https://modrinth.com/mod/vmp-forge), [Paper](https://papermc.io/), [Mohist](https://www.mohistmc.com/), and others
-  
+
   > Note that this is only suitable for small to medium modpacks! For large modpacks like ATM9, we recommend staying on this server instead, because large modpacks often require more compatibility
 
 - If you want to optimize a large modpack, I recommend some common optimization mod combinations (all mods mentioned below are compatible with Luminara)

@@ -3,8 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.animal;
 import io.izzel.arclight.common.bridge.core.entity.passive.AnimalEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.AgeableMobMixin;
-import java.util.Optional;
-import javax.annotation.Nullable;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,11 +25,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
+
 @Mixin(Animal.class)
 public abstract class AnimalMixin
     extends AgeableMobMixin
-    implements AnimalEntityBridge
-{
+    implements AnimalEntityBridge {
 
     @Shadow
     public int inLove;

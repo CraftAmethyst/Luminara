@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.bridge.core.entity.player;
 
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -8,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
 import org.bukkit.event.player.PlayerSpawnChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+
+import java.util.Optional;
 
 public interface ServerPlayerEntityBridge extends PlayerEntityBridge {
     @Override

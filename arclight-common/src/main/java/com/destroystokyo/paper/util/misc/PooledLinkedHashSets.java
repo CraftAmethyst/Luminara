@@ -2,6 +2,7 @@ package com.destroystokyo.paper.util.misc;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -15,7 +16,7 @@ public class PooledLinkedHashSets<E> {
     protected final Object2ObjectOpenHashMap<
         PooledObjectLinkedOpenHashSet<E>,
         PooledObjectLinkedOpenHashSet<E>
-    > mapPool = new Object2ObjectOpenHashMap<>(128, 0.25f);
+        > mapPool = new Object2ObjectOpenHashMap<>(128, 0.25f);
 
     protected void decrementReferenceCount(
         final PooledObjectLinkedOpenHashSet<E> current
@@ -231,7 +232,7 @@ public class PooledLinkedHashSets<E> {
 
             if (
                 currentAdd == null ||
-                !(currentAdd == element || currentAdd.equals(element))
+                    !(currentAdd == element || currentAdd.equals(element))
             ) {
                 return null;
             }
@@ -244,7 +245,7 @@ public class PooledLinkedHashSets<E> {
 
             if (
                 currentRemove == null ||
-                !(currentRemove == element || currentRemove.equals(element))
+                    !(currentRemove == element || currentRemove.equals(element))
             ) {
                 return null;
             }
@@ -319,7 +320,7 @@ public class PooledLinkedHashSets<E> {
                 }
                 return (
                     this.hash == ((PooledObjectLinkedOpenHashSet) other).hash &&
-                    this.set.equals(((PooledObjectLinkedOpenHashSet) other).set)
+                        this.set.equals(((PooledObjectLinkedOpenHashSet) other).set)
                 );
             }
         }
@@ -328,15 +329,15 @@ public class PooledLinkedHashSets<E> {
         public String toString() {
             return (
                 "PooledHashSet: size: " +
-                this.set.size() +
-                ", reference count: " +
-                this.referenceCount +
-                ", hash: " +
-                this.hashCode() +
-                ", identity: " +
-                System.identityHashCode(this) +
-                " map: " +
-                this.set
+                    this.set.size() +
+                    ", reference count: " +
+                    this.referenceCount +
+                    ", hash: " +
+                    this.hashCode() +
+                    ", identity: " +
+                    System.identityHashCode(this) +
+                    " map: " +
+                    this.set
             );
         }
     }

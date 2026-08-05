@@ -52,21 +52,21 @@ public class FrostWalkerEnchantmentMixin {
                         );
                         if (
                             blockstate2 == FrostedIceBlock.meltsInto() &&
-                            blockstate.canSurvive(worldIn, blockpos) &&
-                            worldIn.isUnobstructed(
-                                blockstate,
-                                blockpos,
-                                CollisionContext.empty()
-                            ) &&
-                            !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(
-                                living,
-                                net.minecraftforge.common.util.BlockSnapshot.create(
-                                    worldIn.dimension(),
-                                    worldIn,
-                                    blockpos
-                                ),
-                                net.minecraft.core.Direction.UP
-                            )
+                                blockstate.canSurvive(worldIn, blockpos) &&
+                                worldIn.isUnobstructed(
+                                    blockstate,
+                                    blockpos,
+                                    CollisionContext.empty()
+                                ) &&
+                                !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(
+                                    living,
+                                    net.minecraftforge.common.util.BlockSnapshot.create(
+                                        worldIn.dimension(),
+                                        worldIn,
+                                        blockpos
+                                    ),
+                                    net.minecraft.core.Direction.UP
+                                )
                         ) {
                             if (
                                 CraftEventFactory.handleBlockFormEvent(

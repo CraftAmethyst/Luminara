@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.bridge.bukkit;
 
 import io.izzel.arclight.i18n.conf.MaterialPropertySpec;
-import java.util.function.Function;
-import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -10,6 +8,9 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.inventory.CraftMetaItem;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public interface MaterialBridge {
     void bridge$setupBlock(

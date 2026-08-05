@@ -7,8 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AreaEffectCloud.class)
 public abstract class AreaEffectCloudEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange
-{
+    extends EntityMixin_ActivationRange {
 
     // @formatter:off
     @Shadow public int waitTime;

@@ -13,9 +13,6 @@ import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
 import io.izzel.arclight.common.mod.server.block.ChestBlockDoubleInventoryHacks;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
-import java.util.*;
-import java.util.function.Consumer;
-import javax.annotation.Nullable;
 import net.minecraft.BlockUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -108,11 +105,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Consumer;
+
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin
     extends PlayerMixin
-    implements ServerPlayerEntityBridge
-{
+    implements ServerPlayerEntityBridge {
 
     // @formatter:off
     @Shadow @Final public MinecraftServer server;
@@ -290,7 +290,7 @@ public abstract class ServerPlayerMixin
         BlockPos blockposition = worldserver.getSharedSpawnPos();
         if (
             worldserver.dimensionType().hasSkyLight() &&
-            worldserver.serverLevelData.getGameType() != GameType.ADVENTURE
+                worldserver.serverLevelData.getGameType() != GameType.ADVENTURE
         ) {
             long k;
             long l;
@@ -385,10 +385,10 @@ public abstract class ServerPlayerMixin
             Vec3 position = null;
             if (
                 this.respawnDimension != null &&
-                (world = ServerLifecycleHooks.getCurrentServer().getLevel(
-                    this.respawnDimension
-                )) != null &&
-                this.getRespawnPosition() != null
+                    (world = ServerLifecycleHooks.getCurrentServer().getLevel(
+                        this.respawnDimension
+                    )) != null &&
+                    this.getRespawnPosition() != null
             ) {
                 position = Player.findRespawnPositionAndUseSpawnBlock(
                     (ServerLevel) world,
@@ -570,12 +570,12 @@ public abstract class ServerPlayerMixin
             Team scoreboardteambase = this.getTeam();
             if (
                 scoreboardteambase != null &&
-                scoreboardteambase.getDeathMessageVisibility() !=
-                    Team.Visibility.ALWAYS
+                    scoreboardteambase.getDeathMessageVisibility() !=
+                        Team.Visibility.ALWAYS
             ) {
                 if (
                     scoreboardteambase.getDeathMessageVisibility() ==
-                    Team.Visibility.HIDE_FOR_OTHER_TEAMS
+                        Team.Visibility.HIDE_FOR_OTHER_TEAMS
                 ) {
                     this.server
                         .getPlayerList()
@@ -585,7 +585,7 @@ public abstract class ServerPlayerMixin
                         );
                 } else if (
                     scoreboardteambase.getDeathMessageVisibility() ==
-                    Team.Visibility.HIDE_FOR_OWN_TEAM
+                        Team.Visibility.HIDE_FOR_OWN_TEAM
                 ) {
                     this.server
                         .getPlayerList()
@@ -714,14 +714,14 @@ public abstract class ServerPlayerMixin
         PortalInfo portalinfo = super.findDimensionEntryPoint(level);
         level =
             portalinfo == null ||
-            ((PortalInfoBridge) portalinfo).bridge$getWorld() == null
+                ((PortalInfoBridge) portalinfo).bridge$getWorld() == null
                 ? level
                 : ((PortalInfoBridge) portalinfo).bridge$getWorld();
         if (
             portalinfo != null &&
-            ((WorldBridge) this.level()).bridge$getTypeKey() ==
-                LevelStem.OVERWORLD &&
-            ((WorldBridge) level).bridge$getTypeKey() == LevelStem.END
+                ((WorldBridge) this.level()).bridge$getTypeKey() ==
+                    LevelStem.OVERWORLD &&
+                ((WorldBridge) level).bridge$getTypeKey() == LevelStem.END
         ) {
             Vec3 vector3d = portalinfo.pos.add(0.0D, -1.0D, 0.0D);
             PortalInfo newInfo = new PortalInfo(
@@ -817,8 +817,8 @@ public abstract class ServerPlayerMixin
         ).bridge$getTypeKey();
         if (
             registrykey == LevelStem.END &&
-            ((WorldBridge) server).bridge$getTypeKey() == LevelStem.OVERWORLD &&
-            teleporter.isVanilla()
+                ((WorldBridge) server).bridge$getTypeKey() == LevelStem.OVERWORLD &&
+                teleporter.isVanilla()
         ) {
             //Forge: Fix non-vanilla teleporters triggering end credits
             this.isChangingDimension = true;
@@ -849,7 +849,7 @@ public abstract class ServerPlayerMixin
                 if (((PortalInfoBridge) portalinfo).bridge$getWorld() != null) {
                     server = ((PortalInfoBridge) portalinfo).bridge$getWorld();
                 }
-                ServerLevel[] exitWorld = new ServerLevel[] { server };
+                ServerLevel[] exitWorld = new ServerLevel[]{server};
                 LevelData iworldinfo = server.getLevelData();
                 this.connection.send(
                     new ClientboundRespawnPacket(
@@ -891,22 +891,22 @@ public abstract class ServerPlayerMixin
                         if (exitWorld[0] != null) {
                             if (
                                 registrykey == LevelStem.OVERWORLD &&
-                                (
-                                    (WorldBridge) exitWorld[0]
-                                ).bridge$getTypeKey() == LevelStem.NETHER
+                                    (
+                                        (WorldBridge) exitWorld[0]
+                                    ).bridge$getTypeKey() == LevelStem.NETHER
                             ) {
                                 this.enteredNetherPosition = this.position();
                             } else if (
                                 spawnPortal &&
-                                (
-                                    (WorldBridge) exitWorld[0]
-                                ).bridge$getTypeKey() == LevelStem.END &&
-                                ((
-                                    (PortalInfoBridge) portalinfo
-                                ).bridge$getPortalEventInfo() == null ||
-                                    ((PortalInfoBridge) portalinfo)
-                                        .bridge$getPortalEventInfo()
-                                        .getCanCreatePortal())
+                                    (
+                                        (WorldBridge) exitWorld[0]
+                                    ).bridge$getTypeKey() == LevelStem.END &&
+                                    ((
+                                        (PortalInfoBridge) portalinfo
+                                    ).bridge$getPortalEventInfo() == null ||
+                                        ((PortalInfoBridge) portalinfo)
+                                            .bridge$getPortalEventInfo()
+                                            .getCanCreatePortal())
                             ) {
                                 this.createEndPlatform(
                                     exitWorld[0],
@@ -920,15 +920,15 @@ public abstract class ServerPlayerMixin
                             exitWorld[0] == null
                                 ? null
                                 : new Location(
-                                      (
-                                          (WorldBridge) exitWorld[0]
-                                      ).bridge$getWorld(),
-                                      portalinfo.pos.x,
-                                      portalinfo.pos.y,
-                                      portalinfo.pos.z,
-                                      portalinfo.yRot,
-                                      portalinfo.xRot
-                                  );
+                                (
+                                    (WorldBridge) exitWorld[0]
+                                ).bridge$getWorld(),
+                                portalinfo.pos.x,
+                                portalinfo.pos.y,
+                                portalinfo.pos.z,
+                                portalinfo.yRot,
+                                portalinfo.xRot
+                            );
                         PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(
                             this.getBukkitEntity(),
                             enter,
@@ -1094,8 +1094,8 @@ public abstract class ServerPlayerMixin
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (
             event.isCancelled() ||
-            event.getTo() == null ||
-            event.getTo().getWorld() == null
+                event.getTo() == null ||
+                event.getTo().getWorld() == null
         ) {
             return null;
         }
@@ -1193,7 +1193,7 @@ public abstract class ServerPlayerMixin
         if (!this.isSleeping() && this.isAlive()) {
             if (
                 !this.level().dimensionType().natural() ||
-                !this.level().dimensionType().bedWorks()
+                    !this.level().dimensionType().bedWorks()
             ) {
                 return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
             }
@@ -1293,10 +1293,10 @@ public abstract class ServerPlayerMixin
         Either<Player.BedSleepingProblem, Unit> either = (Either<
             Player.BedSleepingProblem,
             Unit
-        >) e;
+            >) e;
         if (
             either.left().orElse(null) ==
-            Player.BedSleepingProblem.OTHER_PROBLEM
+                Player.BedSleepingProblem.OTHER_PROBLEM
         ) {
             return (Either<L, R>) either;
         } else {
@@ -1363,7 +1363,8 @@ public abstract class ServerPlayerMixin
             target = "Lnet/minecraft/server/level/ServerPlayer;closeContainer()V"
         )
     )
-    private void arclight$skipSwitch(ServerPlayer serverPlayer) {}
+    private void arclight$skipSwitch(ServerPlayer serverPlayer) {
+    }
 
     @Inject(
         method = "openMenu",
@@ -1686,8 +1687,8 @@ public abstract class ServerPlayerMixin
         }
         return (
             this.level().getDayTime() -
-            (this.level().getDayTime() % 24000L) +
-            this.timeOffset
+                (this.level().getDayTime() % 24000L) +
+                this.timeOffset
         );
     }
 
@@ -1792,15 +1793,15 @@ public abstract class ServerPlayerMixin
     public String toString() {
         return (
             super.toString() +
-            "(" +
-            this.getScoreboardName() +
-            " at " +
-            this.getX() +
-            "," +
-            this.getY() +
-            "," +
-            this.getZ() +
-            ")"
+                "(" +
+                this.getScoreboardName() +
+                " at " +
+                this.getX() +
+                "," +
+                this.getY() +
+                "," +
+                this.getZ() +
+                ")"
         );
     }
 
@@ -1868,13 +1869,13 @@ public abstract class ServerPlayerMixin
         Location newSpawn =
             p_9160_ != null
                 ? new Location(
-                      ((ServerWorldBridge) newWorld).bridge$getWorld(),
-                      p_9160_.getX(),
-                      p_9160_.getY(),
-                      p_9160_.getZ(),
-                      p_9161_,
-                      0
-                  )
+                ((ServerWorldBridge) newWorld).bridge$getWorld(),
+                p_9160_.getX(),
+                p_9160_.getY(),
+                p_9160_.getZ(),
+                p_9161_,
+                0
+            )
                 : null;
 
         PlayerSpawnChangeEvent event = new PlayerSpawnChangeEvent(
@@ -1909,7 +1910,7 @@ public abstract class ServerPlayerMixin
         if (p_9160_ != null) {
             boolean flag =
                 p_9160_.equals(this.respawnPosition) &&
-                p_9159_.equals(this.respawnDimension);
+                    p_9159_.equals(this.respawnDimension);
             if (p_9163_ && !flag) {
                 this.sendSystemMessage(
                     Component.translatable("block.minecraft.set_spawn")

@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
 import io.izzel.arclight.common.bridge.core.entity.monster.EndermanEntityBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.PathfinderMobMixin;
-import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -15,11 +14,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import javax.annotation.Nullable;
+
 @Mixin(EnderMan.class)
 public abstract class EnderManMixin
     extends PathfinderMobMixin
-    implements EndermanEntityBridge
-{
+    implements EndermanEntityBridge {
 
     @Shadow
     @Final

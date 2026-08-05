@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class Bee_GrowCropGoalMixin {
 
     @SuppressWarnings("target")
-    @Shadow(aliases = { "this$0", "f_28021_" }, remap = false)
+    @Shadow(aliases = {"this$0", "f_28021_"}, remap = false)
     private Bee outerThis;
 
     @Inject(

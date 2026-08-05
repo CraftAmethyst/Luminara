@@ -1,9 +1,10 @@
 package io.izzel.arclight.common.mod.compat;
 
+import org.bukkit.Bukkit;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
 
 public final class FaweCompat {
 
@@ -15,7 +16,8 @@ public final class FaweCompat {
     private static final String FAWE_IMPL_PREFIX =
         "com.sk89q.worldedit.bukkit.adapter.impl.fawe.";
 
-    private FaweCompat() {}
+    private FaweCompat() {
+    }
 
     public static String getCraftBukkitPackageVersion() {
         String fullPackagePath = Bukkit.getServer()

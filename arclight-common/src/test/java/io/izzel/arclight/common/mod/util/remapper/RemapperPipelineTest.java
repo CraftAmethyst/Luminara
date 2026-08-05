@@ -1,13 +1,14 @@
 package io.izzel.arclight.common.mod.util.remapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import io.izzel.arclight.api.PluginPatcher;
 import io.izzel.arclight.common.mod.util.remapper.patcher.ArclightPluginPatcher;
 import io.izzel.arclight.common.mod.util.remapper.patcher.PluginLoggerTransformer;
-import java.util.List;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RemapperPipelineTest {
 
@@ -18,7 +19,8 @@ class RemapperPipelineTest {
             public void handleClass(
                 org.objectweb.asm.tree.ClassNode classNode,
                 PluginPatcher.ClassRepo classRepo
-            ) {}
+            ) {
+            }
         };
 
         List<PluginTransformer> pipeline = RemapperPipeline.create(

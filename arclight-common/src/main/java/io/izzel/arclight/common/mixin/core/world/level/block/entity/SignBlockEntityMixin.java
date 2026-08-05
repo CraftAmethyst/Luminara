@@ -6,11 +6,6 @@ import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.tileentity.SignTileEntityBridge;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.function.UnaryOperator;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
@@ -44,11 +39,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.UnaryOperator;
+
 @Mixin(SignBlockEntity.class)
 public abstract class SignBlockEntityMixin
     extends BlockEntityMixin
-    implements SignTileEntityBridge, CommandSource, ICommandSourceBridge
-{
+    implements SignTileEntityBridge, CommandSource, ICommandSourceBridge {
 
     private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER =
         ArclightI18nLogger.getLogger("SignBlockEntity");
@@ -91,8 +91,8 @@ public abstract class SignBlockEntityMixin
     ) {
         if (
             !this.isWaxed() &&
-            p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) &&
-            this.level != null
+                p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) &&
+                this.level != null
         ) {
             this.updateText(p_277776_ -> {
                 return this.setMessages(
@@ -218,7 +218,8 @@ public abstract class SignBlockEntityMixin
     }
 
     @Override
-    public void sendSystemMessage(@NotNull Component component) {}
+    public void sendSystemMessage(@NotNull Component component) {
+    }
 
     @Override
     public boolean acceptsSuccess() {
@@ -238,8 +239,8 @@ public abstract class SignBlockEntityMixin
     public CommandSender getBukkitSender(CommandSourceStack wrapper) {
         return wrapper.getEntity() != null
             ? ((EntityBridge) wrapper.getEntity()).bridge$getBukkitSender(
-                  wrapper
-              )
+            wrapper
+        )
             : new CraftBlockCommandSender(wrapper, (BlockEntity) (Object) this);
     }
 

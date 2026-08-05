@@ -37,7 +37,7 @@ public class LeavesBlockMixin {
         Bukkit.getPluginManager().callEvent(event);
         if (
             event.isCancelled() ||
-            worldIn.getBlockState(pos).getBlock() != (Object) this
+                worldIn.getBlockState(pos).getBlock() != (Object) this
         ) {
             ci.cancel();
         }

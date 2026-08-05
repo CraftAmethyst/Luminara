@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -16,10 +14,12 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(SimpleContainer.class)
 public abstract class SimpleContainerMixin
-    implements Container, IInventoryBridge
-{
+    implements Container, IInventoryBridge {
 
     private static final int MAX_STACK = 64;
 

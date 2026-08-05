@@ -1,17 +1,19 @@
 package io.izzel.arclight.i18n;
 
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 final class I18nCommentInjector {
 
-    private I18nCommentInjector() {}
+    private I18nCommentInjector() {
+    }
 
     static String injectComments(String configContent, String currentLocale)
         throws Exception {
@@ -33,18 +35,12 @@ final class I18nCommentInjector {
         ConfigurationNode commentsNode = loadCommentsNode(currentLocale);
         if (commentsNode == null || commentsNode.isVirtual()) return true;
 
-        ConfigurationNode versionComment = findCommentNode(
-            commentsNode,
-            "_v"
-        );
+        ConfigurationNode versionComment = findCommentNode(commentsNode, "_v");
         if (versionComment == null) return true;
         String commentText = getCommentText(versionComment);
         for (String line : commentText.split("\\n")) {
             String trimmed = line.trim();
-            if (
-                !trimmed.isEmpty() &&
-                !configContent.contains("# " + trimmed)
-            ) {
+            if (!trimmed.isEmpty() && !configContent.contains("# " + trimmed)) {
                 return false;
             }
         }
@@ -114,8 +110,8 @@ final class I18nCommentInjector {
                     );
                     if (
                         commentNode != null &&
-                        !commentNode.isVirtual() &&
-                        commentNode.getValue() != null
+                            !commentNode.isVirtual() &&
+                            commentNode.getValue() != null
                     ) {
                         String commentText = getCommentText(commentNode);
                         if (!commentText.isEmpty()) {
@@ -161,9 +157,7 @@ final class I18nCommentInjector {
         String[] path = (fullPath + ".comment").split("\\.");
         ConfigurationNode current = commentsNode;
         for (int index = 0; index < path.length; index++) {
-            ConfigurationNode child = current
-                .getChildrenMap()
-                .get(path[index]);
+            ConfigurationNode child = current.getChildrenMap().get(path[index]);
             if (child != null) {
                 current = child;
                 continue;
@@ -203,7 +197,7 @@ final class I18nCommentInjector {
         int indentLength = 0;
         while (
             indentLength < line.length() &&
-            Character.isWhitespace(line.charAt(indentLength))
+                Character.isWhitespace(line.charAt(indentLength))
         ) {
             indentLength++;
         }
@@ -214,7 +208,7 @@ final class I18nCommentInjector {
         int indentLength = 0;
         while (
             indentLength < line.length() &&
-            Character.isWhitespace(line.charAt(indentLength))
+                Character.isWhitespace(line.charAt(indentLength))
         ) {
             indentLength++;
         }

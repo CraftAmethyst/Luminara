@@ -1,10 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.entity;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.storage.EntityStorage;
@@ -20,6 +16,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Mixin(PersistentEntitySectionManager.class)
 public abstract class PersistentEntitySectionManagerMixin<T extends EntityAccess> {

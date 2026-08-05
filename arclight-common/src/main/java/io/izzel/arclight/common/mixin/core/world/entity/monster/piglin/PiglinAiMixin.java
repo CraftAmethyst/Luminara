@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster.piglin;
 
 import io.izzel.arclight.common.bridge.core.entity.MobEntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.monster.piglin.PiglinBridge;
-import java.util.List;
-import java.util.stream.Collectors;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -20,6 +18,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mixin(PiglinAi.class)
 public abstract class PiglinAiMixin {
@@ -64,12 +65,12 @@ public abstract class PiglinAiMixin {
         stopWalking(piglinEntity);
         if (
             itemEntity.getItem().getItem() == Items.GOLD_NUGGET &&
-            !CraftEventFactory.callEntityPickupItemEvent(
-                piglinEntity,
-                itemEntity,
-                0,
-                false
-            ).isCancelled()
+                !CraftEventFactory.callEntityPickupItemEvent(
+                    piglinEntity,
+                    itemEntity,
+                    0,
+                    false
+                ).isCancelled()
         ) {
             piglinEntity.take(itemEntity, itemEntity.getItem().getCount());
             itemstack = itemEntity.getItem();
@@ -110,9 +111,9 @@ public abstract class PiglinAiMixin {
     private static boolean isLovedByPiglin(ItemStack itemstack, Piglin piglin) {
         return (
             isLovedItem(itemstack) ||
-            ((PiglinBridge) piglin)
-                .bridge$getInterestItems()
-                .contains(itemstack.getItem()) ||
+                ((PiglinBridge) piglin)
+                    .bridge$getInterestItems()
+                    .contains(itemstack.getItem()) ||
                 ((PiglinBridge) piglin)
                     .bridge$getAllowedBarterItems()
                     .contains(itemstack.getItem())
@@ -122,9 +123,9 @@ public abstract class PiglinAiMixin {
     private static boolean isBarterItem(ItemStack itemstack, Piglin piglin) {
         return (
             isBarterCurrency(itemstack) ||
-            ((PiglinBridge) piglin)
-                .bridge$getAllowedBarterItems()
-                .contains(itemstack.getItem())
+                ((PiglinBridge) piglin)
+                    .bridge$getAllowedBarterItems()
+                    .contains(itemstack.getItem())
         );
     }
 

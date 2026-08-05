@@ -1,17 +1,15 @@
 package io.izzel.arclight.i18n;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ArclightConfigPersistenceTest {
 
@@ -46,9 +44,7 @@ class ArclightConfigPersistenceTest {
         assertTrue(
             serialized.contains("# Config version number, do not edit.\n_v: 2")
         );
-        assertTrue(
-            serialized.contains("# Language/I18n settings\nlocale:")
-        );
+        assertTrue(serialized.contains("# Language/I18n settings\nlocale:"));
         assertTrue(serialized.contains("  cache-plugin-class: true"));
         assertTrue(serialized.contains("  extra-logic-worlds:"));
         assertTrue(serialized.contains("- example.First"));
@@ -59,7 +55,10 @@ class ArclightConfigPersistenceTest {
 
     @Test
     void injectsCommentsFromFlattenedLocaleKeys() throws Exception {
-        String injected = I18nCommentInjector.injectComments("_v: 2\n", "es_es");
+        String injected = I18nCommentInjector.injectComments(
+            "_v: 2\n",
+            "es_es"
+        );
 
         assertTrue(
             injected.contains(
@@ -82,7 +81,10 @@ class ArclightConfigPersistenceTest {
                 "/META-INF/luminara.yml"
             )
         ) {
-            template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            template = new String(
+                stream.readAllBytes(),
+                StandardCharsets.UTF_8
+            );
         }
         String currentLocale = ArclightLocale.getInstance().current();
         assertFalse(

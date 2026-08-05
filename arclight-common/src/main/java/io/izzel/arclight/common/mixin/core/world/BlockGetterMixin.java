@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world;
 
 import io.izzel.arclight.common.bridge.core.world.IBlockReaderBridge;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
@@ -12,6 +11,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
 
 @Mixin(BlockGetter.class)
 public interface BlockGetterMixin extends IBlockReaderBridge {
@@ -55,14 +56,14 @@ public interface BlockGetterMixin extends IBlockReaderBridge {
             blockraytraceresult == null
                 ? Double.MAX_VALUE
                 : context
-                      .getFrom()
-                      .distanceToSqr(blockraytraceresult.getLocation());
+                  .getFrom()
+                  .distanceToSqr(blockraytraceresult.getLocation());
         double d1 =
             blockraytraceresult1 == null
                 ? Double.MAX_VALUE
                 : context
-                      .getFrom()
-                      .distanceToSqr(blockraytraceresult1.getLocation());
+                  .getFrom()
+                  .distanceToSqr(blockraytraceresult1.getLocation());
         return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
     }
 

@@ -1,7 +1,5 @@
 package io.izzel.arclight.common.mixin.core.world.entity.raid;
 
-import java.util.List;
-import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
@@ -17,6 +15,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.List;
+import java.util.Map;
 
 @Mixin(Raids.class)
 public class RaidManagerMixin {

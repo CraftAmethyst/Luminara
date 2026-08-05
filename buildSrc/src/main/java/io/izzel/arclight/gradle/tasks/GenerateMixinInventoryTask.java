@@ -4,34 +4,24 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.jar.JarFile;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.jar.JarFile;
 
 public abstract class GenerateMixinInventoryTask extends DefaultTask {
 
@@ -58,6 +48,186 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
         getProject().files();
     private final ConfigurableFileCollection targetClasspath =
         getProject().files();
+
+    private static void addRows(
+        List<Map<String, Object>> rows,
+        ClassLookup targets,
+        String config,
+        String mixinClass,
+        List<String> targetClasses,
+        MethodNode handler,
+        List<String> selectors,
+        int require,
+        String loadIfMod
+    ) throws IOException {
+        if (targetClasses.isEmpty()) {
+            rows.add(
+                row(
+                    config,
+                    mixinClass,
+                    "",
+                    handler.name + handler.desc,
+                    "",
+                    "",
+                    require,
+                    loadIfMod,
+                    loadIfMod == null ? "MISSING_TARGET" : "CONDITIONAL"
+                )
+            );
+            return;
+        }
+        for (String targetClass : targetClasses) {
+            List<ClassNode> targetNodes = targets.readAll(
+                targetClass.replace('.', '/')
+            );
+            for (String selector : selectors) {
+                TargetMethod targetMethod = TargetMethod.parse(
+                    selector,
+                    handler
+                );
+                String status;
+                if (loadIfMod != null) {
+                    status = "CONDITIONAL";
+                } else if (targetNodes.isEmpty()) {
+                    status = "MISSING_CLASS";
+                } else if (
+                    targetNodes.stream().anyMatch(targetMethod::matches)
+                ) {
+                    status = "ACTIVE";
+                } else {
+                    status = "MISSING_METHOD";
+                }
+                rows.add(
+                    row(
+                        config,
+                        mixinClass,
+                        targetClass,
+                        handler.name + handler.desc,
+                        targetMethod.name(),
+                        targetMethod.descriptor(),
+                        require,
+                        loadIfMod,
+                        status
+                    )
+                );
+            }
+        }
+    }
+
+    private static Map<String, Object> row(
+        String config,
+        String mixinClass,
+        String targetClass,
+        String handler,
+        String targetMethod,
+        String targetDescriptor,
+        int require,
+        String loadIfMod,
+        String status
+    ) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("config", config);
+        row.put("mixinClass", mixinClass);
+        row.put("targetClass", targetClass);
+        row.put("handler", handler);
+        row.put("targetMethod", targetMethod);
+        row.put("targetDescriptor", targetDescriptor);
+        row.put("require", require);
+        row.put("loadIfMod", loadIfMod);
+        row.put("status", status);
+        return row;
+    }
+
+    private static String rowKey(Map<String, Object> row) {
+        return (
+            row.get("config") +
+                "\u0000" +
+                row.get("mixinClass") +
+                "\u0000" +
+                row.get("handler") +
+                "\u0000" +
+                row.get("targetClass") +
+                "\u0000" +
+                row.get("targetMethod") +
+                "\u0000" +
+                row.get("targetDescriptor")
+        );
+    }
+
+    private static List<String> mixinTargets(ClassNode node) {
+        for (AnnotationNode annotation : annotations(
+            node.visibleAnnotations,
+            node.invisibleAnnotations
+        )) {
+            if (!MIXIN.equals(annotation.desc)) continue;
+            Map<String, Object> values = annotationValues(annotation);
+            List<String> targets = new ArrayList<>();
+            Object value = values.get("value");
+            if (value instanceof Collection<?> collection) {
+                for (Object target : collection) {
+                    if (target instanceof Type type) targets.add(
+                        type.getClassName()
+                    );
+                }
+            } else if (value instanceof Type type) {
+                targets.add(type.getClassName());
+            }
+            targets.addAll(strings(values.get("targets")));
+            return targets;
+        }
+        return List.of();
+    }
+
+    private static String loadIfMod(ClassNode node) {
+        for (AnnotationNode annotation : annotations(
+            node.visibleAnnotations,
+            node.invisibleAnnotations
+        )) {
+            if (!LOAD_IF_MOD.equals(annotation.desc)) continue;
+            Map<String, Object> values = annotationValues(annotation);
+            String condition = "UNKNOWN";
+            Object rawCondition = values.get("condition");
+            if (
+                rawCondition instanceof String[] enumValue &&
+                    enumValue.length == 2
+            ) condition = enumValue[1];
+            return (
+                condition + ":" + String.join(",", strings(values.get("modid")))
+            );
+        }
+        return null;
+    }
+
+    private static Map<String, Object> annotationValues(
+        AnnotationNode annotation
+    ) {
+        if (annotation.values == null) return Map.of();
+        Map<String, Object> values = new HashMap<>();
+        for (int index = 0; index < annotation.values.size(); index += 2) {
+            values.put(
+                (String) annotation.values.get(index),
+                annotation.values.get(index + 1)
+            );
+        }
+        return values;
+    }
+
+    private static List<String> strings(Object value) {
+        if (value instanceof String string) return List.of(string);
+        if (!(value instanceof Collection<?> collection)) return List.of();
+        List<String> strings = new ArrayList<>();
+        for (Object element : collection)
+            if (element instanceof String string) strings.add(string);
+        return strings;
+    }
+
+    private static <T> List<T> annotations(List<T> visible, List<T> invisible) {
+        if (visible == null && invisible == null) return List.of();
+        List<T> annotations = new ArrayList<>();
+        if (visible != null) annotations.addAll(visible);
+        if (invisible != null) annotations.addAll(invisible);
+        return annotations;
+    }
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -105,7 +275,7 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
             int defaultRequire = 1;
             if (
                 config.has("injectors") &&
-                config.getAsJsonObject("injectors").has("defaultRequire")
+                    config.getAsJsonObject("injectors").has("defaultRequire")
             ) {
                 defaultRequire = config
                     .getAsJsonObject("injectors")
@@ -223,186 +393,6 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
         }
     }
 
-    private static void addRows(
-        List<Map<String, Object>> rows,
-        ClassLookup targets,
-        String config,
-        String mixinClass,
-        List<String> targetClasses,
-        MethodNode handler,
-        List<String> selectors,
-        int require,
-        String loadIfMod
-    ) throws IOException {
-        if (targetClasses.isEmpty()) {
-            rows.add(
-                row(
-                    config,
-                    mixinClass,
-                    "",
-                    handler.name + handler.desc,
-                    "",
-                    "",
-                    require,
-                    loadIfMod,
-                    loadIfMod == null ? "MISSING_TARGET" : "CONDITIONAL"
-                )
-            );
-            return;
-        }
-        for (String targetClass : targetClasses) {
-            List<ClassNode> targetNodes = targets.readAll(
-                targetClass.replace('.', '/')
-            );
-            for (String selector : selectors) {
-                TargetMethod targetMethod = TargetMethod.parse(
-                    selector,
-                    handler
-                );
-                String status;
-                if (loadIfMod != null) {
-                    status = "CONDITIONAL";
-                } else if (targetNodes.isEmpty()) {
-                    status = "MISSING_CLASS";
-                } else if (
-                    targetNodes.stream().anyMatch(targetMethod::matches)
-                ) {
-                    status = "ACTIVE";
-                } else {
-                    status = "MISSING_METHOD";
-                }
-                rows.add(
-                    row(
-                        config,
-                        mixinClass,
-                        targetClass,
-                        handler.name + handler.desc,
-                        targetMethod.name(),
-                        targetMethod.descriptor(),
-                        require,
-                        loadIfMod,
-                        status
-                    )
-                );
-            }
-        }
-    }
-
-    private static Map<String, Object> row(
-        String config,
-        String mixinClass,
-        String targetClass,
-        String handler,
-        String targetMethod,
-        String targetDescriptor,
-        int require,
-        String loadIfMod,
-        String status
-    ) {
-        Map<String, Object> row = new LinkedHashMap<>();
-        row.put("config", config);
-        row.put("mixinClass", mixinClass);
-        row.put("targetClass", targetClass);
-        row.put("handler", handler);
-        row.put("targetMethod", targetMethod);
-        row.put("targetDescriptor", targetDescriptor);
-        row.put("require", require);
-        row.put("loadIfMod", loadIfMod);
-        row.put("status", status);
-        return row;
-    }
-
-    private static String rowKey(Map<String, Object> row) {
-        return (
-            row.get("config") +
-            "\u0000" +
-            row.get("mixinClass") +
-            "\u0000" +
-            row.get("handler") +
-            "\u0000" +
-            row.get("targetClass") +
-            "\u0000" +
-            row.get("targetMethod") +
-            "\u0000" +
-            row.get("targetDescriptor")
-        );
-    }
-
-    private static List<String> mixinTargets(ClassNode node) {
-        for (AnnotationNode annotation : annotations(
-            node.visibleAnnotations,
-            node.invisibleAnnotations
-        )) {
-            if (!MIXIN.equals(annotation.desc)) continue;
-            Map<String, Object> values = annotationValues(annotation);
-            List<String> targets = new ArrayList<>();
-            Object value = values.get("value");
-            if (value instanceof Collection<?> collection) {
-                for (Object target : collection) {
-                    if (target instanceof Type type) targets.add(
-                        type.getClassName()
-                    );
-                }
-            } else if (value instanceof Type type) {
-                targets.add(type.getClassName());
-            }
-            targets.addAll(strings(values.get("targets")));
-            return targets;
-        }
-        return List.of();
-    }
-
-    private static String loadIfMod(ClassNode node) {
-        for (AnnotationNode annotation : annotations(
-            node.visibleAnnotations,
-            node.invisibleAnnotations
-        )) {
-            if (!LOAD_IF_MOD.equals(annotation.desc)) continue;
-            Map<String, Object> values = annotationValues(annotation);
-            String condition = "UNKNOWN";
-            Object rawCondition = values.get("condition");
-            if (
-                rawCondition instanceof String[] enumValue &&
-                enumValue.length == 2
-            ) condition = enumValue[1];
-            return (
-                condition + ":" + String.join(",", strings(values.get("modid")))
-            );
-        }
-        return null;
-    }
-
-    private static Map<String, Object> annotationValues(
-        AnnotationNode annotation
-    ) {
-        if (annotation.values == null) return Map.of();
-        Map<String, Object> values = new HashMap<>();
-        for (int index = 0; index < annotation.values.size(); index += 2) {
-            values.put(
-                (String) annotation.values.get(index),
-                annotation.values.get(index + 1)
-            );
-        }
-        return values;
-    }
-
-    private static List<String> strings(Object value) {
-        if (value instanceof String string) return List.of(string);
-        if (!(value instanceof Collection<?> collection)) return List.of();
-        List<String> strings = new ArrayList<>();
-        for (Object element : collection)
-            if (element instanceof String string) strings.add(string);
-        return strings;
-    }
-
-    private static <T> List<T> annotations(List<T> visible, List<T> invisible) {
-        if (visible == null && invisible == null) return List.of();
-        List<T> annotations = new ArrayList<>();
-        if (visible != null) annotations.addAll(visible);
-        if (invisible != null) annotations.addAll(invisible);
-        return annotations;
-    }
-
     private record TargetMethod(String name, String descriptor) {
         private static TargetMethod parse(String selector, MethodNode handler) {
             if (selector == null || selector.isBlank()) return new TargetMethod(
@@ -412,7 +402,7 @@ public abstract class GenerateMixinInventoryTask extends DefaultTask {
             String value = selector.trim();
             if (
                 value.equals("*") ||
-                (value.startsWith("desc=/") && value.endsWith("/"))
+                    (value.startsWith("desc=/") && value.endsWith("/"))
             ) {
                 return new TargetMethod(value, "");
             }

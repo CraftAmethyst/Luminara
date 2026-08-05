@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.storage;
 
 import io.izzel.arclight.common.bridge.core.world.storage.LevelStorageSourceBridge;
-import java.nio.file.Path;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -13,10 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.nio.file.Path;
+
 @Mixin(LevelStorageSource.LevelStorageAccess.class)
 public class LevelStorageSource_LevelStorageAccessMixin
-    implements LevelStorageSourceBridge.LevelStorageAccessBridge
-{
+    implements LevelStorageSourceBridge.LevelStorageAccessBridge {
 
     public ResourceKey<LevelStem> dimensionType;
 

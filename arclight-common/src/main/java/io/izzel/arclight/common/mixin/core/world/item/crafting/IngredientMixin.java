@@ -1,12 +1,13 @@
 package io.izzel.arclight.common.mixin.core.world.item.crafting;
 
 import io.izzel.arclight.common.bridge.core.item.crafting.IngredientBridge;
-import javax.annotation.Nullable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
 
 @Mixin(Ingredient.class)
 public abstract class IngredientMixin implements IngredientBridge {

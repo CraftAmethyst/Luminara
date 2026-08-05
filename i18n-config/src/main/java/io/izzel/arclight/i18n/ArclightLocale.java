@@ -1,5 +1,11 @@
 package io.izzel.arclight.i18n;
 
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ValueType;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,11 +16,6 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ValueType;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public record ArclightLocale(
     String current,
@@ -151,8 +152,8 @@ public record ArclightLocale(
         Locale locale = Locale.getDefault();
         return (
             locale.getLanguage().toLowerCase(Locale.ROOT) +
-            "_" +
-            locale.getCountry().toLowerCase(Locale.ROOT)
+                "_" +
+                locale.getCountry().toLowerCase(Locale.ROOT)
         );
     }
 
@@ -164,8 +165,8 @@ public record ArclightLocale(
         Logger logger = LogManager.getLogger("ArclightLocale-Debug");
         if (
             path.contains("command") ||
-            path.contains("i18n") ||
-            path.contains("error")
+                path.contains("i18n") ||
+                path.contains("error")
         ) {
             logger.debug("Getting localized string for: {}", path);
         }
@@ -174,7 +175,7 @@ public record ArclightLocale(
             (path.contains("command") ||
                 path.contains("i18n") ||
                 path.contains("error")) &&
-            result.equals(path)
+                result.equals(path)
         ) {
             logger.debug(
                 "No translation found for: {}, returning original",

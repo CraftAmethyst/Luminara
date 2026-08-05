@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
 import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -19,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import javax.annotation.Nullable;
 
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin implements TileEntityBridge {
@@ -70,7 +71,7 @@ public abstract class BlockEntityMixin implements TileEntityBridge {
     ) {
         if (
             this.persistentDataContainer != null &&
-            !this.persistentDataContainer.isEmpty()
+                !this.persistentDataContainer.isEmpty()
         ) {
             cir.getReturnValue().put(
                 "PublicBukkitValues",

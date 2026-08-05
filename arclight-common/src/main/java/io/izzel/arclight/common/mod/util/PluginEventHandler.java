@@ -1,9 +1,14 @@
 package io.izzel.arclight.common.mod.util;
 
-import static org.objectweb.asm.Opcodes.*;
-
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.mod.ArclightMod;
+import net.minecraftforge.eventbus.EventBus;
+import net.minecraftforge.eventbus.api.*;
+import org.bukkit.plugin.Plugin;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
@@ -12,12 +17,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import net.minecraftforge.eventbus.EventBus;
-import net.minecraftforge.eventbus.api.*;
-import org.bukkit.plugin.Plugin;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
+
+import static org.objectweb.asm.Opcodes.*;
 
 public class PluginEventHandler implements IEventListener {
 
@@ -78,12 +79,12 @@ public class PluginEventHandler implements IEventListener {
         subInfo = method.getAnnotation(SubscribeEvent.class);
         readable =
             "PL: " +
-            plugin.getName() +
-            " ASM: " +
-            target +
-            " " +
-            method.getName() +
-            Type.getMethodDescriptor(method);
+                plugin.getName() +
+                " ASM: " +
+                target +
+                " " +
+                method.getName() +
+                Type.getMethodDescriptor(method);
         if (isGeneric) {
             java.lang.reflect.Type type = method.getGenericParameterTypes()[0];
             if (type instanceof ParameterizedType) {
@@ -96,8 +97,8 @@ public class PluginEventHandler implements IEventListener {
                     // If there's a wildcard filter of Object.class, then remove the filter.
                     if (
                         wfilter.getUpperBounds().length == 1 &&
-                        wfilter.getUpperBounds()[0] == Object.class &&
-                        wfilter.getLowerBounds().length == 0
+                            wfilter.getUpperBounds()[0] == Object.class &&
+                            wfilter.getLowerBounds().length == 0
                     ) {
                         filter = null;
                     }
@@ -112,7 +113,7 @@ public class PluginEventHandler implements IEventListener {
         ConcurrentHashMap<Object, ?> listeners = (ConcurrentHashMap<
             Object,
             ?
-        >) MH_GET_LISTENERS.invokeExact(bus);
+            >) MH_GET_LISTENERS.invokeExact(bus);
         if (!listeners.containsKey(target)) {
             if (target.getClass() == Class.class) {
                 registerClass((Class<?>) target, plugin, bus);
@@ -162,7 +163,7 @@ public class PluginEventHandler implements IEventListener {
                     .filter(
                         rm ->
                             rm.isPresent() &&
-                            rm.get().isAnnotationPresent(SubscribeEvent.class)
+                                rm.get().isAnnotationPresent(SubscribeEvent.class)
                     )
                     .findFirst()
                     .ifPresent(rm ->
@@ -275,7 +276,7 @@ public class PluginEventHandler implements IEventListener {
             desc,
             null,
             "java/lang/Object",
-            new String[] { HANDLER_DESC }
+            new String[]{HANDLER_DESC}
         );
 
         cw.visitSource(".dynamic", null);
@@ -373,12 +374,12 @@ public class PluginEventHandler implements IEventListener {
         if (handler != null) {
             if (
                 !event.isCancelable() ||
-                !event.isCanceled() ||
-                subInfo.receiveCanceled()
+                    !event.isCanceled() ||
+                    subInfo.receiveCanceled()
             ) {
                 if (
                     filter == null ||
-                    filter == ((IGenericEvent) event).getGenericType()
+                        filter == ((IGenericEvent) event).getGenericType()
                 ) {
                     handler.invoke(event);
                 }

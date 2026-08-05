@@ -1,8 +1,9 @@
 package io.izzel.arclight.common.mod.inventory;
 
-import java.util.*;
 import net.minecraft.world.Container;
 import org.bukkit.entity.HumanEntity;
+
+import java.util.*;
 
 public class SideViewingTracker {
 

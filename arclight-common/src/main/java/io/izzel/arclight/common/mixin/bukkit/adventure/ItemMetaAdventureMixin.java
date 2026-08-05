@@ -1,12 +1,13 @@
 package io.izzel.arclight.common.mixin.bukkit.adventure;
 
 import io.izzel.arclight.common.adventure.PaperAdventure;
-import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.List;
 
 @Mixin(value = ItemMeta.class, remap = false)
 public interface ItemMetaAdventureMixin {

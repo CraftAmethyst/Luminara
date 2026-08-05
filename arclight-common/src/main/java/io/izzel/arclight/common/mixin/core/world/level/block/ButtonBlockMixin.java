@@ -91,7 +91,7 @@ public class ButtonBlockMixin {
 
         if (
             (flag && event.getNewCurrent() <= 0) ||
-            (!flag && event.getNewCurrent() > 0)
+                (!flag && event.getNewCurrent() > 0)
         ) {
             ci.cancel();
         }

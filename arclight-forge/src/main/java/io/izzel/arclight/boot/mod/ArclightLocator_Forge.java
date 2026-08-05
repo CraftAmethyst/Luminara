@@ -1,10 +1,14 @@
 package io.izzel.arclight.boot.mod;
 
-import static java.lang.Class.forName;
-
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.jarhandling.impl.SimpleJarMetadata;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.IModProvider;
+import net.minecraftforge.forgespi.locating.ModFileFactory;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -17,11 +21,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
-import net.minecraftforge.forgespi.locating.IModProvider;
-import net.minecraftforge.forgespi.locating.ModFileFactory;
+
+import static java.lang.Class.forName;
 
 public class ArclightLocator_Forge implements IModLocator {
 
@@ -56,7 +57,7 @@ public class ArclightLocator_Forge implements IModLocator {
                 Integer.MAX_VALUE,
                 (p, a) ->
                     p.getNameCount() > 0 &&
-                    p.getFileName().toString().endsWith(".class")
+                        p.getFileName().toString().endsWith(".class")
             )
         ) {
             file.setSecurityStatus(
@@ -67,7 +68,7 @@ public class ArclightLocator_Forge implements IModLocator {
                         (s1, s2) ->
                             SecureJar.Status.values()[
                                 Math.min(s1.ordinal(), s2.ordinal())
-                            ]
+                                ]
                     )
                     .orElse(SecureJar.Status.INVALID)
             );
@@ -77,7 +78,8 @@ public class ArclightLocator_Forge implements IModLocator {
     }
 
     @Override
-    public void initArguments(Map<String, ?> arguments) {}
+    public void initArguments(Map<String, ?> arguments) {
+    }
 
     @Override
     public boolean isValid(IModFile modFile) {

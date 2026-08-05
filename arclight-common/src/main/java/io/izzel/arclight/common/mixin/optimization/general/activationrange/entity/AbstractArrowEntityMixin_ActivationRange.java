@@ -7,8 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AbstractArrow.class)
 public abstract class AbstractArrowEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange
-{
+    extends EntityMixin_ActivationRange {
 
     // @formatter:off
     @Shadow public boolean inGround;

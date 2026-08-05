@@ -77,7 +77,7 @@ public class Main_Forge {
         }
         try (
             var loader = new URLClassLoader(
-                new URL[] {
+                new URL[]{
                     path.toUri().toURL(),
                     Main_Forge.class
                         .getProtectionDomain()

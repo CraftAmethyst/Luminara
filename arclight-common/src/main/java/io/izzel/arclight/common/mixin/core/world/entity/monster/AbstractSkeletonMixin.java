@@ -51,7 +51,7 @@ public abstract class AbstractSkeletonMixin extends PathfinderMobMixin {
         }
         if (
             event.getProjectile() !=
-            ((EntityBridge) arrowEntity).bridge$getBukkitEntity()
+                ((EntityBridge) arrowEntity).bridge$getBukkitEntity()
         ) {
             this.playSound(
                 SoundEvents.SKELETON_SHOOT,

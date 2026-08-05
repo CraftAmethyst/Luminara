@@ -6,10 +6,6 @@ package com.destroystokyo.paper.event.server;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.util.TransformingRandomAccessList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
 import net.kyori.examination.Examinable;
 import net.kyori.examination.ExaminableProperty;
@@ -21,6 +17,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class AsyncTabCompleteEvent extends Event implements Cancellable {
 
@@ -230,7 +231,7 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
             final CompletionImpl that = (CompletionImpl) o;
             return (
                 this.suggestion.equals(that.suggestion) &&
-                Objects.equals(this.tooltip, that.tooltip)
+                    Objects.equals(this.tooltip, that.tooltip)
             );
         }
 

@@ -1,7 +1,5 @@
 package io.izzel.arclight.common.mixin.core.network;
 
-import static net.minecraft.server.network.ServerLoginPacketListenerImpl.isValidUsername;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import io.izzel.arclight.common.bridge.core.network.NetworkManagerBridge;
@@ -10,21 +8,6 @@ import io.izzel.arclight.common.bridge.core.server.management.PlayerListBridge;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.netty.buffer.Unpooled;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.security.MessageDigest;
-import java.security.PrivateKey;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import javax.annotation.Nullable;
-import javax.crypto.Cipher;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import net.minecraft.DefaultUncaughtExceptionHandler;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.Connection;
@@ -54,6 +37,24 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static net.minecraft.server.network.ServerLoginPacketListenerImpl.isValidUsername;
 
 @Mixin(ServerLoginPacketListenerImpl.class)
 public abstract class ServerLoginNetHandlerMixin {
@@ -140,7 +141,7 @@ public abstract class ServerLoginNetHandlerMixin {
             this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
             if (
                 this.server.getCompressionThreshold() >= 0 &&
-                !this.connection.isMemoryConnection()
+                    !this.connection.isMemoryConnection()
             ) {
                 this.connection.send(
                     new ClientboundLoginCompressionPacket(
@@ -211,8 +212,8 @@ public abstract class ServerLoginNetHandlerMixin {
         // Velocity Modern Forwarding: send login query and wait for response (only if backend is offline-mode)
         if (
             ArclightConfig.spec().getVelocity() != null &&
-            ArclightConfig.spec().getVelocity().isEnabled() &&
-            !this.server.usesAuthentication()
+                ArclightConfig.spec().getVelocity().isEnabled() &&
+                !this.server.usesAuthentication()
         ) {
             this.luminara$velocityListen = true;
             try {
@@ -237,7 +238,7 @@ public abstract class ServerLoginNetHandlerMixin {
         GameProfile gameprofile = this.server.getSingleplayerProfile();
         if (
             gameprofile != null &&
-            packetIn.name().equalsIgnoreCase(gameprofile.getName())
+                packetIn.name().equalsIgnoreCase(gameprofile.getName())
         ) {
             this.gameProfile = gameprofile;
             this.state = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
@@ -245,7 +246,7 @@ public abstract class ServerLoginNetHandlerMixin {
             this.gameProfile = new GameProfile(null, packetIn.name());
             if (
                 this.server.usesAuthentication() &&
-                !this.connection.isMemoryConnection()
+                    !this.connection.isMemoryConnection()
             ) {
                 this.state = ServerLoginPacketListenerImpl.State.KEY;
                 this.connection.send(
@@ -290,7 +291,7 @@ public abstract class ServerLoginNetHandlerMixin {
         UUID uuid;
         if (
             ((NetworkManagerBridge) this.connection).bridge$getSpoofedUUID() !=
-            null
+                null
         ) {
             uuid = (
                 (NetworkManagerBridge) this.connection
@@ -307,9 +308,9 @@ public abstract class ServerLoginNetHandlerMixin {
             Property[] spoofedProfile;
             for (
                 int length = (spoofedProfile = (
-                        (NetworkManagerBridge) this.connection
-                    ).bridge$getSpoofedProfile()).length,
-                    i = 0;
+                    (NetworkManagerBridge) this.connection
+                ).bridge$getSpoofedProfile()).length,
+                i = 0;
                 i < length;
                 ++i
             ) {
@@ -469,14 +470,14 @@ public abstract class ServerLoginNetHandlerMixin {
             }
         } else if (
             asyncEvent.getLoginResult() !=
-            AsyncPlayerPreLoginEvent.Result.ALLOWED
+                AsyncPlayerPreLoginEvent.Result.ALLOWED
         ) {
             disconnect(asyncEvent.getKickMessage());
             return;
         }
         if (
             ArclightConfig.spec().getVelocity() != null &&
-            ArclightConfig.spec().getVelocity().isEnabled()
+                ArclightConfig.spec().getVelocity().isEnabled()
         ) {
             ARCLIGHT_LOGGER.info(
                 "auth.player-uuid-velocity",

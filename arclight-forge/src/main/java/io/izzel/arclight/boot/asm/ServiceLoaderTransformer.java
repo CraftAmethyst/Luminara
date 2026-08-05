@@ -1,11 +1,12 @@
 package io.izzel.arclight.boot.asm;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
-import java.util.ServiceLoader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+
+import java.util.ServiceLoader;
 
 public class ServiceLoaderTransformer implements Implementer {
 
@@ -44,10 +45,10 @@ public class ServiceLoaderTransformer implements Implementer {
             for (var insn : mn.instructions) {
                 if (
                     insn.getOpcode() == Opcodes.INVOKESTATIC &&
-                    insn instanceof MethodInsnNode method &&
-                    SERVICE_LOADER.equals(method.owner) &&
-                    "load".equals(method.name) &&
-                    LOAD_DESC.equals(method.desc)
+                        insn instanceof MethodInsnNode method &&
+                        SERVICE_LOADER.equals(method.owner) &&
+                        "load".equals(method.name) &&
+                        LOAD_DESC.equals(method.desc)
                 ) {
                     method.owner = Type.getInternalName(
                         ServiceLoaderTransformer.class

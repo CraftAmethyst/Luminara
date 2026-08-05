@@ -40,7 +40,8 @@ public abstract class WorldGenRegionMixin implements WorldBridge {
     @Override
     public void bridge$pushAddEntityReason(
         CreatureSpawnEvent.SpawnReason reason
-    ) {}
+    ) {
+    }
 
     @Override
     public CraftWorld bridge$getWorld() {

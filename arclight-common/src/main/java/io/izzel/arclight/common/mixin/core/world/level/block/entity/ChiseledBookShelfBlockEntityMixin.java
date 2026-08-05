@@ -3,8 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
@@ -21,11 +19,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(ChiseledBookShelfBlockEntity.class)
 public abstract class ChiseledBookShelfBlockEntityMixin
     extends BlockEntityMixin
-    implements IInventoryBridge, Container
-{
+    implements IInventoryBridge, Container {
 
     public List<HumanEntity> transaction = new ArrayList<>();
 
@@ -56,7 +56,8 @@ public abstract class ChiseledBookShelfBlockEntityMixin
     }
 
     @Override
-    public void setOwner(InventoryHolder owner) {}
+    public void setOwner(InventoryHolder owner) {
+    }
 
     @Override
     public int getMaxStackSize() {

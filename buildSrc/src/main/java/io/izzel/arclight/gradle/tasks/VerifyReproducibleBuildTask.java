@@ -1,5 +1,15 @@
 package io.izzel.arclight.gradle.tasks;
 
+import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.LocalState;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,20 +23,123 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
-import org.gradle.api.DefaultTask;
-import org.gradle.api.GradleException;
-import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.LocalState;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.work.DisableCachingByDefault;
 
 @DisableCachingByDefault(
     because = "Runs two isolated nested builds and compares their distributions"
 )
 public abstract class VerifyReproducibleBuildTask extends DefaultTask {
+
+    private static List<String> trackedFiles(Path source) throws Exception {
+        byte[] output = run(source, List.of("git", "ls-files", "-z"));
+        String[] entries = new String(output, StandardCharsets.UTF_8).split(
+            "\u0000",
+            -1
+        );
+        List<String> result = new ArrayList<>(entries.length);
+        for (String entry : entries) {
+            if (!entry.isEmpty()) result.add(entry);
+        }
+        return result;
+    }
+
+    private static void copyTrackedSource(
+        Path source,
+        Path destination,
+        List<String> trackedFiles
+    ) throws IOException {
+        Files.createDirectories(destination);
+        for (String relativeName : trackedFiles) {
+            Path relative = Path.of(relativeName);
+            Path input = source.resolve(relative).normalize();
+            Path output = destination.resolve(relative).normalize();
+            require(
+                input.startsWith(source) && output.startsWith(destination),
+                "Tracked path escapes repository: " + relativeName
+            );
+            require(
+                Files.exists(input, LinkOption.NOFOLLOW_LINKS),
+                "Tracked source file is missing: " + relativeName
+            );
+            if (Files.isDirectory(input, LinkOption.NOFOLLOW_LINKS)) {
+                Files.createDirectories(output);
+                continue;
+            }
+            Files.createDirectories(output.getParent());
+            Files.copy(
+                input,
+                output,
+                LinkOption.NOFOLLOW_LINKS,
+                StandardCopyOption.COPY_ATTRIBUTES
+            );
+        }
+    }
+
+    private static String runGit(Path directory, String... arguments)
+        throws Exception {
+        List<String> command = new ArrayList<>(arguments.length + 1);
+        command.add("git");
+        command.addAll(List.of(arguments));
+        return new String(run(directory, command), StandardCharsets.UTF_8);
+    }
+
+    private static byte[] run(Path directory, List<String> command)
+        throws Exception {
+        Process process = new ProcessBuilder(command)
+            .directory(directory.toFile())
+            .redirectErrorStream(true)
+            .start();
+        byte[] output = process.getInputStream().readAllBytes();
+        int exitCode = process.waitFor();
+        require(
+            exitCode == 0,
+            String.join(" ", command) +
+                " failed with exit code " +
+                exitCode +
+                ": " +
+                new String(output, StandardCharsets.UTF_8)
+        );
+        return output;
+    }
+
+    private static String sha256(Path file) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        try (var input = Files.newInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = input.read(buffer)) >= 0)
+                digest.update(buffer, 0, length);
+        }
+        return HexFormat.of().formatHex(digest.digest());
+    }
+
+    private static void recreateDirectory(Path directory) throws IOException {
+        if (Files.exists(directory)) {
+            try (var paths = Files.walk(directory)) {
+                paths
+                    .sorted(java.util.Comparator.reverseOrder())
+                    .forEach(VerifyReproducibleBuildTask::delete);
+            }
+        }
+        Files.createDirectories(directory);
+    }
+
+    private static void delete(Path path) {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException exception) {
+            throw new java.io.UncheckedIOException(exception);
+        }
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name")
+            .toLowerCase(java.util.Locale.ROOT)
+            .contains("win");
+    }
+
+    private static void require(boolean condition, String message) {
+        if (!condition) throw new GradleException(message);
+    }
 
     @Internal
     public abstract DirectoryProperty getSourceDirectory();
@@ -169,117 +282,5 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
             exitCode == 0,
             "Isolated " + label + " build failed with exit code " + exitCode
         );
-    }
-
-    private static List<String> trackedFiles(Path source) throws Exception {
-        byte[] output = run(source, List.of("git", "ls-files", "-z"));
-        String[] entries = new String(output, StandardCharsets.UTF_8).split(
-            "\u0000",
-            -1
-        );
-        List<String> result = new ArrayList<>(entries.length);
-        for (String entry : entries) {
-            if (!entry.isEmpty()) result.add(entry);
-        }
-        return result;
-    }
-
-    private static void copyTrackedSource(
-        Path source,
-        Path destination,
-        List<String> trackedFiles
-    ) throws IOException {
-        Files.createDirectories(destination);
-        for (String relativeName : trackedFiles) {
-            Path relative = Path.of(relativeName);
-            Path input = source.resolve(relative).normalize();
-            Path output = destination.resolve(relative).normalize();
-            require(
-                input.startsWith(source) && output.startsWith(destination),
-                "Tracked path escapes repository: " + relativeName
-            );
-            require(
-                Files.exists(input, LinkOption.NOFOLLOW_LINKS),
-                "Tracked source file is missing: " + relativeName
-            );
-            if (Files.isDirectory(input, LinkOption.NOFOLLOW_LINKS)) {
-                Files.createDirectories(output);
-                continue;
-            }
-            Files.createDirectories(output.getParent());
-            Files.copy(
-                input,
-                output,
-                LinkOption.NOFOLLOW_LINKS,
-                StandardCopyOption.COPY_ATTRIBUTES
-            );
-        }
-    }
-
-    private static String runGit(Path directory, String... arguments)
-        throws Exception {
-        List<String> command = new ArrayList<>(arguments.length + 1);
-        command.add("git");
-        command.addAll(List.of(arguments));
-        return new String(run(directory, command), StandardCharsets.UTF_8);
-    }
-
-    private static byte[] run(Path directory, List<String> command)
-        throws Exception {
-        Process process = new ProcessBuilder(command)
-            .directory(directory.toFile())
-            .redirectErrorStream(true)
-            .start();
-        byte[] output = process.getInputStream().readAllBytes();
-        int exitCode = process.waitFor();
-        require(
-            exitCode == 0,
-            String.join(" ", command) +
-                " failed with exit code " +
-                exitCode +
-                ": " +
-                new String(output, StandardCharsets.UTF_8)
-        );
-        return output;
-    }
-
-    private static String sha256(Path file) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        try (var input = Files.newInputStream(file)) {
-            byte[] buffer = new byte[8192];
-            int length;
-            while ((length = input.read(buffer)) >= 0)
-                digest.update(buffer, 0, length);
-        }
-        return HexFormat.of().formatHex(digest.digest());
-    }
-
-    private static void recreateDirectory(Path directory) throws IOException {
-        if (Files.exists(directory)) {
-            try (var paths = Files.walk(directory)) {
-                paths
-                    .sorted(java.util.Comparator.reverseOrder())
-                    .forEach(VerifyReproducibleBuildTask::delete);
-            }
-        }
-        Files.createDirectories(directory);
-    }
-
-    private static void delete(Path path) {
-        try {
-            Files.deleteIfExists(path);
-        } catch (IOException exception) {
-            throw new java.io.UncheckedIOException(exception);
-        }
-    }
-
-    private static boolean isWindows() {
-        return System.getProperty("os.name")
-            .toLowerCase(java.util.Locale.ROOT)
-            .contains("win");
-    }
-
-    private static void require(boolean condition, String message) {
-        if (!condition) throw new GradleException(message);
     }
 }

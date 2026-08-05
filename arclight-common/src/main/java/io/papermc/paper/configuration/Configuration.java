@@ -5,5 +5,6 @@ package io.papermc.paper.configuration;
  */
 public final class Configuration {
 
-    private Configuration() {}
+    private Configuration() {
+    }
 }

@@ -2,10 +2,11 @@ package io.izzel.arclight.common.mod.util.remapper;
 
 import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.common.mod.ArclightMod;
-import java.util.regex.Pattern;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.tree.*;
+
+import java.util.regex.Pattern;
 
 public class CraftBukkitVersionRemapper implements PluginTransformer {
 
@@ -45,36 +46,12 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
         if (VERSION_PATTERN.matcher(versionPart).matches()) {
             return (
                 CRAFTBUKKIT_PREFIX +
-                GENERIC_VERSION +
-                afterPrefix.substring(slashIndex)
+                    GENERIC_VERSION +
+                    afterPrefix.substring(slashIndex)
             );
         }
 
         return internalName;
-    }
-
-    private void remapAnnotations(java.util.List<AnnotationNode> annotations) {
-        if (annotations != null) {
-            for (AnnotationNode annotation : annotations) {
-                annotation.desc = remapDescriptor(annotation.desc);
-            }
-        }
-    }
-
-    private void remapFrameTypes(java.util.List<Object> frameTypes) {
-        if (frameTypes == null) {
-            return;
-        }
-        for (int i = 0; i < frameTypes.size(); i++) {
-            Object entry = frameTypes.get(i);
-            if (entry instanceof String internalName) {
-                if (internalName.startsWith("[")) {
-                    frameTypes.set(i, remapDescriptor(internalName));
-                } else {
-                    frameTypes.set(i, remapInternalName(internalName));
-                }
-            }
-        }
     }
 
     public static String remapBinaryName(String binaryName) {
@@ -106,8 +83,8 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
         if (VERSION_PATTERN.matcher(versionPart).matches()) {
             return (
                 CRAFTBUKKIT_DOT_PREFIX +
-                GENERIC_VERSION +
-                afterPrefix.substring(dotIndex)
+                    GENERIC_VERSION +
+                    afterPrefix.substring(dotIndex)
             );
         }
 
@@ -175,8 +152,33 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
             if (current != null && !current.isBlank()) {
                 return current;
             }
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
         return GENERIC_VERSION;
+    }
+
+    private void remapAnnotations(java.util.List<AnnotationNode> annotations) {
+        if (annotations != null) {
+            for (AnnotationNode annotation : annotations) {
+                annotation.desc = remapDescriptor(annotation.desc);
+            }
+        }
+    }
+
+    private void remapFrameTypes(java.util.List<Object> frameTypes) {
+        if (frameTypes == null) {
+            return;
+        }
+        for (int i = 0; i < frameTypes.size(); i++) {
+            Object entry = frameTypes.get(i);
+            if (entry instanceof String internalName) {
+                if (internalName.startsWith("[")) {
+                    frameTypes.set(i, remapDescriptor(internalName));
+                } else {
+                    frameTypes.set(i, remapInternalName(internalName));
+                }
+            }
+        }
     }
 
     @Override
@@ -363,7 +365,7 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
         }
         if (
             (constant.startsWith("L") || constant.startsWith("[")) &&
-            constant.contains(CRAFTBUKKIT_PREFIX)
+                constant.contains(CRAFTBUKKIT_PREFIX)
         ) {
             return remapDescriptor(constant);
         }

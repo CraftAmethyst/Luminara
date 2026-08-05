@@ -52,10 +52,10 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
         if (entityLiving instanceof Player playerentity) {
             boolean flag =
                 playerentity.getAbilities().instabuild ||
-                EnchantmentHelper.getItemEnchantmentLevel(
-                    Enchantments.INFINITY_ARROWS,
-                    stack
-                ) > 0;
+                    EnchantmentHelper.getItemEnchantmentLevel(
+                        Enchantments.INFINITY_ARROWS,
+                        stack
+                    ) > 0;
             ItemStack itemstack = playerentity.getProjectile(stack);
 
             int i = this.getUseDuration(stack) - timeLeft;
@@ -77,12 +77,12 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
                 if (!((double) f < 0.1D)) {
                     boolean flag1 =
                         playerentity.getAbilities().instabuild ||
-                        (itemstack.getItem() instanceof ArrowItem &&
-                            ((ArrowItem) itemstack.getItem()).isInfinite(
-                                itemstack,
-                                stack,
-                                playerentity
-                            ));
+                            (itemstack.getItem() instanceof ArrowItem &&
+                                ((ArrowItem) itemstack.getItem()).isInfinite(
+                                    itemstack,
+                                    stack,
+                                    playerentity
+                                ));
                     if (!worldIn.isClientSide) {
                         ArrowItem arrowitem = (ArrowItem) (
                             itemstack.getItem() instanceof ArrowItem
@@ -160,9 +160,9 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
                         });
                         if (
                             flag1 ||
-                            (playerentity.getAbilities().instabuild &&
-                                (itemstack.getItem() == Items.SPECTRAL_ARROW ||
-                                    itemstack.getItem() == Items.TIPPED_ARROW))
+                                (playerentity.getAbilities().instabuild &&
+                                    (itemstack.getItem() == Items.SPECTRAL_ARROW ||
+                                        itemstack.getItem() == Items.TIPPED_ARROW))
                         ) {
                             abstractarrowentity.pickup =
                                 AbstractArrow.Pickup.CREATIVE_ONLY;
@@ -170,9 +170,9 @@ public abstract class BowItemMixin extends ProjectileWeaponItem {
 
                         if (
                             event.getProjectile() ==
-                            (
-                                (EntityBridge) abstractarrowentity
-                            ).bridge$getBukkitEntity()
+                                (
+                                    (EntityBridge) abstractarrowentity
+                                ).bridge$getBukkitEntity()
                         ) {
                             if (!worldIn.addFreshEntity(abstractarrowentity)) {
                                 if (

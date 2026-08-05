@@ -22,7 +22,7 @@ public class PermissionAPIMixin {
     private static void arclight$init(CallbackInfo ci) {
         if (
             ArclightConfig.spec().getCompat().getPermissionForwarding() !=
-            PermissionForwarding.FORGE_TO_BUKKIT
+                PermissionForwarding.FORGE_TO_BUKKIT
         ) {
             return;
         }

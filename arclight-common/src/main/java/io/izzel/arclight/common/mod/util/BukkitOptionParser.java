@@ -1,10 +1,11 @@
 package io.izzel.arclight.common.mod.util;
 
-import static java.util.Arrays.asList;
+import joptsimple.OptionParser;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import joptsimple.OptionParser;
+
+import static java.util.Arrays.asList;
 
 public class BukkitOptionParser extends OptionParser {
 

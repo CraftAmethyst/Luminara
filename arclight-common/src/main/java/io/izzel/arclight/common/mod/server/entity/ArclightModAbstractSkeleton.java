@@ -22,5 +22,6 @@ public class ArclightModAbstractSkeleton extends CraftAbstractSkeleton {
     }
 
     @Override
-    public void setSkeletonType(Skeleton.SkeletonType type) {}
+    public void setSkeletonType(Skeleton.SkeletonType type) {
+    }
 }

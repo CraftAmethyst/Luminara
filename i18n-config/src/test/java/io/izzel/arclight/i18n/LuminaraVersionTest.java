@@ -1,13 +1,12 @@
 package io.izzel.arclight.i18n;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class LuminaraVersionTest {
 
@@ -16,13 +15,13 @@ class LuminaraVersionTest {
         Properties properties = LuminaraVersion.load(
             new ByteArrayInputStream(
                 """
-                minecraftVersion=1.20.1
-                forgeVersion=47.4.22
-                javaVersion=17
-                bukkitPackage=v1_20_R1
-                version=1.0.14
-                gitCommit=abc1234
-                """.getBytes(StandardCharsets.ISO_8859_1)
+                    minecraftVersion=1.20.1
+                    forgeVersion=47.4.22
+                    javaVersion=17
+                    bukkitPackage=v1_20_R1
+                    version=1.0.14
+                    gitCommit=abc1234
+                    """.getBytes(StandardCharsets.ISO_8859_1)
             )
         );
 

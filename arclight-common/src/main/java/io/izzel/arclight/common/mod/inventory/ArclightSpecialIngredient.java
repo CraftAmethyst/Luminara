@@ -1,12 +1,13 @@
 package io.izzel.arclight.common.mod.inventory;
 
-import java.util.Objects;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class ArclightSpecialIngredient implements RecipeChoice {
 

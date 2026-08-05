@@ -41,7 +41,8 @@ public interface ChatRenderer {
     @ApiStatus.Internal
     sealed interface Default
         extends ChatRenderer, ViewerUnaware
-        permits ViewerUnawareImpl.Default {}
+        permits ViewerUnawareImpl.Default {
+    }
 
     // Chat renderer without viewer context
     interface ViewerUnaware {

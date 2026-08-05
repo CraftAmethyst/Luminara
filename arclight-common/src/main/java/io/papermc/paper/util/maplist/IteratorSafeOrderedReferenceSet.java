@@ -2,9 +2,10 @@ package io.papermc.paper.util.maplist;
 
 import it.unimi.dsi.fastutil.objects.Reference2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
+import org.bukkit.Bukkit;
+
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-import org.bukkit.Bukkit;
 
 public final class IteratorSafeOrderedReferenceSet<E> {
 
@@ -148,8 +149,8 @@ public final class IteratorSafeOrderedReferenceSet<E> {
             this.listElements[index] = null;
             if (
                 this.allowSafeIteration() &&
-                this.iteratorCount == 0 &&
-                this.getFragFactor() >= this.maxFragFactor
+                    this.iteratorCount == 0 &&
+                    this.getFragFactor() >= this.maxFragFactor
             ) {
                 this.defrag();
             }

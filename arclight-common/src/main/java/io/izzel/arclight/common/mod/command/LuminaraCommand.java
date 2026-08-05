@@ -4,13 +4,14 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.izzel.arclight.common.mod.command.subcommands.InfoSubCommand;
 import io.izzel.arclight.common.mod.command.subcommands.LuminaraSubCommand;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // Main Luminara command system
 public class LuminaraCommand {
@@ -26,8 +27,8 @@ public class LuminaraCommand {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(
-            "luminara"
-        )
+                "luminara"
+            )
             .requires(source -> source.hasPermission(2)) // Lower base permission
             .executes(LuminaraCommand::showHelp)
             .then(Commands.literal("help").executes(LuminaraCommand::showHelp));

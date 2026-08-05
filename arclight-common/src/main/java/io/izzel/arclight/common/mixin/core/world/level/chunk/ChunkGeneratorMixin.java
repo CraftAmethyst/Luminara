@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mixin.core.world.level.chunk;
 import io.izzel.arclight.common.bridge.core.world.IWorldBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.level.levelgen.ChunkGeneratorBridge;
-import java.util.function.Predicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
@@ -35,6 +34,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.function.Predicate;
 
 @Mixin(ChunkGenerator.class)
 public abstract class ChunkGeneratorMixin implements ChunkGeneratorBridge {

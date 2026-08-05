@@ -5,7 +5,8 @@ import java.util.List;
 
 final class RegistryReloads {
 
-    private RegistryReloads() {}
+    private RegistryReloads() {
+    }
 
     static void run(List<Operation> operations) {
         List<Throwable> failures = new ArrayList<>();
@@ -27,10 +28,11 @@ final class RegistryReloads {
         }
     }
 
-    record Operation(String name, ThrowingRunnable action) {}
-
     @FunctionalInterface
     interface ThrowingRunnable {
         void run() throws Throwable;
+    }
+
+    record Operation(String name, ThrowingRunnable action) {
     }
 }

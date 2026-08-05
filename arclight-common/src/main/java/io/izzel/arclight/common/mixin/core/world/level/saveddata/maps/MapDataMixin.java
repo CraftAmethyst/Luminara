@@ -1,10 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.saveddata.maps;
 
 import io.izzel.arclight.common.bridge.core.world.storage.MapDataBridge;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Supplier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -21,6 +17,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 @Mixin(MapItemSavedData.class)
 public abstract class MapDataMixin implements MapDataBridge {

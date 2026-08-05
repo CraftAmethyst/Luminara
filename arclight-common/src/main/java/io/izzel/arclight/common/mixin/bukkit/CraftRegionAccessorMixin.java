@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.common.bridge.bukkit.EntityTypeBridge;
-import java.util.function.Function;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.CraftRegionAccessor;
 import org.bukkit.entity.Entity;
@@ -13,6 +12,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.function.Function;
 
 @Mixin(value = CraftRegionAccessor.class, remap = false)
 public abstract class CraftRegionAccessorMixin {
@@ -35,7 +36,7 @@ public abstract class CraftRegionAccessorMixin {
         Function<
             Location,
             ? extends net.minecraft.world.entity.Entity
-        > factory = (
+            > factory = (
             (EntityTypeBridge) (Object) entityType
         ).bridge$entityFactory();
         if (factory != null) {
@@ -64,7 +65,7 @@ public abstract class CraftRegionAccessorMixin {
         Function<
             Location,
             ? extends net.minecraft.world.entity.Entity
-        > factory = (
+            > factory = (
             (EntityTypeBridge) (Object) entityType
         ).bridge$entityFactory();
         if (factory != null) {

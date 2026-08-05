@@ -22,8 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LecternMenu.class)
 public abstract class LecternContainerMixin
     extends AbstractContainerMenuMixin
-    implements LecternContainerBridge
-{
+    implements LecternContainerBridge {
 
     // @formatter:off
     @Shadow @Final private Container lectern;

@@ -1,7 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +19,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.List;
 
 @Mixin(TripWireBlock.class)
 public abstract class TripWireBlockMixin extends BlockMixin {
@@ -55,8 +56,8 @@ public abstract class TripWireBlockMixin extends BlockMixin {
 
         if (
             flag != flag1 &&
-            flag1 &&
-            blockstate.getValue(TripWireBlock.ATTACHED)
+                flag1 &&
+                blockstate.getValue(TripWireBlock.ATTACHED)
         ) {
             org.bukkit.block.Block block = CraftBlock.at(worldIn, pos);
             boolean allowed = false;

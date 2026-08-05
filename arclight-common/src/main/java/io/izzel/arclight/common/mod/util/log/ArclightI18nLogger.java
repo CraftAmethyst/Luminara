@@ -1,9 +1,10 @@
 package io.izzel.arclight.common.mod.util.log;
 
 import io.izzel.arclight.api.Unsafe;
+import org.apache.logging.log4j.Logger;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import org.apache.logging.log4j.Logger;
 
 public class ArclightI18nLogger {
 

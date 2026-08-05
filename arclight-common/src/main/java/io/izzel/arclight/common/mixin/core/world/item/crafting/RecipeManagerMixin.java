@@ -8,9 +8,6 @@ import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.item.crafting.RecipeManagerBridge;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -29,6 +26,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Mixin(RecipeManager.class)
 public abstract class RecipeManagerMixin implements RecipeManagerBridge {
@@ -70,7 +71,7 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
                 Object2ObjectLinkedOpenHashMap<
                     ResourceLocation,
                     Recipe<?>
-                > copy = new Object2ObjectLinkedOpenHashMap<>();
+                    > copy = new Object2ObjectLinkedOpenHashMap<>();
                 copy.putAll(existing);
                 rebuilt.put(type, copy);
             }
@@ -158,7 +159,7 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
             Object2ObjectLinkedOpenHashMap<
                 ResourceLocation,
                 Recipe<?>
-            > hashMap = new Object2ObjectLinkedOpenHashMap<>();
+                > hashMap = new Object2ObjectLinkedOpenHashMap<>();
             hashMap.putAll(original);
             this.recipes.put(recipe.getType(), hashMap);
             map = hashMap;
@@ -166,12 +167,12 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
             map = (Object2ObjectLinkedOpenHashMap<
                 ResourceLocation,
                 Recipe<?>
-            >) original;
+                >) original;
         }
 
         if (
             this.byName.containsKey(recipe.getId()) ||
-            map.containsKey(recipe.getId())
+                map.containsKey(recipe.getId())
         ) {
             throw new IllegalStateException(
                 "Duplicate recipe ignored with ID " + recipe.getId()

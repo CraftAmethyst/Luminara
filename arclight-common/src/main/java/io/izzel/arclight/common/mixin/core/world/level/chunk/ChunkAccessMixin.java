@@ -2,7 +2,6 @@ package io.izzel.arclight.common.mixin.core.world.level.chunk;
 
 import io.izzel.arclight.common.bridge.core.world.chunk.ChunkAccessBridge;
 import io.izzel.arclight.common.bridge.core.world.chunk.LevelChunkSectionBridge;
-import java.util.Map;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -32,10 +31,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Map;
+
 @Mixin(ChunkAccess.class)
 public abstract class ChunkAccessMixin
-    implements BlockGetter, BiomeManager.NoiseBiomeSource, ChunkAccessBridge
-{
+    implements BlockGetter, BiomeManager.NoiseBiomeSource, ChunkAccessBridge {
 
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY =
         new CraftPersistentDataTypeRegistry();

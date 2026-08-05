@@ -1,12 +1,13 @@
 package io.izzel.arclight.common.mod.mixins;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Predicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class ShouldApplyProcessor {
 

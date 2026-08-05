@@ -1,8 +1,6 @@
 package io.izzel.arclight.common.mod.server;
 
 import io.izzel.arclight.api.Unsafe;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
@@ -16,6 +14,9 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.ServerOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
 
 public class ArclightForgePermissible extends PermissibleBase {
 

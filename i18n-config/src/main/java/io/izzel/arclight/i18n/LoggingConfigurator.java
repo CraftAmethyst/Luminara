@@ -1,14 +1,16 @@
 package io.izzel.arclight.i18n;
 
 import io.izzel.arclight.i18n.conf.ConfigSpec;
-import java.net.URI;
-import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 
+import java.net.URI;
+import java.util.Objects;
+
 final class LoggingConfigurator {
 
-    private LoggingConfigurator() {}
+    private LoggingConfigurator() {
+    }
 
     static void apply(ConfigSpec spec) {
         try {
@@ -16,8 +18,8 @@ final class LoggingConfigurator {
             try {
                 useSimpleFormat =
                     spec != null &&
-                    spec.getLogging() != null &&
-                    spec.getLogging().isUseSimpleFormat();
+                        spec.getLogging() != null &&
+                        spec.getLogging().isUseSimpleFormat();
             } catch (Exception e) {
                 useSimpleFormat = false;
             }

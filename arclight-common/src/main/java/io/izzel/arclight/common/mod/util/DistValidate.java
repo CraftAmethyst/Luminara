@@ -2,8 +2,6 @@ package io.izzel.arclight.common.mod.util;
 
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.i18n.ArclightConfig;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.item.context.UseOnContext;
@@ -11,6 +9,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DistValidate {
 
@@ -34,8 +35,8 @@ public class DistValidate {
         var cl = level.getClass();
         return (
             cl == ServerLevel.class ||
-            cl == WorldGenRegion.class ||
-            isLogicWorld(cl)
+                cl == WorldGenRegion.class ||
+                isLogicWorld(cl)
         );
     }
 
