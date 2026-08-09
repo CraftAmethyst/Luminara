@@ -96,4 +96,22 @@ public class WorldEdit {
             }
         }
     }
+
+    public static void handleFaweCommandRegistration(ClassNode node, PluginPatcher.ClassRepo repo) {
+        for (MethodNode method : node.methods) {
+            if (!method.name.equals("getCommandMap") || !method.desc.equals("()Lorg/bukkit/command/CommandMap;")) {
+                continue;
+            }
+            for (AbstractInsnNode instruction : method.instructions) {
+                if (instruction instanceof MethodInsnNode call
+                    && call.owner.equals("io/papermc/lib/PaperLib")
+                    && call.name.equals("isPaper")
+                    && call.desc.equals("()Z")) {
+                    method.instructions.set(call, new InsnNode(Opcodes.ICONST_0));
+                }
+            }
+            return;
+        }
+    }
+
 }
