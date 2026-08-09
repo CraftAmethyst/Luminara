@@ -70,8 +70,7 @@ class RemapSpigotTask implements Runnable {
         def args = [
                 '-i', tmp.toFile().canonicalPath,
                 '-o', tmpDeobf.toFile().canonicalPath,
-                '-m', inSrgToStable.canonicalPath,
-                '-h', inheritanceMap.canonicalPath
+                '-m', inSrgToStable.canonicalPath
         ]
         Path tmpSrg
         if (bukkitVersion) {
