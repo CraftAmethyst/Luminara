@@ -6,6 +6,9 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.gson.JsonElement;
+import io.izzel.arclight.common.mod.compat.ModIds;
+import io.izzel.arclight.common.mod.mixins.annotation.LoadIfMod;
+import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.bridge.core.world.item.crafting.RecipeManagerBridge;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -17,12 +20,12 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
@@ -34,10 +37,10 @@ import java.util.Optional;
 
 @Mixin(RecipeManager.class)
 public abstract class RecipeManagerMixin implements RecipeManagerBridge {
+    private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger("RecipeManager");
 
     // @formatter:off
     @Shadow private boolean hasErrors;
-    @Shadow @Final private static Logger LOGGER;
     @Shadow private Map<ResourceLocation, RecipeHolder<?>> byName;
     @Shadow public Multimap<RecipeType<?>, RecipeHolder<?>> byType;
     @Shadow protected abstract <I extends RecipeInput, T extends Recipe<I>> Collection<RecipeHolder<T>> byType(RecipeType<T> recipeType);
@@ -53,6 +56,35 @@ public abstract class RecipeManagerMixin implements RecipeManagerBridge {
     private void arclight$replaceMutable(Iterable<RecipeHolder<?>> iterable, CallbackInfo ci) {
         this.byName = new HashMap<>(this.byName);
         this.byType = LinkedHashMultimap.create(this.byType);
+    }
+
+    @Redirect(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;info(Ljava/lang/String;Ljava/lang/Object;)V", remap = false), require = 1)
+    private void arclight$logLoadedRecipes(Logger logger, String message, Object count) {
+        ARCLIGHT_LOGGER.info("recipe.loading.completed", count);
+    }
+
+    @Mixin(RecipeManager.class)
+    @LoadIfMod(modid = ModIds.MODERNFIX, condition = LoadIfMod.ModCondition.ABSENT)
+    public static class ParsingErrorLoggerMixin {
+
+        private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger("RecipeManager");
+
+        @Redirect(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V", remap = false), require = 1)
+        private void arclight$logParsingError(Logger logger, String message, Object recipeId, Object exception) {
+            ARCLIGHT_LOGGER.error("recipe.loading.parsing-error", recipeId, exception);
+        }
+    }
+
+    @Mixin(value = RecipeManager.class, priority = 2100)
+    @LoadIfMod(modid = ModIds.MODERNFIX, condition = LoadIfMod.ModCondition.PRESENT)
+    public static class ModernFixParsingErrorLoggerMixin {
+
+        private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger("RecipeManager");
+
+        @Redirect(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V", remap = false), require = 1)
+        private void arclight$logParsingError(Logger logger, String message, Object recipeId, Object exception) {
+            ARCLIGHT_LOGGER.error("recipe.loading.parsing-error", recipeId, exception);
+        }
     }
 
     /**
