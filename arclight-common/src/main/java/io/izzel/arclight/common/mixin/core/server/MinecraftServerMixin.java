@@ -7,6 +7,7 @@ import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.bridge.core.world.level.WorldBridge;
 import io.izzel.arclight.common.mod.ArclightConstants;
+import io.izzel.arclight.common.mod.metrics.MetricsManager;
 import io.izzel.arclight.common.mod.mixins.annotation.TransformAccess;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
@@ -17,6 +18,7 @@ import io.izzel.arclight.common.mod.util.BukkitOptionParser;
 import io.izzel.arclight.common.mod.util.ArclightCrashHandler;
 import io.izzel.arclight.common.util.IteratorUtil;
 import io.izzel.arclight.i18n.ArclightConfig;
+import io.izzel.arclight.i18n.LuminaraVersion;
 import io.izzel.arclight.mixin.Decorate;
 import io.izzel.arclight.mixin.DecorationOps;
 import io.izzel.arclight.mixin.Local;
@@ -236,6 +238,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         if (this.server != null) {
             this.server.disablePlugins();
         }
+        MetricsManager.shutdown();
     }
 
     @Decorate(method = "createLevels", at = @At(value = "INVOKE", target = "Ljava/util/Set;iterator()Ljava/util/Iterator;"))
@@ -262,6 +265,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         this.server.enablePlugins(PluginLoadOrder.POSTWORLD);
         this.bridge$forge$lockRegistries();
         this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
+        MetricsManager.initialize(LuminaraVersion.version(), ((MinecraftServer) (Object) this).getServerDirectory().toFile());
     }
 
     private void executeModerately() {
