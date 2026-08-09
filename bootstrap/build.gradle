@@ -26,6 +26,9 @@ sourceSets {
     fabric {}
 }
 
+sourceSets.test.compileClasspath += sourceSets.applaunch.output
+sourceSets.test.runtimeClasspath += sourceSets.applaunch.output
+
 configurations {
     installer
     installerFabric
@@ -104,6 +107,15 @@ dependencies {
     embedCommon(project(':i18n-config')) { transitive = false }
     embedFabric(libs.mixin.tools) { transitive = false }
     embedFabric(project(':installer')) { transitive = false }
+    testImplementation platform('org.junit:junit-bom:5.14.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+test {
+    useJUnitPlatform()
+    dependsOn compileApplaunchJava
 }
 
 jar {
