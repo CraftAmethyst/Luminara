@@ -35,5 +35,9 @@ velocity:
 experimental:
   replaceable-base-world-generator: false
 
+error-handling:
+  continue-on-crash: false
+  crash-report-directory: "crash-reports"
+
 logging:
   use-simple-format: false

@@ -14,6 +14,7 @@ import io.izzel.arclight.common.mod.server.world.border.ArclightBorderChangeList
 import io.izzel.arclight.common.mod.server.world.border.ArclightDelegatedBorderListener;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.BukkitOptionParser;
+import io.izzel.arclight.common.mod.util.ArclightCrashHandler;
 import io.izzel.arclight.common.util.IteratorUtil;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.mixin.Decorate;
@@ -188,6 +189,19 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         DecorationOps.blackhole().invoke(tickSection, tickCount);
         currentTick = (int) (System.currentTimeMillis() / 50);
         DecorationOps.callsite().invoke(instance);
+    }
+
+    @Decorate(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickServer(Ljava/util/function/BooleanSupplier;)V"))
+    private void luminara$handleTickCrash(MinecraftServer instance, BooleanSupplier hasTimeLeft) throws Throwable {
+        try {
+            DecorationOps.callsite().invoke(instance, hasTimeLeft);
+        } catch (Throwable throwable) {
+            CrashReport crashReport = CrashReport.forThrowable(throwable, "Exception in server tick loop");
+            instance.fillSystemReport(crashReport.getSystemReport());
+            if (!ArclightCrashHandler.handleCrash(throwable, crashReport, instance.getServerDirectory())) {
+                throw throwable;
+            }
+        }
     }
 
     @Decorate(method = "runServer", at = @At(value = "INVOKE", remap = false, target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"))
