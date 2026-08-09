@@ -59,6 +59,7 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
         for (var processor : this.postProcessors) {
             processor.accept(targetClassName, targetClass, mixinInfo);
         }
+        BukkitPaperApiPatcher.patch(targetClassName, targetClass);
         MixinTools.onPostMixin(targetClass);
     }
 }

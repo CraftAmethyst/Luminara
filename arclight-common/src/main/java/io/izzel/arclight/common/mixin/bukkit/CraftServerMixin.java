@@ -141,6 +141,10 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         return "Arclight";
     }
 
+    public String getMinecraftVersion() {
+        return this.console.getServerVersion();
+    }
+
     /**
      * @author IzzelAliz
      * @reason

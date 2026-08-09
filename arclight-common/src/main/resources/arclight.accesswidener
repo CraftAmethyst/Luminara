@@ -57,6 +57,7 @@ accessible field net/minecraft/world/level/block/entity/ConduitBlockEntity destr
 accessible field net/minecraft/world/level/chunk/storage/ChunkSerializer BLOCK_STATE_CODEC Lcom/mojang/serialization/Codec;
 # TODO field net/minecraft/server/PlayerAdvancements f_135964_
 accessible field net/minecraft/world/level/block/state/BlockBehaviour$BlockStateBase destroySpeed F
+accessible method net/minecraft/world/level/block/state/BlockBehaviour getMenuProvider (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/MenuProvider;
 accessible field net/minecraft/world/entity/raid/Raids raidMap Ljava/util/Map;
 accessible class net/minecraft/world/level/block/entity/BeehiveBlockEntity$BeeData
 accessible method net/minecraft/server/WorldLoader loadAndReplaceLayer (Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/core/LayeredRegistryAccess;Lnet/minecraft/server/RegistryLayer;Ljava/util/List;)Lnet/minecraft/core/LayeredRegistryAccess;
