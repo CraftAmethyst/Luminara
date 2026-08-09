@@ -119,7 +119,7 @@ jar {
 
 
 tasks.register('neoforgeJar', Jar) {
-    archiveBaseName.set "arclight-neoforge-${libs.versions.minecraft.get()}"
+    archiveBaseName.set "luminara-neoforge-${libs.versions.minecraft.get()}"
     manifest.attributes 'Main-Class': 'io.izzel.arclight.server.Launcher'
     manifest.attributes 'Implementation-Title': 'Arclight'
     manifest.attributes 'Implementation-Version': "arclight-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
@@ -154,7 +154,7 @@ tasks.register('neoforgeJar', Jar) {
 }
 
 tasks.register('fabricJar', Jar) {
-    archiveBaseName.set "arclight-fabric-${libs.versions.minecraft.get()}"
+    archiveBaseName.set "luminara-fabric-${libs.versions.minecraft.get()}"
     manifest.attributes 'Main-Class': 'io.izzel.arclight.server.Launcher'
     manifest.attributes 'Implementation-Title': 'Arclight'
     manifest.attributes 'Implementation-Version': "arclight-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
