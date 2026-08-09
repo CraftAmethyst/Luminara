@@ -30,6 +30,8 @@ dependencies {
 
     implementation(project(':i18n-config')) { transitive = false }
 
+    implementation libs.bundles.adventure
+    shadowBundle libs.bundles.adventure
     common(project(path: ':arclight-common', configuration: 'namedElements')) { transitive = false }
     shadowBundle(project(path: ':arclight-common', configuration: 'transformProductionNeoForge')) { transitive = false }
 }

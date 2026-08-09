@@ -29,6 +29,10 @@ dependencies {
     implementation libs.bungeecord.chat
     implementation libs.mysql.connectorj
     implementation libs.snakeyaml
+    implementation(libs.bundles.adventure) {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.checkerframework'
+    }
 
     implementation project(':i18n-config')
     testImplementation platform('org.junit:junit-bom:5.14.4')

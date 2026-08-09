@@ -34,6 +34,8 @@ dependencies {
     shadowBundle(project(path: ':arclight-common', configuration: 'transformProductionFabric')) { transitive = false }
     common(project(':bootstrap')) { transitive = false }
     shadowBundle(project(':bootstrap')) { transitive = false }
+    implementation libs.bundles.adventure
+    shadowBundle libs.bundles.adventure
 }
 
 tasks.register('fabricMappings', Copy) {

@@ -11,6 +11,7 @@ asm = '9.7.1'
 commons-io = '2.19.0'
 gson = '2.10.1'
 hocon = '3.6.1'
+adventure = '4.17.0'
 
 lorenz = '0.5.8'
 lorenz-io-proguard = '0.5.8'
@@ -79,6 +80,12 @@ terminalconsoleappender = { module = 'net.minecrell:terminalconsoleappender', ve
 log4j-api = { module = 'org.apache.logging.log4j:log4j-api', version.ref = 'log4j' }
 log4j-core = { module = 'org.apache.logging.log4j:log4j-core', version.ref = 'log4j' }
 log4j-jul = { module = 'org.apache.logging.log4j:log4j-jul', version.ref = 'log4j' }
+adventure-api = { module = 'net.kyori:adventure-api', version.ref = 'adventure' }
+adventure-minimessage = { module = 'net.kyori:adventure-text-minimessage', version.ref = 'adventure' }
+adventure-serializer-gson = { module = 'net.kyori:adventure-text-serializer-gson', version.ref = 'adventure' }
+adventure-serializer-legacy = { module = 'net.kyori:adventure-text-serializer-legacy', version.ref = 'adventure' }
+adventure-serializer-plain = { module = 'net.kyori:adventure-text-serializer-plain', version.ref = 'adventure' }
+adventure-logger-slf4j = { module = 'net.kyori:adventure-text-logger-slf4j', version.ref = 'adventure' }
 
 arclight-api = { module = 'io.izzel.arclight:arclight-api', version.ref = 'arclight-api' }
 izzel-tools = { module = 'io.izzel:tools', version.ref = 'izzel-tools' }
@@ -107,3 +114,4 @@ lorenz = ['lorenz-core', 'lorenz-proguard', 'lorenz-tiny']
 log4j = ['log4j-api', 'log4j-core', 'log4j-jul']
 spigot-shade = ['spigot-api', 'bungeecord-chat']
 spigot-runtime = ['spigot-api', 'snakeyaml', 'mysql-connectorj', 'bungeecord-chat']
+adventure = ['adventure-api', 'adventure-minimessage', 'adventure-serializer-gson', 'adventure-serializer-legacy', 'adventure-serializer-plain', 'adventure-logger-slf4j']
