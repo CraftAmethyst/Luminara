@@ -25,7 +25,7 @@ public class MinecraftProvider {
     }
 
     public static List<Path> modInstall(Consumer<String> logger) throws Throwable {
-        InputStream stream = ForgeInstaller.class.getModule().getResourceAsStream("/META-INF/installer.json");
+        InputStream stream = MinecraftProvider.class.getModule().getResourceAsStream("/META-INF/installer.json");
         InstallInfo installInfo = new Gson().fromJson(new InputStreamReader(stream), InstallInfo.class);
         List<Supplier<Path>> suppliers = checkMavenNoSource(installInfo.libraries);
         if (!suppliers.isEmpty()) {

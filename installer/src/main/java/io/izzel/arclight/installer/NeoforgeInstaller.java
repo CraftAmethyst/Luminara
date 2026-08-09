@@ -35,7 +35,7 @@ public class NeoforgeInstaller {
 
     @SuppressWarnings("unused")
     public static Map.Entry<String, List<String>> applicationInstall() throws Throwable {
-        InputStream stream = ForgeInstaller.class.getResourceAsStream("/META-INF/installer.json");
+        InputStream stream = NeoforgeInstaller.class.getResourceAsStream("/META-INF/installer.json");
         InstallInfo installInfo = new Gson().fromJson(new InputStreamReader(stream), InstallInfo.class);
         List<Supplier<Path>> suppliers = MinecraftProvider.checkMavenNoSource(installInfo.libraries);
         var sysType = File.pathSeparatorChar == ';' ? "win" : "unix";
@@ -61,7 +61,7 @@ public class NeoforgeInstaller {
                 } catch (IOException e) {
                     try (URLClassLoader loader = new URLClassLoader(
                         new URL[]{futures[0].join().toUri().toURL()},
-                        ForgeInstaller.class.getClassLoader().getParent())) {
+                        NeoforgeInstaller.class.getClassLoader().getParent())) {
                         Method method = loader.loadClass("net.minecraftforge.installer.SimpleInstaller").getMethod("main", String[].class);
                         method.invoke(null, (Object) new String[]{"--installServer", ".", "--debug"});
                     }
@@ -112,7 +112,7 @@ public class NeoforgeInstaller {
         exports.add("cpw.mods.bootstraplauncher/cpw.mods.bootstraplauncher=ALL-UNNAMED");
         List<String> ignores = new ArrayList<>();
         List<String> merges = new ArrayList<>();
-        var self = new File(ForgeInstaller.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath();
+        var self = new File(NeoforgeInstaller.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath();
         for (String arg : Files.lines(path).toList()) {
             if (jvmArgs && arg.startsWith("-")) {
                 if (arg.startsWith("-p ")) {

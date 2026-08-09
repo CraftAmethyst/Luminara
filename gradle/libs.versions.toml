@@ -30,8 +30,6 @@ mixin-tools = '1.2.6'
 # minecraft, loaders dependencies (CHECK when migrating Minecraft Versions)
 minecraft = '1.21.1'
 parchment = '2024.11.17'
-forge = '52.1.14'
-full-forge = '1.21.1-52.1.14'
 fabric-loader = '0.19.2'
 fabric-api = '0.116.11+1.21.1'
 neoforge = '21.1.228'
@@ -91,8 +89,7 @@ arclight-api = { module = 'io.izzel.arclight:arclight-api', version.ref = 'arcli
 izzel-tools = { module = 'io.izzel:tools', version.ref = 'izzel-tools' }
 mixin-tools = { module = 'io.izzel.arclight:mixin-tools', version.ref = 'mixin-tools' }
 
-# platforms (arclight-forge, arclight-fabric, arclight-neoforge)
-forge = { module = 'net.minecraftforge:forge', version.ref = 'full-forge' }
+# platforms (arclight-fabric, arclight-neoforge)
 fabric-loader = { module = 'net.fabricmc:fabric-loader', version.ref = 'fabric-loader' }
 fabric-api = { module = 'net.fabricmc.fabric-api:fabric-api', version.ref = 'fabric-api' }
 fabric-permissions-api = { module ='me.lucko:fabric-permissions-api', version.ref = 'fabric-permissions-api' }

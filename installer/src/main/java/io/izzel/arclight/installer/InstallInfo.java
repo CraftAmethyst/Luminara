@@ -12,8 +12,6 @@ public class InstallInfo {
     public static class Installer {
 
         public String minecraft;
-        public String forge;
-        public String forgeHash;
         public String neoforge;
         public String neoforgeHash;
         public String fabricLoader;

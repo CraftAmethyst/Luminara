@@ -12,7 +12,7 @@ import cpw.mods.util.LambdaExceptionUtils;
 import io.izzel.arclight.api.ArclightPlatform;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.boot.AbstractBootstrap;
-import io.izzel.arclight.installer.ForgeInstaller;
+import io.izzel.arclight.installer.NeoforgeInstaller;
 import io.izzel.arclight.installer.MinecraftProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.MarkerManager;
@@ -93,7 +93,7 @@ public class ModBootstrap implements AbstractBootstrap {
                 if (optional.isPresent()) {
                     var uri = optional.get();
                     if (uri.getScheme().equals("file")) {
-                        ForgeInstaller.addToPath(new File(uri).toPath());
+                        NeoforgeInstaller.addToPath(new File(uri).toPath());
                     }
                 }
             }

@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class FabricInstaller {
 
     public static Map.Entry<String, List<Path>> applicationInstall() throws Exception {
-        InputStream stream = ForgeInstaller.class.getResourceAsStream("/META-INF/installer.json");
+        InputStream stream = FabricInstaller.class.getResourceAsStream("/META-INF/installer.json");
         InstallInfo installInfo = new Gson().fromJson(new InputStreamReader(stream), InstallInfo.class);
         List<Supplier<Path>> suppliers = MinecraftProvider.checkMavenNoSource(installInfo.fabricDeps());
         Path path = Paths.get("libraries/net/fabricmc/fabric-loader", installInfo.installer.fabricLoader, "fabric-loader-" + installInfo.installer.fabricLoader + ".jar");
