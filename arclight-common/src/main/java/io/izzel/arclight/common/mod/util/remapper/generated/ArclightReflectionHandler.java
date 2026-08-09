@@ -144,20 +144,23 @@ public class ArclightReflectionHandler extends ClassLoader {
 
     // srg -> bukkit
     public static String handleClassGetName(String cl) {
-        return remapper.toBukkitRemapper().mapType(cl.replace('.', '/')).replace('/', '.');
+        String mapped = remapper.toBukkitRemapper().mapType(cl.replace('.', '/')).replace('/', '.');
+        return CraftBukkitVersionRemapper.toVersionedBinaryName(mapped);
     }
 
     // srg -> bukkit
     public static String redirectClassGetName(Class<?> cl) {
         String internalName = Type.getInternalName(cl);
         Type type = Type.getObjectType(remapper.toBukkitRemapper().mapType(internalName));
-        return type.getInternalName().replace('/', '.');
+        return CraftBukkitVersionRemapper.toVersionedBinaryName(type.getInternalName().replace('/', '.'));
     }
 
     // srg -> bukkit
     public static String handlePackageGetName(String name) {
         if (name.startsWith(PREFIX)) {
             return PREFIX + "server." + ArclightVersion.current().packageName();
+        } else if (name.startsWith("org.bukkit.craftbukkit.")) {
+            return CraftBukkitVersionRemapper.toVersionedBinaryName(name);
         } else {
             return name;
         }
@@ -219,6 +222,33 @@ public class ArclightReflectionHandler extends ClassLoader {
         return type.getTypeName();
     }
 
+    private static String normalizeReflectionClassName(String className) {
+        if (className == null || className.isEmpty()) {
+            return className;
+        }
+        if (className.startsWith("[L") && className.endsWith(";")) {
+            String elementType = className.substring(2, className.length() - 1);
+            return "[L" + CraftBukkitVersionRemapper.remapBinaryName(elementType) + ";";
+        }
+        if (className.startsWith("L") && className.endsWith(";")) {
+            String elementType = className.substring(1, className.length() - 1);
+            return "L" + CraftBukkitVersionRemapper.remapBinaryName(elementType) + ";";
+        }
+        return CraftBukkitVersionRemapper.remapBinaryName(className);
+    }
+
+    private static String mapTypeForReflection(String binaryName) {
+        if (binaryName.startsWith("[L") && binaryName.endsWith(";")) {
+            String elementType = binaryName.substring(2, binaryName.length() - 1);
+            return "[L" + mapTypeForReflection(elementType) + ";";
+        }
+        if (binaryName.startsWith("L") && binaryName.endsWith(";")) {
+            String elementType = binaryName.substring(1, binaryName.length() - 1);
+            return "L" + mapTypeForReflection(elementType) + ";";
+        }
+        return remapper.mapType(binaryName.replace('.', '/')).replace('/', '.');
+    }
+
     // bukkit -> srg
     public static Class<?> redirectClassForName(String cl) throws ClassNotFoundException {
         return redirectClassForName(cl, true, Unsafe.getCallerClass().getClassLoader());
@@ -226,16 +256,28 @@ public class ArclightReflectionHandler extends ClassLoader {
 
     // bukkit -> srg
     public static Class<?> redirectClassForName(String cl, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
+        String normalizedName = normalizeReflectionClassName(cl);
+        String mappedName = mapTypeForReflection(normalizedName);
         try {
-            String replace = remapper.mapType(cl.replace('.', '/')).replace('/', '.');
-            return Class.forName(replace, initialize, classLoader);
-        } catch (ClassNotFoundException e) { // nested/inner class
-            int i = cl.lastIndexOf('.');
-            if (i > 0) {
-                String replace = cl.substring(0, i).replace('.', '/') + "$" + cl.substring(i + 1);
-                replace = remapper.mapType(replace).replace('/', '.').replace('$', '.');
-                return Class.forName(replace, initialize, classLoader);
-            } else throw e;
+            return Class.forName(mappedName, initialize, classLoader);
+        } catch (ClassNotFoundException firstFailure) {
+            if (!mappedName.equals(normalizedName)) {
+                try {
+                    return Class.forName(normalizedName, initialize, classLoader);
+                } catch (ClassNotFoundException ignored) {
+                }
+            }
+            int separator = normalizedName.lastIndexOf('.');
+            if (separator > 0) {
+                String nestedName = normalizedName.substring(0, separator) + "$" + normalizedName.substring(separator + 1);
+                String mappedNestedName = mapTypeForReflection(nestedName);
+                try {
+                    return Class.forName(mappedNestedName, initialize, classLoader);
+                } catch (ClassNotFoundException ignored) {
+                    return Class.forName(nestedName, initialize, classLoader);
+                }
+            }
+            throw firstFailure;
         }
     }
 
@@ -423,13 +465,22 @@ public class ArclightReflectionHandler extends ClassLoader {
     }
 
     public static Object[] handleClassLoaderLoadClass(ClassLoader loader, String binaryName) {
-        return new Object[]{loader, remapper.mapType(binaryName.replace('.', '/')).replace('/', '.')};
+        String normalizedName = normalizeReflectionClassName(binaryName);
+        return new Object[]{loader, mapTypeForReflection(normalizedName)};
     }
 
     // bukkit -> srg
     public static Class<?> redirectClassLoaderLoadClass(ClassLoader loader, String binaryName) throws ClassNotFoundException {
-        String replace = remapper.mapType(binaryName.replace('.', '/')).replace('/', '.');
-        return loader.loadClass(replace);
+        String normalizedName = normalizeReflectionClassName(binaryName);
+        String mappedName = mapTypeForReflection(normalizedName);
+        try {
+            return loader.loadClass(mappedName);
+        } catch (ClassNotFoundException firstFailure) {
+            if (!mappedName.equals(normalizedName)) {
+                return loader.loadClass(normalizedName);
+            }
+            throw firstFailure;
+        }
     }
 
     public static String findMappedResource(Class<?> cl, String name) {
@@ -453,7 +504,7 @@ public class ArclightReflectionHandler extends ClassLoader {
         } else {
             className = name;
         }
-        className = remapper.mapType(className);
+        className = remapper.mapType(CraftBukkitVersionRemapper.remapInternalName(className));
         if (className.startsWith("java/") || className.startsWith("jdk/") || className.startsWith("javax/")) {
             return null;
         } else if (cl != null) return "/" + className + ".class";

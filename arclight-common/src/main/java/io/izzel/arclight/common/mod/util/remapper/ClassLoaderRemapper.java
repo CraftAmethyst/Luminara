@@ -178,15 +178,22 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     }
 
     public void tryDefineClass(String internalName) {
-        if (!internalName.startsWith(PREFIX)) {
-            throw new NoClassDefFoundError(internalName);
+        String normalizedName = internalName.indexOf('.') == -1 ? internalName : internalName.replace('.', '/');
+        normalizedName = CraftBukkitVersionRemapper.remapInternalName(normalizedName);
+        if (!normalizedName.startsWith(PREFIX)) {
+            try {
+                Class.forName(normalizedName.replace('/', '.'), false, classLoader);
+                return;
+            } catch (ClassNotFoundException ignored) {
+                throw new NoClassDefFoundError(internalName);
+            }
         }
-        LOGGER.warn("Loading CLIENT side class: {}", internalName);
+        LOGGER.warn("Loading CLIENT side class: {}", normalizedName);
         ClassWriter writer = new ClassWriter(0);
-        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC | Opcodes.ACC_DEPRECATED, internalName, null, "java/lang/Object", new String[]{});
+        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC | Opcodes.ACC_DEPRECATED, normalizedName, null, "java/lang/Object", new String[]{});
         writer.visitEnd();
         byte[] bytes = writer.toByteArray();
-        Unsafe.defineClass(Type.getObjectType(internalName).getClassName(), bytes, 0, bytes.length, getClass().getClassLoader(), getClass().getProtectionDomain());
+        Unsafe.defineClass(Type.getObjectType(normalizedName).getClassName(), bytes, 0, bytes.length, getClass().getClassLoader(), getClass().getProtectionDomain());
     }
 
     private String mapMethod(Method method) {
