@@ -35,6 +35,7 @@ public class ArclightImplementer extends GameTransformer {
         this.implementers.put("switch", SwitchTableFixer.INSTANCE);
         this.implementers.put("async", AsyncCatcher.INSTANCE);
         this.implementers.put("enum", new EnumDefinalizer());
+        this.implementers.put("service_loader", new ServiceLoaderTransformer());
         boolean logger = detectTransformLogger();
         if (logger) {
             this.implementers.put("logger", new LoggerTransformer());

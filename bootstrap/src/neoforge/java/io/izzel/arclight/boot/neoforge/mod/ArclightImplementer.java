@@ -53,6 +53,7 @@ public class ArclightImplementer implements ILaunchPluginService {
         this.implementers.put("switch", SwitchTableFixer.INSTANCE);
         this.implementers.put("async", AsyncCatcher.INSTANCE);
         this.implementers.put("enum", new EnumDefinalizer());
+        this.implementers.put("service_loader", new ServiceLoaderTransformer());
         if (this.logger) {
             this.implementers.put("logger", new LoggerTransformer());
         }
