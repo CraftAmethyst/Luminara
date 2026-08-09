@@ -22,6 +22,7 @@ compatibility:
     - "com.example.mod.package.aaaa"
   isolate-adventure-from-modloader: false
   preload-bungee-chat-classes: true
+  enable-bukkit-reload-command: true
 
 async-catcher:
   dump: true

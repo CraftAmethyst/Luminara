@@ -43,6 +43,7 @@
     "MaterialMixin",
     "PotionTypeMixin",
     "Registry_SimpleRegistryMixin",
+    "SimpleCommandMapMixin",
     "SpigotWorldConfigMixin",
     "StandardMessengerMixin",
     "WatchdogThreadMixin",

@@ -37,6 +37,9 @@ public class  CompatSpec {
     @Setting("preload-bungee-chat-classes")
     private boolean preloadBungeeChatClasses = true;
 
+    @Setting("enable-bukkit-reload-command")
+    private boolean enableBukkitReloadCommand = true;
+
     public Map<String, MaterialPropertySpec> getMaterials() {
         return materials;
     }
@@ -92,5 +95,9 @@ public class  CompatSpec {
 
     public boolean isPreloadBungeeChatClasses() {
         return preloadBungeeChatClasses;
+    }
+
+    public boolean isEnableBukkitReloadCommand() {
+        return enableBukkitReloadCommand;
     }
 }
