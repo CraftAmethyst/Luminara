@@ -22,6 +22,7 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.entity.Item;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -76,6 +77,20 @@ public abstract class ItemEntityMixin extends EntityMixin implements ItemEntityB
 
         final int canHold = ((InventoryBridge) entity.getInventory()).bridge$canHold(itemstack);
         final int remaining = count - canHold;
+        if (this.pickupDelay <= 0) {
+            final PlayerAttemptPickupItemEvent attemptEvent = new PlayerAttemptPickupItemEvent(
+                ((ServerPlayerBridge) entity).bridge$getBukkitEntity(),
+                (Item) this.getBukkitEntity(),
+                remaining
+            );
+            Bukkit.getPluginManager().callEvent(attemptEvent);
+            if (attemptEvent.isCancelled()) {
+                if (attemptEvent.getFlyAtPlayer()) {
+                    entity.take((ItemEntity) (Object) this, count);
+                }
+                return (int) DecorationOps.cancel().invoke();
+            }
+        }
         if (this.pickupDelay <= 0 && canHold > 0) {
             itemstack.setCount(canHold);
             final PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent(((ServerPlayerBridge) entity).bridge$getBukkitEntity(), (Item) this.getBukkitEntity(), remaining);
