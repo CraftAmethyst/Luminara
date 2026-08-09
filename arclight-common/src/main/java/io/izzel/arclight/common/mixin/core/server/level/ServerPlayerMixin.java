@@ -336,9 +336,6 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
         slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/world/level/GameRules;RULE_SHOWDEATHMESSAGES:Lnet/minecraft/world/level/GameRules$Key;")))
     private boolean arclight$firePlayerDeath(GameRules instance, GameRules.Key<GameRules.BooleanValue> key, DamageSource damagesource) throws Throwable {
         var flag = (boolean) DecorationOps.callsite().invoke(instance, key);
-        if (this.isRemoved()) {
-            return (boolean) DecorationOps.cancel().invoke();
-        }
         boolean spectator = this.isSpectator();
         boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || spectator;
         // FIXME: InitAuther97: copying an Inventory is so expensive and our only way to optimize it is to copy it selectively...
@@ -357,12 +354,14 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements ServerPla
             this.closeContainer();
         }
         String dmsg = arclight$deathMessage;
-        if (dmsg != null && !dmsg.isEmpty() && flag) {
-            if (!dmsg.equals(dmsgOrig)) {
-                ((CombatTrackerBridge) this.getCombatTracker()).bridge$setDeathMessage(CraftChatMessage.fromStringOrNull(dmsg));
+        if (dmsg != null) {
+            if (!dmsg.isEmpty() && flag) {
+                if (!dmsg.equals(dmsgOrig)) {
+                    ((CombatTrackerBridge) this.getCombatTracker()).bridge$setDeathMessage(CraftChatMessage.fromStringOrNull(dmsg));
+                }
+            } else {
+                flag = false;
             }
-        } else {
-            flag = false;
         }
         return flag;
     }

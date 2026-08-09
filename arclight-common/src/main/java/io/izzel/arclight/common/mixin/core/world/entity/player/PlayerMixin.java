@@ -23,10 +23,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Unit;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -88,7 +86,6 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerBri
 
     // @formatter:off
     @Shadow public abstract String getScoreboardName();
-    @Shadow @Final private Abilities abilities;
     @Shadow public abstract float getAttackStrengthScale(float adjustTicks);
     @Shadow public abstract void resetAttackStrengthTicker();
     @Shadow public abstract SoundSource getSoundSource();
@@ -192,46 +189,6 @@ public abstract class PlayerMixin extends LivingEntityMixin implements PlayerBri
                 player.getInventory().addItem(drop.getItemStack());
             }
             cir.setReturnValue(null);
-        }
-    }
-
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public boolean hurt(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
-            return false;
-        } else if (this.abilities.invulnerable && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return false;
-        } else {
-            this.noActionTime = 0;
-            if (this.isDeadOrDying()) {
-                return false;
-            } else {
-                if (source.scalesWithDifficulty()) {
-                    if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-                        // amount = 0.0F;
-                        return false;
-                    }
-
-                    if (this.level().getDifficulty() == Difficulty.EASY) {
-                        amount = Math.min(amount / 2.0F + 1.0F, amount);
-                    }
-
-                    if (this.level().getDifficulty() == Difficulty.HARD) {
-                        amount = amount * 3.0F / 2.0F;
-                    }
-                }
-
-                boolean damaged = super.hurt(source, amount);
-                if (damaged) {
-                    this.removeEntitiesOnShoulder();
-                }
-                return damaged;
-                //return amount == 0.0F ? false : super.attackEntityFrom(source, amount);
-            }
         }
     }
 
