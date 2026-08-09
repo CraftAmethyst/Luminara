@@ -26,6 +26,8 @@ import java.security.Permissions;
 import java.security.ProtectionDomain;
 import java.security.SecureClassLoader;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.StringJoiner;
 
 @SuppressWarnings("unused")
@@ -237,7 +239,42 @@ public class ArclightReflectionHandler extends ClassLoader {
         return CraftBukkitVersionRemapper.remapBinaryName(className);
     }
 
+    private static boolean shouldMapTypeName(String binaryName) {
+        return binaryName.startsWith("net.minecraft.")
+            || binaryName.startsWith("org.bukkit.")
+            || binaryName.startsWith("com.mojang.");
+    }
+
+    private static Class<?> tryLoadClass(String binaryName, boolean initialize, ClassLoader preferredLoader) throws ClassNotFoundException {
+        Set<ClassLoader> loaders = new LinkedHashSet<>();
+        loaders.add(preferredLoader);
+        loaders.add(ArclightReflectionHandler.class.getClassLoader());
+        loaders.add(Thread.currentThread().getContextClassLoader());
+        loaders.add(ClassLoader.getSystemClassLoader());
+
+        Throwable firstFailure = null;
+        for (ClassLoader loader : loaders) {
+            if (loader == null) {
+                continue;
+            }
+            try {
+                return Class.forName(binaryName, initialize, loader);
+            } catch (ClassNotFoundException | LinkageError ex) {
+                if (firstFailure == null) {
+                    firstFailure = ex;
+                }
+            }
+        }
+        if (firstFailure instanceof ClassNotFoundException classNotFoundException) {
+            throw classNotFoundException;
+        }
+        throw new ClassNotFoundException(binaryName, firstFailure);
+    }
+
     private static String mapTypeForReflection(String binaryName) {
+        if (binaryName == null || binaryName.isEmpty()) {
+            return binaryName;
+        }
         if (binaryName.startsWith("[L") && binaryName.endsWith(";")) {
             String elementType = binaryName.substring(2, binaryName.length() - 1);
             return "[L" + mapTypeForReflection(elementType) + ";";
@@ -245,6 +282,9 @@ public class ArclightReflectionHandler extends ClassLoader {
         if (binaryName.startsWith("L") && binaryName.endsWith(";")) {
             String elementType = binaryName.substring(1, binaryName.length() - 1);
             return "L" + mapTypeForReflection(elementType) + ";";
+        }
+        if (!shouldMapTypeName(binaryName)) {
+            return binaryName;
         }
         return remapper.mapType(binaryName.replace('.', '/')).replace('/', '.');
     }
@@ -259,22 +299,33 @@ public class ArclightReflectionHandler extends ClassLoader {
         String normalizedName = normalizeReflectionClassName(cl);
         String mappedName = mapTypeForReflection(normalizedName);
         try {
-            return Class.forName(mappedName, initialize, classLoader);
+            return tryLoadClass(mappedName, initialize, classLoader);
         } catch (ClassNotFoundException firstFailure) {
             if (!mappedName.equals(normalizedName)) {
                 try {
-                    return Class.forName(normalizedName, initialize, classLoader);
+                    return tryLoadClass(normalizedName, initialize, classLoader);
                 } catch (ClassNotFoundException ignored) {
+                }
+            }
+            if (normalizedName.indexOf('$') >= 0 && !shouldMapTypeName(normalizedName)) {
+                try {
+                    return tryLoadClass(normalizedName.replace('$', '.'), initialize, classLoader);
+                } catch (ClassNotFoundException ignored) {
+                    throw firstFailure;
                 }
             }
             int separator = normalizedName.lastIndexOf('.');
             if (separator > 0) {
-                String nestedName = normalizedName.substring(0, separator) + "$" + normalizedName.substring(separator + 1);
+                String simpleName = normalizedName.substring(separator + 1);
+                if (simpleName.matches("v\\d+_\\d+_R\\d+")) {
+                    throw firstFailure;
+                }
+                String nestedName = normalizedName.substring(0, separator) + "$" + simpleName;
                 String mappedNestedName = mapTypeForReflection(nestedName);
                 try {
-                    return Class.forName(mappedNestedName, initialize, classLoader);
+                    return tryLoadClass(mappedNestedName, initialize, classLoader);
                 } catch (ClassNotFoundException ignored) {
-                    return Class.forName(nestedName, initialize, classLoader);
+                    return tryLoadClass(nestedName, initialize, classLoader);
                 }
             }
             throw firstFailure;
@@ -475,11 +526,18 @@ public class ArclightReflectionHandler extends ClassLoader {
         String mappedName = mapTypeForReflection(normalizedName);
         try {
             return loader.loadClass(mappedName);
-        } catch (ClassNotFoundException firstFailure) {
+        } catch (ClassNotFoundException | LinkageError failure) {
             if (!mappedName.equals(normalizedName)) {
-                return loader.loadClass(normalizedName);
+                try {
+                    return loader.loadClass(normalizedName);
+                } catch (ClassNotFoundException | LinkageError ignored) {
+                    return tryLoadClass(normalizedName, false, loader);
+                }
             }
-            throw firstFailure;
+            if (failure instanceof ClassNotFoundException classNotFoundException) {
+                throw classNotFoundException;
+            }
+            throw new ClassNotFoundException(mappedName, failure);
         }
     }
 
