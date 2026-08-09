@@ -29,7 +29,7 @@ public abstract class StonecutterRecipeMixin extends SingleItemRecipe implements
         }
         CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
         CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient));
-        recipe.setGroup(this.group);
+        recipe.setGroup(this.group == null ? "" : this.group);
         return recipe;
     }
 }
