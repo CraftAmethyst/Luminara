@@ -34,6 +34,9 @@ public class  CompatSpec {
     @Setting("isolate-adventure-from-modloader")
     private boolean isolateAdventureFromModloader;
 
+    @Setting("preload-bungee-chat-classes")
+    private boolean preloadBungeeChatClasses = true;
+
     public Map<String, MaterialPropertySpec> getMaterials() {
         return materials;
     }
@@ -85,5 +88,9 @@ public class  CompatSpec {
 
     public boolean isAdventureIsolatedFromML() {
         return isolateAdventureFromModloader;
+    }
+
+    public boolean isPreloadBungeeChatClasses() {
+        return preloadBungeeChatClasses;
     }
 }

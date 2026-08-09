@@ -7,7 +7,9 @@ import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.mixin.bukkit.plugin.SimplePluginManagerAccessor;
 import io.izzel.arclight.common.mod.ArclightCommon;
 import io.izzel.arclight.common.mod.command.LuminaraCommand;
+import io.izzel.arclight.common.mod.util.BungeeComponentPreloader;
 import io.izzel.arclight.common.mod.util.VelocitySupport;
+import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -98,6 +100,9 @@ public class ArclightServer {
                 org.spigotmc.SpigotConfig.init(new File("./spigot.yml"));
                 org.spigotmc.SpigotConfig.registerCommands();
                 server.getCommandMap().register("luminara", new LuminaraCommand());
+                if (ArclightConfig.spec().getCompat().isPreloadBungeeChatClasses()) {
+                    BungeeComponentPreloader.preload();
+                }
                 if (VelocitySupport.isEnabled()) {
                     SpigotConfig.bungee = true;
                 }

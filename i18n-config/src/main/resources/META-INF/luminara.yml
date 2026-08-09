@@ -21,6 +21,7 @@ compatibility:
   isolate-plugin-class-loaders:
     - "com.example.mod.package.aaaa"
   isolate-adventure-from-modloader: false
+  preload-bungee-chat-classes: true
 
 async-catcher:
   dump: true
