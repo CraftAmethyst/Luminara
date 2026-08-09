@@ -30,8 +30,16 @@ dependencies {
 
     implementation(project(':i18n-config')) { transitive = false }
 
-    implementation libs.bundles.adventure
-    shadowBundle libs.bundles.adventure
+    implementation(libs.bundles.adventure) {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.checkerframework'
+        exclude group: 'com.google.code.gson'
+    }
+    shadowBundle(libs.bundles.adventure) {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.checkerframework'
+        exclude group: 'com.google.code.gson'
+    }
     common(project(path: ':arclight-common', configuration: 'namedElements')) { transitive = false }
     shadowBundle(project(path: ':arclight-common', configuration: 'transformProductionNeoForge')) { transitive = false }
 }

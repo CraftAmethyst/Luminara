@@ -34,8 +34,16 @@ dependencies {
     shadowBundle(project(path: ':arclight-common', configuration: 'transformProductionFabric')) { transitive = false }
     common(project(':bootstrap')) { transitive = false }
     shadowBundle(project(':bootstrap')) { transitive = false }
-    implementation libs.bundles.adventure
-    shadowBundle libs.bundles.adventure
+    implementation(libs.bundles.adventure) {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.checkerframework'
+        exclude group: 'com.google.code.gson'
+    }
+    shadowBundle(libs.bundles.adventure) {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.checkerframework'
+        exclude group: 'com.google.code.gson'
+    }
 }
 
 tasks.register('fabricMappings', Copy) {
