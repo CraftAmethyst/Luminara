@@ -10,8 +10,8 @@ optimization:
   use-activation-and-tracking-range: true
 
 compatibility:
-  material-property-overrides:
-  entity-property-overrides:
+  material-property-overrides: {}
+  entity-property-overrides: {}
   symlink-world: false
   extra-logic-worlds:
     - "com.example.mod.ExtraLogicWorld"
@@ -28,7 +28,7 @@ async-catcher:
   dump: true
   warn: true
   defaultOperation: block
-  overrides:
+  overrides: {}
 
 velocity:
   enable: false

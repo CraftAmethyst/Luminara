@@ -1,15 +1,20 @@
 package io.izzel.arclight.i18n;
 
+import com.google.common.reflect.TypeToken;
+import io.izzel.arclight.i18n.conf.ConfigSpec;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ArclightConfigPersistenceTest {
 
@@ -31,6 +36,23 @@ class ArclightConfigPersistenceTest {
         assertTrue(serialized.contains("extra-logic-worlds:"));
         assertTrue(serialized.contains("- example.First"));
         assertFalse(serialized.contains("compatibility: {"));
+    }
+
+    @Test
+    void bundledDefaultsDeserializeEmptyMaps() throws Exception {
+        try (var stream = ArclightConfigPersistenceTest.class.getResourceAsStream("/META-INF/luminara.yml")) {
+            assertNotNull(stream);
+            var node = YAMLConfigurationLoader.builder()
+                .setSource(() -> new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)))
+                .build()
+                .load();
+            ConfigSpec spec = node.getValue(TypeToken.of(ConfigSpec.class));
+
+            assertNotNull(spec);
+            assertTrue(spec.getAsyncCatcher().getOverrides().isEmpty());
+            assertTrue(spec.getCompat().getMaterials().isEmpty());
+            assertTrue(spec.getCompat().getEntities().isEmpty());
+        }
     }
 
     @Test
