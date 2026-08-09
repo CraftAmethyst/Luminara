@@ -5,7 +5,6 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @ConfigSerializable
@@ -23,8 +22,8 @@ public class  CompatSpec {
     @Setting("extra-logic-worlds")
     private List<String> extraLogicWorlds;
 
-    @Setting("forward-permission")
-    private String forwardPermission;
+    @Setting("permission-forwarding")
+    private PermissionForwarding permissionForwarding;
 
     @Setting("valid-username-regex")
     private String validUsernameRegex;
@@ -60,11 +59,15 @@ public class  CompatSpec {
     }
 
     public boolean isForwardPermission() {
-        return Objects.equals(forwardPermission, "true");
+        return forwarding() == PermissionForwarding.FORGE_TO_BUKKIT;
     }
 
     public boolean isForwardPermissionReverse() {
-        return Objects.equals(forwardPermission, "reverse");
+        return forwarding() == PermissionForwarding.BUKKIT_TO_FORGE;
+    }
+
+    private PermissionForwarding forwarding() {
+        return permissionForwarding == null ? PermissionForwarding.DISABLED : permissionForwarding;
     }
 
     public String getValidUsernameRegex() {

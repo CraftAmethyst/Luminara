@@ -96,6 +96,7 @@ gson = { module = 'com.google.code.gson:gson', version.ref = 'gson' }
 
 # i18n-config
 configurate-hocon = { module = 'org.spongepowered:configurate-hocon', version.ref = 'hocon' }
+configurate-yaml = { module = 'org.spongepowered:configurate-yaml', version.ref = 'hocon' }
 
 # bootstrap
 sponge-mixin = { module = 'org.spongepowered:mixin', version.ref = 'mixin' }

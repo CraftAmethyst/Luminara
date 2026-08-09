@@ -3,31 +3,37 @@ package io.izzel.arclight.i18n;
 import com.google.common.reflect.TypeToken;
 import io.izzel.arclight.i18n.conf.ConfigSpec;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.yaml.snakeyaml.DumperOptions;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 
 public class ArclightConfig {
 
     private static ArclightConfig instance;
 
-    private final CommentedConfigurationNode node;
+    private final ConfigurationNode node;
     private final ConfigSpec spec;
 
-    public ArclightConfig(CommentedConfigurationNode node) throws ObjectMappingException {
+    public ArclightConfig(ConfigurationNode node) throws ObjectMappingException {
         this.node = node;
         this.spec = this.node.getValue(TypeToken.of(ConfigSpec.class));
+        if (this.spec == null || this.spec.getVersion() != ConfigMigration.CURRENT_VERSION) {
+            throw new ObjectMappingException("Invalid configuration key _v: expected " + ConfigMigration.CURRENT_VERSION);
+        }
     }
 
-    public CommentedConfigurationNode getNode() {
+    public ConfigurationNode getNode() {
         return node;
     }
 
@@ -44,41 +50,71 @@ public class ArclightConfig {
     }
 
     private static void load() throws Exception {
-        Path path = Paths.get("arclight.conf");
-        CommentedConfigurationNode node = HoconConfigurationLoader.builder().setSource(
-            () -> new BufferedReader(new InputStreamReader(ArclightConfig.class.getResourceAsStream("/META-INF/arclight.conf"), StandardCharsets.UTF_8))
-        ).build().load();
-        HoconConfigurationLoader loader = HoconConfigurationLoader.builder().setPath(path).build();
-        CommentedConfigurationNode cur = loader.load();
-        cur.mergeValuesFrom(node);
-        cur.getNode("locale", "current").setValue(ArclightLocale.getInstance().getCurrent());
-        fillComments(cur, ArclightLocale.getInstance());
-        instance = new ArclightConfig(cur);
-        loader.save(cur);
+        Path path = Paths.get("luminara.yml");
+        ConfigurationNode defaults = loadDefaults();
+        ConfigurationNode configured;
+        ConfigMigration.Result migration;
+
+        if (Files.isRegularFile(path)) {
+            configured = loader(path).load();
+            migration = ConfigMigration.migrate(configured);
+            configured.mergeValuesFrom(defaults);
+        } else {
+            configured = defaults;
+            migration = ConfigMigration.migrate(configured);
+        }
+
+        configured.getNode("locale", "current").setValue(ArclightLocale.getInstance().getCurrent());
+        instance = new ArclightConfig(configured);
+        saveAtomically(path, configured);
+        migration.removedUnsafeSettings().forEach(setting ->
+            System.err.println("Removed unsupported unsafe setting: " + setting)
+        );
     }
 
-    private static void fillComments(CommentedConfigurationNode node, ArclightLocale locale) {
-        if (!node.getComment().isPresent()) {
-            String path = pathOf(node);
-            Optional<String> option = locale.getOption("comments." + path + ".comment");
-            option.ifPresent(node::setComment);
-        }
-        if (node.hasMapChildren()) {
-            for (CommentedConfigurationNode value : node.getChildrenMap().values()) {
-                fillComments(value, locale);
+    private static ConfigurationNode loadDefaults() throws IOException {
+        try (InputStream stream = ArclightConfig.class.getResourceAsStream("/META-INF/luminara.yml")) {
+            if (stream == null) {
+                throw new IOException("Missing /META-INF/luminara.yml");
+            }
+            Path temporary = Files.createTempFile("luminara-defaults", ".yml");
+            try {
+                Files.writeString(temporary, new String(stream.readAllBytes(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+                return loader(temporary).load();
+            } finally {
+                Files.deleteIfExists(temporary);
             }
         }
     }
 
-    private static String pathOf(ConfigurationNode node) {
-        StringJoiner joiner = new StringJoiner(".");
-        for (Object o : node.getPath()) {
-            if (o != null) {
-                joiner.add(o.toString());
-            }
+    private static YAMLConfigurationLoader loader(Path path) {
+        return YAMLConfigurationLoader.builder()
+            .setPath(path)
+            .setIndent(2)
+            .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
+            .build();
+    }
+
+    static void saveAtomically(Path path, ConfigurationNode node) throws IOException {
+        Path absolute = path.toAbsolutePath();
+        Path parent = absolute.getParent();
+        if (parent != null) {
+            Files.createDirectories(parent);
         }
-        String s = joiner.toString();
-        return s.isEmpty() ? "__root__" : s;
+        Path temporary = Files.createTempFile(parent, absolute.getFileName().toString(), ".tmp");
+        try {
+            loader(temporary).save(node);
+            try (FileChannel channel = FileChannel.open(temporary, StandardOpenOption.WRITE)) {
+                channel.force(true);
+            }
+            try {
+                Files.move(temporary, absolute, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException ignored) {
+                Files.move(temporary, absolute, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
     }
 
     static {
