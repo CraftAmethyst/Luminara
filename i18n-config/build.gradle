@@ -1,6 +1,7 @@
 dependencies {
-    implementation libs.configurate.hocon
     implementation libs.configurate.yaml
+    implementation libs.log4j.api
+    implementation libs.log4j.core
     testImplementation platform('org.junit:junit-bom:5.14.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

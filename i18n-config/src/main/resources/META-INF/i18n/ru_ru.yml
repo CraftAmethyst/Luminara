@@ -1,0 +1,399 @@
+logo:
+  - ""
+  - ""
+  - "    §1    __                    _                       "
+  - "    §9   / /   __  ______ ___  (_)___  ____ __________ _"
+  - "    §3  / /   / / / / __ `__ \\/ / __ \\/ __ `/ ___/ __ `/"
+  - "    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / "
+  - "    §e/_____/\\__,_/_/ /_/ /_/_/_/ /_/\\__,_/_/   \\__,_/  "
+  - ""
+  - "    §eLuminara·流明纳拉 Сервер От§b QianMo0721"
+  - "    §aВерсия {} / {}"
+  - "    §aДата сборки {}"
+  - ""
+
+release-name:
+  Horn: "角 (Рог)"
+  GreatHorn: "大角 (Большой Рог)"
+  Executions: "折威 (Казни)"
+  Trials: "顿顽 1.20.1 (Испытания)"
+
+java:
+  deprecated:
+    - "Вы используете устаревшую версию Java"
+    - "Текущая версия {0}, рекомендуемая {1}"
+    - "Поддержка используемой версии Java прекратится в дальнейшем"
+
+i18n:
+  using-language: "Применяется локализация {0} с откатом на {1}"
+
+loading-mapping: "Загрузка разметки ..."
+
+mixin-load:
+  core: "Основной миксин Luminara добавлен."
+  optimization: "Оптимизирующий миксин Luminara добавлен."
+
+mod-load: "Luminara Mod загружен."
+
+patcher:
+  loading: "Загрузка патчей для плагинов ..."
+  loaded: "Загружено {} патчеров"
+  load-error: "Произошла ошибка при загрузке патчера"
+
+registry:
+  forge-event: "События Arclight зарегистрированы."
+  begin: "Регистрирование для Bukkit ..."
+  error: "Произошла ошибка регистрирования Forge "
+  material: "Зарегистрировано  {} новых материалов с {} блоками и {} предметами"
+  entity-type: "Зарегистрировано {} новых типов существ"
+  environment: "Зарегистрировано {} новых измерений"
+  villager-profession: "Зарегистрировано {} новых профессий жителей"
+  biome: "Зарегистрировано {} новых биомов"
+  meta-type:
+    not-subclass: "{} не является подклассом {}"
+    error: "{} предоставил некорректный itemMetaType {}: {}"
+    no-candidate: "{} не обнаружил допустимый конструктор в предоставленном itemMetaType {}"
+  block-state:
+    not-subclass: "{} не является подклассом {}"
+    error: "{} предоставил некорректный itemMetaType {}: {}"
+    no-candidate: "{} не обнаружил допустимый конструктор в предоставленном blockStateClass {}"
+  entity:
+    not-subclass: "{} не является подклассом {}"
+    error: "{} предоставил некорректный entityClass {}: {}"
+
+error-symlink: "Файловая система не поддерживает символические ссылки"
+symlink-file-exist: "Файл уже существует при создании символической ссылки {}"
+
+# Server lifecycle messages (合并所有server相关配置)
+server:
+  starting: "Запуск сервера Luminara..."
+  stopping: "Остановка сервера Luminara..."
+  stopped: "Сервер Luminara остановлен"
+  crash-report-saved: "Отчет о сбое сохранен в: {}"
+  crash-report-failed: "Не удалось сохранить отчет о сбое на диск"
+  unexpected-exception: "Обнаружено неожиданное исключение"
+  continuing-after-crash: "Согласно конфигурации, сервер продолжит работу после сбоя"
+  overload-warning: "Не успевает! Сервер перегружен? Отстает на {} миллисекунд или {} тиков"
+  stop-exception: "Исключение при остановке сервера"
+  async-world-save:
+    starting-shutdown: "Начало асинхронного сохранения мира во время выключения сервера..."
+    starting: "Начало асинхронного сохранения мира..."
+    timeout-or-failed: "Асинхронное сохранение мира не завершилось в течение тайм-аута или не удалось"
+  preparing-start-region: "Подготовка стартовой области для измерения {}"
+  world-save:
+    failed: "Не удалось сохранить мир {}"
+    all-successful: "Все миры успешно сохранены"
+  threads:
+    force-exit: "{} потоков не завершаются корректно, принудительный выход"
+
+# Optimization system messages (合并所有optimization相关配置)
+optimization:
+  chunk-optimization:
+    comment:
+      - "Примечание: Оптимизация чанков будет автоматически отключена при наличии мода C2ME или Noisium, чтобы избежать конфликтов"
+  chunk:
+    unloading: "Выгрузка чанка [{}, {}] в мире {}"
+    unloaded: "{} чанков выгружено"
+    rate-limit: "Ограничение скорости загрузки чанков: оригинал {} -> ограничено {}"
+  memory:
+    cleanup-start: "Начинается очистка памяти..."
+    cleanup-complete: "Очистка памяти завершена, освобождено {} МБ"
+    high-usage: "Высокое использование памяти: {}%"
+    gc-triggered: "Запущена сборка мусора"
+    cache-cleanup-completed: "Очистка кэша Luminara завершена"
+    cache-cleanup-error: "Ошибка при очистке кэша"
+    cache-cleanup-failed: "Очистка кэша не удалась"
+  manager:
+    shutdown-error: "Ошибка при выключении системы оптимизации"
+  async-ai:
+    calculation-error: "Ошибка при асинхронном вычислении ИИ"
+    processing-error: "Ошибка обработки сущности {} в асинхронном ИИ"
+  async-collision:
+    processing-error: "Ошибка обработки сущности {} в асинхронных столкновениях"
+    check-error: "Ошибка при проверке столкновений"
+    handling-error: "Ошибка при обработке асинхронного столкновения между {} и {}"
+  async-event:
+    disabled-due-to-errors: "Асинхронная обработка отключена для типа события из-за ошибок: {}"
+    handler-error: "Ошибка в асинхронном обработчике событий для события {}"
+    registered: "Зарегистрировано асинхронное событие: {}"
+    shutdown-interrupted: "Прерван во время завершения"
+  error-handling:
+    continue-on-crash-warning: "Предупреждение: продолжение работы после сбоя включено, это может привести к повреждению данных"
+    continue-on-crash-disabled: "Продолжение работы после сбоя отключено, сервер остановится"
+  thread-pool:
+    graceful-shutdown-failed: "Пул {} не завершился корректно, принудительное завершение"
+    forced-shutdown-failed: "Пул {} не завершился после принудительного завершения"
+    shutdown-interrupted: "Прерван во время завершения пула {}"
+  thread:
+    uncaught-exception: "Неперехваченное исключение в потоке {}"
+  async-redstone:
+    update-error: "Ошибка при обработке асинхронного обновления редстоуна в {}"
+    calculation-error: "Ошибка при вычислении сигнала редстоуна"
+
+# Velocity forwarding messages (合并所有velocity相关配置)
+velocity:
+  enabled: "Пересылка Velocity Modern включена"
+  disabled: "Пересылка Velocity Modern отключена"
+  loaded-argument-types: "Загружено {} типов аргументов интеграции"
+  failed-load-argument-types: "Не удалось загрузить типы аргументов интеграции, используются значения по умолчанию"
+  forwarding:
+    enabled-for-player: "Современная пересылка Velocity включена для игрока: {} (онлайн-режим: {})"
+    processed-successfully: "Успешно обработана пересылка Velocity для игрока: {}"
+    packet-exception: "Исключение при обработке пакета пересылки Velocity от {}"
+    initialized: "Современная пересылка Velocity инициализирована"
+    player-processed-successfully: "Успешно обработана пересылка Velocity для игрока: {} (онлайн-режим: {})"
+  login:
+    exception-processing: "Исключение при обработке входа Velocity для {}"
+  query:
+    send-failed: "Не удалось отправить пакет запроса Velocity"
+    null-response: "Получен ответ на запрос Velocity с нулевыми данными"
+  address:
+    field-failed-trying-alternatives: "Не удалось установить переадресованный адрес через f_129469_, пробуем альтернативы"
+    reflection-failed-trying-bridge: "Не удалось установить адрес через рефлексию, пробуем мостовой метод"
+    bridge-failed: "Не удалось установить адрес через мост"
+  packet:
+    too-small: "Пакет Velocity слишком мал: {} байт"
+  signature:
+    mismatch: "Подпись Velocity не совпадает!"
+    verification-error: "Ошибка при проверке подписи Velocity"
+
+# Error messages
+error:
+  class-not-found: "Класс не найден: {}"
+  method-not-found: "Метод не найден: {}"
+  field-not-found: "Поле не найдено: {}"
+  invalid-configuration: "Недопустимый файл конфигурации: {}"
+  file-not-found: "Файл не найден: {}"
+  permission-denied: "Доступ запрещен: {}"
+  network-error: "Сетевая ошибка: {}"
+  database-error: "Ошибка базы данных: {}"
+  plugin-error: "Ошибка плагина: {}"
+  mixin-error: "Ошибка Mixin: {}"
+
+# Warning messages
+warning:
+  deprecated-api: "Использование устаревшего API: {}"
+  performance-issue: "Обнаружена проблема с производительностью: {}"
+  memory-low: "Предупреждение о нехватке памяти, текущее использование: {}%"
+  disk-space-low: "Мало места на диске: {} МБ осталось"
+  plugin-conflict: "Обнаружен конфликт плагинов: {} может конфликтовать с {}"
+  async-operation: "Предупреждение об асинхронной операции: {}"
+
+# World management messages (合并所有world相关配置)
+world:
+  creating: "Создание мира {}"
+  created: "Мир {} создан"
+  loading: "Загрузка мира {}"
+  loaded: "Мир {} загружен"
+  unloading: "Выгрузка мира {}"
+  unloaded: "Мир {} выгружен"
+  saving: "Сохранение мира: {}"
+  saved-successfully: "Мир {} успешно сохранен"
+  save-error: "Ошибка сохранения мира {}"
+  unknown-level-stem: "Назначить {} неизвестному стволу уровня {}"
+
+# Mod integration messages
+mod: {}
+
+# Sign block entity messages
+sign: {}
+
+# Enum extender messages (合并所有enum相关配置)
+enum:
+  field-added: "Добавлено {} в {}"
+
+# World symlink messages
+symlink: {}
+
+# Distribution validation messages
+dist: {}
+
+# Chat system messages (合并所有chat相关配置)
+chat:
+  empty-message-warning: "{} попытался отправить пустое сообщение"
+  long-message-warning: "{} попытался отправить слишком длинное сообщение: {} символов"
+  processing-exception: "Исключение при обработке события чата"
+
+# Player action/data messages (合并所有player相关配置)
+player:
+  dropped-items-quickly: "{} слишком быстро выбросил предметы!"
+  invalid-hotbar: "{} попытался установить недопустимый выбор панели быстрого доступа"
+  command-issued: "{} выполнил серверную команду: {}"
+  data:
+    load-failed: "Не удалось загрузить данные игрока для {}"
+  moved-wrongly: "{} двигался неправильно!"
+  moved-too-quickly: "{} двигался слишком быстро! {},{},{}"
+  vehicle-moved-too-quickly: "{} (транспорт {}) двигался слишком быстро! {},{},{}"
+  vehicle-moved-wrongly: "{} (транспорт {}) двигался неправильно! {}"
+  attack-invalid-entity: "Игрок {} попытался атаковать недействительную сущность"
+  place-in-world-failed: "Не удалось поместить игрока в мир"
+
+# Bootstrap messages
+bootstrap:
+  error: "Ошибка загрузки Arclight"
+
+# Component bridge messages
+component:
+  bridge:
+    method-not-found: "Не удалось найти метод getSiblings в классе Component"
+    init-failed: "Не удалось инициализировать ComponentBridgeHandler: {}"
+    get-siblings-failed: "Не удалось получить siblings из Component: {}"
+    create-stream-failed: "Не удалось создать Component stream: {}"
+    create-iterator-failed: "Не удалось создать Component iterator: {}"
+
+# Material messages
+material:
+  bad-data-class: "Неверный класс данных материала {} для {}"
+
+# Authentication messages
+auth:
+  verification-failed-allow: "Не удалось проверить имя пользователя, но вход будет разрешен в любом случае!"
+  invalid-session: "Имя пользователя '{}' попыталось подключиться с недействительной сессией"
+  servers-down-allow: "Серверы аутентификации недоступны, но вход будет разрешен в любом случае!"
+  servers-unavailable: "Не удалось проверить имя пользователя, поскольку серверы недоступны"
+  exception-verifying: "Исключение при проверке {}"
+  player-uuid: "UUID игрока {} равен {}"
+  exception-verifying-player: "Исключение при проверке {}"
+  player-uuid-velocity: "UUID игрока {} равен {} (от Velocity)"
+
+# Permission messages
+permission:
+  forge-to-bukkit: "Пересылка разрешения forge[{}] в bukkit"
+
+# ClassLoader messages
+classloader:
+  dump-failed: "Не удалось выгрузить класс {}"
+  client-side-class: "Загрузка класса клиентской стороны: {}"
+  no-remap-config: "Не предоставлена конфигурация переназначения класса для класса {}, используется PLUGIN"
+  class-not-found: "Не удалось найти класс {}"
+
+# Event system messages
+event:
+  handler:
+    registration-failed: "Ошибка регистрации обработчика событий: {} {}"
+
+# Network messages
+network:
+  custom-payload:
+    register-too-large: "Пользовательская полезная нагрузка REGISTER слишком велика: {} байт"
+    register-string-too-long: "Строка пользовательской полезной нагрузки REGISTER слишком длинная: {} символов"
+    register-error: "Не удалось зарегистрировать пользовательскую полезную нагрузку"
+    unregister-too-large: "Пользовательская полезная нагрузка UNREGISTER слишком велика: {} байт"
+    unregister-string-too-long: "Строка пользовательской полезной нагрузки UNREGISTER слишком длинная: {} символов"
+    unregister-error: "Не удалось отменить регистрацию пользовательской полезной нагрузки"
+    dispatch-failed: "Не удалось отправить пользовательскую полезную нагрузку"
+  packet:
+    handle-failed: "Не удалось обработать пакет {}, подавление ошибки"
+
+# Chunk messages
+chunk:
+  unload-callback:
+    failed: "Не удалось запланировать обратный вызов выгрузки для чанка {}"
+  load-callback:
+    failed: "Не удалось запланировать обратный вызов загрузки для чанка {}"
+
+# Entity messages
+entity:
+  target:
+    unknown-reason: "Неизвестная причина цели установки {} цели на {}"
+
+# Item messages
+item:
+  legacy-itemstack: "Используется устаревший ItemStack, обновления не будут применены: {}"
+
+# Recipe messages
+recipe:
+  loading:
+    skip-null-serializer: "Пропуск загрузки рецепта {}, поскольку его сериализатор вернул null"
+    parsing-error: "Ошибка разбора при загрузке рецепта {}"
+    completed: "Загружено {} рецептов"
+
+# Loot messages
+loot:
+  container:
+    overfill-attempt: "Попытка переполнить контейнер"
+
+# Comments (保留所有俄语注释配置)
+comments:
+  _v.comment:
+    - "Репозиторий: https://github.com/CraftAmethyst/Luminara"
+    - "Баг-трекер: https://github.com/CraftAmethyst/Luminara/issues"
+    - ""
+    - ""
+    - "Версия конфигурации, не исправляйте."
+  locale.comment: "Язык/настройки I18n"
+  logging:
+    comment: "Настройки вывода логов"
+    use-simple-format:
+      comment:
+        - "Использовать ли упрощенный формат вывода логов"
+        - "true - Использовать простой формат (скрыть имена потоков и классов)"
+        - "false - Использовать подробный формат (показывать полные имена потоков, классов и другую отладочную информацию)"
+  optimization:
+    comment: "Настройки серверных оптимизаций"
+    goal-selector-update-interval.comment:
+      - "Интервал в тиках для обновления селектора целей"
+      - "Более высокие значения потребляют меньше ресурсов"
+      - "Заставляют мобов реже менять свои цели"
+  async-catcher.comment:
+    - "Настройки Async Catcher"
+    - "Есть четыре режима, BLOCK наиболее предпочтителен"
+    - "NONE - Ничего не предпринимать"
+    - "DISPATCH - Действовать в основном потоке без его блокировки"
+    - "BLOCK - Перехватывать основной поток и ожидать результат"
+    - "EXCEPTION - Выдавать исключение"
+  async-catcher.dump.comment: "Сохранять трассировку стека в debug.log"
+  async-world-save.comment:
+    - "Настройки асинхронного сохранения мира"
+    - "Асинхронно сохранять данные мира при выключении сервера для сокращения времени выключения"
+  error-handling.comment:
+    - "Настройки обработки ошибок"
+    - "Управляет поведением сервера при сбоях и ошибках"
+  error-handling.continue-on-crash.comment: "Продолжать работу сервера после сбоя (по умолчанию отключено, рекомендуется оставить отключенным)"
+  error-handling.crash-report-directory.comment: "Директория для хранения файлов отчетов о сбоях"
+  async-world-save.enabled.comment: "Включить ли функцию асинхронного сохранения мира"
+  async-world-save.timeout-seconds.comment:
+    - "Тайм-аут асинхронного сохранения в секундах"
+    - "Если сохранение не завершится в течение этого времени, сервер продолжит процесс выключения"
+  async-world-save.save-world-data.comment: "Включать ли данные мира в асинхронное сохранение"
+  compatibility:
+    symlink-world.comment:
+      - "Создать символические ссылки на папку измерения мода, соответствующую имени мира Bukkit"
+      - "Включение этого может улучшить совместимость плагинов"
+      - "Изменение этого на продакшн сервере вызовет изменения в именах миров модов"
+      - "  и приведет к потере данных в плагинах, зависящих от имен миров"
+      - "См. https://github.com/IzzelAliz/Arclight/wiki/World-Symlink для подробностей"
+    extra-logic-worlds.comment:
+      - "Дополнительная логика работающих миров"
+      - "Если какие-то моды работают неправильно, попробуйте найти имена классов в логах, связанные с [EXT_LOGIC], и добавьте их сюда"
+    forward-permission.comment:
+      - "true - Перенаправлять запросы разрешений Forge в Bukkit"
+      - "false - Отключить перенаправление разрешений"
+      - "reverse - Перенаправлять запросы разрешений игроков Bukkit в Forge"
+    valid-username-regex.comment:
+      - "Регулярное выражение для проверки действительного имени пользователя. Оставьте пустым для использования ванильной проверки"
+      - "Следующее разрешает китайские символы:"
+      - "valid-username-regex = \"^[ -~\\\\p{sc=Han}]{1,16}$\""
+      - "Следующее разрешает любое имя пользователя для входа:"
+      - 'valid-username-regex = ".+"'
+    lenient-item-tag-match.comment:
+      - "Позволяет предметам с пустым nbt тегом складываться с предметами без тега"
+    preload-bungee-chat-classes.comment:
+      - "Включить ли предзагрузку классов API чата Bungee при запуске"
+      - "Это помогает исправить проблемы, когда некоторые плагины не могут правильно загрузить API BungeeChat"
+      - "Установите значение false, если вы сталкиваетесь с проблемами совместимости с определенными плагинами"
+  velocity:
+    comment: "Настройки, связанные с Velocity Modern Forwarding"
+    enabled.comment:
+      - "Включить ли поддержку Velocity Modern Forwarding"
+      - "При включении позволяет интеграцию с прокси-сервером Velocity"
+    online-mode.comment:
+      - "Включить ли проверку онлайн-режима"
+      - "Обычно должно соответствовать настройке online-mode в конфигурации Velocity"
+    forwarding-secret.comment:
+      - "Секретный ключ пересылки Velocity"
+      - "Должен точно соответствовать forwarding-secret в файле конфигурации Velocity"
+      - "Используется для аутентификации запросов подключения от Velocity"
+    debug-logging.comment:
+      - "Отображать ли отладочную информацию, связанную с пересылкой Velocity, в логах"
+      - "Включите это для помощи в диагностике проблем с подключением"

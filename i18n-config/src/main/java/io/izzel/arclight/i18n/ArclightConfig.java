@@ -67,6 +67,7 @@ public class ArclightConfig {
         configured.getNode("locale", "current").setValue(ArclightLocale.getInstance().getCurrent());
         instance = new ArclightConfig(configured);
         saveAtomically(path, configured);
+        LoggingConfigurator.apply(instance.spec);
         migration.removedUnsafeSettings().forEach(setting ->
             System.err.println("Removed unsupported unsafe setting: " + setting)
         );
@@ -104,6 +105,17 @@ public class ArclightConfig {
         Path temporary = Files.createTempFile(parent, absolute.getFileName().toString(), ".tmp");
         try {
             loader(temporary).save(node);
+            String currentLocale = node.getNode("locale", "current").getString("en_us");
+            String localized;
+            try {
+                localized = I18nCommentInjector.injectComments(
+                    Files.readString(temporary, StandardCharsets.UTF_8),
+                    currentLocale
+                );
+            } catch (Exception exception) {
+                throw new IOException("Unable to inject localized configuration comments", exception);
+            }
+            Files.writeString(temporary, localized, StandardCharsets.UTF_8);
             try (FileChannel channel = FileChannel.open(temporary, StandardOpenOption.WRITE)) {
                 channel.force(true);
             }

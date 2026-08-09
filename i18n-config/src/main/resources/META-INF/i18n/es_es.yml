@@ -1,0 +1,400 @@
+logo:
+  - ""
+  - ""
+  - "    §1    __                    _                       "
+  - "    §9   / /   __  ______ ___  (_)___  ____ __________ _"
+  - "    §3  / /   / / / / __ `__ \\/ / __ \\/ __ `/ ___/ __ `/"
+  - "    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / "
+  - "    §e/_____/\\__,_/_/ /_/ /_/_/_/ /_/\\__,_/_/   \\__,_/  "
+  - ""
+  - "    §eLuminara·流明纳拉 Servidor Por§b QianMo0721"
+  - "    §aVersión {} / {}"
+  - "    §aFecha de compilación {}"
+  - ""
+
+release-name:
+  Horn: "角 (Cuerno)"
+  GreatHorn: "大角 (Gran Cuerno)"
+  Executions: "折威 (Ejecuciones)"
+  Trials: "顿顽 1.20.1 (Pruebas)"
+
+java:
+  deprecated:
+    - "Estás utilizando una versión desactualizada de Java"
+    - "Actual {0} Recomendada {1}"
+    - "La versión actual de Java no será soportada en un futuro"
+
+i18n:
+  using-language: "Usando el idioma {0} y el idioma alternativo {1}"
+
+loading-mapping: "Cargando mappings ..."
+
+mixin-load:
+  core: "Núcleo de mixin de Luminara añadido."
+  optimization: "Optimización de mixin de Luminara añadida."
+
+mod-load: "Luminara Mod cargado."
+
+patcher:
+  loading: "Cargando plugin patchers ..."
+  loaded: "{} patchers cargados"
+  load-error: "Ha ocurrido un error cargando el patcher"
+
+registry:
+  forge-event: "Eventos de Arclight registrados."
+  begin: "Registrando Bukkit ..."
+  error: "Ha ocurrido un error registrando Forge "
+  material: "Registrados {} materiales nuevos con {} bloques y {} objetos"
+  entity-type: "Registrados {} tipos de entidades nuevos"
+  environment: "Registradas {} dimensiones nuevas"
+  villager-profession: "Registradas {} profesiones de aldeanos nuevas"
+  biome: "Registrados {} biomas nuevos"
+  meta-type:
+    not-subclass: "{} no es una subclase de {}"
+    error: "{} itemMetaType proporcionado {} no es válido: {}"
+    no-candidate: "{} no encontró un constructor válido en el itemMetaType proporcionado {}"
+  block-state:
+    not-subclass: "{} no es una subclase de {}"
+    error: "{} itemMetaType proporcionado {} no es válido: {}"
+    no-candidate: "{} no encontró un constructor válido en el blockStateClass proporcionado {}"
+  entity:
+    not-subclass: "{} no es una subclase de {}"
+    error: "{} entityClass proporcionado {} noe s válido: {}"
+
+error-symlink: "El sistema de ficheros no soporta enlaces de símbolos"
+symlink-file-exist: "El archivo ya existe al crear el enlace simbólico {}"
+
+# Bootstrap messages
+bootstrap:
+  error: "Error en el arranque de Arclight"
+
+# Component bridge messages
+component:
+  bridge:
+    method-not-found: "No se pudo encontrar el método getSiblings en la clase Component"
+    init-failed: "Falló al inicializar ComponentBridgeHandler: {}"
+    get-siblings-failed: "Falló al obtener siblings del Component: {}"
+    create-stream-failed: "Falló al crear Component stream: {}"
+    create-iterator-failed: "Falló al crear Component iterator: {}"
+
+# Material messages
+material:
+  bad-data-class: "Clase de datos de material incorrecta {} para {}"
+
+# Player messages (合并所有player相关配置)
+player:
+  place-in-world-failed: "No se pudo colocar al jugador en el mundo"
+  dropped-items-quickly: "¡{} soltó objetos demasiado rápido!"
+  invalid-hotbar: "{} intentó establecer una selección de barra de acceso rápido inválida"
+  command-issued: "{} ejecutó comando del servidor: {}"
+  moved-wrongly: "¡{} se movió incorrectamente!"
+  moved-too-quickly: "¡{} se movió demasiado rápido! {},{},{}"
+  vehicle-moved-too-quickly: "{} (vehículo de {}) se movió demasiado rápido! {},{},{}"
+  vehicle-moved-wrongly: "{} (vehículo de {}) se movió incorrectamente! {}"
+  attack-invalid-entity: "El jugador {} intentó atacar una entidad inválida"
+  data:
+    load-failed: "Falló al cargar datos del jugador para {}"
+
+# Server lifecycle messages (合并所有server相关配置)
+server:
+  starting: "Iniciando servidor Luminara..."
+  stopping: "Deteniendo servidor Luminara..."
+  stopped: "El servidor Luminara se ha detenido"
+  crash-report-saved: "Reporte de crash guardado en: {}"
+  crash-report-failed: "Falló al guardar el reporte de crash al disco"
+  unexpected-exception: "Se encontró una excepción inesperada"
+  continuing-after-crash: "Según la configuración, el servidor continuará ejecutándose después del fallo"
+  overload-warning: "¡No puede seguir el ritmo! ¿Está sobrecargado el servidor? Ejecutándose {} milisegundos o {} ticks atrasado"
+  stop-exception: "Excepción al detener el servidor"
+  async-world-save:
+    starting-shutdown: "Iniciando guardado asíncrono del mundo durante el apagado del servidor..."
+    starting: "Iniciando guardado asíncrono del mundo..."
+    timeout-or-failed: "El guardado asíncrono del mundo no se completó dentro del tiempo límite o falló"
+  preparing-start-region: "Preparando región de inicio para la dimensión {}"
+  world-save:
+    failed: "Falló al guardar mundo {}"
+    all-successful: "Todos los mundos guardados exitosamente"
+  threads:
+    force-exit: "{} hilos no se están cerrando correctamente, forzando salida"
+
+# Optimization system messages (合并所有optimization相关配置)
+optimization:
+  chunk-optimization:
+    comment:
+      - "Nota: La optimización de chunks se deshabilitará automáticamente cuando esté presente el mod C2ME o Noisium para evitar conflictos"
+  chunk:
+    unloading: "Descargando chunk [{}, {}] en el mundo {}"
+    unloaded: "{} chunks descargados"
+    rate-limit: "Límite de velocidad de carga de chunks: original {} -> limitado {}"
+  memory:
+    cleanup-start: "Iniciando limpieza de memoria..."
+    cleanup-complete: "Limpieza de memoria completada, liberados {} MB"
+    high-usage: "Uso alto de memoria: {}%"
+    gc-triggered: "Recolección de basura activada"
+    cache-cleanup-completed: "Limpieza de caché de Luminara completada"
+    cache-cleanup-error: "Error durante la limpieza de caché"
+    cache-cleanup-failed: "Falló la limpieza de caché"
+  manager:
+    shutdown-error: "Error durante el cierre del sistema de optimización"
+  async-ai:
+    calculation-error: "Error durante el cálculo de IA asíncrona"
+    processing-error: "Error procesando entidad {} en IA asíncrona"
+  async-collision:
+    calculation-error: "Error durante el cálculo de colisión asíncrona"
+    processing-error: "Error procesando entidad {} en colisión asíncrona"
+    check-error: "Error durante la verificación de colisión"
+    handling-error: "Error manejando colisión asíncrona entre {} y {}"
+  async-event:
+    disabled-due-to-errors: "Procesamiento asíncrono deshabilitado para tipo de evento debido a errores: {}"
+    handler-error: "Error en el manejador de eventos asíncrono para el evento {}"
+    registered: "Evento asíncrono registrado: {}"
+    shutdown-interrupted: "Interrumpido durante el apagado"
+  error-handling:
+    continue-on-crash-warning: "Advertencia: continuar después del fallo está habilitado, esto puede causar corrupción de datos"
+    continue-on-crash-disabled: "Continuar después del fallo está deshabilitado, el servidor se detendrá"
+  thread-pool:
+    graceful-shutdown-failed: "El pool {} no terminó correctamente, forzando apagado"
+    forced-shutdown-failed: "El pool {} no terminó después del apagado forzado"
+    shutdown-interrupted: "Interrumpido mientras se apagaba el pool {}"
+  thread:
+    uncaught-exception: "Excepción no capturada en hilo {}"
+  async-redstone:
+    update-error: "Error procesando actualización de redstone asíncrona en {}"
+    calculation-error: "Error calculando señal de redstone"
+
+# Velocity forwarding messages (合并所有velocity相关配置)
+velocity:
+  enabled: "Reenvío Velocity Modern habilitado"
+  disabled: "Reenvío Velocity Modern deshabilitado"
+  loaded-argument-types: "{} tipos de argumentos de integración cargados"
+  failed-load-argument-types: "Falló la carga de tipos de argumentos de integración, usando valores por defecto"
+  forwarding:
+    enabled-for-player: "Reenvío moderno de Velocity está habilitado para el jugador: {} (modo en línea: {})"
+    processed-successfully: "Procesado exitosamente el reenvío de Velocity para el jugador: {}"
+    packet-exception: "Excepción procesando paquete de reenvío de Velocity desde {}"
+    initialized: "Reenvío moderno de Velocity inicializado"
+    player-processed-successfully: "Procesado exitosamente el reenvío de Velocity para el jugador: {} (modo en línea: {})"
+  login:
+    exception-processing: "Excepción procesando inicio de sesión de Velocity para {}"
+  query:
+    send-failed: "Falló al enviar paquete de consulta de Velocity"
+    null-response: "Recibida respuesta de consulta de Velocity con datos nulos"
+  address:
+    field-failed-trying-alternatives: "Falló al establecer dirección reenviada vía f_129469_, intentando alternativas"
+    reflection-failed-trying-bridge: "Falló al establecer dirección vía reflexión, intentando método puente"
+    bridge-failed: "Falló al establecer dirección vía puente"
+  packet:
+    too-small: "Paquete de Velocity demasiado pequeño: {} bytes"
+  signature:
+    mismatch: "¡Firma de Velocity no coincide!"
+    verification-error: "Error verificando firma de Velocity"
+
+# Error messages
+error:
+  class-not-found: "Clase no encontrada: {}"
+  method-not-found: "Método no encontrado: {}"
+  field-not-found: "Campo no encontrado: {}"
+  invalid-configuration: "Archivo de configuración inválido: {}"
+  file-not-found: "Archivo no encontrado: {}"
+  permission-denied: "Permiso denegado: {}"
+  network-error: "Error de red: {}"
+  database-error: "Error de base de datos: {}"
+  plugin-error: "Error de plugin: {}"
+  mixin-error: "Error de Mixin: {}"
+
+# Warning messages
+warning:
+  deprecated-api: "Usando API obsoleta: {}"
+  performance-issue: "Problema de rendimiento detectado: {}"
+  memory-low: "Advertencia de memoria baja, uso actual: {}%"
+  disk-space-low: "Espacio en disco bajo: {} MB restantes"
+  plugin-conflict: "Conflicto de plugin detectado: {} puede entrar en conflicto con {}"
+  async-operation: "Advertencia de operación asíncrona: {}"
+
+# World management messages (合并所有world相关配置)
+world:
+  creating: "Creando mundo {}"
+  created: "Mundo {} creado"
+  loading: "Cargando mundo {}"
+  loaded: "Mundo {} cargado"
+  unloading: "Descargando mundo {}"
+  unloaded: "Mundo {} descargado"
+  saving: "Guardando mundo: {}"
+  saved-successfully: "Mundo {} guardado exitosamente"
+  save-error: "Error guardando mundo {}"
+  unknown-level-stem: "Asignar {} a tipo de nivel desconocido {}"
+
+# Mod integration messages
+mod: {}
+
+# Sign block entity messages
+sign: {}
+
+# Enum extender messages
+enum:
+  field-added: "Agregado {} a {}"
+
+# World symlink messages
+symlink: {}
+
+# Distribution validation messages
+dist: {}
+
+# Chat system messages (合并所有chat相关配置)
+chat:
+  empty-message-warning: "{} intentó enviar un mensaje vacío"
+  long-message-warning: "{} intentó enviar un mensaje demasiado largo: {} caracteres"
+  processing-exception: "Excepción procesando evento de chat"
+
+# Authentication messages
+auth:
+  verification-failed-allow: "Falló la verificación del nombre de usuario pero se permitirá el acceso de todos modos!"
+  invalid-session: "El nombre de usuario '{}' intentó unirse con una sesión inválida"
+  servers-down-allow: "Los servidores de autenticación están caídos pero se permitirá el acceso de todos modos!"
+  servers-unavailable: "No se pudo verificar el nombre de usuario porque los servidores no están disponibles"
+  exception-verifying: "Excepción verificando {}"
+  player-uuid: "UUID del jugador {} es {}"
+  exception-verifying-player: "Excepción verificando {}"
+  player-uuid-velocity: "UUID del jugador {} es {} (desde Velocity)"
+
+# Permission messages
+permission:
+  forge-to-bukkit: "Reenviando permiso de forge[{}] a bukkit"
+
+# ClassLoader messages
+classloader:
+  dump-failed: "Falló al volcar clase {}"
+  client-side-class: "Cargando clase del lado del cliente: {}"
+  no-remap-config: "No se proporcionó configuración de remapeo de clase para la clase {}, usando PLUGIN"
+  class-not-found: "Falló al encontrar clase {}"
+
+# Event system messages
+event:
+  handler:
+    registration-failed: "Error registrando manejador de eventos: {} {}"
+
+# Network messages
+network:
+  custom-payload:
+    register-too-large: "Carga personalizada REGISTER demasiado grande: {} bytes"
+    register-string-too-long: "Cadena de carga personalizada REGISTER demasiado larga: {} caracteres"
+    register-error: "No se pudo registrar carga personalizada"
+    unregister-too-large: "Carga personalizada UNREGISTER demasiado grande: {} bytes"
+    unregister-string-too-long: "Cadena de carga personalizada UNREGISTER demasiado larga: {} caracteres"
+    unregister-error: "No se pudo desregistrar carga personalizada"
+    dispatch-failed: "No se pudo despachar carga personalizada"
+  packet:
+    handle-failed: "Falló al manejar paquete {}, suprimiendo error"
+
+# Chunk messages
+chunk:
+  unload-callback:
+    failed: "Falló al programar callback de descarga para chunk {}"
+  load-callback:
+    failed: "Falló al programar callback de carga para chunk {}"
+
+# Entity messages
+entity:
+  target:
+    unknown-reason: "Razón de objetivo desconocida estableciendo {} objetivo a {}"
+
+# Item messages
+item:
+  legacy-itemstack: "Se está usando ItemStack heredado, las actualizaciones no se aplicarán: {}"
+
+# Recipe messages
+recipe:
+  loading:
+    skip-null-serializer: "Omitiendo carga de receta {} ya que su serializador devolvió null"
+    parsing-error: "Error de análisis cargando receta {}"
+    completed: "Cargadas {} recetas"
+
+# Loot messages
+loot:
+  container:
+    overfill-attempt: "Intentó llenar en exceso un contenedor"
+
+# Comments (保留所有注释配置)
+comments:
+  _v.comment:
+    - "Repositorio: https://github.com/CraftAmethyst/Luminara"
+    - "Rastredor de asuntos y errores: https://github.com/CraftAmethyst/Luminara/issues"
+    - ""
+    - ""
+    - "Versión de la configuración, no editar."
+  locale.comment: "Idioma/ajustes I18n"
+  logging:
+    comment: "Configuración relacionada con la salida de logs"
+    use-simple-format:
+      comment:
+        - "Si usar formato simplificado para la salida de logs"
+        - "true - Usar formato simple (ocultar nombres de hilos y clases)"
+        - "false - Usar formato detallado (mostrar nombres completos de hilos, clases y otra información de depuración)"
+  optimization:
+    comment: "Ajustes relacionados con la optimización"
+    goal-selector-update-interval.comment:
+      - "Intervalo en ticks para actualizar el selector de objetivos (goal selector)"
+      - "Valores más grandes gastan menos recursos"
+      - "Hace que los mobs cambien sus objetivos menos a menudo"
+  async-catcher.comment:
+    - "Ajustes relacionados con receptor asíncromo (Async Catcher)"
+    - "Hay cuatro modos, y BLOCK (bloqueo) es el recomendado"
+    - "NONE - No hacer nada"
+    - "DISPATCH - Enviar acciones sin interrumpir el hilo principal (main thread)"
+    - "BLOCK - Ejecutar en el hilo principal (main thread) y esperar los resultados"
+    - "EXCEPTION - Generar un error"
+  async-catcher.dump.comment: "Generar un volcado de información (stack trace) en debug.log"
+  async-world-save.comment:
+    - "Configuración relacionada con el guardado asíncrono del mundo"
+    - "Guardar datos del mundo de forma asíncrona durante el cierre del servidor para reducir el tiempo de cierre"
+  error-handling.comment:
+    - "Configuración relacionada con el manejo de errores"
+    - "Controla el comportamiento del servidor al encontrar fallos y errores"
+  error-handling.continue-on-crash.comment: "Si continuar ejecutando el servidor después de un fallo (deshabilitado por defecto, recomendado mantener deshabilitado)"
+  error-handling.crash-report-directory.comment: "Directorio para almacenar archivos de reportes de fallos"
+  async-world-save.enabled.comment: "Si habilitar la función de guardado asíncrono del mundo"
+  async-world-save.timeout-seconds.comment:
+    - "Tiempo de espera del guardado asíncrono en segundos"
+    - "Si el guardado no se completa en este tiempo, el servidor continuará el proceso de cierre"
+  async-world-save.save-world-data.comment: "Si incluir datos del mundo en el guardado asíncrono"
+  compatibility:
+    symlink-world.comment:
+      - "Crear enlaces de símbolos a las dimensiones de mods para que se ajuste al formato de Bukkit"
+      - "Activando esto puede mejorar la compatibilidad entre plugins"
+      - "Cambiar esto en servidores en producción causará cambios a nombres de mundos modificados (mod world names)"
+      - "  y causará pérdida de información en plugins que dependan en los nombres de mundos"
+      - "Lee https://github.com/IzzelAliz/Arclight/wiki/World-Symlink para más detalles"
+    extra-logic-worlds.comment:
+      - "Lógica de los mundos adicionales en ejecución"
+      - "Si algún mod no funciona correctamente, intenta buscar en los logs los nombres de las clases relacionados con [EXT_LOGIC] y añádelos aquí"
+    forward-permission.comment:
+      - "true - Reenviar consultas de permisos de Forge a Bukkit"
+      - "false - Desactivar el reenvío de permisos"
+      - "reverse - Reenviar consultas de permisos de jugadores de Bukkit a Forge"
+    valid-username-regex.comment:
+      - "Expresión regular para verificación de nombres de usuario válidos. Déjalo en blanco para usar la verificación vanilla"
+      - "Lo siguiente permite caracteres chinos:"
+      - "valid-username-regex = \"^[ -~\\\\p{sc=Han}]{1,16}$\""
+      - "Lo siguiente permite cualquier nombre de usuario para iniciar sesión:"
+      - 'valid-username-regex = ".+"'
+    lenient-item-tag-match.comment:
+      - "Permite que los elementos con una etiqueta nbt vacía se apilen en elementos sin etiqueta"
+    preload-bungee-chat-classes.comment:
+      - "Si habilitar la precarga de clases de la API de chat de Bungee al inicio"
+      - "Esto ayuda a solucionar problemas donde algunos plugins no cargan correctamente la API de BungeeChat"
+      - "Establecer en falso si encuentra problemas de compatibilidad con ciertos plugins"
+  velocity:
+    comment: "Configuración relacionada con Velocity Modern Forwarding"
+    enabled.comment:
+      - "Si habilitar el soporte de Velocity Modern Forwarding"
+      - "Cuando está habilitado, permite la integración con el servidor proxy Velocity"
+    online-mode.comment:
+      - "Si habilitar la verificación del modo en línea"
+      - "Normalmente debería coincidir con la configuración online-mode en la configuración de Velocity"
+    forwarding-secret.comment:
+      - "Clave secreta de reenvío de Velocity"
+      - "Debe coincidir exactamente con forwarding-secret en el archivo de configuración de Velocity"
+      - "Se usa para autenticar las solicitudes de conexión de Velocity"
+    debug-logging.comment:
+      - "Si mostrar información de depuración relacionada con el reenvío de Velocity en los logs"
+      - "Habilita esto para ayudar a diagnosticar problemas de conexión"

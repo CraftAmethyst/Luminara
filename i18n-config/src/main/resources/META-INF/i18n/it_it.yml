@@ -1,0 +1,159 @@
+implementer:
+  not-found: Classe non trovata {}
+  error: Errore avvenuto {}
+dfu-disable:
+  legacy-plugin: I plugin legacy non sono consentiti quando optimization.disable-data-fixer
+    è abilitato
+  map-convert: L'aggiornamento del mondo non è consentito quando optimization.disable-data-fixer
+    è abilitato
+symlink-file-exist: Un file esiste già durante la creazione del collegamento simbolico
+  {}
+registry:
+  environment: Registrate {} nuove dimensioni
+  potion: Registrati {} nuovi tipi di effetti delle pozioni
+  material: Registrati {} nuovi materiali con {} blocchi e {} oggetti
+  error: Si è verificato un errore durante la registrazione delle voci modificate
+    su Bukkit
+  entity:
+    error: '{} entityClass fornito {} è invalido: {}'
+    not-subclass: '{} non è una sottoclasse di {}'
+  biome: Registrati {} nuovi biomi
+  entity-type: Registrati {} nuovi tipi di entità
+  villager-profession: Registrate {} nuove professioni dei villacci
+  begin: Registrando per Bukkit ...
+  meta-type:
+    error: '{} itemMetaType fornito {} è invalido: {}'
+    not-subclass: '{} non è una sottoclasse di {}'
+    no-candidate: '{} non è stato trovato un costruttore valido nell''itemMetaType
+      fornito {}'
+  block-state:
+    error: '{} itemMetaType fornito {} è invalido: {}'
+    not-subclass: '{} non è una sottoclasse di {}'
+    no-candidate: '{} non è stato trovato un costruttore valido nell''blockStateClass
+      fornito{}'
+  forge-event: Eventi Arclight registrati.
+  enchantment: Registrati {} incantamenti
+java:
+  deprecated:
+  - Stai usando una versione Java obsoleta
+  - Attuale {0} Raccomandata {1}
+  - La versione Java attuale non sarà supportata in futuro
+mod-load: Arclight Mod caricata.
+i18n:
+  using-language: Usando locale {0} e locale di riserva {1}
+  current-not-available: Locale attuale {0} non disponibile
+loading-mapping: Caricamento mappature ...
+error-symlink: Il sistema file non supporta i collegamenti simbolici
+patcher:
+  load-error: Errore avvenuto durante il caricamento dei patcher
+  loaded: Caricati {} patcher
+  integrated:
+    we-enable: Caricando supporto WorldEdit Bukkit ...
+    we-warning: Per problemi di camopatibilita con WorldEdit, si prega di avvisarci
+      in anticipo!
+  loading: Caricamento patcher plugin...
+logo:
+- ''
+- ''
+- '   §1    ___ §9     §3     §6___§e  §6   __   /\'
+- '   §1   /   |§9 ____§3____§6/ §e(_)§6__ / /  / /'
+- '   §1  / /| |§9/ __§3/ __§6/ §e/ /§6 _ / _ \/__/'
+- '   §1 / ___ §9/ / §3/ /_§6/ §e/ /§6 / / // / /'
+- '   §1/_/  |§9/_/  §3\__§6/_§e/_/§6\_ /_//_/ /'
+- '   §1      §9     §3    §6  §e §6/__/     \/'
+- ''
+- '    §aVersione {} / {}'
+- '    §aData di compilazione {}'
+- ''
+mixin-load:
+  optimization: Ottimizzazione Arclight mixin aggiunta.
+  core: Aggiunto nucleo Arclight mixin.
+lightcity-not-installed: Questo server richiede il plugin Lightcity installato sul
+  tuo proxy Velocity
+comments:
+  compatibility:
+    symlink-world:
+      comment:
+      - Crea collegamenti simbolici alla cartella delle dimensioni delle mod che corrisponde
+        al nome del mondo Bukki
+      - Abilitare questa opzione può migliorare la compatibilità con i plugin
+      - Modificare questa impostazione su un server in produzione causerà cambiamenti
+        ai nomi dei mondi delle mod
+      - '  e provocherà perdita di dati nei plugin che si basano sui nomi dei mondi'
+      - Consultare https://github.com/IzzelAliz/Arclight/wiki/World-Symlink per maggiori
+        dettagli
+    valid-username-regex:
+      comment:
+      - Espressione regolare per la verifica dei nomi utente validi. Lasciarla vuota
+        utilizzerà la verifica standard di vanilla
+      - 'La seguente permette caratteri cinesi:'
+      - valid-username-regex = "^[ -~\\p{sc=Han}]{1,16}$"
+      - 'La seguente permette a qualsiasi nome utente di effettuare il login:'
+      - valid-username-regex = ".+"
+    forward-permission:
+      comment:
+      - true - Inoltra la richiesta di permesso di Forge a Bukkit
+      - false - Disabilita l'inoltro dei permessi
+      - reverse - Inoltra la richiesta di permesso del giocatore Bukkit a Forge
+    isolate-plugin-class-loaders:
+      comment:
+      - Un accesso illegale significa che un plugin carica una classe da un altro
+        plugin che non è una sua dipendenza o dipendenza soft
+      - Quando viene fornito un nome di pacchetto, non verranno tentati accessi illegali
+        alle classi con prefisso uguale al nome del pacchetto.
+      - Questo è particolarmente utile quando si verificano problemi di caricamento
+        delle classi.
+      - 'Attenzione: potrebbe causare malfunzionamenti nei plugin che si basano su
+        accessi illegali.'
+    extra-logic-worlds:
+      comment:
+      - Logica di esecuzione dei mondi extra
+      - Se alcune mod non funzionano correttamente, prova a cercare nei log i nomi
+        delle classi relativi a [EXT_LOGIC] e aggiungili qui
+    isolate-adventure-from-modloader:
+      comment:
+      - Impedisci ai plugin di caricare Kyori Adventure da ModLoader.
+      - Questa è solo un’opzione di compatibilità e resterà per ora. Verrà sostituita
+        con un meccanismo migliore.
+  optimization:
+    goal-selector-update-interval:
+      comment:
+      - Intervallo in tick per aggiornare il selettore degli obiettivi
+      - Valori più alti richiedono meno risorse
+      - Fa sì che i mob cambino i loro obiettivi meno spesso
+    comment: Impostazioni relative all'ottimizzazione
+  _v:
+    comment:
+    - 'Repository: https://github.com/IzzelAliz/Arclight'
+    - 'Tracker dei problemi: https://github.com/IzzelAliz/Arclight/issues'
+    - ''
+    - ''
+    - Numero di versione della configurazione, non modificare.
+  locale:
+    comment: Impostazioni Lingua/I18n
+  async-catcher:
+    comment:
+    - Impostazioni relative ad Async Catcher
+    - Ci sono quattro modalità, ed è raccomandata BLOCK
+    - NONE - Non fare nulla
+    - DISPATCH - Invia l’azione al thread principale senza bloccare
+    - BLOCK - Esegui nel thread principale e attendi i risultati
+    - EXCEPTION - Genera un errore
+    dump:
+      comment: Salva le informazioni dello stack trace in debug.log
+  velocity:
+    secret:
+      comment:
+      - Il segreto utilizzato per l’inoltro moderno delle informazioni dei giocatori
+        su Velocity
+    enable:
+      comment:
+      - Abilita l’inoltro moderno delle informazioni dei giocatori su Velocity
+release-name:
+  Horn: 角 (Corno)
+  GreatHorn: 大角 (Gran Corno)
+  Executions: 折威 (Esecuzioni)
+  FeudalKings: 诸王 (Re Feudali)
+  Trials: 顿顽 (Prove)
+  Net: 毕宿 (Rete)
+  Whisper: 附耳 (Sussurro)

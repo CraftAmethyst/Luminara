@@ -1,0 +1,361 @@
+auth:
+  exception-verifying: "{} 확인 중 예외 발생"
+  exception-verifying-player: "{} 확인 중 예외 발생"
+  invalid-session: 사용자명 '{}'이(가) 유효하지 않은 세션으로 접속을 시도했습니다
+  player-uuid: 플레이어 {}의 UUID는 {}입니다
+  player-uuid-velocity: 플레이어 {}의 UUID는 {}입니다 (Velocity에서)
+  servers-down-allow: 인증 서버가 다운되었지만 어쨌든 입장을 허용합니다!
+  servers-unavailable: 서버를 사용할 수 없어 사용자명을 확인할 수 없습니다
+  verification-failed-allow: 사용자명 확인에 실패했지만 어쨌든 입장을 허용합니다!
+bootstrap:
+  error: Arclight 부트스트랩 오류
+chat:
+  empty-message-warning: "{}가 빈 메시지를 보내려고 했습니다"
+  long-message-warning: "{}가 너무 긴 메시지를 보내려고 했습니다: {} 글자"
+  processing-exception: 채팅 이벤트 처리 중 예외 발생
+chunk:
+  load-callback:
+    failed: 청크 {}에 대한 로드 콜백 스케줄링 실패
+  unload-callback:
+    failed: 청크 {}에 대한 언로드 콜백 스케줄링 실패
+classloader:
+  class-not-found: 클래스 {} 찾기 실패
+  client-side-class: "클라이언트 측 클래스 로딩: {}"
+  dump-failed: 클래스 {} 덤프 실패
+  no-remap-config: 클래스 {}에 대한 클래스 리맵 설정이 제공되지 않았습니다. PLUGIN 사용
+comments:
+  _v:
+    comment:
+      - "레포지트리: https://github.com/CraftAmethyst/Luminara"
+      - "이슈 트래커: https://github.com/CraftAmethyst/Luminara/issues"
+      - ""
+      - ""
+      - 설정 버전 번호, 편집하지 마세요.
+  async-catcher:
+    comment:
+      - Async Catcher 관련 설정
+      - 네 개의 모드가 있으며, BLOCK로 설정하는 것을 권장합니다.
+      - NONE - 아무 것도 하지 않음
+      - DISPATCH - 주 스레드에 올리지 않고 백그라운드에서 실행
+      - BLOCK - 주 스레드에 올리고 결과를 대기
+      - EXCEPTION - 오류를 발생
+    dump:
+      comment: 스택 추적 덤프 정보는 debug.log에 있습니다.
+  async-world-save:
+    comment:
+      - 비동기 월드 저장 관련 설정
+      - 서버 종료 시 월드 데이터를 비동기적으로 저장하여 종료 시간을 단축합니다
+    enabled:
+      comment: 비동기 월드 저장 기능을 활성화할지 여부
+    save-world-data:
+      comment: 비동기 저장에 월드 데이터를 포함할지 여부
+    timeout-seconds:
+      comment:
+        - 비동기 저장 타임아웃 시간(초)
+        - 이 시간 내에 저장이 완료되지 않으면 서버는 종료 프로세스를 계속합니다
+  compatibility:
+    extra-logic-worlds:
+      comment:
+        - 별도 세계 작동 로직
+        - 제대로 작동하지 않는 모드가 있다면, 로그 파일에서 [EXT_LOGIC]와 관련된 클래스 명을
+        - "  찾아 여기에 추가해 주세요."
+    forward-permission:
+      comment:
+        - true - Forge의 권한 쿼리를 Bukkit으로 넘깁니다.
+        - false - 권한 넘기기를 비활성화합니다.
+        - reverse - Bukkit의 권한 쿼리를 Forge로 넘깁니다.
+    lenient-item-tag-match:
+      comment:
+        - 빈 nbt 태그가 있는 아이템이 태그가 없는 아이템과 스택되도록 허용
+    preload-bungee-chat-classes:
+      comment:
+        - 서버 시작 시 Bungee 채팅 API 클래스의 사전 로드를 활성화할지 여부
+        - 일부 플러그인이 BungeeChat API를 제대로 로드하지 못하는 문제를 해결하는 데 도움이 됩니다
+        - 특정 플러그인과의 호환성 문제 발생 시 false로 설정하세요
+    symlink-world:
+      comment:
+        - 버킷 포맷에 맞도록 모드 차원 폴더에 대한 Symbolic Link를 생성합니다.
+        - 활성화하면 플러그인과의 호환성을 향상시킬 수 있습니다.
+        - 이 설정을 수정하면 모드의 월드 명칭이 바뀌어 월드 명칭에 의존하는 플러그인의
+        - "  데이터 손실이 발생할 수 있습니다."
+        - https://github.com/IzzelAliz/Arclight/wiki/World-Symlink (영문)에서 자세한
+        - "  내용을 확인하세요."
+    valid-username-regex:
+      comment:
+        - 유효한 사용자명 확인을 위한 정규식. 비워두면 바닐라 확인을 사용합니다
+        - "다음은 중국어 문자를 허용합니다:"
+        - valid-username-regex = "^[ -~\\p{sc=Han}]{1,16}$"
+        - "다음은 모든 사용자명의 로그인을 허용합니다:"
+        - valid-username-regex = ".+"
+  error-handling:
+    comment:
+      - 오류 처리 관련 설정
+      - 크래시 및 오류 발생 시 서버 동작을 제어합니다
+    continue-on-crash:
+      comment: 크래시 후 서버를 계속 실행할지 여부 (기본값 비활성화, 비활성화 유지 권장)
+    crash-report-directory:
+      comment: 크래시 리포트 파일 저장 디렉토리
+  locale:
+    comment: 언어/I18n 설정
+  logging:
+    comment: 로그 출력 관련 설정
+    use-simple-format:
+      comment:
+        - 단순화된 로그 출력 형식을 사용할지 여부
+        - true - 단순 형식 사용 (스레드명과 클래스명 숨김)
+        - false - 상세 형식 사용 (전체 스레드명, 클래스명 및 기타 디버그 정보 표시)
+  optimization:
+    comment: 최적화 관련 설정
+    goal-selector-update-interval:
+      comment:
+        - 목표 선택기가 업데이트되는 시간(틱 단위)을 설정합니다.
+        - 높은 값은 더 적은 리소스를 소모합니다.
+        - 대신 몹의 목표 변경이 덜 자주 일어나게 됩니다.
+  velocity:
+    comment: Velocity Modern Forwarding 관련 설정
+    debug-logging:
+      comment:
+        - 로그에 Velocity 포워딩 관련 디버그 정보를 표시할지 여부
+        - 연결 문제 진단에 도움이 되도록 이 기능을 활성화하세요
+    enabled:
+      comment:
+        - Velocity Modern Forwarding 지원을 활성화할지 여부
+        - 활성화하면 Velocity 프록시 서버와의 통합이 가능합니다
+    forwarding-secret:
+      comment:
+        - Velocity 포워딩 비밀 키
+        - Velocity 설정 파일의 forwarding-secret와 정확히 일치해야 합니다
+        - Velocity로부터의 연결 요청을 인증하는 데 사용됩니다
+    online-mode:
+      comment:
+        - 온라인 모드 검증을 활성화할지 여부
+        - 일반적으로 Velocity 설정의 online-mode 설정과 일치해야 합니다
+component:
+  bridge:
+    create-iterator-failed: "Component iterator 생성 실패: {}"
+    create-stream-failed: "Component stream 생성 실패: {}"
+    get-siblings-failed: "Component에서 siblings 가져오기 실패: {}"
+    init-failed: "ComponentBridgeHandler 초기화 실패: {}"
+    method-not-found: Component 클래스에서 getSiblings 메서드를 찾을 수 없습니다
+dist: {}
+entity:
+  target:
+    unknown-reason: 알 수 없는 타겟 이유로 {} 타겟을 {}로 설정
+enum:
+  field-added: "{}을(를) {}에 추가했습니다"
+error:
+  class-not-found: "클래스를 찾을 수 없음: {}"
+  database-error: "데이터베이스 오류: {}"
+  field-not-found: "필드를 찾을 수 없음: {}"
+  file-not-found: "파일을 찾을 수 없음: {}"
+  invalid-configuration: "잘못된 설정 파일: {}"
+  method-not-found: "메서드를 찾을 수 없음: {}"
+  mixin-error: "Mixin 오류: {}"
+  network-error: "네트워크 오류: {}"
+  permission-denied: "권한이 거부됨: {}"
+  plugin-error: "플러그인 오류: {}"
+error-symlink: 파일 시스템이 symbolic link를 지원하지 않습니다.
+event:
+  handler:
+    registration-failed: "이벤트 핸들러 등록 오류: {} {}"
+i18n:
+  using-language: 언어 {1} 대신 {0}을 사용합니다.
+item:
+  legacy-itemstack: "레거시 ItemStack이 사용 중입니다. 업데이트가 적용되지 않습니다: {}"
+java:
+  deprecated:
+    - 오래된 JAVA 버전을 이용하고 있습니다!
+    - "현재: {0}, 권장: {1}"
+    - 현재 Java 버전은 향후에 지원되지 않을 것입니다.
+loading-mapping: 맵핑 로드 중...
+logo:
+  - ""
+  - ""
+  - "    §1    __                    _                       "
+  - "    §9   / /   __  ______ ___  (_)___  ____ __________ _"
+  - '    §3  / /   / / / / __ `__ \/ / __ \/ __ `/ ___/ __ `/'
+  - "    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / "
+  - '    §e/_____/\__,_/_/ /_/ /_/_/_/ /_/\__,_/_/   \__,_/  '
+  - ""
+  - "    §eLuminara·流明纳拉 서버 제작자§b QianMo0721"
+  - "    §a버전: {} / {}"
+  - "    §a빌드 날짜: {}"
+  - ""
+loot:
+  container:
+    overfill-attempt: 컨테이너를 과도하게 채우려고 시도했습니다
+material:
+  bad-data-class: "{}에 대한 잘못된 재료 데이터 클래스 {}"
+mixin-load:
+  core: Luminara core mixin 적용됨
+  optimization: Luminara 최적화 mixin 적용됨
+mod: {}
+mod-load: Luminara 모드 로드됨
+network:
+  custom-payload:
+    dispatch-failed: 커스텀 페이로드를 디스패치할 수 없습니다
+    register-error: 커스텀 페이로드를 등록할 수 없습니다
+    register-string-too-long: "커스텀 페이로드 REGISTER 문자열이 너무 깁니다: {} 문자"
+    register-too-large: "커스텀 페이로드 REGISTER가 너무 큽니다: {} 바이트"
+    unregister-error: 커스텀 페이로드를 등록 해제할 수 없습니다
+    unregister-string-too-long: "커스텀 페이로드 UNREGISTER 문자열이 너무 깁니다: {} 문자"
+    unregister-too-large: "커스텀 페이로드 UNREGISTER가 너무 큽니다: {} 바이트"
+  packet:
+    handle-failed: 패킷 {} 처리 실패, 오류 억제
+optimization:
+  chunk-optimization:
+    comment:
+      - "주의: C2ME 또는 Noisium 모드가 존재하면 충돌을 피하기 위해 청크 최적화가 자동으로 비활성화됩니다"
+  async-ai:
+    calculation-error: AI 계산 중 오류
+    processing-error: 비동기 AI에서 엔티티 {} 처리 중 오류 발생
+  async-collision:
+    calculation-error: 충돌 계산 중 오류
+    check-error: 충돌 검사 중 오류 발생
+    handling-error: "{} 및 {} 간의 비동기 충돌 처리 중 오류"
+    processing-error: 비동기 충돌에서 엔티티 {} 처리 중 오류 발생
+  async-event:
+    disabled-due-to-errors: "오류로 인해 이벤트 타입의 비동기 처리 비활성화: {}"
+    handler-error: 이벤트 {}의 비동기 이벤트 핸들러에서 오류 발생
+    registered: "비동기 이벤트 등록됨: {}"
+    shutdown-interrupted: 종료 중 중단됨
+  async-redstone:
+    calculation-error: 레드스톤 신호 계산 중 오류
+    update-error: "{}에서 비동기 레드스톤 업데이트 처리 중 오류"
+  chunk:
+    rate-limit: "청크 로딩 속도 제한: 원본 {} -> 제한 {}"
+    unloaded: "{} 개의 청크가 언로드되었습니다"
+    unloading: 월드 {}의 청크 [{}, {}] 언로드 중
+  error-handling:
+    continue-on-crash-disabled: 크래시 후 계속 실행이 비활성화되어 있습니다. 서버가 중지됩니다
+    continue-on-crash-warning: "경고: 크래시 후 계속 실행이 활성화되어 있습니다. 이는 데이터 손상을 일으킬 수 있습니다"
+  manager:
+    shutdown-error: 최적화 시스템 종료 중 오류 발생
+  memory:
+    cache-cleanup-completed: Luminara 캐시 정리 완료
+    cache-cleanup-error: 캐시 정리 중 오류 발생
+    cache-cleanup-failed: 캐시 정리 실패
+    cleanup-complete: 메모리 정리 완료, {} MB 해제됨
+    cleanup-start: 메모리 정리 시작...
+    gc-triggered: 가비지 컬렉션 실행됨
+    high-usage: "높은 메모리 사용량: {}%"
+  thread:
+    uncaught-exception: 스레드 {}에서 잡히지 않은 예외
+  thread-pool:
+    forced-shutdown-failed: "{} 풀이 강제 종료 후에도 종료되지 않았습니다"
+    graceful-shutdown-failed: "{} 풀이 정상적으로 종료되지 않아 강제 종료합니다"
+    shutdown-interrupted: "{} 풀 종료 중 중단됨"
+patcher:
+  load-error: 패치기 로드 중 오류 발생
+  loaded: "{} 패치기 로드 완료"
+  loading: 플러그인 패치기 로드 중...
+permission:
+  forge-to-bukkit: forge 권한[{}]을 bukkit으로 전달
+player:
+  attack-invalid-entity: 플레이어 {}이(가) 유효하지 않은 엔티티를 공격하려고 시도했습니다
+  command-issued: "{}가 서버 명령어를 실행했습니다: {}"
+  data:
+    load-failed: "{}에 대한 플레이어 데이터 로드 실패"
+  dropped-items-quickly: "{}가 아이템을 너무 빨리 버렸습니다!"
+  invalid-hotbar: "{}가 잘못된 핫바 선택을 설정하려고 했습니다"
+  moved-too-quickly: "{}이(가) 너무 빠르게 이동했습니다! {},{},{}"
+  moved-wrongly: "{}이(가) 잘못 이동했습니다!"
+  place-in-world-failed: 플레이어를 월드에 배치할 수 없습니다
+  vehicle-moved-too-quickly: "{} ({}의 탈것)이(가) 너무 빠르게 이동했습니다! {},{},{}"
+  vehicle-moved-wrongly: "{} ({}의 탈것)이(가) 잘못 이동했습니다! {}"
+recipe:
+  loading:
+    completed: "{} 레시피를 로드했습니다"
+    parsing-error: 레시피 {} 로딩 중 파싱 오류
+    skip-null-serializer: 시리얼라이저가 null을 반환했으므로 레시피 {} 로딩을 건너뜁니다
+registry:
+  begin: 버킷에 적용 중...
+  biome: 신규 바이옴({}종) 적용 완료
+  block-state:
+    error: "{} prodived itemMetaType {} is invalid {}"
+    no-candidate: "{} do not found a valid constructor in provided blockStateClass {}"
+    not-subclass: "{} is not a subclass of {}"
+  entity:
+    error: "{} prodived entityClass {} is invalid: {}"
+    not-subclass: "{} is not a subclass of {}"
+  entity-type: 신규 엔티티({}종) 적용 완료
+  environment: 신규 차원({}종) 적용 완료
+  error: Forge 적용 중 오류 발생
+  forge-event: Arclight 이벤트 적용됨
+  material: "신규 자원(총 {}종: 블록 {}종, 아이템 {}종) 적용 완료"
+  meta-type:
+    error: "{} provided itemMetaType {} is invalid: {}"
+    no-candidate: "{} do not found a valid constructor in prodived itemMetaType {}"
+    not-subclass: "{} is not a subclass of {}"
+  villager-profession: 신규 주민 직업({}종) 적용 완료
+release-name:
+  Executions: 折威 (절위)
+  GreatHorn: 大角 (대각)
+  Horn: 角 (각)
+  Trials: 顿顽 1.20.1 (돈완)
+server:
+  async-world-save:
+    starting: 비동기 월드 저장 시작...
+    starting-shutdown: 서버 종료 중 비동기 월드 저장 시작...
+    timeout-or-failed: 비동기 월드 저장이 시간 초과 내에 완료되지 않았거나 실패했습니다
+  continuing-after-crash: 설정에 따라 크래시 후에도 서버가 계속 실행됩니다
+  crash-report-failed: 크래시 리포트를 디스크에 저장하지 못했습니다
+  crash-report-saved: "크래시 리포트 저장됨: {}"
+  overload-warning: 서버가 따라잡을 수 없습니다! 서버가 과부하 상태인가요? {} 밀리초 또는 {} 틱 지연
+  preparing-start-region: 차원 {}에 대한 시작 지역 준비 중
+  starting: Luminara 서버 시작 중...
+  stop-exception: 서버 중지 중 예외 발생
+  stopped: Luminara 서버가 종료되었습니다
+  stopping: Luminara 서버 종료 중...
+  threads:
+    force-exit: "{} 스레드가 올바르게 종료되지 않아 강제 종료합니다"
+  unexpected-exception: 예상치 못한 예외가 발생했습니다
+  world-save:
+    all-successful: 모든 월드가 성공적으로 저장되었습니다
+    failed: 월드 {} 저장 실패
+sign: {}
+symlink: {}
+symlink-file-exist: 심볼릭 링크 {} 생성 시 파일이 이미 존재합니다
+velocity:
+  address:
+    bridge-failed: 브리지를 통한 주소 설정 실패
+    field-failed-trying-alternatives: f_129469_를 통한 포워딩 주소 설정 실패, 대안 시도 중
+    reflection-failed-trying-bridge: 리플렉션을 통한 주소 설정 실패, 브리지 메서드 시도 중
+  disabled: Velocity Modern 포워딩이 비활성화되었습니다
+  enabled: Velocity Modern 포워딩이 활성화되었습니다
+  failed-load-argument-types: 통합 인수 타입 로드 실패, 기본값 사용
+  forwarding:
+    enabled-for-player: "플레이어 {}에 대해 Velocity Modern 포워딩이 활성화되었습니다 (온라인 모드: {})"
+    initialized: Velocity Modern 포워딩이 초기화되었습니다
+    packet-exception: "{}에서 Velocity 포워딩 패킷 처리 중 예외 발생"
+    player-processed-successfully: "플레이어 {}에 대한 Velocity 포워딩을 성공적으로 처리했습니다 (온라인 모드: {})"
+    processed-successfully: 플레이어 {}에 대한 Velocity 포워딩을 성공적으로 처리했습니다
+  loaded-argument-types: "{} 개의 통합 인수 타입이 로드되었습니다"
+  login:
+    exception-processing: 플레이어 {}의 Velocity 로그인 처리 중 예외 발생
+  packet:
+    too-small: "Velocity 패킷이 너무 작습니다: {} 바이트"
+  query:
+    null-response: null 데이터로 Velocity 쿼리 응답을 받았습니다
+    send-failed: Velocity 쿼리 패킷 전송 실패
+  signature:
+    mismatch: Velocity 서명이 일치하지 않습니다!
+    verification-error: Velocity 서명 확인 중 오류 발생
+warning:
+  async-operation: "비동기 작업 경고: {}"
+  deprecated-api: "사용 중단된 API 사용: {}"
+  disk-space-low: "디스크 공간 부족: {} MB 남음"
+  memory-low: "메모리 부족 경고, 현재 사용량: {}%"
+  performance-issue: "성능 문제 감지: {}"
+  plugin-conflict: "플러그인 충돌 감지: {}가 {}와 충돌할 수 있음"
+world:
+  created: 월드 {} 생성됨
+  creating: 월드 {} 생성 중
+  loaded: 월드 {} 로드됨
+  loading: 월드 {} 로딩 중
+  save-error: 월드 {} 저장 중 오류 발생
+  saved-successfully: 월드 {} 저장 성공
+  saving: "월드 저장 중: {}"
+  unknown-level-stem: "{}을(를) 알 수 없는 레벨 스템 {}에 할당"
+  unloaded: 월드 {} 언로드됨
+  unloading: 월드 {} 언로드 중

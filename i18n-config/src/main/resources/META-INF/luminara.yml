@@ -34,3 +34,6 @@ velocity:
 
 experimental:
   replaceable-base-world-generator: false
+
+logging:
+  use-simple-format: false

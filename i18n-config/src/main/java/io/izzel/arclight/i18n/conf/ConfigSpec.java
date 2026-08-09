@@ -27,6 +27,9 @@ public class ConfigSpec {
     @Setting("experimental")
     private ExperimentalSpec experimentalSpec;
 
+    @Setting("logging")
+    private LoggingSpec loggingSpec;
+
     public int getVersion() {
         return version;
     }
@@ -53,5 +56,9 @@ public class ConfigSpec {
 
     public ExperimentalSpec getExperimental() {
         return experimentalSpec;
+    }
+
+    public LoggingSpec getLogging() {
+        return loggingSpec == null ? new LoggingSpec() : loggingSpec;
     }
 }

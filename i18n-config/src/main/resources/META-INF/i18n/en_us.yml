@@ -1,0 +1,440 @@
+chat:
+  empty-message: "{} tried to send empty message"
+  message-too-long: "{} tried to send too long message: {} characters"
+  processing-exception: Exception processing chat event
+chunk:
+  load-callback:
+    failed: Failed to schedule load callback for chunk {}
+  unload-callback:
+    failed: Failed to schedule unload callback for chunk {}
+classloader:
+  class-not-found: Failed to find class {}
+  client-side-class: "Loading CLIENT side class: {}"
+  dump-failed: Failed to dump class {}
+  no-remap-config: No class remap config is provided for class {}, using PLUGIN
+comments:
+  _v:
+    comment:
+      - "Repository: https://github.com/CraftAmethyst/Luminara"
+      - "Issue Tracker: https://github.com/CraftAmethyst/Luminara/issues"
+      - ""
+      - ""
+      - Config version number, do not edit.
+  async-catcher:
+    comment:
+      - Async Catcher related settings
+      - There are four modes, and BLOCK is recommended
+      - NONE - Do nothing
+      - DISPATCH - Non blocking-ly dispatch action to main thread
+      - BLOCK - Run in main thread and wait for results
+      - EXCEPTION - Raise an error
+    dump:
+      comment: Dump stack trace information in debug.log
+  async-world-save:
+    comment:
+      - Async world save related settings
+      - Asynchronously save world data during server shutdown to reduce shutdown time
+    enabled:
+      comment: Whether to enable async world save feature
+    save-world-data:
+      comment: Whether to include world data in async save
+    timeout-seconds:
+      comment:
+        - Async save timeout in seconds
+        - If save doesn't complete within this time, server will continue shutdown process
+  compatibility:
+    extra-logic-worlds:
+      comment:
+        - Extra worlds running logic
+        - If any mods do not function well, try search class names in logs related to [EXT_LOGIC] and add them here
+    forward-permission:
+      comment:
+        - true - Forward Forge permission query to Bukkit
+        - false - Disable permission forward
+        - reverse - Forward Bukkit player perimission query to Forge
+    lenient-item-tag-match:
+      comment:
+        - Allows items with an empty nbt tag stack on no tag items
+    preload-bungee-chat-classes:
+      comment:
+        - Whether to enable preloading of Bungee chat API classes at startup
+        - This helps fix issues where some plugins wouldn't load the BungeeChat API properly
+        - Set to false if you encounter compatibility issues with certain plugins
+    symlink-world:
+      comment:
+        - Create symbol links to mod dimension folder that matches Bukkit world name
+        - Enable this could improve plugin compotibility
+        - Changing this on production server will cause changes to mod world names
+        - "  and cause data loss on plugins relying world names"
+        - See https://github.com/IzzelAliz/Arclight/wiki/World-Symlink for more detail
+    valid-username-regex:
+      comment:
+        - Regex for valid username check. Leave it blank will fallback to vanilla check
+        - "Following allows Chinese characters:"
+        - valid-username-regex = "^[ -~\\p{sc=Han}]{1,16}$"
+        - "Following allows any username to login:"
+        - valid-username-regex = ".+"
+  error-handling:
+    comment:
+      - Error handling related settings
+      - Controls server behavior when encountering crashes and errors
+    continue-on-crash:
+      comment: Whether to continue running the server after a crash (default disabled, recommended to keep disabled)
+    crash-report-directory:
+      comment: Directory for storing crash report files
+  locale:
+    comment: Language/I18n settings
+  logging:
+    comment: Logging output related settings
+    use-simple-format:
+      comment:
+        - Whether to use simplified log output format
+        - true - Use simple format (hide thread names and class names)
+        - false - Use detailed format (show full thread names, class names and other debug info)
+  optimization:
+    async-system:
+      async-ai-enabled:
+        comment: Whether to enable async AI
+      async-collision-enabled:
+        comment: Whether to enable async collision detection
+      async-redstone-enabled:
+        comment: Whether to enable async redstone
+      comment: Async system related settings
+      disable-on-error:
+        comment: Whether to disable async system on error
+      enabled:
+        comment: Whether to enable async system
+      event-class-blacklist:
+        comment: Event class blacklist
+      max-threads:
+        comment: Maximum thread count
+      mod-blacklist:
+        comment: Mod blacklist
+      strict-class-checking:
+        comment: Whether to enable strict class checking
+      timeout-seconds:
+        comment: Timeout (seconds)
+    cache-plugin-class:
+      comment: Whether to cache plugin classes for better performance
+    chunk-optimization:
+      aggressive-chunk-unloading:
+        comment: Whether to enable aggressive chunk unloading
+      chunk-load-rate-limit:
+        comment: Chunk loading rate limit
+      chunk-unload-delay:
+        comment: Chunk unload delay (ticks)
+      comment:
+        - Chunk optimization related settings
+        - Note: Chunk optimization will be automatically disabled when C2ME or Noisium mod is present to avoid conflicts
+      optimize-chunk-loading:
+        comment: Whether to optimize chunk loading
+    comment: Server optimization related settings
+    entity-optimization:
+      chunk-entity-limit:
+        comment: Chunk entity limit
+      clean-valuable-items:
+        comment: Whether to clean valuable items
+      cleanup-cancelled-message:
+        comment: Cleanup cancelled message template
+      cleanup-complete-message:
+        comment: Cleanup complete message template
+      cleanup-notification-enabled:
+        comment: Whether to enable cleanup notifications
+      cleanup-start-message:
+        comment: Cleanup start message template
+      cleanup-warning-time:
+        comment: Cleanup warning time (seconds)
+      comment: Entity optimization related settings
+      disable-entity-collisions:
+        comment: Whether to disable entity collision detection
+      entity-check-interval:
+        comment: Entity check interval (ticks)
+      entity-cleanup-enabled:
+        comment: Whether to enable entity cleanup feature
+      entity-cleanup-threshold:
+        comment: Entity count threshold to trigger cleanup
+      entity-freeze-timeout:
+        comment: Entity freeze timeout (milliseconds)
+      entity-update-distance:
+        comment: Entity update distance
+      item-max-age:
+        comment: Maximum item existence time (ticks)
+      max-entities-per-chunk:
+        comment: Maximum entities per chunk
+      max-entities-per-type:
+        comment: Maximum entities per type
+      reduce-entity-updates:
+        comment: Whether to reduce entity update frequency
+    goal-selector-update-interval:
+      comment:
+        - Entity goal selector update interval
+        - Higher values consume less resources
+        - Causes entities to change goals less frequently
+    use-activation-and-tracking-range:
+      comment: Whether to use Spigot Activation Range and Tracking Range optimization
+    memory-optimization:
+      cache-cleanup-enabled:
+        comment: Whether to enable cache cleanup
+      cache-cleanup-interval:
+        comment: Cache cleanup interval (seconds)
+      comment: Memory optimization related settings
+      entity-cleanup-enabled:
+        comment: Whether to enable entity cleanup
+    world-creation:
+      async-world-data-loading:
+        comment: Whether to load world data asynchronously
+      comment:
+        - World creation related settings
+        - Note: Parallel world loading will be automatically disabled when ModernFix mod is present to avoid conflicts
+      defer-spawn-area-preparation:
+        comment: Whether to defer spawn area preparation
+      early-world-list-addition:
+        comment: Whether to add to world list early
+      fast-world-creation:
+        comment: Whether to enable fast world creation
+      force-close-loading-screen:
+        comment: Whether to force close loading screen
+      max-concurrent-world-loads:
+        comment: Maximum concurrent world loads
+      optimize-world-border-setup:
+        comment: Whether to optimize world border setup
+      parallel-world-initialization:
+        comment: Whether to initialize worlds in parallel
+      skip-spawn-chunk-loading:
+        comment: Whether to skip spawn chunk loading
+      spawn-area-radius:
+        comment: Spawn area radius
+      world-init-timeout-seconds:
+        comment: World initialization timeout (seconds)
+  velocity:
+    comment: Velocity Modern Forwarding related settings
+    debug-logging:
+      comment:
+        - Whether to display Velocity forwarding related debug information in logs
+        - Enable this to help diagnose connection issues
+    enabled:
+      comment:
+        - Whether to enable Velocity Modern Forwarding support
+        - When enabled, allows integration with Velocity proxy server
+    forwarding-secret:
+      comment:
+        - Velocity forwarding secret key
+        - Must exactly match the forwarding-secret in Velocity configuration file
+        - Used to authenticate connection requests from Velocity
+    online-mode:
+      comment:
+        - Whether to enable online mode verification
+        - Should typically match the online-mode setting in Velocity configuration
+dist: {}
+entity:
+  target:
+    unknown-reason: Unknown target reason setting {} target to {}
+enum:
+  field-added: Added {} to {}
+error:
+  class-not-found: "Class not found: {}"
+  database-error: "Database error: {}"
+  field-not-found: "Field not found: {}"
+  file-not-found: "File not found: {}"
+  invalid-configuration: "Invalid configuration file: {}"
+  method-not-found: "Method not found: {}"
+  mixin-error: "Mixin error: {}"
+  network-error: "Network error: {}"
+  permission-denied: "Permission denied: {}"
+  plugin-error: "Plugin error: {}"
+error-symlink: File system do not support symbol links
+event:
+  handler:
+    registration-failed: "Error registering event handler: {} {}"
+i18n:
+  using-language: Using locale {0} and fallback locale {1}
+item:
+  legacy-itemstack: "Legacy ItemStack being used, updates will not applied: {}"
+java:
+  deprecated:
+    - You are running an outdated Java version
+    - Current {0} Recommended {1}
+    - Current Java will not be supported in future
+loading-mapping: Loading mappings ...
+logo:
+  - ""
+  - ""
+  - "    §1    __                    _                       "
+  - "    §9   / /   __  ______ ___  (_)___  ____ __________ _"
+  - '    §3  / /   / / / / __ `__ \/ / __ \/ __ `/ ___/ __ `/'
+  - "    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / "
+  - '    §e/_____/\__,_/_/ /_/ /_/_/_/ /_/\__,_/_/   \__,_/  '
+  - ""
+  - "    §eLuminara Server-Software By§b QianMo0721"
+  - "    §aVersion {} / {}"
+  - "    §aBuild Time: {}"
+  - ""
+loot:
+  container:
+    overfill-attempt: Tried to over-fill a container
+mixin-load:
+  core: Luminara core mixin added.
+  optimization: Luminara optimization mixin added.
+mod: {}
+mod-load: Luminara Mod loaded.
+network:
+  custom-payload:
+    dispatch-failed: Couldn't dispatch custom payload
+    register-error: Couldn't register custom payload
+    register-string-too-long: "Custom payload REGISTER string too long: {} characters"
+    register-too-large: "Custom payload REGISTER too large: {} bytes"
+    unregister-error: Couldn't unregister custom payload
+    unregister-string-too-long: "Custom payload UNREGISTER string too long: {} characters"
+    unregister-too-large: "Custom payload UNREGISTER too large: {} bytes"
+  packet:
+    handle-failed: Failed to handle packet {}, suppressing error
+optimization:
+  async-ai:
+    calculation-error: Error during async AI calculation
+    processing-error: Error processing entity {} in async AI
+  async-collision:
+    calculation-error: Error during async collision calculation
+    check-error: Error during collision check
+    handling-error: Error handling async collision between {} and {}
+    processing-error: Error processing entity {} in async collision
+  async-event:
+    disabled-due-to-errors: "Disabled async processing for event type due to errors: {}"
+    handler-error: Error in async event handler for event {}
+    registered: "Registered async event: {}"
+    shutdown-interrupted: Interrupted during shutdown
+  async-redstone:
+    calculation-error: Error calculating redstone signal
+    update-error: Error processing async redstone update at {}
+  chunk:
+    rate-limit: "Chunk loading rate limit: original {} -> limited {}"
+    unloaded: Unloaded {} chunks
+    unloading: Unloading chunk [{}, {}] in world {}
+  manager:
+    shutdown-error: Error during optimization system shutdown
+  memory:
+    cache-cleanup-completed: Luminara cache cleanup completed
+    cache-cleanup-error: Error during cache cleanup
+    cache-cleanup-failed: Cache cleanup failed
+    cleanup-complete: Memory cleanup completed, freed {} MB
+    cleanup-start: Starting memory cleanup...
+    gc-triggered: Garbage collection triggered
+    high-usage: "High memory usage: {}%"
+  thread:
+    uncaught-exception: Uncaught exception in thread {}
+  thread-pool:
+    forced-shutdown-failed: "{} pool did not terminate after forced shutdown"
+    graceful-shutdown-failed: "{} pool did not terminate gracefully, forcing shutdown"
+    shutdown-interrupted: Interrupted while shutting down {} pool
+patcher:
+  load-error: Error occurred while loading patcher
+  loaded: Loaded {} patchers
+  loading: Loading plugin patchers ...
+permission:
+  forge-to-bukkit: Forwarding forge permission[{}] to bukkit
+player:
+  attack-invalid-entity: Player {} tried to attack an invalid entity
+  command-issued: "{} issued server command: {}"
+  data:
+    load-failed: Failed to load player data for {}
+  dropped-items-quickly: "{} dropped items too quickly!"
+  invalid-hotbar: "{} tried to set invalid hotbar selection"
+  moved-too-quickly: "{} moved too quickly! {},{},{}"
+  moved-wrongly: "{} moved wrongly!"
+  place-in-world-failed: Couldn't place player in world
+  vehicle-moved-too-quickly: "{} (vehicle of {}) moved too quickly! {},{},{}"
+  vehicle-moved-wrongly: "{} (vehicle of {}) moved wrongly! {}"
+recipe:
+  loading:
+    completed: Loaded {} recipes
+    parsing-error: Parsing error loading recipe {}
+    skip-null-serializer: Skipping loading recipe {} as it's serializer returned null
+registry:
+  begin: Registering for Bukkit ...
+  biome: Registered {} new biomes
+  block-state:
+    error: "{} prodived itemMetaType {} is invalid: {}"
+    no-candidate: "{} did not find a valid constructor in provided blockStateClass {}"
+    not-subclass: "{} is not a subclass of {}"
+  entity:
+    error: "{} prodived entityClass {} is invalid: {}"
+    not-subclass: "{} is not a subclass of {}"
+  entity-type: Registered {} new entity types
+  environment: Registered {} new dimensions
+  error: "Error occured registering Forge "
+  forge-event: Luminara events registered.
+  material: Registered {} new materials with {} blocks and {} items
+  meta-type:
+    error: "{} provided itemMetaType {} is invalid: {}"
+    no-candidate: "{} did not find a valid constructor in prodived itemMetaType {}"
+    not-subclass: "{} is not a subclass of {}"
+  villager-profession: Registered {} new villager professions
+release-name:
+  Executions: 折威 (Executions)
+  GreatHorn: 大角 (Great Horn)
+  Horn: 角 (Horn)
+  Trials: 顿顽 1.20.1 (Trials)
+server:
+  async-world-save:
+    starting: Starting async world save...
+    starting-shutdown: Starting async world save during server shutdown...
+    timeout-or-failed: Async world save did not complete within timeout or failed
+  crash-report-failed: Failed to save crash report to disk
+  crash-report-saved: "Crash report saved to: {}"
+  overload-warning: Can't keep up! Is the server overloaded? Running {} milliseconds or {} ticks behind
+  preparing-start-region: Preparing start region for dimension {}
+  starting: Starting Luminara server...
+  stop-exception: Exception stopping the server
+  stopped: Luminara server has stopped
+  stopping: Stopping Luminara server...
+  threads:
+    force-exit: "{} threads not shutting down correctly, force exiting"
+  unexpected-exception: Encountered unexpected exception
+  world-save:
+    all-successful: All worlds saved successfully
+    failed: Failed to save world {}
+sign: {}
+symlink: {}
+symlink-file-exist: File already exists when creating symbol link {}
+velocity:
+  address:
+    bridge-failed: Failed to set address via bridge
+    field-failed-trying-alternatives: Failed to set forwarded address via f_129469_, trying alternatives
+    reflection-failed-trying-bridge: Failed to set address via reflection, trying bridge method
+  disabled: Velocity Modern forwarding disabled
+  enabled: Velocity Modern forwarding enabled
+  failed-load-argument-types: Failed to load integration argument types, using defaults
+  forwarding:
+    enabled-for-player: "Velocity Modern Forwarding is enabled for player: {} (online-mode: {})"
+    initialized: Velocity Modern Forwarding initialized
+    packet-exception: Exception processing Velocity forwarding packet from {}
+    player-processed-successfully: "Successfully processed Velocity forwarding for player: {} (online-mode: {})"
+    processed-successfully: "Successfully processed Velocity forwarding for player: {}"
+  loaded-argument-types: Loaded {} integration argument types
+  login:
+    exception-processing: Exception processing Velocity login for {}
+  packet:
+    too-small: "Velocity packet too small: {} bytes"
+  query:
+    null-response: Received Velocity query response with null data
+    send-failed: Failed to send Velocity query packet
+  signature:
+    mismatch: Velocity signature mismatch!
+    verification-error: Error verifying Velocity signature
+warning:
+  async-operation: "Async operation warning: {}"
+  deprecated-api: "Using deprecated API: {}"
+  disk-space-low: "Low disk space: {} MB remaining"
+  memory-low: "Low memory warning, current usage: {}%"
+  performance-issue: "Performance issue detected: {}"
+  plugin-conflict: "Plugin conflict detected: {} may conflict with {}"
+world:
+  created: World {} created
+  creating: Creating world {}
+  loaded: World {} loaded
+  loading: Loading world {}
+  save-error: Error saving world {}
+  saved-successfully: World {} saved successfully
+  saving: "Saving world: {}"
+  unknown-level-stem: Assign {} to unknown level stem {}
+  unloaded: World {} unloaded
+  unloading: Unloading world {}

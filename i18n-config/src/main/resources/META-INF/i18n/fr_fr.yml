@@ -1,0 +1,394 @@
+logo:
+  - ""
+  - ""
+  - "    §1    __                    _                       "
+  - "    §9   / /   __  ______ ___  (_)___  ____ __________ _"
+  - "    §3  / /   / / / / __ `__ \\/ / __ \\/ __ `/ ___/ __ `/"
+  - "    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / "
+  - "    §e/_____/\\__,_/_/ /_/ /_/_/_/ /_/\\__,_/_/   \\__,_/  "
+  - ""
+  - "    §eLuminara·流明纳拉 Serveur Par§b QianMo0721"
+  - "    §aVersion {} / {}"
+  - "    §aDate du Build {}"
+  - ""
+
+release-name:
+  Horn: "角 (Corne)"
+  GreatHorn: "大角 (Grande Corne)"
+  Executions: "折威 (Exécutions)"
+  Trials: "顿顽 1.20.1 (Épreuves)"
+
+i18n:
+  using-language: "Utilisation des paramètres de langue {0} et des paramètres de langue de secours {1}"
+
+loading-mapping: "Chargement des mappings ..."
+
+mixin-load:
+  core: "Luminara core mixin ajouté."
+  optimization: "Luminara optimization mixin ajouté."
+
+mod-load: "Luminara Mod chargé."
+
+patcher:
+  loading: "Chargement des patchs de plugins ..."
+  loaded: "{} patchs chargés"
+  load-error: "Une erreur s'est produite lors du chargement d'un patch"
+
+registry:
+  forge-event: "Événements Arclight enregistrés."
+  begin: "Enregistrement de Bukkit ..."
+  error: "Une erreur s'est produite lors de l'enregistrement de Forge "
+  material: "{} nouveaux materiaux enregistrés dont {} blocs et {} objets"
+  entity-type: "{} nouveaux types d'entités enregistrés"
+  environment: "{} nouvelles dimensions enregistrés"
+  villager-profession: "{} nouvelles professions de villageois enregistrés"
+  biome: "{} nouveaux biomes enregistrés"
+  meta-type:
+    not-subclass: "{} n'est pas une sous-classe de {}"
+    error: "{} itemMetaType {} fourni n'est pas valide: {}"
+    no-candidate: "{} aucun constructeur valide trouvé pour itemMetaType {}"
+  block-state:
+    not-subclass: "{} n'est pas une sous-classe de {}"
+    error: "{} itemMetaType {} fourni n'est pas valide: {}"
+    no-candidate: "{} aucun constructeur valide trouvé pour blockStateClass {}"
+  entity:
+    not-subclass: "{} n'est pas une sous-classe de {}"
+    error: "{} entityClass {} fourni n'est pas valide: {}"
+
+error-symlink: "Le système de fichiers ne prend pas en charge les liens symboliques"
+symlink-file-exist: "Le fichier existe déjà lors de la création du lien symbolique {}"
+
+# Server lifecycle messages (合并所有server相关配置)
+server:
+  starting: "Démarrage du serveur Luminara..."
+  stopping: "Arrêt du serveur Luminara..."
+  stopped: "Le serveur Luminara s'est arrêté"
+  crash-report-saved: "Rapport de crash sauvegardé dans : {}"
+  crash-report-failed: "Échec de la sauvegarde du rapport de crash sur le disque"
+  unexpected-exception: "Exception inattendue rencontrée"
+  continuing-after-crash: "Selon la configuration, le serveur continuera à fonctionner après le plantage"
+  overload-warning: "Impossible de suivre ! Le serveur est-il surchargé ? En retard de {} millisecondes ou {} ticks"
+  stop-exception: "Exception lors de l'arrêt du serveur"
+  async-world-save:
+    starting-shutdown: "Démarrage de la sauvegarde asynchrone du monde pendant l'arrêt du serveur..."
+    starting: "Démarrage de la sauvegarde asynchrone du monde..."
+    timeout-or-failed: "La sauvegarde asynchrone du monde ne s'est pas terminée dans les délais ou a échoué"
+  preparing-start-region: "Préparation de la région de départ pour la dimension {}"
+  world-save:
+    failed: "Échec de la sauvegarde du monde {}"
+    all-successful: "Tous les mondes sauvegardés avec succès"
+  threads:
+    force-exit: "{} threads ne s'arrêtent pas correctement, forçage de la sortie"
+
+# Optimization system messages (合并所有optimization相关配置)
+optimization:
+  chunk-optimization:
+    comment:
+      - "Remarque : L’optimisation des chunks sera automatiquement désactivée lorsque le mod C2ME ou Noisium est présent afin d’éviter les conflits"
+  chunk:
+    unloading: "Déchargement du chunk [{}, {}] dans le monde {}"
+    unloaded: "{} chunks déchargés"
+    rate-limit: "Limite de taux de chargement des chunks : original {} -> limité {}"
+  memory:
+    cleanup-start: "Début du nettoyage de la mémoire..."
+    cleanup-complete: "Nettoyage de la mémoire terminé, {} MB libérés"
+    high-usage: "Utilisation mémoire élevée : {}%"
+    gc-triggered: "Collecte des déchets déclenchée"
+    cache-cleanup-completed: "Nettoyage du cache Luminara terminé"
+    cache-cleanup-error: "Erreur lors du nettoyage du cache"
+    cache-cleanup-failed: "Échec du nettoyage du cache"
+  manager:
+    shutdown-error: "Erreur lors de l'arrêt du système d'optimisation"
+  async-ai:
+    calculation-error: "Erreur lors du calcul IA asynchrone"
+    processing-error: "Erreur lors du traitement de l'entité {} en IA asynchrone"
+  async-collision:
+    calculation-error: "Erreur lors du calcul de collision asynchrone"
+    processing-error: "Erreur lors du traitement de l'entité {} en collision asynchrone"
+    check-error: "Erreur lors de la vérification de collision"
+    handling-error: "Erreur lors de la gestion de la collision asynchrone entre {} et {}"
+  async-event:
+    disabled-due-to-errors: "Traitement asynchrone désactivé pour le type d'événement en raison d'erreurs : {}"
+    handler-error: "Erreur dans le gestionnaire d'événements asynchrone pour l'événement {}"
+    registered: "Événement asynchrone enregistré : {}"
+    shutdown-interrupted: "Interrompu pendant l'arrêt"
+  error-handling:
+    continue-on-crash-warning: "Avertissement : continuer après plantage est activé, cela peut causer une corruption des données"
+    continue-on-crash-disabled: "Continuer après plantage est désactivé, le serveur s'arrêtera"
+  thread-pool:
+    graceful-shutdown-failed: "Le pool {} ne s'est pas terminé correctement, forçage de l'arrêt"
+    forced-shutdown-failed: "Le pool {} ne s'est pas terminé après l'arrêt forcé"
+    shutdown-interrupted: "Interrompu lors de l'arrêt du pool {}"
+  thread:
+    uncaught-exception: "Exception non capturée dans le thread {}"
+  async-redstone:
+    update-error: "Erreur lors du traitement de la mise à jour redstone asynchrone à {}"
+    calculation-error: "Erreur lors du calcul du signal redstone"
+
+# Velocity forwarding messages (合并所有velocity相关配置)
+velocity:
+  enabled: "Transfert Velocity Modern activé"
+  disabled: "Transfert Velocity Modern désactivé"
+  loaded-argument-types: "{} types d'arguments d'intégration chargés"
+  failed-load-argument-types: "Échec du chargement des types d'arguments d'intégration, utilisation des valeurs par défaut"
+  forwarding:
+    enabled-for-player: "Le transfert moderne Velocity est activé pour le joueur : {} (mode en ligne : {})"
+    processed-successfully: "Transfert Velocity traité avec succès pour le joueur : {}"
+    packet-exception: "Exception lors du traitement du paquet de transfert Velocity depuis {}"
+    initialized: "Transfert moderne Velocity initialisé"
+    player-processed-successfully: "Transfert Velocity traité avec succès pour le joueur : {} (mode en ligne : {})"
+  login:
+    exception-processing: "Exception lors du traitement de la connexion Velocity pour {}"
+  query:
+    send-failed: "Échec de l'envoi du paquet de requête Velocity"
+    null-response: "Réponse de requête Velocity reçue avec des données nulles"
+  address:
+    field-failed-trying-alternatives: "Échec de la définition de l'adresse transférée via f_129469_, tentative d'alternatives"
+    reflection-failed-trying-bridge: "Échec de la définition de l'adresse via réflexion, tentative de méthode pont"
+    bridge-failed: "Échec de la définition de l'adresse via pont"
+  packet:
+    too-small: "Paquet Velocity trop petit : {} octets"
+  signature:
+    mismatch: "Signature Velocity ne correspond pas !"
+    verification-error: "Erreur lors de la vérification de la signature Velocity"
+
+# Error messages
+error:
+  class-not-found: "Classe non trouvée : {}"
+  method-not-found: "Méthode non trouvée : {}"
+  field-not-found: "Champ non trouvé : {}"
+  invalid-configuration: "Fichier de configuration invalide : {}"
+  file-not-found: "Fichier non trouvé : {}"
+  permission-denied: "Permission refusée : {}"
+  network-error: "Erreur réseau : {}"
+  database-error: "Erreur de base de données : {}"
+  plugin-error: "Erreur de plugin : {}"
+  mixin-error: "Erreur Mixin : {}"
+
+# Warning messages
+warning:
+  deprecated-api: "Utilisation d'une API dépréciée : {}"
+  performance-issue: "Problème de performance détecté : {}"
+  memory-low: "Avertissement de mémoire faible, utilisation actuelle : {}%"
+  disk-space-low: "Espace disque faible : {} MB restants"
+  plugin-conflict: "Conflit de plugin détecté : {} peut entrer en conflit avec {}"
+  async-operation: "Avertissement d'opération asynchrone : {}"
+
+# World management messages (合并所有world相关配置)
+world:
+  creating: "Création du monde {}"
+  created: "Monde {} créé"
+  loading: "Chargement du monde {}"
+  loaded: "Monde {} chargé"
+  unloading: "Déchargement du monde {}"
+  unloaded: "Monde {} déchargé"
+  saving: "Sauvegarde du monde : {}"
+  saved-successfully: "Monde {} sauvegardé avec succès"
+  save-error: "Erreur lors de la sauvegarde du monde {}"
+  unknown-level-stem: "Assigner {} à un type de niveau inconnu {}"
+
+# Mod integration messages
+mod: {}
+
+# Sign block entity messages
+sign: {}
+
+# Enum extender messages (合并所有enum相关配置)
+enum:
+  field-added: "Ajouté {} à {}"
+
+# World symlink messages
+symlink: {}
+
+# Distribution validation messages
+dist: {}
+
+# Chat system messages (合并所有chat相关配置)
+chat:
+  empty-message-warning: "{} a essayé d'envoyer un message vide"
+  long-message-warning: "{} a essayé d'envoyer un message trop long : {} caractères"
+  processing-exception: "Exception lors du traitement de l'événement de chat"
+
+# Player action/data messages (合并所有player相关配置)
+player:
+  dropped-items-quickly: "{} a lâché des objets trop rapidement !"
+  invalid-hotbar: "{} a essayé de définir une sélection de barre d'action invalide"
+  command-issued: "{} a exécuté la commande serveur : {}"
+  data:
+    load-failed: "Échec du chargement des données du joueur pour {}"
+  moved-wrongly: "{} s'est déplacé incorrectement !"
+  moved-too-quickly: "{} s'est déplacé trop rapidement ! {},{},{}"
+  vehicle-moved-too-quickly: "{} (véhicule de {}) s'est déplacé trop rapidement ! {},{},{}"
+  vehicle-moved-wrongly: "{} (véhicule de {}) s'est déplacé incorrectement ! {}"
+  attack-invalid-entity: "Le joueur {} a tenté d'attaquer une entité invalide"
+  place-in-world-failed: "Impossible de placer le joueur dans le monde"
+
+# Bootstrap messages
+bootstrap:
+  error: "Erreur de démarrage d'Arclight"
+
+# Component bridge messages
+component:
+  bridge:
+    method-not-found: "Impossible de trouver la méthode getSiblings dans la classe Component"
+    init-failed: "Échec de l'initialisation de ComponentBridgeHandler : {}"
+    get-siblings-failed: "Échec de l'obtention des siblings du Component : {}"
+    create-stream-failed: "Échec de la création du Component stream : {}"
+    create-iterator-failed: "Échec de la création du Component iterator : {}"
+
+# Material messages
+material:
+  bad-data-class: "Classe de données de matériau incorrecte {} pour {}"
+
+# Authentication messages
+auth:
+  verification-failed-allow: "Échec de la vérification du nom d'utilisateur mais l'accès sera autorisé quand même !"
+  invalid-session: "Le nom d'utilisateur '{}' a tenté de se connecter avec une session invalide"
+  servers-down-allow: "Les serveurs d'authentification sont en panne mais l'accès sera autorisé quand même !"
+  servers-unavailable: "Impossible de vérifier le nom d'utilisateur car les serveurs ne sont pas disponibles"
+  exception-verifying: "Exception lors de la vérification de {}"
+  player-uuid: "UUID du joueur {} est {}"
+  exception-verifying-player: "Exception lors de la vérification de {}"
+  player-uuid-velocity: "UUID du joueur {} est {} (depuis Velocity)"
+
+# Permission messages
+permission:
+  forge-to-bukkit: "Transfert de permission forge[{}] vers bukkit"
+
+# ClassLoader messages
+classloader:
+  dump-failed: "Échec du vidage de la classe {}"
+  client-side-class: "Chargement de la classe côté client : {}"
+  no-remap-config: "Aucune configuration de remappage de classe fournie pour la classe {}, utilisation de PLUGIN"
+  class-not-found: "Échec de la recherche de la classe {}"
+
+# Event system messages
+event:
+  handler:
+    registration-failed: "Erreur lors de l'enregistrement du gestionnaire d'événements : {} {}"
+
+# Network messages
+network:
+  custom-payload:
+    register-too-large: "Charge personnalisée REGISTER trop grande : {} octets"
+    register-string-too-long: "Chaîne de charge personnalisée REGISTER trop longue : {} caractères"
+    register-error: "Impossible d'enregistrer la charge personnalisée"
+    unregister-too-large: "Charge personnalisée UNREGISTER trop grande : {} octets"
+    unregister-string-too-long: "Chaîne de charge personnalisée UNREGISTER trop longue : {} caractères"
+    unregister-error: "Impossible de désenregistrer la charge personnalisée"
+    dispatch-failed: "Impossible de distribuer la charge personnalisée"
+  packet:
+    handle-failed: "Échec de la gestion du paquet {}, suppression de l'erreur"
+
+# Chunk messages
+chunk:
+  unload-callback:
+    failed: "Échec de la programmation du callback de déchargement pour le chunk {}"
+  load-callback:
+    failed: "Échec de la programmation du callback de chargement pour le chunk {}"
+
+# Entity messages
+entity:
+  target:
+    unknown-reason: "Raison de cible inconnue définissant {} cible à {}"
+
+# Item messages
+item:
+  legacy-itemstack: "ItemStack hérité en cours d'utilisation, les mises à jour ne seront pas appliquées : {}"
+
+# Recipe messages
+recipe:
+  loading:
+    skip-null-serializer: "Ignorer le chargement de la recette {} car son sérialiseur a retourné null"
+    parsing-error: "Erreur d'analyse lors du chargement de la recette {}"
+    completed: "Chargé {} recettes"
+
+# Loot messages
+loot:
+  container:
+    overfill-attempt: "Tentative de sur-remplissage d'un conteneur"
+
+# Comments (保留所有注释配置)
+comments:
+  _v.comment:
+    - "Dépôt: https://github.com/CraftAmethyst/Luminara"
+    - "Problèmes: https://github.com/CraftAmethyst/Luminara/issues"
+    - ""
+    - ""
+    - "Numéro de version de la configuration, ne pas modifier."
+  locale.comment: "Langage/paramètres I18n"
+  logging:
+    comment: "Paramètres liés à la sortie des logs"
+    use-simple-format:
+      comment:
+        - "Utiliser ou non le format simplifié pour la sortie des logs"
+        - "true - Utiliser le format simple (masquer les noms de threads et de classes)"
+        - "false - Utiliser le format détaillé (afficher les noms complets de threads, classes et autres informations de débogage)"
+  optimization:
+    comment: "Paramètres d'optimisation"
+    goal-selector-update-interval.comment:
+      - "Intervalle en ticks pour mettre à jour le sélecteur d'objectifs"
+      - "Des valeurs plus élevées coûtent moins de ressources"
+      - "Fait que les mobs changent leurs objectifs moins souvent"
+  async-catcher.comment:
+    - "Paramètres Async Catcher"
+    - "Il existe quatre modes, le mode BLOCK est recommandé !"
+    - "NONE - Ne fait rien"
+    - "DISPATCH - Ne bloque rien et affiche les informations dans la console"
+    - "BLOCK - Continue l'execution dans le thread principal"
+    - "EXCEPTION - Affiche une erreur dans la console"
+  async-catcher.dump.comment: "Affiche les informations contenues dans le fichier debug.log"
+  async-world-save.comment:
+    - "Paramètres liés à la sauvegarde asynchrone du monde"
+    - "Sauvegarder les données du monde de manière asynchrone lors de l'arrêt du serveur pour réduire le temps d'arrêt"
+  error-handling.comment:
+    - "Paramètres liés à la gestion des erreurs"
+    - "Contrôle le comportement du serveur lors de plantages et d'erreurs"
+  error-handling.continue-on-crash.comment: "Continuer l'exécution du serveur après un plantage (désactivé par défaut, recommandé de garder désactivé)"
+  error-handling.crash-report-directory.comment: "Répertoire pour stocker les fichiers de rapport de plantage"
+  async-world-save.enabled.comment: "Activer ou non la fonction de sauvegarde asynchrone du monde"
+  async-world-save.timeout-seconds.comment:
+    - "Délai d'attente de la sauvegarde asynchrone en secondes"
+    - "Si la sauvegarde ne se termine pas dans ce délai, le serveur continuera le processus d'arrêt"
+  async-world-save.save-world-data.comment: "Inclure ou non les données du monde dans la sauvegarde asynchrone"
+  compatibility:
+    symlink-world.comment:
+      - "Créer des liens symboliques vers le dossier de dimension de mod qui correspond au nom du monde Bukkit"
+      - "Activer ceci pourrait améliorer la compatibilité des plugins"
+      - "Changer ceci sur un serveur de production causera des changements aux noms des mondes de mod"
+      - "  et causera une perte de données sur les plugins dépendant des noms de monde"
+      - "Voir https://github.com/IzzelAliz/Arclight/wiki/World-Symlink pour plus de détails"
+    extra-logic-worlds.comment:
+      - "Logique des mondes supplémentaires en cours d'exécution"
+      - "Si des mods ne fonctionnent pas bien, essayez de rechercher les noms de classe dans les logs liés à [EXT_LOGIC] et ajoutez-les ici"
+    forward-permission.comment:
+      - "true - Transférer les requêtes de permission Forge vers Bukkit"
+      - "false - Désactiver le transfert de permission"
+      - "reverse - Transférer les requêtes de permission de joueur Bukkit vers Forge"
+    valid-username-regex.comment:
+      - "Regex pour la vérification de nom d'utilisateur valide. Laissez vide pour utiliser la vérification vanilla"
+      - "Ce qui suit permet les caractères chinois:"
+      - "valid-username-regex = \"^[ -~\\\\p{sc=Han}]{1,16}$\""
+      - "Ce qui suit permet à tout nom d'utilisateur de se connecter:"
+      - 'valid-username-regex = ".+"'
+    lenient-item-tag-match.comment:
+      - "Permet aux objets avec une étiquette nbt vide de s'empiler sur des objets sans étiquette"
+    preload-bungee-chat-classes.comment:
+      - "Activer ou non le préchargement des classes de l'API de chat Bungee au démarrage"
+      - "Cela aide à résoudre les problèmes où certains plugins ne chargent pas correctement l'API BungeeChat"
+      - "Mettre à false si vous rencontrez des problèmes de compatibilité avec certains plugins"
+  velocity:
+    comment: "Paramètres liés à Velocity Modern Forwarding"
+    enabled.comment:
+      - "Activer ou non le support de Velocity Modern Forwarding"
+      - "Lorsqu'activé, permet l'intégration avec le serveur proxy Velocity"
+    online-mode.comment:
+      - "Activer ou non la vérification du mode en ligne"
+      - "Devrait généralement correspondre au paramètre online-mode dans la configuration Velocity"
+    forwarding-secret.comment:
+      - "Clé secrète de transfert Velocity"
+      - "Doit correspondre exactement au forwarding-secret dans le fichier de configuration Velocity"
+      - "Utilisé pour authentifier les demandes de connexion de Velocity"
+    debug-logging.comment:
+      - "Afficher ou non les informations de débogage liées au transfert Velocity dans les logs"
+      - "Activez ceci pour aider à diagnostiquer les problèmes de connexion"
