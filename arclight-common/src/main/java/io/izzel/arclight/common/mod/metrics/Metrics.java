@@ -31,14 +31,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
 public class Metrics {
 
-    private static final Logger logger = Logger.getLogger("Metrics");
     private final MetricsBase metricsBase;
 
     /**
@@ -101,14 +98,10 @@ public class Metrics {
                 jsonObjectBuilder -> appendServiceData(jsonObjectBuilder, serverVersion),
                 isFolia
                         ? null
-                        : submitDataTask ->
-                        Bukkit.getScheduler().runTask(
-                                Bukkit.getPluginManager().getPlugins()[0],
-                                submitDataTask
-                        ),
-                () -> true,
-                (message, error) -> logger.log(Level.WARNING, message, error),
-                message -> logger.log(Level.INFO, message),
+                        : submitDataTask -> io.izzel.arclight.common.mod.server.ArclightServer.executeOnMainThread(submitDataTask),
+                () -> io.izzel.arclight.common.mod.server.ArclightServer.isInitialized(),
+                (message, error) -> io.izzel.arclight.common.mod.server.ArclightServer.LOGGER.warn(message, error),
+                message -> io.izzel.arclight.common.mod.server.ArclightServer.LOGGER.info(message),
                 logErrors,
                 logSentData,
                 logResponseStatusText,
