@@ -1,4 +1,4 @@
-.gradle/
+!.github
 /.settings/
 build/
 bin/
@@ -7,3 +7,4 @@ bin/
 *.log
 run_*/
 run
+.*
