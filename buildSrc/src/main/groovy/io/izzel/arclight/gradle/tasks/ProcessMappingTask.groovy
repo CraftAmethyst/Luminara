@@ -48,14 +48,19 @@ class ProcessMappingTask implements Runnable {
     @Override
     void run() {
         def tree = new MemoryMappingTree()
-        MappingReader.read(LoomGradleExtension.get(project).mappingConfiguration.tinyMappingsWithSrg, tree)
-        def mcp = new TinyMappingsReader(tree, "named", "srg").read()
+        MappingReader.read(LoomGradleExtension.get(project).mappingConfiguration.tinyMappings, tree)
         def intermediaryRev = new TinyMappingsReader(tree, "intermediary", "official").read()
 
         def mojmapTree = new MemoryMappingTree()
         MappingReader.read(MappingConfiguration.getMojmapSrgFileIfPossible(project), mojmapTree)
         def official = new TinyMappingsReader(mojmapTree, "official", "named").read()
         def officialRev = official.reverse()
+        def srg = MappingSet.create()
+        LoomGradleExtension.get(project).srgProvider.mergedMojangRaw.toFile().withReader {
+            def data = it.lines().filter { String s -> !(s.startsWith('\t\t') || s.startsWith('tsrg2')) }.collect(Collectors.joining('\n'))
+            new TSrgReader(new StringReader(data.toString())).read(srg)
+        }
+        def mcp = officialRev.merge(srg)
 
         if (!outDir.isDirectory()) {
             outDir.mkdirs()
@@ -81,11 +86,6 @@ class ProcessMappingTask implements Runnable {
             }.write(mcp.reverse())
         }
 
-        def srg = MappingSet.create()
-        LoomGradleExtension.get(project).srgProvider.mergedMojangRaw.toFile().withReader {
-            def data = it.lines().filter { String s -> !(s.startsWith('\t\t') || s.startsWith('tsrg2')) }.collect(Collectors.joining('\n'))
-            new TSrgReader(new StringReader(data.toString())).read(srg)
-        }
 
         def csrg = MappingSet.create()
         def clFile = new File(buildData, "mappings/bukkit-$mcVersion-cl.csrg")
