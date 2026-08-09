@@ -52,6 +52,12 @@ processResources {
     filesMatching("META-INF/mods.toml") {
         expand "version": ver
     }
+
+    filesMatching("META-INF/luminara-version.properties") {
+        expand minecraftVersion: libs.versions.minecraft.get(), loader: 'Forge',
+            loaderVersion: libs.versions.forge.get(), javaVersion: '21',
+            bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash
+    }
 }
 
 shadowJar {

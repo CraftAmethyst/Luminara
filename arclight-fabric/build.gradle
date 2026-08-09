@@ -58,6 +58,12 @@ processResources {
     filesMatching('fabric.mod.json') {
         expand 'version': ver
     }
+
+    filesMatching('META-INF/luminara-version.properties') {
+        expand minecraftVersion: libs.versions.minecraft.get(), loader: 'Fabric',
+            loaderVersion: libs.versions.fabric.loader.get(), javaVersion: '21',
+            bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash
+    }
 }
 
 shadowJar {

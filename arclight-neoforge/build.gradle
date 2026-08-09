@@ -54,6 +54,12 @@ processResources {
     filesMatching('META-INF/neoforge.mods.toml') {
         expand 'version': ver
     }
+
+    filesMatching('META-INF/luminara-version.properties') {
+        expand minecraftVersion: libs.versions.minecraft.get(), loader: 'NeoForge',
+            loaderVersion: libs.versions.neoforge.get(), javaVersion: '21',
+            bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash
+    }
 }
 
 shadowJar {
