@@ -9,15 +9,21 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
+
+import java.util.Set;
 
 public interface ServerGamePacketListenerImplBridge extends ServerCommonPacketListenerImplBridge {
 
     void bridge$pushTeleportCause(PlayerTeleportEvent.TeleportCause cause);
 
     void bridge$teleport(Location dest);
+
+    void bridge$teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeMovement> relativeSet,
+                         PlayerTeleportEvent.TeleportCause cause);
 
     void bridge$pushNoTeleportEvent();
 

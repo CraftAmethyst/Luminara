@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 import java.lang.reflect.Field;
+
 @Mixin(value = CraftHumanEntity.class)
 public abstract class CraftHumanEntityMixin extends CraftEntity {
 

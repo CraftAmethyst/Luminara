@@ -1737,6 +1737,12 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
     }
 
     @Override
+    public void bridge$teleport(double x, double y, double z, float yaw, float pitch,
+                                Set<RelativeMovement> relativeSet, PlayerTeleportEvent.TeleportCause cause) {
+        this.teleport(x, y, z, yaw, pitch, relativeSet, cause);
+    }
+
+    @Override
     public boolean bridge$teleportCancelled() {
         return arclight$teleportCancelled;
     }
