@@ -146,6 +146,9 @@ tasks.register('neoforgeJar', Jar) {
     from sourceSets.applaunch.output
     from sourceSets.main.output
     from sourceSets.neoforge.output
+    from(project(':arclight-neoforge').sourceSets.main.output) {
+        include 'META-INF/luminara-version.properties'
+    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(project(':arclight-neoforge').tasks.build)
 }
@@ -169,6 +172,9 @@ tasks.register('fabricJar', Jar) {
     }
     from sourceSets.applaunch.output
     from sourceSets.fabric.output
+    from(project(':arclight-fabric').sourceSets.main.output) {
+        include 'META-INF/luminara-version.properties'
+    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(project(':arclight-fabric').tasks.build)
 }
