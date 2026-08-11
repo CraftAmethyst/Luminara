@@ -1,30 +1,61 @@
 import io.izzel.arclight.gradle.ArclightGradlePlugin
-import io.izzel.arclight.gradle.tasks.UploadFilesTask
+import io.izzel.arclight.gradle.tasks.AssembleDistributionTask
+import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
+import io.izzel.arclight.gradle.tasks.VerifyLauncherBoundaryTask
+import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Jar
+
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 plugins {
-    id 'architectury-plugin' version '3.4-SNAPSHOT' apply false
-    id 'dev.architectury.loom' apply false  // version: gradle/libs.versions.toml
-    id 'com.gradleup.shadow' version '8.3.+' apply false
+    alias libs.plugins.architectury.plugin apply false
+    id 'dev.architectury.loom' apply false // Already supplied by buildSrc at the catalog version.
+    alias libs.plugins.gradleup.shadow apply false
 }
+
+def commandOutput = { List<String> command ->
+    def stdout = new ByteArrayOutputStream()
+    try {
+        def result = exec {
+            commandLine command
+            standardOutput = stdout
+            errorOutput = new ByteArrayOutputStream()
+            ignoreExitValue = true
+        }
+        return result.exitValue == 0 ? stdout.toString('UTF-8').trim() : null
+    } catch (Exception ignored) {
+        return null
+    }
+}
+
+def explicitGitHash = providers.gradleProperty('luminaraGitHash').orNull
+if (explicitGitHash != null && !(explicitGitHash ==~ /[0-9a-f]{7,40}/)) {
+    throw new GradleException('luminaraGitHash must contain 7-40 lowercase hexadecimal characters')
+}
+def resolvedGitHash = explicitGitHash ?: commandOutput(['git', 'rev-parse', '--short', 'HEAD']) ?: 'unknown'
+
+def epochText = providers.environmentVariable('SOURCE_DATE_EPOCH').orNull
+def gitEpoch = epochText ?: commandOutput(['git', 'show', '-s', '--format=%ct', 'HEAD'])
+def resolvedGitTimestamp = gitEpoch == null
+    ? 'unknown'
+    : DateTimeFormatter.ISO_INSTANT.format(Instant.ofEpochSecond(Long.parseLong(gitEpoch)).atOffset(ZoneOffset.UTC))
+
+rootProject.ext.gitHash = resolvedGitHash
+rootProject.ext.gitTimestamp = resolvedGitTimestamp
 
 allprojects {
     apply plugin: 'java'
 
     group 'io.izzel.arclight'
-    version '1.0.15-Alpha'
-
-    def getGitHash = { ->
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'rev-parse', '--short', 'HEAD'
-            standardOutput = stdout
-        }
-        return stdout.toString().trim()
-    }
+    version libs.versions.project.get()
 
     ext {
         versionName = 'feudal-kings'
-        gitHash = getGitHash()
+        gitHash = rootProject.ext.gitHash
+        gitTimestamp = rootProject.ext.gitTimestamp
         supportedPlatforms = ['neoforge', 'fabric']
         commonProject = project(':arclight-common')
         fabricProject = project(':arclight-fabric')
@@ -36,19 +67,21 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
         }
     }
 
-    repositories {
-        maven { url = 'https://repo.spongepowered.org/maven' }
-        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        maven { url = 'https://maven.neoforged.net/releases' }
-        maven { url = 'https://files.minecraftforge.net/maven/' }
-        maven { url = 'https://maven.izzel.io/releases' }
-        mavenCentral()
-        mavenLocal()
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
+
+    tasks.withType(AbstractArchiveTask).configureEach {
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
     }
 
     dependencies {
@@ -132,7 +165,7 @@ rootProject.ext.platformProjects.each { Project p ->
             manifest.attributes 'Implementation-Title': 'Arclight'
             manifest.attributes 'Implementation-Version': "${p.name}-${libs.versions.minecraft.get()}-${project.version}+$gitHash"
             manifest.attributes 'Implementation-Vendor': 'Arclight Team'
-            manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
+            manifest.attributes 'Implementation-Timestamp': gitTimestamp
         }
 
         components.java {
@@ -145,27 +178,121 @@ rootProject.ext.platformProjects.each { Project p ->
 
 jar.enabled = false
 
+evaluationDependsOn(':bootstrap')
+def fabricJar = project(':bootstrap').tasks.named('fabricJar', Jar)
+def neoforgeJar = project(':bootstrap').tasks.named('neoforgeJar', Jar)
+
+def assembleFabricDistribution = tasks.register('assembleFabricDistribution', AssembleDistributionTask) {
+    group = 'distribution'
+    description = 'Assembles the Fabric distribution JAR.'
+    inputJar.set(fabricJar.flatMap { it.archiveFile })
+    outputJar.set(layout.buildDirectory.file(fabricJar.flatMap { it.archiveFileName }.map { "distributions/${it}" }))
+}
+
+def assembleNeoForgeDistribution = tasks.register('assembleNeoForgeDistribution', AssembleDistributionTask) {
+    group = 'distribution'
+    description = 'Assembles the NeoForge distribution JAR.'
+    inputJar.set(neoforgeJar.flatMap { it.archiveFile })
+    outputJar.set(layout.buildDirectory.file(neoforgeJar.flatMap { it.archiveFileName }.map { "distributions/${it}" }))
+}
+
+tasks.register('assembleDistributions') {
+    group = 'distribution'
+    description = 'Assembles all loader distribution JARs.'
+    dependsOn assembleFabricDistribution, assembleNeoForgeDistribution
+}
+
+def commonDistributionEntries = [
+    'common.jar',
+    'gson.jar',
+    'META-INF/installer.json',
+    'META-INF/luminara-version.properties',
+    'arclight-server-launch.properties',
+    'arclight-log4j2.xml',
+    'arclight-log4j2-simple.xml'
+]
+def commonMixinEntries = [
+    'mixins.arclight.core.json',
+    'mixins.arclight.bukkit.json',
+    'mixins.arclight.vanilla.json',
+    'mixins.arclight.impl.optimization.json'
+]
+
+def configureDistributionVerification = { VerifyDistributionTask task ->
+    task.minecraftVersion.set(libs.versions.minecraft)
+    task.javaVersion.set(libs.versions.java)
+    task.projectVersion.set(libs.versions.project)
+    task.gitCommit.set(rootProject.ext.gitHash)
+    task.gitTimestamp.set(rootProject.ext.gitTimestamp)
+    task.mainClass.set('io.izzel.arclight.server.Launcher')
+    task.requiredEntries.set(commonDistributionEntries)
+    task.expectedNeoForgeVersion.set(libs.versions.neoforge)
+    task.expectedFabricLoaderVersion.set(libs.versions.fabric.loader)
+}
+
+def verifyFabricDistribution = tasks.register('verifyFabricDistribution', VerifyDistributionTask) {
+    group = 'verification'
+    description = 'Verifies the Fabric distribution contract.'
+    dependsOn assembleFabricDistribution
+    distributionJar.set(assembleFabricDistribution.flatMap { it.outputJar })
+    expectedFileName.set(fabricJar.flatMap { it.archiveFileName })
+    loader.set('Fabric')
+    loaderVersion.set(libs.versions.fabric.loader)
+    launchMainClass.set('io.izzel.arclight.boot.fabric.application.Main_Fabric')
+    requiredCommonEntries.set(['fabric.mod.json', 'mixins.arclight.fabric.json'] + commonMixinEntries)
+    forbiddenCommonEntries.set(['META-INF/neoforge.mods.toml', 'mixins.arclight.neoforge.json'])
+    expectedServices.set([
+        'net.fabricmc.loader.impl.game.GameProvider': 'io.izzel.arclight.boot.fabric.mod.ArclightGameProvider'
+    ])
+    configureDistributionVerification(delegate)
+}
+
+def verifyNeoForgeDistribution = tasks.register('verifyNeoForgeDistribution', VerifyDistributionTask) {
+    group = 'verification'
+    description = 'Verifies the NeoForge distribution contract.'
+    dependsOn assembleNeoForgeDistribution
+    distributionJar.set(assembleNeoForgeDistribution.flatMap { it.outputJar })
+    expectedFileName.set(neoforgeJar.flatMap { it.archiveFileName })
+    loader.set('NeoForge')
+    loaderVersion.set(libs.versions.neoforge)
+    launchMainClass.set('io.izzel.arclight.boot.neoforge.application.Main_Neoforge')
+    requiredCommonEntries.set(['META-INF/neoforge.mods.toml', 'mixins.arclight.neoforge.json'] + commonMixinEntries)
+    forbiddenCommonEntries.set(['fabric.mod.json', 'mixins.arclight.fabric.json'])
+    expectedServices.set([
+        'cpw.mods.modlauncher.api.ILaunchHandlerService': 'io.izzel.arclight.boot.neoforge.mod.ArclightLaunchHandler',
+        'cpw.mods.modlauncher.serviceapi.ILaunchPluginService': 'io.izzel.arclight.boot.neoforge.mod.ArclightImplementer',
+        'java.util.function.Consumer': 'io.izzel.arclight.boot.neoforge.application.ApplicationBootstrap',
+        'net.neoforged.neoforgespi.locating.IDependencyLocator': 'io.izzel.arclight.boot.neoforge.mod.ArclightJarInJarFilter',
+        'net.neoforged.neoforgespi.locating.IModFileCandidateLocator': 'io.izzel.arclight.boot.neoforge.mod.ArclightLocator_Neoforge',
+        'net.neoforged.neoforgespi.locating.IModFileReader': 'io.izzel.arclight.boot.neoforge.mod.ArclightModFileReader'
+    ])
+    configureDistributionVerification(delegate)
+}
+
+tasks.register('verifyDistributions') {
+    group = 'verification'
+    description = 'Verifies all loader distribution contracts.'
+    dependsOn verifyFabricDistribution, verifyNeoForgeDistribution
+}
+
+def javaToolchains = extensions.getByType(JavaToolchainService)
+tasks.register('verifyLauncherBoundaries', VerifyLauncherBoundaryTask) {
+    group = 'verification'
+    description = 'Verifies both launchers reject a missing Minecraft EULA.'
+    dependsOn tasks.named('verifyDistributions')
+    distributionJars.from(
+        assembleFabricDistribution.flatMap { it.outputJar },
+        assembleNeoForgeDistribution.flatMap { it.outputJar }
+    )
+    javaExecutable.set(javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
+    }.map { it.executablePath.asFile.absolutePath })
+    outputDirectory.set(layout.buildDirectory.dir('launcher-boundary'))
+}
+
 tasks.register('collect', Copy) {
+    dependsOn tasks.named('assembleDistributions')
     destinationDir = file('build/libs')
-    from project(':bootstrap').tasks.neoforgeJar.outputs
-    from project(':bootstrap').tasks.fabricJar.outputs
-}
-
-def gitBranch() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
-tasks.register('uploadFiles', UploadFilesTask) {
-    mcVersion.set libs.versions.minecraft
-    version.set "${project.version}-${project.ext.gitHash}"
-    snapshot.set project.version.toString().endsWith('-SNAPSHOT')
-    gitHash.set project.ext.gitHash
-    branch.set gitBranch()
-    inputs.files tasks.collect.outputs.files
-    dependsOn(tasks.collect)
+    from assembleFabricDistribution.flatMap { it.outputJar }
+    from assembleNeoForgeDistribution.flatMap { it.outputJar }
 }

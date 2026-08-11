@@ -22,8 +22,26 @@ sourceSets.test.compileClasspath += sourceSets.applaunch.output
 sourceSets.test.runtimeClasspath += sourceSets.applaunch.output
 
 configurations {
-    installer
-    installerFabric
+    installer {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    installerFabric {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    neoforgeInstallerArtifact {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    fabricLoaderArtifact {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
     embedCommon
     embedFabric
     embed
@@ -77,6 +95,8 @@ dependencies {
     neoforgeImplementation 'cpw.mods:securejarhandler:2.1.24'
 
     fabricImplementation "net.fabricmc:fabric-loader:${libs.versions.fabric.loader.get()}"
+    neoforgeInstallerArtifact "net.neoforged:neoforge:${libs.versions.neoforge.get()}:installer"
+    fabricLoaderArtifact libs.fabric.loader
 
     for (def lib : installerLibs) {
         installer lib
@@ -124,7 +144,7 @@ tasks.register('neoforgeJar', Jar) {
     manifest.attributes 'Implementation-Title': 'Arclight'
     manifest.attributes 'Implementation-Version': "luminara-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
     manifest.attributes 'Implementation-Vendor': 'Arclight Team'
-    manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
+    manifest.attributes 'Implementation-Timestamp': gitTimestamp
     manifest.attributes 'Automatic-Module-Name': 'arclight.boot'
     from(configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude 'META-INF/MANIFEST.MF'
@@ -159,7 +179,7 @@ tasks.register('fabricJar', Jar) {
     manifest.attributes 'Implementation-Title': 'Arclight'
     manifest.attributes 'Implementation-Version': "luminara-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
     manifest.attributes 'Implementation-Vendor': 'Arclight Team'
-    manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
+    manifest.attributes 'Implementation-Timestamp': gitTimestamp
     manifest.attributes 'Automatic-Module-Name': 'arclight.boot'
     from(configurations.embedFabric.collect { it.isDirectory() ? it : zipTree(it) })
     into('/') {
@@ -183,10 +203,17 @@ tasks.register('generateInstallerInfo', GenerateInstallerInfo) {
     neoforgeVersion = libs.versions.neoforge.get()
     minecraftVersion = libs.versions.minecraft.get()
     fabricLoaderVersion = libs.versions.fabric.loader.get()
-    def installer = file('build/arclight_installer/META-INF/installer.json')
-    outputs.file(installer)
     configuration = project.configurations.installer
     fabricExtra = project.configurations.installerFabric
+    neoforgeInstallerArtifact.set(layout.file(project.configurations.neoforgeInstallerArtifact.elements.map { files ->
+        if (files.size() != 1) throw new GradleException("Expected one NeoForge installer artifact, found ${files.size()}")
+        files.iterator().next().asFile
+    }))
+    fabricLoaderArtifact.set(layout.file(project.configurations.fabricLoaderArtifact.elements.map { files ->
+        if (files.size() != 1) throw new GradleException("Expected one Fabric Loader artifact, found ${files.size()}")
+        files.iterator().next().asFile
+    }))
+    outputFile.set(layout.buildDirectory.file('arclight_installer/META-INF/installer.json'))
 }
 
 project.sourceSets.main.output.dir file('build/arclight_installer'), builtBy: tasks.generateInstallerInfo

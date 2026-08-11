@@ -5,33 +5,56 @@ import io.izzel.arclight.gradle.Utils
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.DependencyArtifact
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 
-class GenerateInstallerInfo extends DefaultTask {
+abstract class GenerateInstallerInfo extends DefaultTask {
 
     private String minecraftVersion, neoforgeVersion, fabricLoaderVersion
     private Configuration configuration, fabricExtra
 
     @Classpath
-    Configuration getConfiguration() {
-        return configuration
-    }
+    abstract ConfigurableFileCollection getInstallerLibraries()
+
+    @Classpath
+    abstract ConfigurableFileCollection getFabricExtraLibraries()
+
+    @InputFile
+    @PathSensitive(PathSensitivity.NONE)
+    abstract RegularFileProperty getNeoforgeInstallerArtifact()
+
+    @InputFile
+    @PathSensitive(PathSensitivity.NONE)
+    abstract RegularFileProperty getFabricLoaderArtifact()
+
+    @OutputFile
+    abstract RegularFileProperty getOutputFile()
+
+    @Internal
+    Configuration getConfiguration() { configuration }
 
     void setConfiguration(Configuration configuration) {
         this.configuration = configuration
+        installerLibraries.from(configuration)
     }
 
-    @Classpath
-    Configuration getFabricExtra() {
-        return fabricExtra
-    }
+    @Internal
+    Configuration getFabricExtra() { fabricExtra }
 
     void setFabricExtra(Configuration fabricExtra) {
         this.fabricExtra = fabricExtra
+        fabricExtraLibraries.from(fabricExtra)
     }
 
     @Input
@@ -77,57 +100,47 @@ class GenerateInstallerInfo extends DefaultTask {
             } else {
                 return "${dep.group}:${dep.name}:${dep.version}"
             }
-        } as List<String>
+        }.sort() as List<String>
+    }
+
+    private static SortedMap<String, String> artifactHashes(Configuration configuration, List<String> coordinates) {
+        def resolved = configuration.resolvedConfiguration.resolvedArtifacts
+        def hashes = new TreeMap<String, String>()
+        coordinates.each { coordinate ->
+            def notation = coordinate.split('@', 2)
+            def parts = notation[0].split(':')
+            def extension = notation.length == 2 ? notation[1] : 'jar'
+            def classifier = parts.length == 4 ? parts[3] : null
+            def matches = resolved.findAll { artifact ->
+                artifact.moduleVersion.id.group == parts[0] &&
+                    artifact.moduleVersion.id.name == parts[1] &&
+                    artifact.moduleVersion.id.version == parts[2] &&
+                    artifact.classifier == classifier &&
+                    artifact.extension == extension
+            }
+            if (matches.size() != 1) {
+                throw new IllegalStateException("Expected exactly one resolved artifact for ${coordinate}, found ${matches.size()}")
+            }
+            hashes[coordinate] = Utils.sha1(matches.iterator().next().file)
+        }
+        return hashes
     }
 
     @TaskAction
     void run() {
-        def libs = configurationDeps(this.configuration)
-        def fabricLibs = configurationDeps(this.fabricExtra)
-        def artifacts = { List<String> arts ->
-            def ret = new HashMap<String, String>()
-            def cfg = project.configurations.create("art_rev_" + System.currentTimeMillis())
-            cfg.transitive = false
-            arts.each {
-                def dep = project.dependencies.create(it)
-                cfg.dependencies.add(dep)
-            }
-            cfg.resolve()
-            cfg.resolvedConfiguration.resolvedArtifacts.each { rev ->
-                def art = [
-                        group     : rev.moduleVersion.id.group,
-                        name      : rev.moduleVersion.id.name,
-                        version   : rev.moduleVersion.id.version,
-                        classifier: rev.classifier,
-                        extension : rev.extension,
-                        file      : rev.file
-                ]
-                def desc = "${art.group}:${art.name}:${art.version}"
-                if (art.classifier != null)
-                    desc += ":${art.classifier}"
-                if (art.extension != 'jar')
-                    desc += "@${art.extension}"
-                ret.put(desc.toString(), Utils.sha1(art.file))
-            }
-            return arts.collectEntries { [(it.toString()): ret.get(it.toString())] }
-        }
-        def neoforgeUrl = "https://maven.neoforged.net/releases/net/neoforged/neoforge/$neoforgeVersion/neoforge-$neoforgeVersion-installer.jar"
-        def tmpNeoforge = Files.createTempFile("neoforge", "jar")
-        Utils.download(neoforgeUrl, tmpNeoforge.toFile())
-        def fabricLoaderUrl = "https://maven.fabricmc.net/net/fabricmc/fabric-loader/$fabricLoaderVersion/fabric-loader-${fabricLoaderVersion}.jar"
-        def tmpFabric = Files.createTempFile("fabric", "jar")
-        Utils.download(fabricLoaderUrl, tmpFabric.toFile())
-        def output = [
-                installer  : [
-                        minecraft       : minecraftVersion,
-                        neoforge        : neoforgeVersion,
-                        neoforgeHash    : Utils.sha1(tmpNeoforge.toFile()),
-                        fabricLoader    : fabricLoaderVersion,
-                        fabricLoaderHash: Utils.sha1(tmpFabric.toFile()),
-                ],
-                libraries  : artifacts(libs),
-                fabricExtra: artifacts(fabricLibs)
-        ]
-        outputs.files.singleFile.text = JsonOutput.toJson(output)
+        def output = new LinkedHashMap<String, Object>()
+        output.installer = new LinkedHashMap<String, String>([
+            minecraft       : minecraftVersion,
+            neoforge        : neoforgeVersion,
+            neoforgeHash    : Utils.sha1(neoforgeInstallerArtifact.get().asFile),
+            fabricLoader    : fabricLoaderVersion,
+            fabricLoaderHash: Utils.sha1(fabricLoaderArtifact.get().asFile)
+        ])
+        output.libraries = artifactHashes(configuration, configurationDeps(configuration))
+        output.fabricExtra = artifactHashes(fabricExtra, configurationDeps(fabricExtra))
+
+        def outputPath = outputFile.get().asFile.toPath()
+        Files.createDirectories(outputPath.parent)
+        Files.writeString(outputPath, JsonOutput.toJson(output), StandardCharsets.UTF_8)
     }
 }

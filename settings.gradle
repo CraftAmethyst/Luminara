@@ -1,10 +1,113 @@
 pluginManagement {
     repositories {
-        maven { url 'https://maven.fabricmc.net/' }
-        maven { url 'https://maven.architectury.dev/' }
-        maven { url 'https://maven.minecraftforge.net/' }
+        maven {
+            name = 'Fabric Plugin Repository'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'Architectury Plugin Repository'
+            url = 'https://maven.architectury.dev/'
+        }
+        maven {
+            name = 'Forge Plugin Repository'
+            url = 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name = 'NeoForge Plugin Repository'
+            url = 'https://maven.neoforged.net/releases/'
+        }
         gradlePluginPortal()
     }
+}
+
+def useMavenLocal = providers.gradleProperty('useMavenLocal')
+    .map { it.equalsIgnoreCase('true') }
+    .getOrElse(false)
+
+def configureLuminaraRepositories = { repositories ->
+    if (useMavenLocal) {
+        repositories.mavenLocal()
+    }
+    repositories.mavenCentral()
+    repositories.maven {
+        name = 'Fabric'
+        url = 'https://maven.fabricmc.net/'
+        content {
+            includeGroupByRegex 'net\\.fabricmc(\\..*)?'
+        }
+    }
+    repositories.maven {
+        name = 'Minecraft Libraries'
+        url = 'https://libraries.minecraft.net/'
+        content {
+            includeGroupByRegex 'com\\.mojang(\\..*)?'
+        }
+    }
+    repositories.maven {
+        name = 'Parchment'
+        url = 'https://maven.parchmentmc.org/'
+        content {
+            includeGroup 'org.parchmentmc.data'
+        }
+    }
+    repositories.maven {
+        name = 'Architectury'
+        url = 'https://maven.architectury.dev/'
+        content {
+            includeGroup 'dev.architectury'
+        }
+    }
+    repositories.maven {
+        name = 'NeoForge'
+        url = 'https://maven.neoforged.net/releases/'
+        content {
+            includeGroupByRegex 'net\\.neoforged(\\..*)?'
+            includeGroup 'cpw.mods'
+        }
+    }
+    repositories.maven {
+        name = 'Forge'
+        url = 'https://maven.minecraftforge.net/'
+        content {
+            includeGroup 'net.minecraftforge'
+            includeGroup 'cpw.mods'
+            includeGroup 'de.oceanlabs.mcp'
+        }
+    }
+    repositories.maven {
+        name = 'Sponge'
+        url = 'https://repo.spongepowered.org/maven/'
+        content {
+            includeGroupByRegex 'org\\.spongepowered(\\..*)?'
+        }
+    }
+    repositories.maven {
+        name = 'Spigot Snapshots'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        mavenContent { snapshotsOnly() }
+        content {
+            includeGroup 'org.spigotmc'
+        }
+    }
+    repositories.maven {
+        name = 'Izzel'
+        url = 'https://maven.izzel.io/releases/'
+        content {
+            includeGroupByRegex 'io\\.izzel(\\..*)?'
+            includeGroup 'net.md-5'
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        configureLuminaraRepositories(delegate)
+    }
+}
+
+gradle.beforeProject { project ->
+    configureLuminaraRepositories(project.repositories)
 }
 
 rootProject.name = 'arclight'

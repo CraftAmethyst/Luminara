@@ -8,3 +8,6 @@ bin/
 run_*/
 run
 .*
+!.github/
+!.github/workflows/
+!.github/workflows/ci.yml

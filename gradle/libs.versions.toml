@@ -1,7 +1,12 @@
 [versions]
 # plugins
+architectury-plugin = '3.4-SNAPSHOT'
 architectury-loom = '1.9-SNAPSHOT'
-# architectury-plugin, gradleup-shadow version: ../build.gradle
+gradleup-shadow = '8.3.11'
+
+# project
+project = '1.0.15-Alpha'
+java = '21'
 
 # common
 lombok = '1.18.38'
@@ -30,9 +35,9 @@ mixin-tools = '1.2.6'
 # minecraft, loaders dependencies (CHECK when migrating Minecraft Versions)
 minecraft = '1.21.1'
 parchment = '2024.11.17'
-fabric-loader = '0.19.2'
-fabric-api = '0.116.11+1.21.1'
-neoforge = '21.1.228'
+fabric-loader = '0.19.3'
+fabric-api = '0.116.15+1.21.1'
+neoforge = '21.1.248'
 fabric-permissions-api = '0.3.1'
 
 # spigot dependencies (CHECK when migrating Spigot Versions)
@@ -112,3 +117,8 @@ log4j = ['log4j-api', 'log4j-core', 'log4j-jul']
 spigot-shade = ['spigot-api', 'bungeecord-chat']
 spigot-runtime = ['spigot-api', 'snakeyaml', 'mysql-connectorj', 'bungeecord-chat']
 adventure = ['adventure-api', 'adventure-minimessage', 'adventure-serializer-gson', 'adventure-serializer-legacy', 'adventure-serializer-plain', 'adventure-logger-slf4j']
+
+[plugins]
+architectury-plugin = { id = 'architectury-plugin', version.ref = 'architectury-plugin' }
+architectury-loom = { id = 'dev.architectury.loom', version.ref = 'architectury-loom' }
+gradleup-shadow = { id = 'com.gradleup.shadow', version.ref = 'gradleup-shadow' }
