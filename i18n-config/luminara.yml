@@ -1,0 +1,78 @@
+# 源代码仓库: https://github.com/CraftAmethyst/Luminara
+# 提交反馈/错误报告: https://github.com/CraftAmethyst/Luminara/issues
+# 配置文件版本号，请勿编辑
+_v: 2
+# 语言/国际化相关设置
+locale:
+  fallback: en_us
+  current: zh_cn
+# 服务端优化相关设置
+optimization:
+  # 是否缓存插件类以提高性能
+  cache-plugin-class: true
+  disable-data-fixer: false
+  # 实体目标选择器的更新间隔
+  # 数值越高消耗资源越少
+  # 导致实体更改目标速度变慢
+  goal-selector-update-interval: 2
+  # 是否使用Spigot Activation Range和Tracking Range优化
+  use-activation-and-tracking-range: true
+compatibility:
+  material-property-overrides: {}
+  entity-property-overrides: {}
+  # 为模组的维度创建符号链接
+  # 推荐启用以增强插件交互兼容性
+  # 变更此设置会导致模组世界名称变化，可能造成依赖世界名称的插件数据丢失
+  # 参见 https://github.com/IzzelAliz/Arclight/wiki/World-Symlink
+  symlink-world: false
+  # 额外运行逻辑的维度类名
+  # 如果有模组世界/功能运行不正常，尝试在日志中搜索和 [EXT_LOGIC] 有关的对应类名并添加
+  extra-logic-worlds:
+  - com.example.mod.ExtraLogicWorld
+  - xyz.nucleoid.fantasy.RuntimeWorld
+  permission-forwarding: FORGE_TO_BUKKIT
+  # 用户名合法检查正则表达式，留空为使用原版检查
+  # 如果需要允许中文字符可以使用
+  # valid-username-regex = "^[ -~\p{sc=Han}]{1,16}$"
+  # 如果允许任何用户名可以使用
+  # valid-username-regex = ".+"
+  valid-username-regex: ''
+  isolate-plugin-class-loaders:
+  - com.example.mod.package.aaaa
+  isolate-adventure-from-modloader: false
+  # 是否在启动时预加载Bungee聊天API类
+  # 这有助于修复某些插件无法正确加载BungeeChat API的问题
+  # 如果您遇到某些插件的兼容性问题，可以设置为false
+  preload-bungee-chat-classes: true
+  enable-bukkit-reload-command: true
+# 异步捕获相关设置
+# Async Catcher 共有四种模式
+# NONE - 保持在当前线程执行
+# DISPATCH - 不阻塞地发布到主线程
+# BLOCK - 发布到主线程并等待结果
+# EXCEPTION - 抛出异常
+async-catcher:
+  # 是否在 debug 日志中打印堆栈信息
+  dump: true
+  warn: true
+  defaultOperation: block
+  overrides: {}
+# Velocity Modern 转发相关设置
+velocity:
+  enable: false
+  secret: ''
+experimental:
+  replaceable-base-world-generator: false
+# 错误处理相关设置
+# 控制服务器在遇到崩溃和错误时的行为
+error-handling:
+  # 是否在崩溃后继续运行服务器（默认关闭，建议保持关闭）
+  continue-on-crash: false
+  # 崩溃报告文件存储目录
+  crash-report-directory: crash-reports
+# 日志输出相关设置
+logging:
+  # 是否使用简化的日志输出格式
+  # true - 使用简洁格式（隐藏线程名和类名，类似Mohist风格）
+  # false - 使用详细格式（显示完整的线程名、类名等调试信息）
+  use-simple-format: false

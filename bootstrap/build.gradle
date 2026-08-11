@@ -122,7 +122,7 @@ tasks.register('neoforgeJar', Jar) {
     archiveBaseName.set "luminara-neoforge-${libs.versions.minecraft.get()}"
     manifest.attributes 'Main-Class': 'io.izzel.arclight.server.Launcher'
     manifest.attributes 'Implementation-Title': 'Arclight'
-    manifest.attributes 'Implementation-Version': "arclight-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
+    manifest.attributes 'Implementation-Version': "luminara-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
     manifest.attributes 'Implementation-Vendor': 'Arclight Team'
     manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
     manifest.attributes 'Automatic-Module-Name': 'arclight.boot'
@@ -157,7 +157,7 @@ tasks.register('fabricJar', Jar) {
     archiveBaseName.set "luminara-fabric-${libs.versions.minecraft.get()}"
     manifest.attributes 'Main-Class': 'io.izzel.arclight.server.Launcher'
     manifest.attributes 'Implementation-Title': 'Arclight'
-    manifest.attributes 'Implementation-Version': "arclight-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
+    manifest.attributes 'Implementation-Version': "luminara-${libs.versions.minecraft.get()}-${project.version}-$gitHash"
     manifest.attributes 'Implementation-Vendor': 'Arclight Team'
     manifest.attributes 'Implementation-Timestamp': new Date().format("yyyy-MM-dd HH:mm:ss")
     manifest.attributes 'Automatic-Module-Name': 'arclight.boot'

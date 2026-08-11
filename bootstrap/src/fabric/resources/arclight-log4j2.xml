@@ -9,12 +9,12 @@
             <PatternLayout>
                 <!-- use white for info output -->
                 <LoggerNamePatternSelector
-                        defaultPattern="%highlight{[%d{HH:mm:ss} %level] [%c{1.}%notEmpty{/%markerSimpleName}]: %minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal}">
+                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
                     <PatternMatch key="net.minecraft."
-                                  pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal}"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
                     <PatternMatch key="com.mojang."
-                                  pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal}"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
