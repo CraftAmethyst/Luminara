@@ -1,11 +1,11 @@
 package io.izzel.arclight.boot.fabric.mod;
 
+import io.izzel.arclight.boot.EmbeddedJarExtractor;
 import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
 import net.fabricmc.loader.impl.launch.FabricLauncher;
 import net.fabricmc.loader.impl.util.Arguments;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
@@ -57,21 +57,14 @@ public class ArclightGameProvider extends MinecraftGameProvider {
     private Path extract() throws Exception {
         var version = getArclightVersion();
         System.setProperty("arclight.version", version);
-        var path = getClass().getModule().getResourceAsStream("/common.jar");
-        var dir = Paths.get(".arclight", "mod_file");
-        if (!Files.exists(dir)) {
-            Files.createDirectories(dir);
+        try (var path = getClass().getModule().getResourceAsStream("/common.jar")) {
+            return EmbeddedJarExtractor.extract(
+                path,
+                Paths.get(".arclight", "mod_file"),
+                version + ".jar",
+                Boolean.getBoolean("arclight.alwaysExtract")
+            );
         }
-        var mod = dir.resolve(version + ".jar");
-        if (!Files.exists(mod) || Boolean.getBoolean("arclight.alwaysExtract")) {
-            try (var files = Files.list(dir)) {
-                for (Path old : files.toList()) {
-                    Files.delete(old);
-                }
-                Files.copy(path, mod);
-            }
-        }
-        return mod;
     }
 
     @SuppressWarnings("unchecked")

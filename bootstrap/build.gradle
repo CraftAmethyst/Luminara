@@ -15,7 +15,14 @@ sourceSets {
             runtimeClasspath += main.runtimeClasspath
         }
     }
-    fabric {}
+    fabric {
+        java {
+            compileClasspath += main.output
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.output
+            runtimeClasspath += main.runtimeClasspath
+        }
+    }
 }
 
 sourceSets.test.compileClasspath += sourceSets.applaunch.output
@@ -192,6 +199,9 @@ tasks.register('fabricJar', Jar) {
     }
     from sourceSets.applaunch.output
     from sourceSets.fabric.output
+    from(sourceSets.main.output) {
+        include 'io/izzel/arclight/boot/EmbeddedJarExtractor.class'
+    }
     from(project(':arclight-fabric').sourceSets.main.output) {
         include 'META-INF/luminara-version.properties'
     }
