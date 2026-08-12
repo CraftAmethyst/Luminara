@@ -5,7 +5,7 @@ architectury-loom = '1.9-SNAPSHOT'
 gradleup-shadow = '8.3.11'
 
 # project
-project = '1.0.15-Alpha'
+project = '1.0.15-beta.1'
 java = '21'
 
 # common
