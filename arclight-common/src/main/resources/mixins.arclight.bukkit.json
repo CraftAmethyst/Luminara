@@ -19,6 +19,7 @@
     "CraftBlockStateMixin",
     "CraftBlockTypeMixin",
     "CraftChunkMixin",
+    "CraftChatMessageMixin",
     "CraftConsoleCommandSenderMixin",
     "CraftEnderDragonMixin",
     "CraftEntityMixin",
