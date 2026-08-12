@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.inventory;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
 import io.izzel.arclight.common.bridge.core.world.inventory.AnvilMenuBridge;
 import io.izzel.arclight.common.bridge.core.world.inventory.ContainerLevelAccessBridge;
@@ -87,12 +88,12 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenuMixin implements An
         this.sendAllDataToRemote();
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40), require = 0)
+    @ModifyExpressionValue(method = "createResult", at = @At(value = "CONSTANT", args = "intValue=40"), require = 0)
     private int arclight$maximumRepairCost(int i) {
         return i - 40 + maximumRepairCost;
     }
 
-    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 39), require = 0)
+    @ModifyExpressionValue(method = "createResult", at = @At(value = "CONSTANT", args = "intValue=39"), require = 0)
     private int arclight$maximumRepairCost2(int i) {
         return i - 40 + maximumRepairCost;
     }
