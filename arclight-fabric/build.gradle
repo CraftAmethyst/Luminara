@@ -78,6 +78,7 @@ processResources {
 
 shadowJar {
     exclude 'architectury.common.json'
+    exclude 'io/izzel/arclight/boot/EmbeddedJarExtractor.class'
 
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
