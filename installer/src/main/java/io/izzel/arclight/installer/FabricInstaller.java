@@ -50,10 +50,13 @@ public class FabricInstaller {
         "net.fabricmc.fabric-api:fabric-api:"
     );
 
+    private static final String JANSI = "org.fusesource.jansi:jansi:";
+    private static final String JLINE_2 = "jline:jline:";
+
     private static Map.Entry<String, List<Path>> classpath(InstallInfo info, Path path) throws Exception {
         var mcPath = String.format("libraries/net/minecraft/server/%1$s/server-%1$s.jar", info.installer.minecraft);
         System.setProperty("fabric.gameJarPath", Paths.get(mcPath).toAbsolutePath().toString());
-        var gameLibs = info.fabricDeps().keySet().stream()
+        var gameLibs = orderedGameLibraries(info.fabricDeps().keySet()).stream()
             .filter(it -> BOOTSTRAP_LIBS.stream().noneMatch(it::startsWith) && BUILTIN_MODS.stream().noneMatch(it::startsWith))
             .map(it -> "libraries/" + Util.mavenToPath(it)).collect(Collectors.joining(File.pathSeparator));
         System.setProperty("arclight.fabric.classpath", gameLibs);
@@ -71,6 +74,23 @@ public class FabricInstaller {
             var mainClass = file.getManifest().getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
             return Map.entry(mainClass, libs);
         }
+    }
+
+    static List<String> orderedGameLibraries(Collection<String> libraries) {
+        return libraries.stream()
+            .sorted(Comparator.comparingInt(FabricInstaller::classpathPriority).thenComparing(Comparator.naturalOrder()))
+            .toList();
+    }
+
+    private static int classpathPriority(String library) {
+        if (library.startsWith(JANSI)) {
+            return 0;
+        }
+        // JLine 2 bundles Jansi 1.x classes, so it must not shadow the standalone Jansi 2.x jar.
+        if (library.startsWith(JLINE_2)) {
+            return 2;
+        }
+        return 1;
     }
 
     private static boolean fabricClasspathMissing(Path fabricLoader) throws Exception {
