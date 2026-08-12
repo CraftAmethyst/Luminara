@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.google.common.collect.Lists;
 import io.izzel.arclight.common.bridge.core.world.entity.MobBridge;
 import net.minecraft.core.BlockPos;
@@ -95,9 +96,9 @@ public abstract class BeehiveBlockEntityMixin extends BlockEntityMixin {
 
     private static transient boolean arclight$force;
 
-    @Redirect(method = "releaseOccupant", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isNight()Z"))
-    private static boolean arclight$bypassNightCheck(Level world) {
-        return !arclight$force && world.isNight();
+    @ModifyExpressionValue(method = "releaseOccupant", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isNight()Z"))
+    private static boolean arclight$bypassNightCheck(boolean isNight) {
+        return !arclight$force && isNight;
     }
 
     @Inject(method = "loadAdditional", at = @At("RETURN"))
