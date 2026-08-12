@@ -31,10 +31,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Mixin(DedicatedServer.class)
 public abstract class DedicatedServerMixin extends MinecraftServerMixin implements DedicatedServerBridge {
+
+    private static final long ARCLIGHT_SHUTDOWN_TIMEOUT_MILLIS = 5000L;
 
     // @formatter:off
     @Shadow @Final public RconConsoleSource rconConsoleSource;
@@ -104,9 +107,9 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin implemen
 
     private void arclight$exit() {
         try {
-            Thread.sleep(5000L);
+            Thread.sleep(ARCLIGHT_SHUTDOWN_TIMEOUT_MILLIS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         List<String> threads = new ArrayList<>();
         for (Thread thread : Thread.getAllStackTraces().keySet()) {
@@ -114,11 +117,13 @@ public abstract class DedicatedServerMixin extends MinecraftServerMixin implemen
                 threads.add(thread.getName());
             }
         }
+        threads.sort(Comparator.naturalOrder());
         if (!threads.isEmpty()) {
             ArclightServer.LOGGER.debug("Threads {} not shutting down", String.join(", ", threads));
-            ArclightServer.LOGGER.info("{} threads not shutting down correctly, force exiting", threads.size());
+            ArclightServer.LOGGER.info("server.threads.force-exit", threads.size());
         }
-        System.exit(0);
+        // A stuck shutdown hook can block System.exit indefinitely.
+        Runtime.getRuntime().halt(0);
     }
 
     /**
