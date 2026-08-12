@@ -66,11 +66,29 @@ public class NeoforgeInstaller {
                         method.invoke(null, (Object) new String[]{"--installServer", ".", "--debug"});
                     }
                 }
+                cleanupInstallerArtifacts(Paths.get("."), installInfo.installer.neoforge, System.out::println);
             }
             MinecraftProvider.handleFutures(System.out::println, array);
             pool.shutdownNow();
         }
         return classpath(path, installInfo);
+    }
+
+    static void cleanupInstallerArtifacts(Path serverDirectory, String neoforgeVersion, Consumer<String> logger) {
+        List<Path> artifacts = List.of(
+            serverDirectory.resolve("neoforge-" + neoforgeVersion + "-installer.jar"),
+            serverDirectory.resolve("run.bat"),
+            serverDirectory.resolve("run.sh"),
+            serverDirectory.resolve("user_jvm_args.txt"),
+            serverDirectory.resolve(".arclight").resolve("installer_stripped.jar.log")
+        );
+        for (Path artifact : artifacts) {
+            try {
+                Files.deleteIfExists(artifact);
+            } catch (IOException e) {
+                logger.accept("Failed to delete NeoForge installer artifact " + artifact + ": " + e.getMessage());
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
