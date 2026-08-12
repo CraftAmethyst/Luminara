@@ -75,7 +75,7 @@
     "server.level.ChunkHolderMixin",
     "server.level.ChunkMap_TrackedEntityMixin",
     "server.level.ChunkMapMixin",
-    "server.level.DistanceManager_ChunkTicketTrackerMixin",
+    "server.level.ChunkMap_DistanceManagerMixin",
     "server.level.DistanceManagerMixin",
     "server.level.ServerChunkCache_MainThreadExecutorMixin",
     "server.level.ServerChunkCacheMixin",
