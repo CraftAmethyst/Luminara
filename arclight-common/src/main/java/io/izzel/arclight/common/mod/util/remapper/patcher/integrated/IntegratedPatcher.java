@@ -24,6 +24,7 @@ public class IntegratedPatcher implements PluginPatcher {
         SPECIFIC.put("com/sk89q/worldedit/bukkit/adapter/impl/v1_21/PaperweightAdapter", WorldEdit::handleBukkitAdapter);
         SPECIFIC.put("com/Zrips/CMI/utils/CMIThread", CMI::handleThreadExecutor);
         SPECIFIC.put("com/sk89q/bukkit/util/CommandRegistration", WorldEdit::handleFaweCommandRegistration);
+        SPECIFIC.put("me/lucko/luckperms/bukkit/inject/permissible/PermissibleInjector", LuckPerms::handlePermissibleInjector);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class IntegratedPatcher implements PluginPatcher {
             sb.append("version=").append(implVersion);
         }
         sb.append(" patchers=[");
-        sb.append("WorldEdit 1.21.1 4, FAWE CommandRegistration, CMI");
+        sb.append("WorldEdit 1.21.1 4, FAWE CommandRegistration, CMI, LuckPerms");
         sb.append("]");
         return sb.toString();
     }
