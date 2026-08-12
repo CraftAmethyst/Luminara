@@ -94,12 +94,4 @@ public class ArclightGameProvider extends MinecraftGameProvider {
         return true;
     }
 
-    @Override
-    public String getRawGameVersion() {
-        try {
-            return super.getRawGameVersion() + " Arclight " + getArclightVersion();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
