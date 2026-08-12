@@ -105,7 +105,7 @@ public interface AbstractBootstrap {
                 extract(getClass().getModule().getResourceAsStream("/common.jar"), version);
             }
             String buildTime = attributes.getValue("Implementation-Timestamp");
-            LogManager.getLogger("Arclight").info(ArclightLocale.getInstance().get("logo"),
+            LogManager.getLogger("Luminara").info(ArclightLocale.getInstance().get("logo"),
                     ArclightLocale.getInstance().get("release-name." + ArclightVersion.current().getReleaseName()), version, buildTime);
         }
     }

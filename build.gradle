@@ -209,7 +209,7 @@ def commonDistributionEntries = [
     'META-INF/luminara-version.properties',
     'arclight-server-launch.properties',
     'arclight-log4j2.xml',
-    'arclight-log4j2-simple.xml'
+    'arclight-log4j2-detailed.xml'
 ]
 def commonMixinEntries = [
     'mixins.arclight.core.json',

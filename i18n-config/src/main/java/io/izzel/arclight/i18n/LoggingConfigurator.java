@@ -25,8 +25,8 @@ final class LoggingConfigurator {
             }
 
             String configFile = useSimpleFormat
-                ? "arclight-log4j2-simple.xml"
-                : "arclight-log4j2.xml";
+                ? "arclight-log4j2.xml"
+                : "arclight-log4j2-detailed.xml";
             reconfigureLogging(configFile);
 
             System.out.println(

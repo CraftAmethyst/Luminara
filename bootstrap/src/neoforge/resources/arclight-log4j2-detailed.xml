@@ -27,7 +27,7 @@
             <PatternLayout>
                 <!-- use white for info output -->
                 <LoggerNamePatternSelector
-                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}">
+                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [%style{%c{1.}%notEmpty{/%markerSimpleName}}{magenta}] %highlight{%minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
                     <PatternMatch key="net.minecraft."
                                   pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
@@ -41,12 +41,12 @@
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
             <PatternLayout>
                 <LoggerNamePatternSelector
-                        defaultPattern="[%d{HH:mm:ss}] [%level]: %minecraftFormatting{%msg{nolookup}}{strip}%n">
+                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [%style{%c{2.}/%markerSimpleName}{magenta}]: %highlight{%minecraftFormatting{%msg{nolookup}}{strip}%n}{INFO=normal, WARN=normal, ERROR=red}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
                     <PatternMatch key="net.minecraft."
-                                  pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}] %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [minecraft/%logger{1}]: %highlight{%minecraftFormatting{%msg{nolookup}}{strip}%n}{INFO=normal, WARN=normal, ERROR=red}"/>
                     <PatternMatch key="com.mojang."
-                                  pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}] %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [mojang/%logger{1}]: %highlight{%minecraftFormatting{%msg{nolookup}}{strip}%n}{INFO=normal, WARN=normal, ERROR=red}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Queue>

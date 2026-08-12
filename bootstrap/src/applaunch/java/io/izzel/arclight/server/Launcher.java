@@ -23,6 +23,7 @@ public class Launcher {
     private static final String EULA_FILE = "eula.txt";
 
     public static void main(String[] args) throws Throwable {
+        System.setProperty("terminal.ansi", System.getProperty("terminal.ansi", "true"));
         int javaVersion = (int) Float.parseFloat(System.getProperty("java.class.version"));
         if (javaVersion < MIN_CLASS_VERSION) {
             System.err.println("Arclight requires Java " + MIN_JAVA_VERSION);
