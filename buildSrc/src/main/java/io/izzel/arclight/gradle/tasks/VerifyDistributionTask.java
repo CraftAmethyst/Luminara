@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Arrays;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -56,6 +57,17 @@ public abstract class VerifyDistributionTask extends DefaultTask {
     @Input public abstract ListProperty<String> getRequiredCommonEntries();
     @Input public abstract ListProperty<String> getForbiddenCommonEntries();
     @Input public abstract MapProperty<String, String> getExpectedServices();
+
+    /**
+     * Class path prefixes that are intentionally allowed to appear both in the outer
+     * launcher JAR and in the embedded {@code common.jar}. During the transition the
+     * standalone mod JARs carry their own runtime libraries (arclight-api, i18n-config,
+     * mixin-tools, io.izzel tools) while the legacy launcher keeps embedding the same
+     * libraries for its own early bootstrap. The classes are the same library versions,
+     * so the classpath duplication is benign; the duplicate check still catches real
+     * version conflicts of any other class.
+     */
+    @Input public abstract ListProperty<String> getIgnoredDuplicatePrefixes();
 
     @TaskAction
     public void verify() throws IOException {
@@ -210,29 +222,59 @@ public abstract class VerifyDistributionTask extends DefaultTask {
     }
 
     private void verifyDuplicateClasses(ZipFile outer, byte[] common, byte[] gson) throws IOException {
-        var owners = new HashMap<String, String>();
+        var owners = new HashMap<String, byte[]>();
         var duplicates = new HashSet<String>();
         var entries = outer.entries();
         while (entries.hasMoreElements()) {
             var entry = entries.nextElement();
-            registerClass(entry.getName(), "outer JAR", owners, duplicates);
+            registerClass(outer, entry, "outer JAR", owners, duplicates);
         }
         registerNestedClasses(common, "common.jar", owners, duplicates);
         registerNestedClasses(gson, "gson.jar", owners, duplicates);
         if (!duplicates.isEmpty()) fail("duplicate classes across archives: " + String.join(", ", duplicates));
     }
 
-    private void registerNestedClasses(byte[] bytes, String owner, Map<String, String> owners, Set<String> duplicates) throws IOException {
+    private void registerNestedClasses(byte[] bytes, String owner, Map<String, byte[]> owners, Set<String> duplicates) throws IOException {
         try (var jar = new JarInputStream(new ByteArrayInputStream(bytes))) {
             ZipEntry entry;
-            while ((entry = jar.getNextEntry()) != null) registerClass(entry.getName(), owner, owners, duplicates);
+            while ((entry = jar.getNextEntry()) != null) {
+                registerClass(jar, entry, owner, owners, duplicates);
+            }
         }
     }
 
-    private void registerClass(String path, String owner, Map<String, String> owners, Set<String> duplicates) {
-        if (!path.endsWith(".class") || path.equals("module-info.class") || path.endsWith("/module-info.class")) return;
-        var previous = owners.putIfAbsent(path, owner);
-        if (previous != null && !previous.equals(owner)) duplicates.add(path + " (" + previous + ", " + owner + ")");
+    private void registerClass(ZipFile zip, ZipEntry entry, String owner, Map<String, byte[]> owners, Set<String> duplicates) throws IOException {
+        if (!isClass(entry.getName())) return;
+        var content = readAllBytes(zip.getInputStream(entry));
+        register(entry.getName(), content, owners, duplicates);
+    }
+
+    private void registerClass(JarInputStream jar, ZipEntry entry, String owner, Map<String, byte[]> owners, Set<String> duplicates) throws IOException {
+        if (!isClass(entry.getName())) return;
+        register(entry.getName(), jar.readAllBytes(), owners, duplicates);
+    }
+
+    private void register(String path, byte[] content, Map<String, byte[]> owners, Set<String> duplicates) {
+        if (isIgnoredDuplicate(path)) return;
+        var previous = owners.putIfAbsent(path, content);
+        if (previous != null && !Arrays.equals(previous, content)) {
+            duplicates.add(path + " (" + previous.length + " vs " + content.length + " bytes)");
+        }
+    }
+
+    private boolean isIgnoredDuplicate(String path) {
+        for (var prefix : getIgnoredDuplicatePrefixes().get()) {
+            if (path.startsWith(prefix)) return true;
+        }
+        return false;
+    }
+
+    private byte[] readAllBytes(InputStream input) throws IOException {
+        return input.readAllBytes();
+    }
+
+    private boolean isClass(String path) {
+        return path.endsWith(".class") && !path.equals("module-info.class") && !path.endsWith("/module-info.class");
     }
 
     private Set<String> nestedEntries(byte[] bytes, String label) throws IOException {

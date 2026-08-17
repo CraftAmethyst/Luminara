@@ -15,3 +15,6 @@ description='''
 
 [[accessTransformers]]
 file="META-INF/accesstransformer.cfg"
+
+[[mixins]]
+config="mixinextras.init.mixins.json"

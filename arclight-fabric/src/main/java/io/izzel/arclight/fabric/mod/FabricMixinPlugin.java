@@ -1,7 +1,7 @@
 package io.izzel.arclight.fabric.mod;
 
 import io.izzel.arclight.api.ArclightPlatform;
-import io.izzel.arclight.boot.AbstractBootstrap;
+import io.izzel.arclight.common.mod.boot.AbstractBootstrap;
 import io.izzel.arclight.common.mod.ArclightCommon;
 import io.izzel.arclight.common.mod.ArclightMixinPlugin;
 import io.izzel.arclight.i18n.ArclightConfig;
@@ -21,7 +21,7 @@ public class FabricMixinPlugin extends ArclightMixinPlugin implements AbstractBo
             ArclightLocale.getInstance().format("i18n.using-language", ArclightConfig.spec().getLocale().getCurrent(), ArclightConfig.spec().getLocale().getFallback())
         );
         try {
-            this.setupMod(ArclightPlatform.FABRIC, false);
+            this.setupMod(ArclightPlatform.FABRIC);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

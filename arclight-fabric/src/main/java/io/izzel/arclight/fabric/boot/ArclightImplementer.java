@@ -1,6 +1,6 @@
 package io.izzel.arclight.fabric.boot;
 
-import io.izzel.arclight.boot.asm.*;
+import io.izzel.arclight.common.mod.boot.asm.*;
 import net.fabricmc.loader.impl.game.patch.GameTransformer;
 import net.fabricmc.loader.impl.launch.FabricLauncher;
 import org.objectweb.asm.ClassReader;
@@ -75,7 +75,7 @@ public class ArclightImplementer extends GameTransformer {
     private static boolean detectTransformLogger() {
         var transformLogger = !(java.util.logging.LogManager.getLogManager().getClass().getName().equals("org.apache.logging.log4j.jul.LogManager"));
         if (transformLogger && !System.getProperties().contains("log4j.jul.LoggerAdapter")) {
-            System.setProperty("log4j.jul.LoggerAdapter", "io.izzel.arclight.boot.log.ArclightLoggerAdapter");
+            System.setProperty("log4j.jul.LoggerAdapter", "io.izzel.arclight.common.mod.util.log.ArclightLoggerAdapter");
         }
         return transformLogger;
     }

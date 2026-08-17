@@ -20,6 +20,10 @@ dependencies {
     implementation libs.mixin.tools
     annotationProcessor(libs.mixin.tools) { transitive = false }
 
+    // boot utilities shared by the standalone mod entry points
+    implementation(libs.bundles.asm) { transitive = false }
+    implementation libs.gson
+
     // spigot
     implementation libs.spigot.api
     implementation libs.jline
@@ -28,6 +32,7 @@ dependencies {
     implementation libs.log4j.jul
     implementation libs.bungeecord.chat
     implementation libs.mysql.connectorj
+    implementation libs.sqlite.jdbc
     implementation libs.snakeyaml
     implementation(libs.bundles.adventure) {
         exclude group: 'org.slf4j'

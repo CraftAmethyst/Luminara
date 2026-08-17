@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mod;
 
 import io.izzel.arclight.api.ArclightPlatform;
+import io.izzel.arclight.api.ArclightVersion;
+import io.izzel.arclight.common.mod.boot.AbstractBootstrap;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.mixin.MixinTools;
 import org.apache.logging.log4j.Logger;
@@ -13,10 +15,15 @@ public class ArclightConnector implements IMixinConnector {
 
     @Override
     public void connect() {
+        // The legacy launcher set the version/platform in its bootstrap phase before any
+        // mixin was applied. As a standalone mod the connector is the earliest hook on
+        // NeoForge, so both must be established here or mixins fail on version lookup.
+        AbstractBootstrap.setVersionIfAbsent(ArclightVersion.FEUDAL_KINGS);
+        AbstractBootstrap.setPlatformIfAbsent(AbstractBootstrap.detectPlatform());
         MixinTools.setup();
         Mixins.addConfiguration("mixins.arclight.core.json");
         Mixins.addConfiguration("mixins.arclight.bukkit.json");
-        switch (ArclightPlatform.current()) {
+        switch (currentPlatform()) {
             case VANILLA -> Mixins.addConfiguration("mixins.arclight.vanilla.json");
             case FORGE -> Mixins.addConfiguration("mixins.arclight.forge.json");
             case NEOFORGE -> Mixins.addConfiguration("mixins.arclight.neoforge.json");
@@ -24,5 +31,10 @@ public class ArclightConnector implements IMixinConnector {
         LOGGER.info("mixin-load.core");
         Mixins.addConfiguration("mixins.arclight.impl.optimization.json");
         LOGGER.info("mixin-load.optimization");
+    }
+
+    private static ArclightPlatform currentPlatform() {
+        AbstractBootstrap.setPlatformIfAbsent(AbstractBootstrap.detectPlatform());
+        return ArclightPlatform.current();
     }
 }

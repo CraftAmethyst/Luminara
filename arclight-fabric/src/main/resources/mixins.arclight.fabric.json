@@ -19,6 +19,7 @@
     "bukkit.CraftServerMixin_Fabric",
     "bukkit.StandardMessengerMixin_Fabric",
     "core.server.MinecraftServerMixin_Fabric",
+    "core.commands.CommandNodeMixin_Fabric",
     "core.server.level.ServerPlayerMixin_Fabric",
     "core.server.network.ServerCommonPacketListenerImplMixin_Fabric",
     "core.server.network.ServerConfigurationPacketListenerImplMixin_Fabric",

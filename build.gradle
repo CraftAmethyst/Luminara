@@ -2,6 +2,7 @@ import io.izzel.arclight.gradle.ArclightGradlePlugin
 import io.izzel.arclight.gradle.tasks.AssembleDistributionTask
 import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
 import io.izzel.arclight.gradle.tasks.VerifyLauncherBoundaryTask
+import io.izzel.arclight.gradle.tasks.VerifyModDistributionTask
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Jar
@@ -178,29 +179,114 @@ rootProject.ext.platformProjects.each { Project p ->
 
 jar.enabled = false
 
-evaluationDependsOn(':bootstrap')
-def fabricJar = project(':bootstrap').tasks.named('fabricJar', Jar)
-def neoforgeJar = project(':bootstrap').tasks.named('neoforgeJar', Jar)
-
-def assembleFabricDistribution = tasks.register('assembleFabricDistribution', AssembleDistributionTask) {
-    group = 'distribution'
-    description = 'Assembles the Fabric distribution JAR.'
-    inputJar.set(fabricJar.flatMap { it.archiveFile })
-    outputJar.set(layout.buildDirectory.file(fabricJar.flatMap { it.archiveFileName }.map { "distributions/${it}" }))
+tasks.register('nativeTestPlugin') {
+    group = 'verification'
+    description = 'Builds the Bukkit plugin used by native M3-M5 integration tests.'
+    dependsOn ':native-test-plugin:jar'
 }
 
-def assembleNeoForgeDistribution = tasks.register('assembleNeoForgeDistribution', AssembleDistributionTask) {
+evaluationDependsOn(':bootstrap')
+
+// Primary install artifacts: the standalone standard mod JARs.
+def fabricModJar = project(':arclight-fabric').tasks.named('relocateCraftBukkit', AbstractArchiveTask)
+def neoforgeModJar = project(':arclight-neoforge').tasks.named('relocateCraftBukkit', AbstractArchiveTask)
+
+// Legacy launcher distributions, kept as the transitional fallback / regression baseline.
+def fabricLauncherJar = project(':bootstrap').tasks.named('fabricJar', Jar)
+def neoforgeLauncherJar = project(':bootstrap').tasks.named('neoforgeJar', Jar)
+
+def modDistributionFileName = { String loader -> "luminara-${loader}-${libs.versions.minecraft.get()}-${libs.versions.project.get()}.jar" }
+
+def assembleFabricModDistribution = tasks.register('assembleFabricModDistribution', AssembleDistributionTask) {
     group = 'distribution'
-    description = 'Assembles the NeoForge distribution JAR.'
-    inputJar.set(neoforgeJar.flatMap { it.archiveFile })
-    outputJar.set(layout.buildDirectory.file(neoforgeJar.flatMap { it.archiveFileName }.map { "distributions/${it}" }))
+    description = 'Assembles the standalone Fabric mod JAR.'
+    inputJar.set(fabricModJar.flatMap { it.archiveFile })
+    outputJar.set(layout.buildDirectory.file("distributions/" + modDistributionFileName('fabric')))
+}
+
+def assembleNeoForgeModDistribution = tasks.register('assembleNeoForgeModDistribution', AssembleDistributionTask) {
+    group = 'distribution'
+    description = 'Assembles the standalone NeoForge mod JAR.'
+    inputJar.set(neoforgeModJar.flatMap { it.archiveFile })
+    outputJar.set(layout.buildDirectory.file("distributions/" + modDistributionFileName('neoforge')))
 }
 
 tasks.register('assembleDistributions') {
     group = 'distribution'
-    description = 'Assembles all loader distribution JARs.'
-    dependsOn assembleFabricDistribution, assembleNeoForgeDistribution
+    description = 'Assembles all standalone mod distribution JARs.'
+    dependsOn assembleFabricModDistribution, assembleNeoForgeModDistribution
 }
+
+def commonMixinEntries = [
+    'mixins.arclight.core.json',
+    'mixins.arclight.bukkit.json',
+    'mixins.arclight.vanilla.json',
+    'mixins.arclight.impl.optimization.json'
+]
+
+def launcherRemnants = [
+    'io/izzel/arclight/server/',
+    'io/izzel/arclight/installer/',
+    'io/izzel/arclight/boot/',
+    'META-INF/installer.json',
+    'arclight-server-launch.properties',
+    'common.jar',
+    'gson.jar',
+    'META-INF/services/net.fabricmc.loader.impl.game.GameProvider',
+    'META-INF/services/cpw.mods.modlauncher.api.ILaunchHandlerService',
+    'META-INF/services/cpw.mods.modlauncher.serviceapi.ILaunchPluginService',
+    'META-INF/services/java.util.function.Consumer',
+    'META-INF/services/net.neoforged.neoforgespi.locating.IDependencyLocator',
+    'META-INF/services/net.neoforged.neoforgespi.locating.IModFileCandidateLocator',
+    'META-INF/services/net.neoforged.neoforgespi.locating.IModFileReader'
+]
+
+def configureModDistributionVerification = { VerifyModDistributionTask task ->
+    task.minecraftVersion.set(libs.versions.minecraft)
+    task.javaVersion.set(libs.versions.java)
+    task.projectVersion.set(libs.versions.project)
+    task.gitCommit.set(rootProject.ext.gitHash)
+    task.gitTimestamp.set(rootProject.ext.gitTimestamp)
+    task.forbiddenEntries.set(launcherRemnants)
+}
+
+def verifyFabricModDistribution = tasks.register('verifyFabricModDistribution', VerifyModDistributionTask) {
+    group = 'verification'
+    description = 'Verifies the standalone Fabric mod JAR contract.'
+    dependsOn assembleFabricModDistribution
+    distributionJar.set(assembleFabricModDistribution.flatMap { it.outputJar })
+    expectedFileName.set(modDistributionFileName('fabric'))
+    moduleName.set('arclight-fabric')
+    loader.set('Fabric')
+    loaderVersion.set(libs.versions.fabric.loader)
+    requiredEntries.set(['fabric.mod.json', 'mixins.arclight.fabric.json'] + commonMixinEntries)
+    configureModDistributionVerification(delegate)
+    forbiddenEntries.add('META-INF/neoforge.mods.toml')
+    forbiddenEntries.add('mixins.arclight.neoforge.json')
+}
+
+def verifyNeoForgeModDistribution = tasks.register('verifyNeoForgeModDistribution', VerifyModDistributionTask) {
+    group = 'verification'
+    description = 'Verifies the standalone NeoForge mod JAR contract.'
+    dependsOn assembleNeoForgeModDistribution
+    distributionJar.set(assembleNeoForgeModDistribution.flatMap { it.outputJar })
+    expectedFileName.set(modDistributionFileName('neoforge'))
+    moduleName.set('arclight-neoforge')
+    loader.set('NeoForge')
+    loaderVersion.set(libs.versions.neoforge)
+    requiredEntries.set(['META-INF/neoforge.mods.toml', 'mixins.arclight.neoforge.json'] + commonMixinEntries)
+    configureModDistributionVerification(delegate)
+    forbiddenEntries.add('fabric.mod.json')
+    forbiddenEntries.add('mixins.arclight.fabric.json')
+}
+
+tasks.register('verifyDistributions') {
+    group = 'verification'
+    description = 'Verifies all standalone mod distribution contracts.'
+    dependsOn verifyFabricModDistribution, verifyNeoForgeModDistribution
+}
+
+// ---------- Legacy launcher fallback (transitional regression baseline) ----------
 
 def commonDistributionEntries = [
     'common.jar',
@@ -211,11 +297,26 @@ def commonDistributionEntries = [
     'arclight-log4j2.xml',
     'arclight-log4j2-detailed.xml'
 ]
-def commonMixinEntries = [
-    'mixins.arclight.core.json',
-    'mixins.arclight.bukkit.json',
-    'mixins.arclight.vanilla.json',
-    'mixins.arclight.impl.optimization.json'
+
+def assembleFabricLauncherDistribution = tasks.register('assembleFabricLauncherDistribution', AssembleDistributionTask) {
+    group = 'distribution'
+    description = 'Assembles the legacy Fabric launcher JAR (fallback).'
+    inputJar.set(fabricLauncherJar.flatMap { it.archiveFile })
+    outputJar.set(layout.buildDirectory.file(fabricLauncherJar.flatMap { it.archiveFileName }.map { "distributions/launcher/${it}" }))
+}
+
+def assembleNeoForgeLauncherDistribution = tasks.register('assembleNeoForgeLauncherDistribution', AssembleDistributionTask) {
+    group = 'distribution'
+    description = 'Assembles the legacy NeoForge launcher JAR (fallback).'
+    inputJar.set(neoforgeLauncherJar.flatMap { it.archiveFile })
+    outputJar.set(layout.buildDirectory.file(neoforgeLauncherJar.flatMap { it.archiveFileName }.map { "distributions/launcher/${it}" }))
+}
+
+def commonSharedRuntimePrefixes = [
+    'io/izzel/arclight/api/',
+    'io/izzel/arclight/i18n/',
+    'io/izzel/arclight/mixin/',
+    'io/izzel/tools/'
 ]
 
 def configureDistributionVerification = { VerifyDistributionTask task ->
@@ -228,14 +329,15 @@ def configureDistributionVerification = { VerifyDistributionTask task ->
     task.requiredEntries.set(commonDistributionEntries)
     task.expectedNeoForgeVersion.set(libs.versions.neoforge)
     task.expectedFabricLoaderVersion.set(libs.versions.fabric.loader)
+    task.ignoredDuplicatePrefixes.set(commonSharedRuntimePrefixes)
 }
 
-def verifyFabricDistribution = tasks.register('verifyFabricDistribution', VerifyDistributionTask) {
+def verifyFabricLauncherDistribution = tasks.register('verifyFabricLauncherDistribution', VerifyDistributionTask) {
     group = 'verification'
-    description = 'Verifies the Fabric distribution contract.'
-    dependsOn assembleFabricDistribution
-    distributionJar.set(assembleFabricDistribution.flatMap { it.outputJar })
-    expectedFileName.set(fabricJar.flatMap { it.archiveFileName })
+    description = 'Verifies the legacy Fabric launcher distribution contract.'
+    dependsOn assembleFabricLauncherDistribution
+    distributionJar.set(assembleFabricLauncherDistribution.flatMap { it.outputJar })
+    expectedFileName.set(fabricLauncherJar.flatMap { it.archiveFileName })
     loader.set('Fabric')
     loaderVersion.set(libs.versions.fabric.loader)
     launchMainClass.set('io.izzel.arclight.boot.fabric.application.Main_Fabric')
@@ -247,12 +349,12 @@ def verifyFabricDistribution = tasks.register('verifyFabricDistribution', Verify
     configureDistributionVerification(delegate)
 }
 
-def verifyNeoForgeDistribution = tasks.register('verifyNeoForgeDistribution', VerifyDistributionTask) {
+def verifyNeoForgeLauncherDistribution = tasks.register('verifyNeoForgeLauncherDistribution', VerifyDistributionTask) {
     group = 'verification'
-    description = 'Verifies the NeoForge distribution contract.'
-    dependsOn assembleNeoForgeDistribution
-    distributionJar.set(assembleNeoForgeDistribution.flatMap { it.outputJar })
-    expectedFileName.set(neoforgeJar.flatMap { it.archiveFileName })
+    description = 'Verifies the legacy NeoForge launcher distribution contract.'
+    dependsOn assembleNeoForgeLauncherDistribution
+    distributionJar.set(assembleNeoForgeLauncherDistribution.flatMap { it.outputJar })
+    expectedFileName.set(neoforgeLauncherJar.flatMap { it.archiveFileName })
     loader.set('NeoForge')
     loaderVersion.set(libs.versions.neoforge)
     launchMainClass.set('io.izzel.arclight.boot.neoforge.application.Main_Neoforge')
@@ -269,20 +371,14 @@ def verifyNeoForgeDistribution = tasks.register('verifyNeoForgeDistribution', Ve
     configureDistributionVerification(delegate)
 }
 
-tasks.register('verifyDistributions') {
-    group = 'verification'
-    description = 'Verifies all loader distribution contracts.'
-    dependsOn verifyFabricDistribution, verifyNeoForgeDistribution
-}
-
 def javaToolchains = extensions.getByType(JavaToolchainService)
 tasks.register('verifyLauncherBoundaries', VerifyLauncherBoundaryTask) {
     group = 'verification'
-    description = 'Verifies both launchers reject a missing Minecraft EULA.'
-    dependsOn tasks.named('verifyDistributions')
+    description = 'Verifies both legacy launchers reject a missing Minecraft EULA.'
+    dependsOn verifyFabricLauncherDistribution, verifyNeoForgeLauncherDistribution
     distributionJars.from(
-        assembleFabricDistribution.flatMap { it.outputJar },
-        assembleNeoForgeDistribution.flatMap { it.outputJar }
+        assembleFabricLauncherDistribution.flatMap { it.outputJar },
+        assembleNeoForgeLauncherDistribution.flatMap { it.outputJar }
     )
     javaExecutable.set(javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
@@ -293,6 +389,6 @@ tasks.register('verifyLauncherBoundaries', VerifyLauncherBoundaryTask) {
 tasks.register('collect', Copy) {
     dependsOn tasks.named('assembleDistributions')
     destinationDir = file('build/libs')
-    from assembleFabricDistribution.flatMap { it.outputJar }
-    from assembleNeoForgeDistribution.flatMap { it.outputJar }
+    from assembleFabricModDistribution.flatMap { it.outputJar }
+    from assembleNeoForgeModDistribution.flatMap { it.outputJar }
 }

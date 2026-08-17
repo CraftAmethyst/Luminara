@@ -47,7 +47,7 @@ public class ArclightRemapper {
             } else {
                 DUMP = null;
             }
-            SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName("io.izzel.arclight.boot.asm.SwitchTableFixer").getField("INSTANCE").get(null);
+            SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName("io.izzel.arclight.common.mod.boot.asm.SwitchTableFixer").getField("INSTANCE").get(null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -20,10 +20,51 @@ dependencies {
     implementation libs.arclight.api
     implementation libs.mixin.tools
 
+    shadowBundle(libs.izzel.tools) { transitive = false }
+    shadowBundle(libs.arclight.api) { transitive = false }
+    shadowBundle(libs.mixin.tools) { transitive = false }
+    shadowBundle(project(':i18n-config')) {
+        transitive = true
+        exclude group: 'org.apache.logging.log4j'
+        exclude group: 'com.google.guava'
+        exclude group: 'org.checkerframework'
+        exclude group: 'org.yaml'
+    }
+    shadowBundle('org.yaml:snakeyaml:2.2') { transitive = false }
+    shadowBundle(libs.jline) { transitive = false }
+    shadowBundle(libs.specialsource) { transitive = false }
+    shadowBundle(libs.mysql.connectorj) { transitive = false }
+    shadowBundle(libs.sqlite.jdbc) { transitive = false }
+    shadowBundle(libs.log4j.jul) { transitive = false }
+
+    // Maven Resolver (Aether) is required by CraftBukkit's JavaPluginLoader to resolve
+    // plugin.yml "libraries". Same coordinates the legacy launcher shipped as server libs.
+    for (dep in ['org.apache.maven:maven-resolver-provider:3.8.5',
+     'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3',
+     'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3',
+     'org.apache.maven:maven-model:3.8.5',
+     'org.apache.maven:maven-model-builder:3.8.5',
+     'org.apache.maven:maven-builder-support:3.8.5',
+     'org.apache.maven:maven-repository-metadata:3.8.5',
+     'org.apache.maven.resolver:maven-resolver-api:1.6.3',
+     'org.apache.maven.resolver:maven-resolver-spi:1.6.3',
+     'org.apache.maven.resolver:maven-resolver-util:1.6.3',
+     'org.apache.maven.resolver:maven-resolver-impl:1.6.3',
+     'org.codehaus.plexus:plexus-interpolation:1.26',
+     'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.4',
+     'org.apache.httpcomponents:httpclient:4.5.13',
+     'org.apache.httpcomponents:httpcore:4.4.14',
+     'commons-codec:commons-codec:1.15',
+     'org.slf4j:jcl-over-slf4j:1.7.30',
+     'javax.inject:javax.inject:1'
+    ]) {
+        shadowBundle(dep) { transitive = false }
+    }
+
     implementation(libs.bundles.spigot.shade) { transitive = false }
     shadowBundle(libs.bundles.spigot.shade) { transitive = false }
     implementation rootProject.ext.generatedSpigot
-    shadowBundle rootProject.ext.generatedSpigot
+    shadowBundle(rootProject.ext.generatedSpigot) { transitive = false }
 
     // XXX: for compiling (arclight-api): NeoForgeArclightServer#registerForgeEvent
     compileOnly("net.minecraftforge:eventbus:4.0.0") { transitive = false }
@@ -75,6 +116,11 @@ processResources {
 shadowJar {
     exclude 'fabric.mod.json'
     exclude 'architectury.common.json'
+    exclude 'com/google/**'
+    exclude 'org/checkerframework/**'
+    // The NeoForge game layer exposes org.apache.maven.artifact as the maven.artifact
+    // module; bundling it would split its packages. The module is read by the mod.
+    exclude 'org/apache/maven/artifact/**'
 
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'

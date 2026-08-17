@@ -17,13 +17,68 @@ dependencies {
     implementation libs.mixin.tools
     annotationProcessor(libs.mixin.tools) { transitive = false }
 
+    shadowBundle(libs.izzel.tools) { transitive = false }
+    shadowBundle(libs.arclight.api) { transitive = false }
+    shadowBundle(libs.mixin.tools) { transitive = false }
+    shadowBundle(project(':i18n-config')) {
+        transitive = true
+        exclude group: 'org.apache.logging.log4j'
+        exclude group: 'com.google.guava'
+        exclude group: 'org.checkerframework'
+        exclude group: 'org.yaml'
+    }
+    shadowBundle('org.yaml:snakeyaml:2.2') { transitive = false }
+    shadowBundle(libs.jline) { transitive = false }
+    shadowBundle(libs.specialsource) { transitive = false }
+    shadowBundle(libs.mysql.connectorj) { transitive = false }
+    shadowBundle(libs.sqlite.jdbc) { transitive = false }
+    shadowBundle(libs.log4j.jul) { transitive = false }
+
+    // Interactive console (jline) is not provided by the Fabric game layer.
+    shadowBundle('org.jline:jline-reader:3.20.0') { transitive = false }
+    shadowBundle('org.jline:jline-terminal:3.20.0') { transitive = false }
+    shadowBundle('org.jline:jline-terminal-jansi:3.20.0') { transitive = false }
+    shadowBundle('org.fusesource.jansi:jansi:2.3.2') { transitive = false }
+    shadowBundle('net.minecrell:terminalconsoleappender:1.3.0') { transitive = false }
+
+    // Maven Resolver (Aether) is required by CraftBukkit's JavaPluginLoader to resolve
+    // plugin.yml "libraries". Same coordinates the legacy launcher shipped as server libs.
+    for (dep in ['org.apache.maven:maven-resolver-provider:3.8.5',
+     'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3',
+     'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3',
+     'org.apache.maven:maven-model:3.8.5',
+     'org.apache.maven:maven-model-builder:3.8.5',
+     'org.apache.maven:maven-builder-support:3.8.5',
+     'org.apache.maven:maven-repository-metadata:3.8.5',
+     'org.apache.maven:maven-artifact:3.8.5',
+     'org.apache.maven.resolver:maven-resolver-api:1.6.3',
+     'org.apache.maven.resolver:maven-resolver-spi:1.6.3',
+     'org.apache.maven.resolver:maven-resolver-util:1.6.3',
+     'org.apache.maven.resolver:maven-resolver-impl:1.6.3',
+     'org.codehaus.plexus:plexus-utils:3.3.0',
+     'org.codehaus.plexus:plexus-interpolation:1.26',
+     'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.4',
+     'org.apache.httpcomponents:httpclient:4.5.13',
+     'org.apache.httpcomponents:httpcore:4.4.14',
+     'commons-codec:commons-codec:1.15',
+     'org.slf4j:jcl-over-slf4j:1.7.30',
+     'javax.inject:javax.inject:1'
+    ]) {
+        shadowBundle(dep) { transitive = false }
+    }
+
     implementation(libs.bundles.spigot.shade) { transitive = false }
     shadowBundle(libs.bundles.spigot.shade) { transitive = false }
     implementation rootProject.ext.generatedSpigot
-    shadowBundle rootProject.ext.generatedSpigot
+    shadowBundle(rootProject.ext.generatedSpigot) { transitive = false }
 
     modImplementation libs.fabric.permissions.api
     include libs.fabric.permissions.api
+
+    // MixinExtras is not provided by Fabric Loader; bundle it so the common
+    // @Local / @ModifyExpressionValue mixins work on the standalone mod path.
+    modImplementation libs.mixinextras.fabric
+    include libs.mixinextras.fabric
 
     // XXX: for compiling (arclight-api): FabricArclightServer#registerForgeEvent
     compileOnly("net.minecraftforge:eventbus:4.0.0") { transitive = false }
@@ -32,8 +87,6 @@ dependencies {
 
     common(project(path: ':arclight-common', configuration: 'namedElements')) { transitive = false }
     shadowBundle(project(path: ':arclight-common', configuration: 'transformProductionFabric')) { transitive = false }
-    common(project(':bootstrap')) { transitive = false }
-    shadowBundle(project(':bootstrap')) { transitive = false }
     implementation(libs.bundles.adventure) {
         exclude group: 'org.slf4j'
         exclude group: 'org.checkerframework'
@@ -78,7 +131,8 @@ processResources {
 
 shadowJar {
     exclude 'architectury.common.json'
-    exclude 'io/izzel/arclight/boot/EmbeddedJarExtractor.class'
+    exclude 'com/google/**'
+    exclude 'org/checkerframework/**'
 
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'

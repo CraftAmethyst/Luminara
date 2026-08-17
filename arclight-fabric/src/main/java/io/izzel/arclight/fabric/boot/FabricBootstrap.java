@@ -1,6 +1,6 @@
 package io.izzel.arclight.fabric.boot;
 
-import io.izzel.arclight.boot.AbstractBootstrap;
+import io.izzel.arclight.common.mod.boot.AbstractBootstrap;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
 import net.fabricmc.loader.impl.game.patch.GameTransformer;

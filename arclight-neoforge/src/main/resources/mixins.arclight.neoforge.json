@@ -22,6 +22,7 @@
     "bukkit.StandardMessengerMixin_NeoForge",
     "compat.connector.CommandNodeMixin",
     "core.commands.CommandsMixin_NeoForge",
+    "core.commands.CommandNodeMixin_NeoForge",
     "core.world.level.material.LavaFluidMixin_NeoForge",
     "core.server.network.ServerCommonPacketListenerImplMixin_NeoForge",
     "core.server.network.ServerConfigurationPacketListenerImplMixin_NeoForge",

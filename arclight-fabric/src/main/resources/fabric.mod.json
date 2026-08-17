@@ -21,11 +21,8 @@
     "fabric-permissions-api-v0": ">=0.3"
   },
   "entrypoints": {
-    "main": [
+    "server": [
       "io.izzel.arclight.fabric.ArclightModEntrypoint"
-    ],
-    "arclight_boot": [
-      "io.izzel.arclight.fabric.boot.FabricBootstrap"
     ]
   }
 }

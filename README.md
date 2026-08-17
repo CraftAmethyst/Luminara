@@ -14,11 +14,21 @@ Versions list and support status: [Discussions thread](https://github.com/IzzelA
 
 ## Installing
 
-* Download the jar.  
-* Launch with command `java -jar arclight.jar nogui`. 
-  * The `nogui` argument will disable the server control panel.
+Luminara is distributed as a standard server mod for each supported loader. Install the
+matching dedicated server first, then:
 
-Read our document for more information.
+1. Put `luminara-neoforge-1.21.1-<version>.jar` in `mods/` on NeoForge, or put
+   `luminara-fabric-1.21.1-<version>.jar` in `mods/` on Fabric.
+2. Put Bukkit plugins in `plugins/`.
+3. Keep Java 21 and start the loader's normal dedicated-server command with `nogui`.
+4. On Fabric, also install Fabric API and `fabric-permissions-api` in `mods/`.
+
+The old bootstrap/launcher JARs remain available only as a transitional fallback and
+regression reference. They are deprecated and are not the recommended installation path.
+
+Read [the native server regression guide](docs/NATIVE_TESTING.md) for repeatable plugin,
+command, scheduler, shutdown, and event checks.
+
 
 ## Support
 

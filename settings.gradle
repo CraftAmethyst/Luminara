@@ -121,3 +121,4 @@ include 'arclight-neoforge'
 include 'arclight-fabric'
 
 include 'bootstrap'
+include 'native-test-plugin'
