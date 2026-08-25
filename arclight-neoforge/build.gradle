@@ -1,3 +1,6 @@
+import io.izzel.arclight.gradle.tasks.AssembleDistributionTask
+import io.izzel.arclight.gradle.tasks.BundleJarJarTask
+
 plugins {
     id 'architectury-plugin'
     id 'com.gradleup.shadow'
@@ -10,6 +13,16 @@ architectury {
 
 loom {
     neoForge {
+    }
+}
+
+configurations {
+    // Libraries that must keep their original package names and therefore cannot be merged
+    // into the mod JAR: the mod JAR is an automatic module exporting every package it
+    // contains, so a merged copy clashes with the same library shipped by any other mod.
+    jarJarBundle {
+        canBeResolved = true
+        canBeConsumed = false
     }
 }
 
@@ -30,7 +43,10 @@ dependencies {
         exclude group: 'org.checkerframework'
         exclude group: 'org.yaml'
     }
-    shadowBundle('org.yaml:snakeyaml:2.2') { transitive = false }
+    // Bukkit plugins resolve org.yaml.snakeyaml by its original name, so it is nested instead
+    // of relocated. Mods commonly ship it through jar-in-jar as well and NeoForge keeps a
+    // single copy per group:artifact.
+    jarJarBundle('org.yaml:snakeyaml:2.2') { transitive = false }
     shadowBundle(libs.jline) { transitive = false }
     shadowBundle(libs.specialsource) { transitive = false }
     shadowBundle(libs.mysql.connectorj) { transitive = false }
@@ -111,6 +127,26 @@ processResources {
             loaderVersion: libs.versions.neoforge.get(), javaVersion: '21',
             bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash
     }
+}
+
+def bundleJarJarLibraries = tasks.register('bundleJarJarLibraries', BundleJarJarTask) {
+    libraries.from configurations.jarJarBundle
+    libraryCoordinates.set configurations.jarJarBundle.incoming.artifacts.resolvedArtifacts.map { artifacts ->
+        artifacts.collectEntries { artifact ->
+            def id = artifact.id.componentIdentifier
+            [(artifact.file.name): "$id.group:$id.module:$id.version".toString()]
+        }
+    }
+    // Keep the range open ended and above the SnakeYAML 2 rewrite: CraftBukkit needs the
+    // LoaderOptions API, and a mod shipping a newer 2.x copy has to be able to win.
+    versionRanges.put 'org.yaml:snakeyaml', '[2.0,)'
+    outputDirectory.set layout.buildDirectory.dir('jarjar')
+}
+
+// The shadow and remap stages merge every archive they are handed, so the nested libraries are
+// appended by the distribution assembly instead.
+rootProject.tasks.named('assembleNeoForgeModDistribution', AssembleDistributionTask).configure {
+    nestedLibraries.set bundleJarJarLibraries.flatMap { it.outputDirectory }
 }
 
 shadowJar {
