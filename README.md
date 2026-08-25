@@ -2,11 +2,15 @@
 
 [简体中文](README_sc.md)
 
-Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://github.com/IzzelAliz/Arclight). It runs Forge mods and Bukkit plugins together on one Minecraft server.
+Luminara is a Bukkit compatibility layer based on [Arclight](https://github.com/IzzelAliz/Arclight). It runs loader mods and Bukkit plugins together on one Minecraft server. This branch is the Forge-only line for Minecraft `1.20.1`.
 
 > Goal: Implement more Paper APIs, maximize compatibility with mods and plugins, and provide more customization options.
 
 ## Supported platform
+
+Two release lines are maintained, one per branch.
+
+### Minecraft 1.20.1 on Forge — this branch (`stable/Trials`)
 
 | Component           | Supported version                             |
 | ------------------- | --------------------------------------------- |
@@ -16,7 +20,22 @@ Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://
 | Java                | `17` (64-bit)                                 |
 | Luminara            | `1.0.15-hotfix`                               |
 
-This branch targets Minecraft `1.20.1` on Forge only. Minecraft `1.21.1` on Fabric and NeoForge is maintained on the [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings) branch. Other Minecraft versions and hybrid loader configurations are not supported.
+Everything else in this document describes this line.
+
+### Minecraft 1.21.1 on Fabric and NeoForge — [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings)
+
+| Component           | Supported version |
+| ------------------- | ----------------- |
+| Minecraft           | `1.21.1`          |
+| Fabric              | Loader `0.19.3`   |
+| NeoForge            | `21.1.248`        |
+| CraftBukkit package | `v1_21_R1`        |
+| Java                | `21` (64-bit)     |
+| Luminara            | `1.0.15-beta.1`   |
+
+That line ships as a standard server mod rather than a launcher. Install the matching dedicated server, then put `luminara-neoforge-1.21.1-1.0.15-beta.1.jar` or `luminara-fabric-1.21.1-1.0.15-beta.1.jar` in `mods/`, keep Bukkit plugins in `plugins/`, and start the loader's normal dedicated-server command with `nogui`. On Fabric, Fabric API `0.116.15+1.21.1` and `fabric-permissions-api` `0.3.1` are also required. Build it from the [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings) branch and follow that branch's readme.
+
+Other Minecraft versions and hybrid loader configurations are not supported.
 
 ## Capabilities
 

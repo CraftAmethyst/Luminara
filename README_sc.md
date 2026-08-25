@@ -1,10 +1,14 @@
 # Luminara
 
-Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的仅限 Forge 的 Bukkit 兼容层。它可以让 Forge 模组和 Bukkit 插件在同一个 Minecraft 服务器上共存运行。
+Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的 Bukkit 兼容层。它可以让加载器模组和 Bukkit 插件在同一个 Minecraft 服务器上共存运行。本分支是 Minecraft `1.20.1` 的纯 Forge 线。
 
 > ~~梦想~~目标：实现更多 Paper API，最大限度地提高与模组和插件的兼容性，并提供更多自定义选项。
 
 ## 支持的平台
+
+本仓库维护两条发布线，各占一个分支。
+
+### Forge 上的 Minecraft 1.20.1 —— 本分支（`stable/Trials`）
 
 | 组件           | 支持的版本                                    |
 | -------------- | --------------------------------------------- |
@@ -14,7 +18,22 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 | Java           | `17`（64 位）                                 |
 | Luminara       | `1.0.15-hotfix`                               |
 
-本分支只针对 Forge 上的 Minecraft `1.20.1`。Fabric 与 NeoForge 上的 Minecraft `1.21.1` 由 [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings) 分支维护。其他 Minecraft 版本以及混合加载器配置均不受支持。
+本文档其余部分描述的都是这条线。
+
+### Fabric 与 NeoForge 上的 Minecraft 1.21.1 —— [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings)
+
+| 组件           | 支持的版本        |
+| -------------- | ----------------- |
+| Minecraft      | `1.21.1`          |
+| Fabric         | Loader `0.19.3`   |
+| NeoForge       | `21.1.248`        |
+| CraftBukkit 包 | `v1_21_R1`        |
+| Java           | `21`（64 位）     |
+| Luminara       | `1.0.15-beta.1`   |
+
+这条线以标准服务端模组的形式发布，不再使用启动器。先安装对应的服务端，然后把 `luminara-neoforge-1.21.1-1.0.15-beta.1.jar` 或 `luminara-fabric-1.21.1-1.0.15-beta.1.jar` 放进 `mods/`，Bukkit 插件仍放在 `plugins/`，再用加载器自身的服务端启动命令加 `nogui` 启动。Fabric 还需要 Fabric API `0.116.15+1.21.1` 与 `fabric-permissions-api` `0.3.1`。请从 [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings) 分支构建，并参考该分支的说明文档。
+
+其他 Minecraft 版本以及混合加载器配置均不受支持。
 
 ## 功能特性
 
