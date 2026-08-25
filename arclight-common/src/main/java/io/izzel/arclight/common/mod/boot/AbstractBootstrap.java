@@ -6,6 +6,7 @@ import io.izzel.arclight.api.ArclightPlatform;
 import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.i18n.ArclightLocale;
+import io.izzel.arclight.i18n.LuminaraVersion;
 import org.apache.logging.log4j.LogManager;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -118,6 +119,7 @@ public interface AbstractBootstrap {
     default void setupMod(ArclightPlatform platform) throws Exception {
         setVersionIfAbsent(ArclightVersion.FEUDAL_KINGS);
         setPlatformIfAbsent(platform);
+        setVersionPropertyIfAbsent();
         try (InputStream stream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
             if (stream == null) {
                 return;
@@ -136,6 +138,17 @@ public interface AbstractBootstrap {
             ArclightVersion.current();
         } catch (IllegalStateException ignored) {
             ArclightVersion.setVersion(version);
+        }
+    }
+
+    /**
+     * {@code CraftServer#getVersion} reports this property, and the legacy launcher published it
+     * from its own manifest during boot. A standalone mod has to publish it itself, otherwise
+     * Bukkit reports {@code Arclight version null}.
+     */
+    static void setVersionPropertyIfAbsent() {
+        if (System.getProperty("arclight.version") == null) {
+            System.setProperty("arclight.version", LuminaraVersion.version());
         }
     }
 
