@@ -208,6 +208,7 @@ def assembleNeoForgeModDistribution = tasks.register('assembleNeoForgeModDistrib
     group = 'distribution'
     description = 'Assembles the standalone NeoForge mod JAR.'
     inputJar.set(neoforgeModJar.flatMap { it.archiveFile })
+    // :arclight-neoforge wires its jar-in-jar libraries into nestedLibraries.
     outputJar.set(layout.buildDirectory.file("distributions/" + modDistributionFileName('neoforge')))
 }
 
@@ -274,10 +275,13 @@ def verifyNeoForgeModDistribution = tasks.register('verifyNeoForgeModDistributio
     moduleName.set('arclight-neoforge')
     loader.set('NeoForge')
     loaderVersion.set(libs.versions.neoforge)
-    requiredEntries.set(['META-INF/neoforge.mods.toml', 'mixins.arclight.neoforge.json'] + commonMixinEntries)
+    requiredEntries.set(['META-INF/neoforge.mods.toml', 'mixins.arclight.neoforge.json', 'META-INF/jarjar/metadata.json'] + commonMixinEntries)
     configureModDistributionVerification(delegate)
     forbiddenEntries.add('fabric.mod.json')
     forbiddenEntries.add('mixins.arclight.fabric.json')
+    // SnakeYAML ships as a jar-in-jar entry so NeoForge can collapse it with the copies other
+    // mods bundle; a merged copy makes the game layer fail to resolve.
+    forbiddenEntries.add('org/yaml/snakeyaml/')
 }
 
 tasks.register('verifyDistributions') {
