@@ -68,7 +68,12 @@ class LuminaraVersionTest {
         assertTrue(
             failure
                 .getMessage()
-                .contains("expected Minecraft 1.20.1 / Forge 47.4.22")
+                .contains(
+                    "expected Minecraft " +
+                        LuminaraVersion.minecraftVersion() +
+                        " / Forge " +
+                        LuminaraVersion.forgeVersion()
+                )
         );
     }
 }
