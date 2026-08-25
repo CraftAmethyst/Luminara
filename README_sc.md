@@ -14,7 +14,7 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 | Java           | `17`（64 位）                                 |
 | Luminara       | `1.0.15-hotfix`                               |
 
-本仓库不支持其他 Minecraft 版本，也不支持 Fabric、NeoForge 或混合加载器等配置。
+本分支只针对 Forge 上的 Minecraft `1.20.1`。Fabric 与 NeoForge 上的 Minecraft `1.21.1` 由 [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings) 分支维护。其他 Minecraft 版本以及混合加载器配置均不受支持。
 
 ## 功能特性
 
@@ -121,6 +121,13 @@ java -jar luminara-1.20.1-1.0.15-hotfix.jar nogui
 当 `eula.txt` 缺失或内容不恰好为已接受的值时，启动器会不提示直接退出。它绝不会代你接受 EULA。
 
 将 Forge `1.20.1` 模组放入 `mods/`，将兼容 `v1_20_R1` 的 Bukkit 插件放入 `plugins/`。更改任一组之前请先备份服务器。
+
+## 社区
+
+- Discord：https://discord.gg/xn8KGphcvS
+- QQ 群 `929252864`：https://qm.qq.com/q/5S00vXfQpq
+
+这两个渠道用于日常提问、整合包兼容性反馈和构建求助。可复现的缺陷仍请按[支持政策](SUPPORT.md)要求的诊断信息提交 [issue](https://github.com/CraftAmethyst/Luminara/issues)；安全漏洞请按[安全政策](SECURITY.md)私下报告，不要发到群里或公开 issue。
 
 ## 项目指南
 

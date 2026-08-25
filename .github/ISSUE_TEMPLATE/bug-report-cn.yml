@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         请使用 `CraftAmethyst/Luminara` 的 `stable/Trials` 分支构建。
-        受支持的版本为 Luminara `1.0.14`、Minecraft `1.20.1`、该 Minecraft 版本的最新 Forge promotion 和 64 位 Java 17。
+        受支持的版本为 Luminara `1.0.15-hotfix`、Minecraft `1.20.1`、该 Minecraft 版本的最新 Forge promotion 和 64 位 Java 17。
         提交前请搜索现有问题。除非问题也能在 Arclight 中复现，否则请勿向上游 Arclight 报告 Luminara 缺陷。
 
   - type: checkboxes
@@ -31,7 +31,7 @@ body:
     attributes:
       label: Luminara 版本和提交
       description: 请从 `/luminara info` 或启动输出中复制 Luminara 版本和构建提交。
-      placeholder: "Luminara 1.0.14，提交 1a2b3c4"
+      placeholder: "Luminara 1.0.15-hotfix，提交 1a2b3c4"
     validations:
       required: true
 

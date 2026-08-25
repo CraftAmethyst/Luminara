@@ -1,5 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Discord
+    url: https://discord.gg/xn8KGphcvS
+    about: Ask questions and discuss modpack compatibility with the community.
+  - name: QQ group 929252864
+    url: https://qm.qq.com/q/5S00vXfQpq
+    about: 中文交流群：日常提问、整合包兼容性反馈与构建求助。
   - name: Support policy
     url: https://github.com/CraftAmethyst/Luminara/blob/stable/Trials/SUPPORT.md
     about: Check supported versions and required diagnostics before reporting.

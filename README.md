@@ -16,7 +16,7 @@ Luminara is a Forge-only Bukkit compatibility layer based on [Arclight](https://
 | Java                | `17` (64-bit)                                 |
 | Luminara            | `1.0.15-hotfix`                               |
 
-Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations are not supported by this repository.
+This branch targets Minecraft `1.20.1` on Forge only. Minecraft `1.21.1` on Fabric and NeoForge is maintained on the [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings) branch. Other Minecraft versions and hybrid loader configurations are not supported.
 
 ## Capabilities
 
@@ -125,6 +125,13 @@ Add Forge `1.20.1` mods to `mods/` and Bukkit plugins compatible with `v1_20_R1`
 ## Distribution policy
 
 This repository has no GitHub Release, Maven publication, or custom binary publication workflow. CI may retain verification artifacts for seven days; those artifacts are not releases. Build the distribution from the reviewed `stable/Trials` branch when you need a binary.
+
+## Community
+
+- Discord: https://discord.gg/xn8KGphcvS
+- QQ group `929252864`: https://qm.qq.com/q/5S00vXfQpq
+
+Both channels are for questions, modpack compatibility reports, and build help. Reproducible defects still belong in an [issue](https://github.com/CraftAmethyst/Luminara/issues) with the diagnostics listed in the [support policy](SUPPORT.md), and vulnerabilities belong in a private report as described in the [security policy](SECURITY.md).
 
 ## Project guidance
 

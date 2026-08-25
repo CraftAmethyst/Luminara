@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         Use a build from the `stable/Trials` branch of `CraftAmethyst/Luminara`.
-        The supported matrix is Luminara `1.0.14`, Minecraft `1.20.1`, the latest Forge promotion for that Minecraft version, and 64-bit Java 17.
+        The supported matrix is Luminara `1.0.15-hotfix`, Minecraft `1.20.1`, the latest Forge promotion for that Minecraft version, and 64-bit Java 17.
         Search existing issues first. Do not report Luminara defects to upstream Arclight unless they also reproduce there.
 
   - type: checkboxes
@@ -31,7 +31,7 @@ body:
     attributes:
       label: Luminara version and commit
       description: Copy the Luminara version and build commit from `/luminara info` or startup output.
-      placeholder: "Luminara 1.0.14, commit 1a2b3c4"
+      placeholder: "Luminara 1.0.15-hotfix, commit 1a2b3c4"
     validations:
       required: true
 
