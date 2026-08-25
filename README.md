@@ -12,6 +12,21 @@ Downloads are available at [https://arclight.izzel.io](https://arclight.izzel.io
 
 Versions list and support status: [Discussions thread](https://github.com/IzzelAliz/Arclight/discussions/1575)
 
+## Supported platform
+
+| Component           | Supported version                    |
+| ------------------- | ------------------------------------ |
+| Minecraft           | `1.21.1`                             |
+| Fabric              | Loader `0.19.3`                      |
+| NeoForge            | `21.1.248`                           |
+| CraftBukkit package | `v1_21_R1`                           |
+| Java                | `21` (64-bit)                        |
+| Luminara            | `1.0.15-beta.1`                      |
+
+On Fabric, Fabric API `0.116.15+1.21.1` and `fabric-permissions-api` `0.3.1` are required.
+
+Minecraft `1.20.1` on Forge is maintained on the [`stable/Trials`](https://github.com/CraftAmethyst/Luminara/tree/stable/Trials) branch. Other Minecraft versions and hybrid loader configurations are not supported.
+
 ## Installing
 
 Luminara is distributed as a standard server mod for each supported loader. Install the
@@ -32,12 +47,11 @@ command, scheduler, shutdown, and event checks.
 
 ## Support
 
-Read the [document](https://wiki.izzel.io/s/arclight-docs).  
-Something is not working? Report any problems [here](https://github.com/IzzelAliz/Arclight/issues/new/choose)!.  
-Questions and discussions [here](https://github.com/IzzelAliz/Arclight/discussions).  
+Read the upstream [Arclight documentation](https://wiki.izzel.io/s/arclight-docs) for behavior inherited from Arclight.  
+Something is not working? Report Luminara problems [here](https://github.com/CraftAmethyst/Luminara/issues/new/choose).  
 
-Discord Server: https://discord.gg/ZvTY5SC  
-QQ Group Chat: 3556966
+Discord: https://discord.gg/xn8KGphcvS  
+QQ group `929252864`: https://qm.qq.com/q/5S00vXfQpq
 
 ## License
 
