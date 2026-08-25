@@ -77,6 +77,11 @@ Other Minecraft versions and Fabric, NeoForge, or hybrid loader configurations a
 
 Use a 64-bit JDK 17 and the checked-in Gradle wrapper. An empty-cache build requires network access to the dependency repositories and to Mojang, Forge, and Spigot build services.
 The build resolves the latest Forge promotion for Minecraft `1.20.1` at configuration time. Use `-PforgeVersion=<version>` to reproduce a specific Forge build or to work offline with a previously resolved version.
+Because the build tracks the latest promotion, a new Forge release ships artifacts that are not yet covered by Gradle dependency verification (`gradle/verification-metadata.xml`), which fails the build during configuration. Regenerate the verification metadata with:
+
+```bash
+./gradlew :arclight-common:tasks --write-verification-metadata sha256
+```
 
 ```bash
 ./gradlew check

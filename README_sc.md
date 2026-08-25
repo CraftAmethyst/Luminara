@@ -77,6 +77,11 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的�
 
 使用 64 位 JDK 17 和仓库中自带的 Gradle wrapper。空缓存构建需要能够访问依赖仓库以及 Mojang、Forge 和 Spigot 的构建服务。
 构建过程会在配置阶段解析适用于 Minecraft `1.20.1` 的最新 Forge 正式版。使用 `-PforgeVersion=<version>` 可以使用特定的 Forge 构建版本，或在之前已解析过某个版本的情况下离线构建。
+由于构建会跟踪最新正式版，Forge 发布新版本时，其新工件尚未包含在 Gradle 依赖校验（`gradle/verification-metadata.xml`）中，构建会在配置阶段失败。此时重新生成校验元数据即可：
+
+```bash
+./gradlew :arclight-common:tasks --write-verification-metadata sha256
+```
 
 ```bash
 ./gradlew check
