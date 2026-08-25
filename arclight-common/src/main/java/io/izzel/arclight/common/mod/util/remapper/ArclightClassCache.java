@@ -5,6 +5,7 @@ import com.google.common.hash.Hashing;
 import io.izzel.arclight.api.PluginPatcher;
 import io.izzel.arclight.common.mod.server.ArclightServer;
 import io.izzel.arclight.i18n.ArclightConfig;
+import io.izzel.arclight.i18n.LuminaraVersion;
 import io.izzel.tools.product.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Marker;
@@ -65,7 +66,9 @@ public abstract class ArclightClassCache implements AutoCloseable {
             var builder = new StringBuilder();
             builder.append("Arclight class cache").append(", ");
             builder.append("spec=").append(SPEC_VERSION).append(", ");
-            var arclight = ArclightClassCache.class.getPackage().getImplementationVersion();
+            // Not Package#getImplementationVersion: it is null once Luminara ships as a plain
+            // mod, which would keep cached plugin classes alive across updates.
+            var arclight = LuminaraVersion.version();
             builder.append("arclight=").append(arclight).append(", ");
             builder.append("patcher=[");
             for (PluginPatcher patcher : ArclightRemapper.INSTANCE.getPatchers()) {

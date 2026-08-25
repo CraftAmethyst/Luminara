@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mod.util.remapper.patcher.integrated;
 
 import io.izzel.arclight.api.PluginPatcher;
+import io.izzel.arclight.i18n.LuminaraVersion;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.util.ArrayList;
@@ -29,11 +30,10 @@ public class IntegratedPatcher implements PluginPatcher {
 
     @Override
     public String version() {
-        String implVersion = this.getClass().getPackage().getImplementationVersion();
         StringBuilder sb = new StringBuilder();
-        if (implVersion != null) {
-            sb.append("version=").append(implVersion);
-        }
+        // Package#getImplementationVersion is null once Luminara ships as a plain mod, which
+        // would keep cached plugin classes alive across updates.
+        sb.append("version=").append(LuminaraVersion.version());
         sb.append(" patchers=[");
         sb.append("WorldEdit 1.21.1 4, FAWE CommandRegistration, CMI, LuckPerms");
         sb.append("]");
