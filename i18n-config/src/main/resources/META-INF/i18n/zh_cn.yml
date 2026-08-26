@@ -52,7 +52,7 @@ comments:
     timeout-seconds:
       comment:
         - 异步保存超时时间（秒）
-        - 如果在指定时间内��存未完成，服务器将继续关闭流程
+        - 如果在指定时间内保存未完成，服务器将继续关闭流程
   compatibility:
     extra-logic-worlds:
       comment:

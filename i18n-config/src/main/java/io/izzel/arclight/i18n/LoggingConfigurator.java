@@ -5,15 +5,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 final class LoggingConfigurator {
+
+    private static final String CONSOLE_CHARSET_PROPERTY = "luminara.console.charset";
 
     private LoggingConfigurator() {
     }
 
     static void apply(ConfigSpec spec) {
         try {
+            configureConsoleCharset();
             boolean useSimpleFormat;
             try {
                 useSimpleFormat =
@@ -38,6 +43,29 @@ final class LoggingConfigurator {
                 "Failed to apply logging configuration: " + e.getMessage()
             );
         }
+    }
+
+    private static void configureConsoleCharset() {
+        if (System.getProperty(CONSOLE_CHARSET_PROPERTY) != null) {
+            return;
+        }
+        String charset = null;
+        for (String property : new String[]{
+            "stdout.encoding", "sun.stdout.encoding", "native.encoding", "file.encoding"
+        }) {
+            String candidate = System.getProperty(property);
+            if (candidate != null && !candidate.isBlank()) {
+                try {
+                    charset = Charset.forName(candidate).name();
+                    break;
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        System.setProperty(
+            CONSOLE_CHARSET_PROPERTY,
+            charset == null ? StandardCharsets.UTF_8.name() : charset
+        );
     }
 
     private static void reconfigureLogging(String configFile) {
