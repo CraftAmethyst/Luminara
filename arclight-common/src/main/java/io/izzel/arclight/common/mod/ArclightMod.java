@@ -1,11 +1,13 @@
 package io.izzel.arclight.common.mod;
 
+import io.izzel.arclight.common.mod.boot.LuminaraBootstrap;
 import io.izzel.arclight.common.mod.command.LuminaraCommand;
 import io.izzel.arclight.common.mod.server.event.ArclightEventDispatcherRegistry;
 import io.izzel.arclight.common.mod.util.BungeeComponentPreloader;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.LuminaraVersion;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
@@ -31,8 +33,27 @@ public class ArclightMod {
     );
 
     public ArclightMod(FMLJavaModLoadingContext context) {
-        LOGGER.info("mod-load");
-        LOGGER.info(LuminaraVersion.compatibilityLine());
+        if (FMLLoader.getDist() != Dist.DEDICATED_SERVER) {
+            throw new IllegalStateException(
+                "Luminara " +
+                    LuminaraVersion.version() +
+                    " only runs on a Forge dedicated server. Remove it from the client, " +
+                    "or start the server through the Forge dedicated-server launch command " +
+                    "after reading https://github.com/CraftAmethyst/Luminara"
+            );
+        }
+        LuminaraBootstrap.applyPlatform();
+        try {
+            LuminaraBootstrap.installGsonEnumFactory();
+            LuminaraBootstrap.warmUpEnumHelper();
+        } catch (Throwable t) {
+            throw new IllegalStateException(
+                "Luminara failed to install the Gson enum bootstrap",
+                t
+            );
+        }
+        LuminaraBootstrap.logBanner();
+
         System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
         System.setErr(
             new LoggingPrintStream("STDERR", System.err, Level.ERROR)
