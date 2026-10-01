@@ -446,7 +446,10 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                     )
                 );
             } else {
-                if (parts.length != 2 || leftClass == null) {
+                // A TSRG member line carries a descriptor for methods and only a name for
+                // fields, so the two are told apart by the shape of the line.
+                boolean method = parts.length == 3;
+                if ((!method && parts.length != 2) || leftClass == null) {
                     rows.add(
                         row(
                             input.getName(),
@@ -460,18 +463,23 @@ public abstract class GenerateMappingInventoryTask extends DefaultTask {
                     );
                     continue;
                 }
-                boolean active =
-                    leftNode != null &&
+                boolean active = method
+                    ? leftNode != null &&
+                        rightNode != null &&
+                        hasMethod(leftNode, parts[0], parts[1])
+                    : leftNode != null &&
                         hasField(leftNode, parts[0]) &&
                         rightNode != null;
                 rows.add(
                     row(
                         input.getName(),
                         index + 1,
-                        "field-mapping",
+                        method ? "method-mapping" : "field-mapping",
                         leftClass.replace('/', '.'),
-                        parts[0] + " -> " + parts[1],
-                        "",
+                        method
+                            ? parts[0] + " " + parts[1] + " -> " + parts[2]
+                            : parts[0] + " -> " + parts[1],
+                        method ? parts[1] : "",
                         active ? "ACTIVE" : "MISSING"
                     )
                 );

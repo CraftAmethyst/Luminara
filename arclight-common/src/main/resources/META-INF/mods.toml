@@ -1,13 +1,29 @@
 modLoader = "javafml"
-loaderVersion = "[44,]"
+loaderVersion = "[47,)"
 license = "GNU GENERAL PUBLIC LICENSE Version 3"
 
 [[mods]]
 modId = "luminara"
 version = "${version}"
-displayName = "Luminara Mod"
+displayName = "Luminara"
 credits = "lona,夜幕"
 authors = "IzzelAliz"
 description = '''
-    Luminara bukkit layer for MinecraftForge
-    '''
+Luminara is a Bukkit/Spigot/Paper compatibility layer for Minecraft Forge. It runs
+Forge mods from mods/ together with Bukkit plugins from plugins/ on a dedicated
+server. This build supports Minecraft 1.20.1 on Forge 47.x and is server-side only.
+'''
+
+[[dependencies.luminara]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.luminara]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.20.2)"
+ordering = "NONE"
+side = "BOTH"

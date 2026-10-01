@@ -2,7 +2,7 @@ import groovy.json.JsonSlurper
 import java.security.MessageDigest
 import org.gradle.api.artifacts.dsl.LockMode
 import io.izzel.arclight.gradle.tasks.SmokeServerTask
-import io.izzel.arclight.gradle.tasks.VerifyDistributionTask
+import io.izzel.arclight.gradle.tasks.VerifyForgeModTask
 import io.izzel.arclight.gradle.tasks.VerifyReproducibleBuildTask
 
 def resolveForgeVersion = {
@@ -75,76 +75,85 @@ allprojects {
     }
 }
 
-def distributionName = "luminara-${libs.versions.minecraft.get()}-${libs.versions.project.get()}.jar"
-def distributionOutputJar = layout.buildDirectory.file("distributions/${distributionName}")
-def distributionChecksum = layout.buildDirectory.file("distributions/${distributionName}.sha256")
-def distributionInput = configurations.create('distributionInput') {
+def modJarName = "luminara-forge-${libs.versions.minecraft.get()}-${libs.versions.project.get()}.jar"
+def modOutputJar = layout.buildDirectory.file("distributions/${modJarName}")
+def modChecksum = layout.buildDirectory.file("distributions/${modJarName}.sha256")
+def modInput = configurations.create('modInput') {
     canBeConsumed = false
     canBeResolved = true
     transitive = false
 }
-dependencies.add('distributionInput', dependencies.project(path: ':arclight-forge', configuration: 'archives'))
+dependencies.add('modInput', dependencies.project(path: ':arclight-forge', configuration: 'archives'))
 
-def assembleDistribution = tasks.register('assembleDistribution') {
+def assembleForgeMod = tasks.register('assembleForgeMod') {
     group = 'build'
-    description = 'Assembles the reproducible Luminara server distribution.'
-    inputs.files(distributionInput)
-    outputs.files(distributionOutputJar, distributionChecksum)
+    description = 'Assembles the standard Luminara Forge mod JAR and its checksum.'
+    inputs.files(modInput)
+    outputs.files(modOutputJar, modChecksum)
 
     doLast {
         if (project.ext.gitHash == 'unknown') {
-            throw new GradleException('assembleDistribution requires Git commit metadata')
+            throw new GradleException('assembleForgeMod requires Git commit metadata')
         }
         copy {
-            from(distributionInput.singleFile)
-            into(distributionOutputJar.get().asFile.parentFile)
-            rename { distributionName }
+            from(modInput.singleFile)
+            into(modOutputJar.get().asFile.parentFile)
+            rename { modJarName }
         }
-        def jarFile = distributionOutputJar.get().asFile
+        def jarFile = modOutputJar.get().asFile
         MessageDigest digest = MessageDigest.getInstance('SHA-256')
         jarFile.eachByte(8192) { bytes, size -> digest.update(bytes, 0, size) }
-        distributionChecksum.get().asFile.text = digest.digest().collect { String.format('%02x', it) }.join() + "  ${distributionName}\n"
+        modChecksum.get().asFile.text = digest.digest().collect { String.format('%02x', it) }.join() + "  ${modJarName}\n"
     }
 }
 
-tasks.register('verifyDistribution', VerifyDistributionTask) {
+tasks.register('verifyForgeModDistribution', VerifyForgeModTask) {
     group = 'verification'
-    description = 'Validates the assembled Luminara distribution contract.'
-    dependsOn(assembleDistribution)
-    distributionJar.set(distributionOutputJar)
-    forgeInstallerJar.set(project(':arclight-common').layout.buildDirectory.file("arclight_cache/forge-${project.ext.minecraftVersion}-${project.ext.forgeVersion}-installer.jar"))
+    description = 'Validates that the artifact is a standard Forge mod JAR with no legacy launcher entries.'
+    dependsOn(assembleForgeMod)
+    modJar.set(modOutputJar)
+    modId.set('luminara')
     minecraftVersion.set(libs.versions.minecraft.get())
     forgeVersion.set(project.ext.forgeVersion)
-    mainClass.set('io.izzel.arclight.server.Launcher')
+    expectedVersionPrefix.set(libs.versions.project.get())
     requiredEntries.set([
-            'common.jar',
-            'gson.jar',
-            'META-INF/installer.json',
-            'META-INF/luminara-version.properties'
+            'META-INF/mods.toml',
+            'META-INF/accesstransformer.cfg',
+            'META-INF/luminara-version.properties',
+            'META-INF/MANIFEST.MF',
+            'mixins.arclight.refmap.json',
+            'pack.mcmeta',
+            'io/izzel/arclight/common/mod/ArclightMod.class',
+            'io/izzel/arclight/common/mod/ArclightConnector.class',
+            'io/izzel/arclight/common/mixin/core/commands/CommandNodeMixin.class',
+            'io/izzel/arclight/common/mixin/bukkit/enumvalues/MaterialEnumMixin.class'
     ])
-    requiredCommonEntries.set([
+    mixinConfigurations.set([
             'mixins.arclight.core.json',
             'mixins.arclight.bukkit.json',
             'mixins.arclight.forge.json',
             'mixins.arclight.compat.json',
             'mixins.arclight.impl.forge.optimization.json'
     ])
-    expectedServices.set([
-            'java.util.function.Consumer': 'io.izzel.arclight.boot.application.ApplicationBootstrap',
-            'net.minecraftforge.forgespi.locating.IModLocator': 'io.izzel.arclight.boot.mod.ArclightLocator_Forge',
-            'cpw.mods.modlauncher.serviceapi.ILaunchPluginService': 'io.izzel.arclight.boot.asm.ArclightImplementer',
-            'cpw.mods.modlauncher.api.ILaunchHandlerService': 'io.izzel.arclight.boot.application.ArclightLaunchHandler'
+    expectedManifestAttributes.set([
+            'MixinConnector': 'io.izzel.arclight.common.mod.ArclightConnector'
     ])
 }
 
-tasks.register('smokeServer', SmokeServerTask) {
+def forgeInstallerFile = project(':arclight-common').layout.buildDirectory.file(
+        "arclight_cache/forge-${project.ext.minecraftVersion}-${project.ext.forgeVersion}-installer.jar")
+
+def smokeServer = tasks.register('smokeServer', SmokeServerTask) {
     group = 'verification'
     outputs.upToDateWhen { false }
-    description = 'Starts an isolated Forge server with smoke mod and plugin fixtures.'
-    dependsOn(assembleDistribution, ':arclight-common:smokePluginJar', ':arclight-common:smokeModJar')
-    distributionJar.set(distributionOutputJar)
+    description = 'Installs a clean Forge dedicated server, runs the mod with the smoke fixtures, and asserts on the log.'
+    dependsOn(assembleForgeMod, ':arclight-common:smokePluginJar', ':arclight-common:smokeModJar',
+            ':arclight-common:downloadInstaller')
+    modJar.set(modOutputJar)
     pluginJar.set(project(':arclight-common').tasks.named('smokePluginJar', Jar).flatMap { it.archiveFile })
-    modJar.set(project(':arclight-common').tasks.named('smokeModJar', Jar).flatMap { it.archiveFile })
+    fixtureModJar.set(project(':arclight-common').tasks.named('smokeModJar', Jar).flatMap { it.archiveFile })
+    forgeInstallerJar.set(forgeInstallerFile)
+    forgeCoordinates.set("${project.ext.minecraftVersion}-${project.ext.forgeVersion}")
     fixtureDirectory.set(layout.buildDirectory.dir('smoke-server'))
     startupTimeoutSeconds.set(900)
     expectedOutput.set([
@@ -165,13 +174,25 @@ tasks.register('smokeServer', SmokeServerTask) {
     ])
 }
 
+tasks.register('smokeNativeForgeServer') {
+    group = 'verification'
+    description = 'Alias for smokeServer, the native Forge dedicated-server smoke test.'
+    dependsOn(smokeServer)
+}
+
+tasks.register('runNativeForgeServer') {
+    group = 'verification'
+    description = 'Alias for smokeServer that keeps the fixture server directory for manual inspection.'
+    dependsOn(smokeServer)
+}
+
 def reproducibleWorkspace = new File(System.getProperty('java.io.tmpdir'),
         "luminara-reproducible-${Integer.toUnsignedString(rootDir.absolutePath.hashCode())}")
 
-tasks.register('verifyReproducibleBuild', VerifyReproducibleBuildTask) {
+tasks.register('verifyReproducibleForgeMod', VerifyReproducibleBuildTask) {
     group = 'verification'
-    description = 'Builds the tracked source twice and compares distribution SHA-256 values.'
+    description = 'Builds the tracked source twice and compares the Forge mod JAR SHA-256 values.'
     sourceDirectory.set(layout.projectDirectory)
     workspaceDirectory.set(reproducibleWorkspace)
-    distributionRelativePath.set("build/distributions/${distributionName}")
+    distributionRelativePath.set("build/distributions/${modJarName}")
 }

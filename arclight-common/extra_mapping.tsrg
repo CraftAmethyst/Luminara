@@ -2,3 +2,5 @@ net/minecraft/world/level/block/ChestBlock$DoubleInventory net/minecraft/world/l
 	tileentitychest f_51612_
 	tileentitychest1 f_51613_
 net/minecraft/world/level/block/entity/LecternBlockEntity$LecternInventory net/minecraft/world/level/block/entity/LecternBlockEntity$1
+net/minecraft/server/MinecraftServer net/minecraft/server/MinecraftServer
+	setInitialSpawn (Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/storage/ServerLevelData;ZZ)V m_177896_

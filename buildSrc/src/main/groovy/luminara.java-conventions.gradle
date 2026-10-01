@@ -22,7 +22,7 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.release.set(name == 'compileApplaunchJava' ? 7 : javaRelease)
+    options.release.set(javaRelease)
 }
 
 tasks.withType(Test).configureEach {

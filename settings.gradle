@@ -83,7 +83,6 @@ gradle.beforeProject { project ->
 
 rootProject.name = 'luminara'
 include 'arclight-common'
-include 'forge-installer'
 include 'arclight-forge'
 include 'i18n-config'
 

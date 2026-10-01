@@ -246,7 +246,7 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
             command.add(directory.resolve("gradlew").toString());
         }
         command.add("--no-daemon");
-        command.add("assembleDistribution");
+        command.add("assembleForgeMod");
         command.add("-PluminaraGitHash=" + gitHash);
 
         ProcessBuilder builder = new ProcessBuilder(command)

@@ -2,6 +2,8 @@ import io.izzel.arclight.gradle.tasks.GenerateMappingInventoryTask
 
 import io.izzel.arclight.gradle.tasks.GenerateMixinInventoryTask
 
+import io.izzel.arclight.gradle.tasks.BundleJarJarTask
+
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
@@ -39,7 +41,14 @@ arclight {
 }
 
 configurations {
-    embed
+    embed {
+        // Everything on embed lands inside the mod JAR. Forge already puts ASM, Gson,
+        // Guava, commons-lang3, log4j and friends on the module path, so a bundled copy of
+        // any of them becomes a second module exporting the same packages and Java refuses
+        // to build the game layer. Only the leaf artifact of each library is embedded; its
+        // transitive dependencies are expected from Forge.
+        transitive = false
+    }
     reobfuscatedElements {
         canBeConsumed = true
         canBeResolved = false
@@ -51,9 +60,13 @@ sourceSets {
     smokeMod
 }
 
-configurations {
-    smokePluginImplementation.extendsFrom(implementation)
-    smokeModImplementation.extendsFrom(implementation)
+// The smoke fixtures run inside the server, so they compile against the API the server
+// already provides instead of inheriting this module's runtime classpath. Inheriting it
+// put a second copy of Forge-provided libraries such as ASM on the module path, which
+// makes the module layer fail to resolve. The mod fixture uses a compile-only stub of the
+// annotation it needs, so no Forge artifact enters the build.
+dependencies {
+    smokePluginCompileOnly "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
 }
 
 
@@ -92,11 +105,14 @@ dependencies {
 
     def adventureArtifacts = [
         'adventure-api',
+        'adventure-key',
         'adventure-text-serializer-gson',
+        'adventure-text-serializer-json',
         'adventure-text-serializer-legacy',
         'adventure-text-serializer-plain',
         'adventure-text-minimessage',
-        'adventure-text-logger-slf4j'
+        'adventure-text-logger-slf4j',
+        'examination-api'
     ]
     implementation platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
     embed platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
@@ -115,9 +131,58 @@ dependencies {
 
     embed 'net.md-5:bungeecord-chat:1.16-R0.4@jar'
     embed "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+    embed(project(':i18n-config')) {
+        transitive = false
+    }
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+def jarJarMetadataFile = layout.buildDirectory.file("jarjar/META-INF/jarjar/metadata.json")
+
+/*
+ * Libraries Forge does not provide travel as a JarJar payload so each keeps its own
+ * module, instead of merging their packages into the mod JAR and colliding with Forge's
+ * copies. They come from a detached configuration: declaring them on a project
+ * configuration makes ForgeGradle resolve it while it is still building its own
+ * repositories, which fails the build.
+ * <p>
+ * ASM is deliberately absent. Forge already puts it on the module path, and a second
+ * nested copy makes the layer fail with "Module forge reads more than one module named
+ * org.objectweb.asm".
+ */
+def jarJarLibraries = [
+        "io.izzel:tools:${toolsVersion}",
+        "io.izzel.arclight:arclight-api:$apiVersion",
+        "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}",
+        "org.spongepowered:configurate-core:${libs.versions.configurate.get()}",
+        "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}",
+        "org.yaml:snakeyaml:2.0",
+        'net.md-5:SpecialSource:1.11.0',
+        'jline:jline:2.12.1',
+        "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}",
+        "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
+]
+def jarJarFiles = providers.provider {
+    def detached = configurations.detachedConfiguration(
+            jarJarLibraries.collect { dependencies.create(it) } as org.gradle.api.artifacts.Dependency[])
+    detached.transitive = false
+    detached.resolve()
+}
+
+def bundleJarJar = tasks.register('bundleJarJar', BundleJarJarTask) {
+    description = 'Collects the libraries Forge does not provide into a JarJar payload.'
+    libraries.from(jarJarFiles)
+    coordinates.set(
+        providers.provider {
+            jarJarLibraries.collectEntries { coordinate ->
+                def parts = coordinate.split(':')
+                [("${parts[1]}-${parts[2]}.jar".toString()): coordinate]
+            }
+        }
+    )
+    metadataFile.set(jarJarMetadataFile)
 }
 
 jar {
@@ -130,7 +195,21 @@ jar {
         exclude "LICENSE.txt"
         exclude "META-INF/services/**"
         exclude "org/apache/commons/lang/enum/**"
+        // Forge places every mod on the module path. A bundled library that still carries
+        // a module descriptor becomes a named module and then clashes with the copy Forge
+        // already provides, so the descriptors are dropped to keep them plain class path
+        // entries, exactly like the launcher did.
+        exclude "module-info.class"
+        exclude "META-INF/versions/*/module-info.class"
     }
+    // JarJar payload: one nested JAR per library plus the metadata Forge reads to load it.
+    from(jarJarFiles) {
+        into 'META-INF/jarjar'
+    }
+    from(jarJarMetadataFile) {
+        into 'META-INF/jarjar'
+    }
+    dependsOn(bundleJarJar)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
@@ -203,7 +282,10 @@ def smokePluginJar = tasks.register('smokePluginJar', Jar) {
 def smokeModJar = tasks.register('smokeModJar', Jar) {
     archiveFileName.set('luminara-smoke-mod.jar')
     destinationDirectory.set(layout.buildDirectory.dir('smoke-fixtures'))
-    from(sourceSets.smokeMod.output)
+    from(sourceSets.smokeMod.output) {
+        // Compile-only stub of the Forge annotation; the server provides the real one.
+        exclude 'net/minecraftforge/**'
+    }
 }
 
 tasks.named('compileSmokePluginJava') {
@@ -220,6 +302,7 @@ remapSpigotJar {
 
 mixin {
     add sourceSets.main, 'mixins.arclight.refmap.json'
+    extraMappings(project.file('extra_mapping.tsrg').absolutePath)
 }
 
 def generateMixinInventory = tasks.register('generateMixinInventory', GenerateMixinInventoryTask) {

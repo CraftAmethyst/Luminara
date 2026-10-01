@@ -1,206 +1,76 @@
-import java.security.MessageDigest
-
-
 apply plugin: 'luminara.java-conventions'
 apply plugin: 'idea'
 
-base.archivesName = "luminara-${minecraftVersion}"
-
-sourceSets {
-    applaunch {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-        }
-    }
-    test {
-        compileClasspath += applaunch.output
-        runtimeClasspath += applaunch.output
-    }
-}
-
+base.archivesName = "luminara-forge-${minecraftVersion}"
 
 configurations {
-    installer {
-        transitive = false
-    }
-    embed
-    gson
     commonReobfuscated {
         canBeConsumed = false
         canBeResolved = true
     }
-    implementation.extendsFrom(embed, gson)
 }
-
-
-def embedLibs = [
-    'org.yaml:snakeyaml:2.0',
-    "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}",
-    "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}",
-    'com.googlecode.json-simple:json-simple:1.1.1',
-    "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}",
-    'net.md-5:SpecialSource:1.11.0',
-    'org.jline:jline-terminal-jansi:3.12.1',
-    'org.fusesource.jansi:jansi:1.18',
-    'jline:jline:2.12.1',
-    "org.spongepowered:configurate-hocon:${libs.versions.configurate.get()}",
-    "org.spongepowered:configurate-core:${libs.versions.configurate.get()}",
-    "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}",
-    'com.typesafe:config:1.3.1',
-    'javax.inject:javax.inject:1'
-]
 
 dependencies {
     commonReobfuscated project(path: ':arclight-common', configuration: 'reobfuscatedElements')
-    implementation "com.google.guava:guava:${libs.versions.guava.get()}"
-    implementation "org.ow2.asm:asm:${libs.versions.asm.get()}"
-    implementation "org.ow2.asm:asm-tree:${libs.versions.asm.get()}"
-    implementation "cpw.mods:modlauncher:${libs.versions.modlauncher.get()}"
-    implementation "cpw.mods:securejarhandler:${libs.versions.securejarhandler.get()}"
-    implementation "net.minecraftforge:forgespi:${libs.versions.forgespi.get()}"
-    gson "com.google.code.gson:gson:${libs.versions.gson.get()}"
-    implementation "org.apache.logging.log4j:log4j-api:${libs.versions.log4j.get()}"
-    implementation "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
-    implementation 'org.jetbrains:annotations:23.0.0'
-    implementation "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
-    implementation "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
-    implementation "net.minecraftforge:fmlloader:${minecraftVersion}-${forgeVersion}"
-    for (def lib : embedLibs) {
-        installer lib
-    }
-    installer "com.google.code.gson:gson:${libs.versions.gson.get()}"
-    embed "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
-    embed "io.izzel:tools:$toolsVersion"
-    embed "io.izzel.arclight:arclight-api:$apiVersion"
-    embed 'commons-lang:commons-lang:2.6@jar'
-    embed(project(':i18n-config')) {
-        transitive = false
-    }
-    embed(project(':forge-installer')) {
-        transitive = false
-    }
-    testImplementation "cpw.mods:bootstraplauncher:${libs.versions.bootstraplauncher.get()}"
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-jar {
-    manifest.attributes 'Main-Class': 'io.izzel.arclight.server.Launcher'
-    manifest.attributes 'Automatic-Module-Name': 'arclight.boot'
-    from(configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude "META-INF/MANIFEST.MF"
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-        exclude "LICENSE.txt"
-        exclude "META-INF/services/**"
-        exclude "org/apache/commons/lang/enum/**"
-    }
-    into('/') {
-        from(configurations.commonReobfuscated)
-        rename { 'common.jar' }
-    }
-    into('/') {
-        it.from(configurations.gson.collect())
-        it.rename { name -> 'gson.jar' }
-    }
-    from sourceSets.applaunch.output.classesDirs
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-def installerInfoFile = layout.buildDirectory.file('arclight_installer/META-INF/installer.json')
-def installerOutputDirectory = layout.buildDirectory.dir('arclight_installer')
-def forgeInstallerJar = project(':arclight-common').layout.buildDirectory.file("arclight_cache/forge-${minecraftVersion}-${forgeVersion}-installer.jar")
-
-def generateInstallerInfo = tasks.register('generateInstallerInfo') {
-    inputs.property('minecraftVersion', minecraftVersion)
-    inputs.property('forgeVersion', forgeVersion)
-    inputs.files(configurations.installer)
-    inputs.file(forgeInstallerJar)
-    outputs.file(installerInfoFile)
-    dependsOn(project(':arclight-common').tasks.named('downloadInstaller'))
-
-    doLast {
-        def coordinate = { artifact ->
-            def id = artifact.moduleVersion.id
-            def value = "${id.group}:${id.name}:${id.version}"
-            if (artifact.classifier != null) value += ":${artifact.classifier}"
-            if (artifact.extension != 'jar') value += "@${artifact.extension}"
-            value
-        }
-        def sha1 = { File file ->
-            MessageDigest digest = MessageDigest.getInstance('SHA-1')
-            file.eachByte(4096) { bytes, size -> digest.update(bytes, 0, size) }
-            digest.digest().collect { String.format('%02x', it) }.join()
-        }
-
-        def librariesByGa = new LinkedHashMap<String, Map<String, String>>()
-        new java.util.zip.ZipFile(forgeInstallerJar.get().asFile).withCloseable { archive ->
-            ['install_profile.json', 'version.json'].each { profileName ->
-                def profile = new groovy.json.JsonSlurper().parse(archive.getInputStream(archive.getEntry(profileName)))
-                profile.libraries.each { library ->
-                    def artifact = library.downloads?.artifact
-                    if (artifact?.sha1) {
-                        def parts = library.name.toString().split(':')
-                        librariesByGa.put("${parts[0]}:${parts[1]}", [coordinate: library.name.toString(), hash: artifact.sha1.toString()])
-                    }
-                }
-            }
-        }
-
-        def resolvedByGa = new LinkedHashMap<String, Map<String, String>>()
-        configurations.installer.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-            def value = coordinate(artifact)
-            def parts = value.split(':')
-            resolvedByGa.put("${parts[0]}:${parts[1]}", [coordinate: value, hash: sha1(artifact.file)])
-        }
-        configurations.installer.dependencies.each { dependency ->
-            def ga = "${dependency.group}:${dependency.name}"
-            def resolved = resolvedByGa.get(ga)
-            if (resolved == null) throw new GradleException("No resolved installer artifact for ${ga}")
-            librariesByGa.put(ga, resolved)
-        }
-        def libraries = librariesByGa.values().collectEntries { library ->
-            [(library.coordinate): library.hash]
-        }
-        def runtimeLibraries = resolvedByGa.values().collect { it.coordinate }
-
-        def output = [
-            installer: [
-                minecraft: minecraftVersion,
-                forge: forgeVersion,
-                hash: sha1(forgeInstallerJar.get().asFile)
-            ],
-            libraries: libraries,
-            runtimeLibraries: runtimeLibraries
-        ]
-        def target = installerInfoFile.get().asFile
-        target.parentFile.mkdirs()
-        target.text = groovy.json.JsonOutput.toJson(output)
-    }
-}
-
-sourceSets.main.output.dir([builtBy: generateInstallerInfo], installerOutputDirectory)
-
+// The common runtime is only usable after ForgeGradle has reobfuscated it, so the task
+// that produces the mod JAR has to depend on that step explicitly.
 compileJava {
     options.compilerArgs << '-XDignore.symbol.file' << '-XDenableSunApiLintControl'
 }
 
-tasks.register('runProdServer', JavaExec) {
-    classpath = files(tasks.named('jar'))
-    systemProperties 'terminal.ansi': 'true'
-    systemProperties 'mixin.debug.export': 'true'
-    systemProperties 'mixin.dumpTargetOnFailure': 'true'
-    systemProperties 'arclight.alwaysExtract': 'true'
-    systemProperties 'arclight.remapper.dump': './.mixin.out/plugin_classes'
-    workingDir System.env.ARCLIGHT_PROD_DIR ?: layout.projectDirectory.dir('run_prod').asFile
-    maxHeapSize '4G'
-    args 'nogui'
-    standardInput System.in
-    javaLauncher.convention(javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(17)
-    })
-    dependsOn project(':arclight-common').tasks.named('build'), tasks.named('build')
+/*
+ * The published artifact is a plain Forge mod JAR. Every entry that used to live in the
+ * nested common.jar is flattened into the root so Forge finds META-INF/mods.toml and the
+ * mixin configurations by scanning the mod JAR itself.
+ *
+ * The reobfuscated common runtime already carries the mixin configurations and the access
+ * transformer, so only the resources ForgeGradle generates afterwards are taken from the
+ * module output.
+ *
+ * Two leftovers of the launcher are dropped instead of shipped:
+ *  - installer.json described the runtime Forge installer, which no longer exists;
+ *  - ChestBlock$DoubleInventory is a Spigot patch of a Minecraft class that no code in
+ *    this repository reads. Shipping it would make the mod JAR declare
+ *    net.minecraft.world.level.block, which the minecraft module already owns, and Java's
+ *    module resolver refuses to build the layer because of the split package.
+ */
+def modResources = project(':arclight-common').layout.buildDirectory.dir('resources/main')
+def generatedRefmap = project(':arclight-common').layout.buildDirectory.file('tmp/compileJava/mixins.arclight.refmap.json')
+
+tasks.named('jar') {
+    // The common runtime is only usable after ForgeGradle has reobfuscated it, and the
+    // annotation processor output is the authoritative refmap: the copy MixinGradle puts
+    // in the common JAR can predate a mapping change, which then makes Mixin resolve
+    // @Shadow members by their unmapped names at runtime.
+    dependsOn(project(':arclight-common').tasks.matching { it.name == 'reobfJar' })
+    dependsOn(project(':arclight-common').tasks.named('compileJava'))
+    from(generatedRefmap) {
+        rename { 'mixins.arclight.refmap.json' }
+    }
+}
+
+jar {
+    manifest.attributes 'Automatic-Module-Name': 'luminara.forge'
+    manifest.attributes 'MixinConnector': 'io.izzel.arclight.common.mod.ArclightConnector'
+    from(configurations.commonReobfuscated.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/mods.toml'
+        exclude 'META-INF/installer.json'
+        exclude 'META-INF/services/**'
+        exclude 'net/minecraft/**'
+        exclude 'LICENSE.txt'
+        exclude 'module-info.class'
+    }
+    from(modResources) {
+        exclude 'io/**'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
