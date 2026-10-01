@@ -83,4 +83,21 @@ public final class LuminaraBootstrap {
     public static void warmUpEnumHelper() {
         Unsafe.ensureClassInitialized(EnumHelper.class);
     }
+
+    /**
+     * Whether the running JVM routes java.util.logging through log4j.
+     * <p>
+     * Mod code must not link against {@code org.apache.logging.log4j.jul} directly. Forge
+     * already owns the {@code org.apache.logging.log4j} packages, so a copy bundled in the
+     * mod JAR is not what the module class loader resolves, and a direct reference throws
+     * {@code NoClassDefFoundError} the first time a plugin is loaded. The check is therefore
+     * reflective, and the answer decides whether the plugin remapper rewrites
+     * {@code Logger.getLogger} calls.
+     */
+    public static boolean isJulBridgeActive() {
+        return java.util.logging.LogManager.getLogManager()
+            .getClass()
+            .getName()
+            .equals("org.apache.logging.log4j.jul.LogManager");
+    }
 }

@@ -164,7 +164,11 @@ def jarJarLibraries = [
         'net.md-5:SpecialSource:1.11.0',
         'jline:jline:2.12.1',
         "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}",
-        "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
+        "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}",
+        // Forge ships log4j-api and log4j-core but not the JUL bridge, and Luminara installs
+        // it as the java.util.logging manager. It travels as a module so the module layer
+        // resolves it once, and no mod class links it directly.
+        "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
 ]
 def jarJarFiles = providers.provider {
     def detached = configurations.detachedConfiguration(
