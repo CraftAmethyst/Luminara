@@ -1,0 +1,13 @@
+package io.izzel.arclight.common.mixin.bukkit.enumvalues;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
+
+@Mixin(value = org.bukkit.Statistic.class, remap = false)
+public class StatisticEnumMixin {
+
+    @Mutable
+    @Shadow
+    private static org.bukkit.Statistic[] ENUM$VALUES;
+}
