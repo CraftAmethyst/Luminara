@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.izzel.arclight.api.PluginPatcher;
 import io.izzel.arclight.api.Unsafe;
+import io.izzel.arclight.common.mod.boot.LuminaraBootstrap;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.common.mod.util.remapper.patcher.ArclightPluginPatcher;
 import io.izzel.arclight.common.mod.util.remapper.resource.RemapSourceHandler;
@@ -44,11 +45,7 @@ public class ArclightRemapper {
             } else {
                 DUMP = null;
             }
-            SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName(
-                    "io.izzel.arclight.boot.asm.SwitchTableFixer"
-                )
-                .getField("INSTANCE")
-                .get(null);
+            SWITCH_TABLE_FIXER = SwitchTableFixer.INSTANCE;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -161,10 +158,10 @@ public class ArclightRemapper {
             inheritanceProvider
         );
         this.patchers = ArclightPluginPatcher.load();
-        boolean useJulBridge =
-            java.util.logging.LogManager.getLogManager() instanceof
-                org.apache.logging.log4j.jul.LogManager;
-        this.transformerList = RemapperPipeline.create(useJulBridge, patchers);
+        this.transformerList = RemapperPipeline.create(
+            LuminaraBootstrap.isJulBridgeActive(),
+            patchers
+        );
         toBukkitMapping.setFallbackInheritanceProvider(
             GlobalClassRepo.inheritanceProvider()
         );
