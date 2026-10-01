@@ -8,7 +8,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.BufferedReader;
@@ -158,7 +158,11 @@ public abstract class SmokeServerTask extends DefaultTask {
     @InputFile
     public abstract RegularFileProperty getForgeInstallerJar();
 
-    @OutputDirectory
+    /**
+     * Not declared as an output: the fixture holds a running server's world, session locks
+     * and logs, which cannot be hashed reliably for up-to-date checks. The task always runs.
+     */
+    @Internal
     public abstract DirectoryProperty getFixtureDirectory();
 
     @Input
