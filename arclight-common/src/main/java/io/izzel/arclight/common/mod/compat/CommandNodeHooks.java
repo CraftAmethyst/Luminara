@@ -1,47 +1,27 @@
 package io.izzel.arclight.common.mod.compat;
 
 import com.mojang.brigadier.tree.CommandNode;
-import io.izzel.arclight.api.Unsafe;
+import io.izzel.arclight.common.bridge.core.command.CommandNodeBridge;
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
-
-import java.util.Map;
 
 public class CommandNodeHooks {
 
-    private static final long CHILDREN, LITERALS, ARGUMENTS, CURRENT;
-    private static final Object CURRENT_BASE;
+    private static final ThreadLocal<CommandNode<?>> CURRENT = new ThreadLocal<>();
 
-    static {
-        try {
-            CHILDREN = Unsafe.objectFieldOffset(
-                CommandNode.class.getDeclaredField("children")
-            );
-            LITERALS = Unsafe.objectFieldOffset(
-                CommandNode.class.getDeclaredField("literals")
-            );
-            ARGUMENTS = Unsafe.objectFieldOffset(
-                CommandNode.class.getDeclaredField("arguments")
-            );
-            CURRENT_BASE = Unsafe.staticFieldBase(
-                CommandNode.class.getDeclaredField("CURRENT_COMMAND")
-            );
-            CURRENT = Unsafe.staticFieldOffset(
-                CommandNode.class.getDeclaredField("CURRENT_COMMAND")
-            );
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     public static void removeCommand(CommandNode<?> node, String command) {
-        ((Map<String, ?>) Unsafe.getObject(node, CHILDREN)).remove(command);
-        ((Map<String, ?>) Unsafe.getObject(node, LITERALS)).remove(command);
-        ((Map<String, ?>) Unsafe.getObject(node, ARGUMENTS)).remove(command);
+        ((CommandNodeBridge) node).bridge$removeCommand(command);
     }
 
     public static CommandNode<?> getCurrent() {
-        return (CommandNode<?>) Unsafe.getObjectVolatile(CURRENT_BASE, CURRENT);
+        return CURRENT.get();
+    }
+
+    public static void setCurrent(CommandNode<?> node) {
+        if (node == null) {
+            CURRENT.remove();
+        } else {
+            CURRENT.set(node);
+        }
     }
 
     public static <S> boolean canUse(CommandNode<S> node, S source) {
