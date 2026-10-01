@@ -148,9 +148,11 @@ def jarJarMetadataFile = layout.buildDirectory.file("jarjar/META-INF/jarjar/meta
  * configuration makes ForgeGradle resolve it while it is still building its own
  * repositories, which fails the build.
  * <p>
- * ASM is deliberately absent. Forge already puts it on the module path, and a second
- * nested copy makes the layer fail with "Module forge reads more than one module named
- * org.objectweb.asm".
+ * ASM is deliberately absent. Forge already puts it on the module path, and a nested copy
+ * makes the layer fail with "Module luminara reads more than one module named
+ * org.objectweb.asm.tree". Keeping it out has a cost: mod code cannot see ASM, because the
+ * module class loader only searches its own layer while Forge's ASM lives on the legacy
+ * class path. See docs/known-limitations.md.
  */
 def jarJarLibraries = [
         "io.izzel:tools:${toolsVersion}",

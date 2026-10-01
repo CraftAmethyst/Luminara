@@ -56,10 +56,9 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
                 input.startsWith(source) && output.startsWith(destination),
                 "Tracked path escapes repository: " + relativeName
             );
-            require(
-                Files.exists(input, LinkOption.NOFOLLOW_LINKS),
-                "Tracked source file is missing: " + relativeName
-            );
+            // git ls-files also lists paths whose deletion is staged but not yet committed,
+            // and those have no content left to copy.
+            if (!Files.exists(input, LinkOption.NOFOLLOW_LINKS)) continue;
             if (Files.isDirectory(input, LinkOption.NOFOLLOW_LINKS)) {
                 Files.createDirectories(output);
                 continue;
