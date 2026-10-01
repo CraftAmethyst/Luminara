@@ -186,6 +186,16 @@ tasks.register('runNativeForgeServer') {
     dependsOn(smokeServer)
 }
 
+// Every other gate is a static inspection of the artifact; this one actually boots Forge
+// with the mod in mods/ and a Bukkit plugin in plugins/. The root project has no check
+// task of its own, so the full gate is exposed as verify and wired into the module checks.
+tasks.register('verify') {
+    group = 'verification'
+    description = 'Runs every module check plus the mod JAR verification and the native Forge smoke test.'
+    dependsOn(subprojects.collect { it.tasks.matching { task -> task.name == 'check' } })
+    dependsOn(tasks.named('verifyForgeModDistribution'), smokeServer)
+}
+
 def reproducibleWorkspace = new File(System.getProperty('java.io.tmpdir'),
         "luminara-reproducible-${Integer.toUnsignedString(rootDir.absolutePath.hashCode())}")
 

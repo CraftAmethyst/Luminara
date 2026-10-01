@@ -29,10 +29,8 @@ jobs:
           java-version: "17"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
-      - name: Verify and assemble
-        run: ./gradlew check assembleDistribution verifyDistribution
-      - name: Smoke test server
-        run: ./gradlew smokeServer
+      - name: Full verification including the native Forge smoke test
+        run: ./gradlew verify
       - name: Upload verification artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -46,7 +44,7 @@ jobs:
             **/build/reports/tests/**
 
   windows:
-    name: Windows assembly and launcher smoke
+    name: Windows assembly and mod JAR contract
     runs-on: windows-latest
     timeout-minutes: 120
     steps:
@@ -59,29 +57,33 @@ jobs:
           java-version: "17"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
-      - name: Verify and assemble
-        run: .\gradlew.bat check assembleDistribution verifyDistribution
-      - name: Smoke test launcher EULA boundary
+      - name: Verify and assemble the standard Forge mod
+        run: .\gradlew.bat check assembleForgeMod verifyForgeModDistribution
+      - name: Check the mod JAR is a standard mod and carries no launcher
         shell: pwsh
         run: |
-          $jars = @(Get-ChildItem 'build/distributions' -Filter 'luminara-*.jar' -File)
+          $jars = @(Get-ChildItem 'build/distributions' -Filter 'luminara-forge-*.jar' -File)
           if ($jars.Count -ne 1) {
-            throw "Expected exactly one Luminara distribution JAR, found $($jars.Count): $($jars.FullName -join ', ')"
+            throw "Expected exactly one Luminara mod JAR, found $($jars.Count): $($jars.FullName -join ', ')"
           }
-          $jar = $jars[0].FullName
-          $work = Join-Path $env:RUNNER_TEMP 'luminara-launcher-smoke'
-          New-Item -ItemType Directory -Force -Path $work | Out-Null
-          Push-Location $work
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [System.IO.Compression.ZipFile]::OpenRead($jars[0].FullName)
           try {
-            $process = Start-Process -FilePath 'java' -ArgumentList '-jar', $jar, 'nogui' -WorkingDirectory $work -RedirectStandardOutput launcher.stdout.log -RedirectStandardError launcher.stderr.log -Wait -PassThru
-            $exitCode = $process.ExitCode
-            $output = (Get-Content -Raw launcher.stdout.log), (Get-Content -Raw launcher.stderr.log) -join "`n"
-            if ($exitCode -eq 0) {
-              throw 'Launcher unexpectedly accepted a missing eula.txt.'
+            $names = $archive.Entries | ForEach-Object { $_.FullName }
+            foreach ($required in @('META-INF/mods.toml', 'META-INF/MANIFEST.MF', 'mixins.arclight.refmap.json')) {
+              if ($names -notcontains $required) { throw "Missing $required" }
             }
-            if ($output -notmatch 'Minecraft EULA not accepted' -or $output -notmatch 'https://aka.ms/MinecraftEULA') {
-              throw "Launcher did not report the required EULA boundary:`n$output"
+            foreach ($forbidden in @('common.jar', 'gson.jar', 'META-INF/installer.json', 'META-INF/services/net.minecraftforge.forgespi.locating.IModLocator')) {
+              if ($names -contains $forbidden) { throw "Legacy launcher entry still present: $forbidden" }
             }
+            $launcherClasses = @($names | Where-Object { $_ -like 'io/izzel/arclight/boot/*' -or $_ -like 'io/izzel/arclight/server/*' -or $_ -like 'io/izzel/arclight/forgeinstaller/*' })
+            if ($launcherClasses.Count -gt 0) {
+              throw "Legacy launcher classes still present: $($launcherClasses -join ', ')"
+            }
+            $manifest = New-Object System.IO.StreamReader($archive.GetEntry('META-INF/MANIFEST.MF').Open())
+            $text = $manifest.ReadToEnd()
+            $manifest.Close()
+            if ($text -match 'Main-Class') { throw 'The mod JAR must not declare a Main-Class launcher entry' }
           } finally {
-            Pop-Location
+            $archive.Dispose()
           }
