@@ -15,16 +15,16 @@ Development targets the `stable/Trials` branch of [CraftAmethyst/Luminara](https
 Select a 64-bit JDK 17 through `JAVA_HOME`, then run from the repository root:
 
 ```bash
-./gradlew check assembleDistribution verifyDistribution
+./gradlew check assembleForgeMod verifyForgeModDistribution
 ./gradlew smokeServer
 ```
 
-The first command must produce `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar` and its `.jar.sha256` file. Forge resolves to the latest promotion by default. A second build invocation is not a repair strategy: do not use the old double-build sequence or `--refresh-dependencies`.
+The first command must produce `build/distributions/luminara-forge-1.20.1-1.0.15-hotfix.jar` and its `.jar.sha256` file. Forge resolves to the latest promotion by default. A second build invocation is not a repair strategy: do not use the old double-build sequence or `--refresh-dependencies`.
 
 Changes to archive metadata, dependency resolution, or build inputs must also pass:
 
 ```bash
-./gradlew verifyReproducibleBuild
+./gradlew verifyReproducibleForgeMod
 ```
 
 Use `gradlew.bat` instead of `./gradlew` on Windows.

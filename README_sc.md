@@ -104,19 +104,19 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的 B
 
 ```bash
 ./gradlew check
-./gradlew assembleDistribution
-./gradlew verifyDistribution
+./gradlew assembleForgeMod
+./gradlew verifyForgeModDistribution
 ```
 
-构建是单次通过的；不要运行两次，也不要使用 `--refresh-dependencies` 作为变通方案。构建产物包括：
+构建是单次通过的；不要运行两次，也不要使用 `--refresh-dependencies` 作为变通方案。标准 Forge 模组产物包括：
 
-- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar`
-- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar.sha256`
+- `build/distributions/luminara-forge-1.20.1-1.0.15-hotfix.jar`
+- `build/distributions/luminara-forge-1.20.1-1.0.15-hotfix.jar.sha256`
 
 使用以下命令校验 SHA256：
 
 ```bash
-(cd build/distributions && sha256sum -c luminara-1.20.1-1.0.15-hotfix.jar.sha256)
+(cd build/distributions && sha256sum -c luminara-forge-1.20.1-1.0.15-hotfix.jar.sha256)
 ```
 
 使用以下命令运行端到端的 Forge 模组与 Bukkit 插件冒烟测试：
@@ -129,17 +129,12 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的 B
 
 ## 运行服务器
 
-1. 将 `luminara-1.20.1-1.0.15-hotfix.jar` 放入一个新的服务器目录中。
-2. 阅读 [Minecraft 最终用户许可协议（EULA）](https://aka.ms/MinecraftEULA)。如果你接受该协议，请在该目录中创建 `eula.txt`，内容必须恰好为 `eula=true`。
-3. 在该目录中启动 Luminara：
+1. 安装匹配的 Forge `1.20.1` 独立服务端。
+2. 将 `luminara-forge-1.20.1-1.0.15-hotfix.jar` 放入服务端的 `mods/` 目录。
+3. 将兼容 `v1_20_R1` 的 Bukkit 插件放入 `plugins/` 目录。
+4. 阅读 [Minecraft 最终用户许可协议（EULA）](https://aka.ms/MinecraftEULA)，在 `eula.txt` 中接受协议，然后使用 Forge 自带的独立服务端命令加 `nogui` 启动。
 
-```bash
-java -jar luminara-1.20.1-1.0.15-hotfix.jar nogui
-```
-
-当 `eula.txt` 缺失或内容不恰好为已接受的值时，启动器会不提示直接退出。它绝不会代你接受 EULA。
-
-将 Forge `1.20.1` 模组放入 `mods/`，将兼容 `v1_20_R1` 的 Bukkit 插件放入 `plugins/`。更改任一组之前请先备份服务器。
+更改 Forge 模组或 Bukkit 插件之前请先备份服务器。
 
 ## 社区
 

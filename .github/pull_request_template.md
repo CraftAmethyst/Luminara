@@ -19,7 +19,7 @@
 
 <!-- List the exact commands and scenarios run. Do not check a box that was not exercised. -->
 
-- [ ] `./gradlew check assembleDistribution verifyDistribution`
+- [ ] `./gradlew check assembleForgeMod verifyForgeModDistribution`
 - [ ] `./gradlew smokeServer`
 - [ ] Added or updated a regression test for new observable behavior
 - [ ] Updated affected documentation

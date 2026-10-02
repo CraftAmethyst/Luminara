@@ -104,19 +104,19 @@ Because the build tracks the latest promotion, a new Forge release ships artifac
 
 ```bash
 ./gradlew check
-./gradlew assembleDistribution
-./gradlew verifyDistribution
+./gradlew assembleForgeMod
+./gradlew verifyForgeModDistribution
 ```
 
-The build is single-pass; do not run it twice and do not use `--refresh-dependencies` as a workaround. The distribution outputs are:
+The build is single-pass; do not run it twice and do not use `--refresh-dependencies` as a workaround. The standard Forge mod outputs are:
 
-- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar`
-- `build/distributions/luminara-1.20.1-1.0.15-hotfix.jar.sha256`
+- `build/distributions/luminara-forge-1.20.1-1.0.15-hotfix.jar`
+- `build/distributions/luminara-forge-1.20.1-1.0.15-hotfix.jar.sha256`
 
 Verify the checksum with:
 
 ```bash
-(cd build/distributions && sha256sum -c luminara-1.20.1-1.0.15-hotfix.jar.sha256)
+(cd build/distributions && sha256sum -c luminara-forge-1.20.1-1.0.15-hotfix.jar.sha256)
 ```
 
 Run the end-to-end Forge mod and Bukkit plugin smoke test with:
@@ -129,17 +129,12 @@ Use `gradlew.bat` instead of `./gradlew` on Windows.
 
 ## Run a server
 
-1. Put `luminara-1.20.1-1.0.15-hotfix.jar` in a new server directory.
-2. Read the [Minecraft EULA](https://aka.ms/MinecraftEULA). If you accept it, create `eula.txt` in that directory containing exactly `eula=true`.
-3. Start Luminara from that directory:
+1. Install the matching Forge `1.20.1` Dedicated Server.
+2. Put `luminara-forge-1.20.1-1.0.15-hotfix.jar` in the server's `mods/` directory.
+3. Put Bukkit plugins compatible with `v1_20_R1` in `plugins/`.
+4. Read the [Minecraft EULA](https://aka.ms/MinecraftEULA), accept it in `eula.txt`, and start the server with Forge's normal Dedicated Server command and `nogui`.
 
-```bash
-java -jar luminara-1.20.1-1.0.15-hotfix.jar nogui
-```
-
-The launcher exits without prompting when `eula.txt` is missing or does not contain the exact accepted value. It never accepts the EULA on your behalf.
-
-Add Forge `1.20.1` mods to `mods/` and Bukkit plugins compatible with `v1_20_R1` to `plugins/`. Back up the server before changing either set.
+Back up the server before changing either the Forge mods or Bukkit plugins.
 
 ## Distribution policy
 
