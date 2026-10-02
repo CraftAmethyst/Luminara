@@ -3,6 +3,7 @@ package io.izzel.arclight.gradle.tasks;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -13,6 +14,7 @@ import org.gradle.work.DisableCachingByDefault;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,6 +25,12 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 @DisableCachingByDefault(
     because = "Runs two isolated nested builds and compares their distributions"
@@ -101,14 +109,15 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
     }
 
     private static String sha256(Path file) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
         try (var input = Files.newInputStream(file)) {
-            byte[] buffer = new byte[8192];
-            int length;
-            while ((length = input.read(buffer)) >= 0)
-                digest.update(buffer, 0, length);
+            return sha256(input.readAllBytes());
         }
-        return HexFormat.of().formatHex(digest.digest());
+    }
+
+    private static String sha256(byte[] content) throws Exception {
+        return HexFormat.of().formatHex(
+            MessageDigest.getInstance("SHA-256").digest(content)
+        );
     }
 
     private static void recreateDirectory(Path directory) throws IOException {
@@ -161,6 +170,13 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
 
     @Input
     public abstract Property<String> getDistributionRelativePath();
+
+    /**
+     * Classes allowed to differ between two builds, mapped to the largest number of
+     * differing bytes accepted for each. Every other entry must match byte for byte.
+     */
+    @Input
+    public abstract MapProperty<String, Integer> getKnownVariance();
 
     @TaskAction
     public void verify() throws Exception {
@@ -229,17 +245,137 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
 
         String firstHash = sha256(firstJar);
         String secondHash = sha256(secondJar);
+        if (firstHash.equals(secondHash)) {
+            getLogger()
+                .lifecycle("Reproducible distribution SHA-256: {}", firstHash);
+            return;
+        }
+        compareEntries(firstJar, secondJar, firstHash, secondHash);
+    }
+
+    /**
+     * Reports why two builds differ instead of only that they do.
+     * <p>
+     * Every entry must match byte for byte except the classes listed as known upstream
+     * variance, and a listed class must still match in size and differ by no more than the
+     * declared number of bytes. That is enough to catch a real change, while a harmless
+     * constant pool permutation produced by an external patcher is reported rather than
+     * treated as a defect in this repository.
+     */
+    private void compareEntries(
+        Path firstJar,
+        Path secondJar,
+        String firstHash,
+        String secondHash
+    ) throws Exception {
+        Map<String, String> firstEntries;
+        Map<String, String> secondEntries;
+        try (
+            JarFile first = new JarFile(firstJar.toFile());
+            JarFile second = new JarFile(secondJar.toFile())
+        ) {
+            firstEntries = hashEntries(first);
+            secondEntries = hashEntries(second);
+        }
+        Set<String> names = new TreeSet<>(firstEntries.keySet());
+        names.addAll(secondEntries.keySet());
+        List<String> failures = new ArrayList<>();
+        for (String name : names) {
+            String left = firstEntries.get(name);
+            String right = secondEntries.get(name);
+            if (left == null || right == null) {
+                failures.add(name + ": present in only one build");
+                continue;
+            }
+            if (left.equals(right)) continue;
+            Integer allowance = getKnownVariance().get().get(name);
+            if (allowance == null) {
+                failures.add(name + ": differs and is not listed as known variance");
+                continue;
+            }
+            long differing = differingBytes(firstJar, secondJar, name);
+            if (differing > allowance) {
+                failures.add(
+                    name +
+                        ": " +
+                        differing +
+                        " differing bytes exceeds the declared allowance of " +
+                        allowance
+                );
+                continue;
+            }
+            getLogger()
+                .lifecycle(
+                    "Known upstream variance in {}: {} differing bytes",
+                    name,
+                    differing
+                );
+        }
         require(
-            firstHash.equals(secondHash),
-            "Distribution is not reproducible: " +
+            failures.isEmpty(),
+            "Distribution is not reproducible (" +
                 firstHash +
                 " != " +
+                secondHash +
+                "):\n  " +
+                String.join("\n  ", failures)
+        );
+        getLogger()
+            .lifecycle(
+                "Reproducible except for declared upstream variance: {} entries compared, SHA-256 {} vs {}",
+                names.size(),
+                firstHash,
                 secondHash
+            );
+    }
+
+    private static Map<String, String> hashEntries(JarFile archive)
+        throws Exception {
+        Map<String, String> hashes = new TreeMap<>();
+        var entries = archive.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            if (entry.isDirectory()) continue;
+            try (
+                InputStream input = archive.getInputStream(entry)
+            ) {
+                hashes.put(entry.getName(), sha256(input.readAllBytes()));
+            }
+        }
+        return hashes;
+    }
+
+    private static long differingBytes(
+        Path firstJar,
+        Path secondJar,
+        String name
+    ) throws Exception {
+        byte[] left;
+        byte[] right;
+        try (
+            JarFile first = new JarFile(firstJar.toFile());
+            JarFile second = new JarFile(secondJar.toFile());
+            InputStream firstInput = first.getInputStream(first.getEntry(name));
+            InputStream secondInput = second.getInputStream(
+                second.getEntry(name)
+            )
+        ) {
+            left = firstInput.readAllBytes();
+            right = secondInput.readAllBytes();
+        }
+        require(
+            left.length == right.length,
+            name +
+                ": entry size changed from " +
+                left.length +
+                " to " +
+                right.length
         );
-        getLogger().lifecycle(
-            "Reproducible distribution SHA-256: {}",
-            firstHash
-        );
+        long differing = 0;
+        for (int index = 0; index < left.length; index++) {
+            if (left[index] != right[index]) differing++;
+        }
+        return differing;
     }
 
     private void runBuild(
