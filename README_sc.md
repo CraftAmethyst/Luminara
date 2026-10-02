@@ -1,158 +1,51 @@
 # Luminara
 
-Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 的 Bukkit 兼容层。它可以让加载器模组和 Bukkit 插件在同一个 Minecraft 服务器上共存运行。本分支是 Minecraft `1.20.1` 的纯 Forge 线。
+Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服务端开发的分支项目。
 
-> ~~梦想~~目标：实现更多 Paper API，最大限度地提高与模组和插件的兼容性，并提供更多自定义选项。
+## 相比 Arclight 的优势
 
-## 支持的平台
+- 以标准 Mod 形式提供
+- 在 1.20.1 分支上支持 Velocity Modern 转发
+- 兼容 Adventure、MiniMessage、签名聊天（signed-chat）以及部分常用 Paper API
+- 具备更好的模组与插件兼容性
 
-本仓库维护两条发布线，各占一个分支。
+## 支持版本
 
-### Forge 上的 Minecraft 1.20.1 —— 本分支（`stable/Trials`）
 
-| 组件           | 支持的版本                                    |
-| -------------- | --------------------------------------------- |
-| Minecraft      | `1.20.1`                                      |
-| Forge          | 适用于 Minecraft `1.20.1` 的最新 Forge 正式版 |
-| CraftBukkit 包 | `v1_20_R1`                                    |
-| Java           | `17`（64 位）                                 |
-| Luminara       | `1.0.15-hotfix`                               |
+| 组件 | stable/Trials | stable/FeudalKings |
+| --- | --- | --- |
+| Minecraft | 1.20.1 | 1.21.1 |
+| JDK | 17、21 | 21、25 |
+| Forge | ≥ 47.4.0 | 不支持 |
+| NeoForge | 不支持 | ≥ 21.1.117 |
+| Fabric Loader | 不支持 | ≥ 0.16.0 |
+| Fabric API | 不支持 | ≥ 0.115.0 |
+| CraftBukkit | `v1_20_R1` | `v1_21_R1` |
 
-本文档其余部分描述的都是这条线。
+## 社区支持
 
-### Fabric 与 NeoForge 上的 Minecraft 1.21.1 —— [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings)
+- Discord（国际）：https://discord.gg/xn8KGphcvS
+- QQ 群 `929252864`（仅中国）：https://qm.qq.com/q/5S00vXfQpq
 
-| 组件           | 支持的版本        |
-| -------------- | ----------------- |
-| Minecraft      | `1.21.1`          |
-| Fabric         | Loader `0.19.3`   |
-| NeoForge       | `21.1.248`        |
-| CraftBukkit 包 | `v1_21_R1`        |
-| Java           | `21`（64 位）     |
-| Luminara       | `1.0.15-beta.1`   |
+## 技术支持
 
-这条线以标准服务端模组的形式发布，不再使用启动器。先安装对应的服务端，然后把 `luminara-neoforge-1.21.1-1.0.15-beta.1.jar` 或 `luminara-fabric-1.21.1-1.0.15-beta.1.jar` 放进 `mods/`，Bukkit 插件仍放在 `plugins/`，再用加载器自身的服务端启动命令加 `nogui` 启动。Fabric 还需要 Fabric API `0.116.15+1.21.1` 与 `fabric-permissions-api` `0.3.1`。请从 [`stable/FeudalKings`](https://github.com/CraftAmethyst/Luminara/tree/stable/FeudalKings) 分支构建，并参考该分支的说明文档。
+一般情况下，在提出问题前，请阅读本项目的 [文档](https://lum.rimecraft.top)，它会帮助你很多。
 
-其他 Minecraft 版本以及混合加载器配置均不受支持。
+如果你在使用过程中遇到 Bug，或有更好的建议，欢迎在 [Issue](https://github.com/CraftAmethyst/Luminara/issues) 中提出。
 
-## 功能特性
+如涉及安全漏洞，请按 [安全政策](SECURITY.md) 的方式私下报告，切勿在群聊中公开讨论或直接提交公开 Issue。
 
-- 在 Forge 上提供兼容 Spigot 的 Bukkit API。
-- 同时加载 `mods/` 目录下的 Forge 模组和 `plugins/` 目录下的 Bukkit 插件。
-- 兼容 Adventure、MiniMessage、签名聊天（signed-chat）及部分 Paper API。
-- 通过内置的 `i18n-config` 模块实现本地化配置。
-- 默认使用同步、与原版一致的存档持久化方式。
-- 在整合包 [ATM9](https://www.curseforge.com/minecraft/modpacks/all-the-mods-9) 和 [落幕曲](https://www.mcmod.cn/modpack/1133.html) 中运行完美。
-
-## 已知不兼容的模组
-
-- [ServerCore](https://modrinth.com/mod/servercore)
-
-  > 它的大部分优化方法源自 Spigot 或 Paper。本服务端本身就是一个 Forge + Spigot + Paper API 服务器，强行加入会导致行为异常或崩溃，因此永远不会兼容
-
-- [Sinytra Connector](https://modrinth.com/mod/connector)
-
-  > 恩情课文：Connector 爷爷使用大量 Fabric API 转译层击落 Forge 服务端兼容性。
-
-- [C2ME Forge](https://www.curseforge.com/minecraft/mc-mods/concurent-chunk-management-engine-forge/d)
-
-  > 没找到源码，所以不修
-
-  > 替代品：[FastChunkGen](https://www.curseforge.com/minecraft/mc-mods/fastchunkgen)
-
-## 已知不兼容的插件
-
-- 任何声称能优化服务器性能的插件（例如 LaggRemover）
-
-  > 这类插件大多是假优化——要么对性能毫无帮助，要么反而会损害性能
-
-- 任何反作弊插件（例如 GrimAC、Matrix、Vulcan）
-
-  > 反作弊插件有时会误判玩家与模组物品的交互（因为这些插件只检测原版行为）~~有些 Bukkit 反作弊其实连原版行为都能多次误判~~
-
-- 70% 使用 Paper API 的插件
-
-  > 本服务器仅支持少数 Paper API——只有十几种常用的——因此你可能会遇到功能缺失、行为异常甚至崩溃的情况。我们目前正在努力实现更多的 Paper API
-
-  > 有些插件提供备选的"Spigot API"版本——那才是最佳的兼容路径
-
-## 如何在此服务端上实现最大优化？
-
-- 如果你想要更激进性能优化，我们推荐我们的下游项目 [PRTS-SERVER](https://github.com/ElainAwa/PRTS-SERVER)
-
-  > PRTS-SERVER 的目标是在尽可能保持兼容性的同时实现更多性能优化补丁。这些补丁来自 [ServerCore](https://modrinth.com/mod/servercore)、[Very Many Players](https://modrinth.com/mod/vmp-forge)、[Paper](https://papermc.io/)、[Mohist](https://www.mohistmc.com/) 等项目
-
-  > 请注意，它只适合中小型整合包！对于像 ATM9 这样的大型整合包，我们建议继续使用本服务端，因为大型整合包往往需要更高的兼容性
-
-  > ~~我最近才发现这破服务端还有下游~~
-
-- 如果你想优化大型整合包，我们推荐一些常见的优化模组组合（下面提到的所有模组都与本服务端兼容）
-
-  > 对大多数整合包来说，仅三个模组就能击落 MSPT：[ModernFix](https://modrinth.com/mod/modernfix)、[FerriteCore](https://modrinth.com/mod/ferrite-core) 和 [Radium](https://modrinth.com/mod/radium)
-
-  > 对于涉及大量探索的整合包，两个模组可以大幅加快区块生成速度：[FastNoise](https://modrinth.com/mod/zfastnoise) 和 [FastChunkGen](https://www.curseforge.com/minecraft/mc-mods/fastchunkgen)
-
-## 从源码构建
-
-使用 64 位 JDK 17 和仓库中自带的 Gradle wrapper。空缓存构建需要能够访问依赖仓库以及 Mojang、Forge 和 Spigot 的构建服务。
-构建过程会在配置阶段解析适用于 Minecraft `1.20.1` 的最新 Forge 正式版。使用 `-PforgeVersion=<version>` 可以使用特定的 Forge 构建版本，或在之前已解析过某个版本的情况下离线构建。
-由于构建会跟踪最新正式版，Forge 发布新版本时，其新工件尚未包含在 Gradle 依赖校验（`gradle/verification-metadata.xml`）中，构建会在配置阶段失败。此时重新生成校验元数据即可：
-
-```bash
-./gradlew :arclight-common:tasks --write-verification-metadata sha256
-```
-
-```bash
-./gradlew check
-./gradlew assembleForgeMod
-./gradlew verifyForgeModDistribution
-```
-
-构建是单次通过的；不要运行两次，也不要使用 `--refresh-dependencies` 作为变通方案。标准 Forge 模组产物包括：
-
-- `build/distributions/luminara-forge-1.20.1-1.0.15-hotfix.jar`
-- `build/distributions/luminara-forge-1.20.1-1.0.15-hotfix.jar.sha256`
-
-使用以下命令校验 SHA256：
-
-```bash
-(cd build/distributions && sha256sum -c luminara-forge-1.20.1-1.0.15-hotfix.jar.sha256)
-```
-
-使用以下命令运行端到端的 Forge 模组与 Bukkit 插件冒烟测试：
-
-```bash
-./gradlew smokeServer
-```
-
-在 Windows 上请使用 `gradlew.bat` 而不是 `./gradlew`。~~其实你在 CMD 用 ./gradlew 也可以运行~~
-
-## 运行服务器
-
-1. 安装匹配的 Forge `1.20.1` 独立服务端。
-2. 将 `luminara-forge-1.20.1-1.0.15-hotfix.jar` 放入服务端的 `mods/` 目录。
-3. 将兼容 `v1_20_R1` 的 Bukkit 插件放入 `plugins/` 目录。
-4. 阅读 [Minecraft 最终用户许可协议（EULA）](https://aka.ms/MinecraftEULA)，在 `eula.txt` 中接受协议，然后使用 Forge 自带的独立服务端命令加 `nogui` 启动。
-
-更改 Forge 模组或 Bukkit 插件之前请先备份服务器。
-
-## 社区
-
-- Discord：https://discord.gg/xn8KGphcvS
-- QQ 群 `929252864`：https://qm.qq.com/q/5S00vXfQpq
-
-这两个渠道用于日常提问、整合包兼容性反馈和构建求助。可复现的缺陷仍请按[支持政策](SUPPORT.md)要求的诊断信息提交 [issue](https://github.com/CraftAmethyst/Luminara/issues)；安全漏洞请按[安全政策](SECURITY.md)私下报告，不要发到群里或公开 issue。
+详见 [支持政策（Support policy）](SUPPORT.md)。
 
 ## 项目指南
 
+- [文档](https://lum.rimecraft.top)
 - [贡献指南（Contributing）](CONTRIBUTING.md)
 - [行为准则（Code of conduct）](CODE_OF_CONDUCT.md)
 - [安全政策（Security policy）](SECURITY.md)
 - [支持政策（Support policy）](SUPPORT.md)
 - [上游 Arclight 项目](https://github.com/IzzelAliz/Arclight)
 
-## 许可证
+## License
 
 Luminara 依据 [GNU 通用公共许可证 v3.0](LICENSE) 授权。对于继承的代码，Arclight 的署名要求和上游声明仍然适用。
-
-~~翻译完成。如果需要，我也可以把这版翻译写入文件（例如 `README_sc.md`）方便直接使用，需要的话告诉我。~~
