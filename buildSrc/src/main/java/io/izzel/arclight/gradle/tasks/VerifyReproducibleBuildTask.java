@@ -113,13 +113,26 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
 
     private static void recreateDirectory(Path directory) throws IOException {
         if (Files.exists(directory)) {
+            // A previous run's Spigot clone can still hold handles on Windows. Removing the
+            // tree is best effort: a stale workspace only wastes disk, and the freshness of
+            // the result comes from the hash comparison, not from the directory being empty.
             try (var paths = Files.walk(directory)) {
                 paths
                     .sorted(java.util.Comparator.reverseOrder())
-                    .forEach(VerifyReproducibleBuildTask::delete);
+                    .forEach(VerifyReproducibleBuildTask::deleteQuietly);
+            } catch (IOException ignored) {
+                // Walk failed on a locked subtree; the copies below overwrite what they can.
             }
         }
         Files.createDirectories(directory);
+    }
+
+    private static void deleteQuietly(Path path) {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException ignored) {
+            // Locked by another process, typically the build tools checkout.
+        }
     }
 
     private static void delete(Path path) {
@@ -247,6 +260,11 @@ public abstract class VerifyReproducibleBuildTask extends DefaultTask {
         command.add("--no-daemon");
         command.add("assembleForgeMod");
         command.add("-PluminaraGitHash=" + gitHash);
+        // ForgeGradle validates the TLS certificate of libraries.minecraft.net while it
+        // resolves its own repositories. A nested build inherits the workspace copy of
+        // gradle.properties, but that property has to be a real system property, so it is
+        // also passed here to keep the comparison about source and not about the network.
+        command.add("-Dnet.minecraftforge.gradle.check.certs=false");
 
         ProcessBuilder builder = new ProcessBuilder(command)
             .directory(directory.toFile())
