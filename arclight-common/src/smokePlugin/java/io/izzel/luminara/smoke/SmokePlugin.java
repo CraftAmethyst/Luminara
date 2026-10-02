@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
+import java.util.logging.Logger;
 
 public final class SmokePlugin extends JavaPlugin {
 
@@ -36,10 +38,22 @@ public final class SmokePlugin extends JavaPlugin {
         try {
             assertDefinalized(Material.class);
             assertDefinalized(SpawnCategory.class);
+            assertExtendedBukkitApi();
         } catch (Exception e) {
             throw new IllegalStateException("Enum definalization check failed", e);
         }
         getLogger().info("LUMINARA_SMOKE_PLUGIN_ENABLED");
+        Logger.getLogger("LuminaraSmokeJul").info("LUMINARA_SMOKE_JUL_BRIDGE");
+    }
+
+    private static void assertExtendedBukkitApi() throws Exception {
+        Class<?> bukkit = Class.forName("org.bukkit.Bukkit");
+        Method minecraftVersion = bukkit.getMethod("getMinecraftVersion");
+        Method commandMap = bukkit.getMethod("getCommandMap");
+        if (minecraftVersion.invoke(null) == null || commandMap.invoke(null) == null) {
+            throw new IllegalStateException("Extended Bukkit API returned null");
+        }
+        System.out.println("LUMINARA_SMOKE_BUKKIT_API_OK");
     }
 
     @Override

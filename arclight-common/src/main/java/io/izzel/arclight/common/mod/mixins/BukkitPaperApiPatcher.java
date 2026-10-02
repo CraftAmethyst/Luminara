@@ -6,6 +6,9 @@ import org.objectweb.asm.tree.*;
 public final class BukkitPaperApiPatcher {
 
     private static final String BUKKIT_CLASS = "org.bukkit.Bukkit";
+    private static final String BUKKIT_INTERNAL_NAME = "org/bukkit/Bukkit";
+    private static final String BUKKIT_API_COMPAT =
+        "io/izzel/arclight/common/mod/compat/BukkitApiCompat";
     private static final String TITLE_CLASS = "net.kyori.adventure.title.Title";
     private static final String PLAYER_TELEPORT_EVENT_CLASS =
         "org.bukkit.event.player.PlayerTeleportEvent";
@@ -33,6 +36,8 @@ public final class BukkitPaperApiPatcher {
 
     public static void patch(String targetClassName, ClassNode targetClass) {
         if (BUKKIT_CLASS.equals(targetClassName)) {
+            patchGetMinecraftVersion(targetClass);
+            patchGetCommandMap(targetClass);
             patchGetCurrentTick(targetClass);
             patchCreateInventoryComponent(targetClass);
         }
@@ -42,6 +47,84 @@ public final class BukkitPaperApiPatcher {
         if (PLAYER_TELEPORT_EVENT_CLASS.equals(targetClassName)) {
             patchPlayerTeleportEvent(targetClass);
         }
+    }
+
+    private static void patchGetMinecraftVersion(ClassNode targetClass) {
+        if (hasMethod(targetClass, "getMinecraftVersion", "()Ljava/lang/String;")) {
+            return;
+        }
+
+        MethodNode method = new MethodNode(
+            Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+            "getMinecraftVersion",
+            "()Ljava/lang/String;",
+            null,
+            null
+        );
+        method.instructions.add(
+            new MethodInsnNode(
+                Opcodes.INVOKESTATIC,
+                BUKKIT_INTERNAL_NAME,
+                "getServer",
+                "()Lorg/bukkit/Server;",
+                false
+            )
+        );
+        method.instructions.add(
+            new MethodInsnNode(
+                Opcodes.INVOKESTATIC,
+                BUKKIT_API_COMPAT,
+                "getMinecraftVersion",
+                "(Lorg/bukkit/Server;)Ljava/lang/String;",
+                false
+            )
+        );
+        method.instructions.add(new InsnNode(Opcodes.ARETURN));
+        method.maxStack = 1;
+        method.maxLocals = 0;
+        targetClass.methods.add(method);
+    }
+
+    private static void patchGetCommandMap(ClassNode targetClass) {
+        if (
+            hasMethod(
+                targetClass,
+                "getCommandMap",
+                "()Lorg/bukkit/command/CommandMap;"
+            )
+        ) {
+            return;
+        }
+
+        MethodNode method = new MethodNode(
+            Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+            "getCommandMap",
+            "()Lorg/bukkit/command/CommandMap;",
+            null,
+            null
+        );
+        method.instructions.add(
+            new MethodInsnNode(
+                Opcodes.INVOKESTATIC,
+                BUKKIT_INTERNAL_NAME,
+                "getServer",
+                "()Lorg/bukkit/Server;",
+                false
+            )
+        );
+        method.instructions.add(
+            new MethodInsnNode(
+                Opcodes.INVOKESTATIC,
+                BUKKIT_API_COMPAT,
+                "getCommandMap",
+                "(Lorg/bukkit/Server;)Lorg/bukkit/command/CommandMap;",
+                false
+            )
+        );
+        method.instructions.add(new InsnNode(Opcodes.ARETURN));
+        method.maxStack = 1;
+        method.maxLocals = 0;
+        targetClass.methods.add(method);
     }
 
     private static void patchGetCurrentTick(ClassNode targetClass) {

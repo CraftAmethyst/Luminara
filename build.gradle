@@ -161,6 +161,7 @@ def smokeServer = tasks.register('smokeServer', SmokeServerTask) {
             'For help, type "help"',
             'LUMINARA_SMOKE_MOD_ENABLED',
             'LUMINARA_SMOKE_PLUGIN_ENABLED',
+            'LUMINARA_SMOKE_BUKKIT_API_OK',
             'LUMINARA_SMOKE_ENUM_DEFINALIZED Material=Material',
             'LUMINARA_SMOKE_ENUM_DEFINALIZED SpawnCategory=SpawnCategory',
             'LUMINARA_SMOKE_COMMAND_OK',
