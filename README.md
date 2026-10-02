@@ -1,5 +1,7 @@
 # Luminara
 
+[简体中文 Chinese](./README_sc.md)
+
 Luminara is a fork project developed based on the [Arclight](https://github.com/IzzelAliz/Arclight) server.
 
 ## Advantages over Arclight
