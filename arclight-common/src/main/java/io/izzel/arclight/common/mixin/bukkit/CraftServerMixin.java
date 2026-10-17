@@ -7,6 +7,7 @@ import io.izzel.arclight.common.bridge.bukkit.CraftServerBridge;
 import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.mod.server.ArclightServer;
+import io.izzel.arclight.common.mod.util.log.ArclightPluginLogger;
 import jline.console.ConsoleReader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
@@ -122,6 +123,9 @@ public abstract class CraftServerMixin implements CraftServerBridge {
         CallbackInfo ci
     ) {
         this.serverName = "Luminara";
+        // Bukkit.getLogger() returns this field. Replace the original JUL logger so
+        // Spigot internals and plugins share Forge's Log4j formatting.
+        this.setLogger(ArclightPluginLogger.getLogger("Arclight"));
     }
 
     /**

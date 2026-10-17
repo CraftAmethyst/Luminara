@@ -44,6 +44,9 @@ public final class SmokePlugin extends JavaPlugin {
         }
         getLogger().info("LUMINARA_SMOKE_PLUGIN_ENABLED");
         Logger.getLogger("LuminaraSmokeJul").info("LUMINARA_SMOKE_JUL_BRIDGE");
+        org.bukkit.Bukkit.getLogger().info(
+            "LUMINARA_SMOKE_SERVER_LOGGER_BRIDGE"
+        );
     }
 
     private static void assertExtendedBukkitApi() throws Exception {
