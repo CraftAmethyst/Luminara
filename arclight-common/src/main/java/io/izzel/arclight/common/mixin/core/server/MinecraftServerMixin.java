@@ -10,6 +10,7 @@ import io.izzel.arclight.common.mod.metrics.MetricsManager;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.BukkitOptionParser;
+import io.izzel.arclight.common.mod.util.ServerShutdownWatchdog;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import joptsimple.OptionParser;
@@ -439,6 +440,7 @@ public abstract class MinecraftServerMixin
                     (MinecraftServer) (Object) this
                 );
                 ARCLIGHT_LOGGER.info("server.stopped");
+                ServerShutdownWatchdog.start();
                 this.onServerExit();
             }
         }

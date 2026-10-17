@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Method;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 public final class SmokePlugin extends JavaPlugin {
@@ -59,6 +60,21 @@ public final class SmokePlugin extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(
             "&aLUMINARA_SMOKE_AMP_LEGACY_COLOR"
         );
+        startShutdownHangProbe();
+    }
+
+    private void startShutdownHangProbe() {
+        CountDownLatch neverReleased = new CountDownLatch(1);
+        Thread thread = new Thread(() -> {
+            try {
+                neverReleased.await();
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }, "LuminaraSmoke-ShutdownHang");
+        thread.setDaemon(false);
+        thread.start();
+        getLogger().info("LUMINARA_SMOKE_SHUTDOWN_HANG_READY");
     }
 
     private static void assertExtendedBukkitApi() throws Exception {

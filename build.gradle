@@ -168,6 +168,7 @@ def smokeServer = tasks.register('smokeServer', SmokeServerTask) {
             'LUMINARA_SMOKE_HEX_MALFORMED',
             'LUMINARA_SMOKE_AMP_HEX_COLOR',
             'LUMINARA_SMOKE_AMP_LEGACY_COLOR',
+            'LUMINARA_SMOKE_SHUTDOWN_HANG_READY',
             'LUMINARA_SMOKE_ENUM_DEFINALIZED Material=Material',
             'LUMINARA_SMOKE_ENUM_DEFINALIZED SpawnCategory=SpawnCategory',
             'LUMINARA_SMOKE_ASYNC_GUARD_OK',
