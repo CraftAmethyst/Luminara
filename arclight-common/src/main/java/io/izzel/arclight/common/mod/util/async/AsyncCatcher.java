@@ -100,19 +100,30 @@ public final class AsyncCatcher {
                 Thread.currentThread().getName()
             );
         }
-        IllegalStateException exception = new IllegalStateException(
-            "Asynchronous " + reason + "!"
-        );
         if (specification.isDump()) {
-            LOGGER.debug(MARKER, "Asynchronous {}", reason, exception);
+            LOGGER.debug(
+                MARKER,
+                "Asynchronous {}",
+                reason,
+                new IllegalStateException("Asynchronous " + reason + "!")
+            );
         }
+        return execute(strategy, reason, operation, executor());
+    }
+
+    static <T> T execute(
+        AsyncCatcherSpec.Operation strategy,
+        String reason,
+        Operation<T> operation,
+        Executor executor
+    ) {
         switch (strategy) {
             case NONE:
                 return null;
             case EXCEPTION:
-                throw exception;
+                throw new IllegalStateException("Asynchronous " + reason + "!");
             case DISPATCH:
-                executor().execute(() -> {
+                executor.execute(() -> {
                     try {
                         replay(operation);
                     } catch (Throwable throwable) {
@@ -126,7 +137,7 @@ public final class AsyncCatcher {
                 });
                 return null;
             case BLOCK:
-                return blocking(reason, operation);
+                return blocking(reason, operation, executor);
             default:
                 throw new IllegalStateException(
                     "Unhandled async catcher strategy " + strategy
@@ -134,28 +145,41 @@ public final class AsyncCatcher {
         }
     }
 
-    private static <T> T blocking(String reason, Operation<T> operation) {
+    private static <T> T blocking(
+        String reason,
+        Operation<T> operation,
+        Executor executor
+    ) {
         CompletableFuture<T> future = CompletableFuture.supplyAsync(() -> {
             try {
                 return replay(operation);
             } catch (Throwable throwable) {
                 throw new CompletionException(throwable);
             }
-        }, executor());
+        }, executor);
         try {
             return future.get(BLOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (TimeoutException timeout) {
-            Thread serverThread = ArclightServer
-                .getMinecraftServer()
-                .getRunningThread();
-            Exception where = new Exception("Server thread");
-            where.setStackTrace(serverThread.getStackTrace());
-            LOGGER.error(
-                MARKER,
-                "Asynchronous {} timed out waiting for the server thread",
-                reason,
-                where
-            );
+            var server = ArclightServer.getMinecraftServer();
+            if (server == null) {
+                LOGGER.error(
+                    MARKER,
+                    "Asynchronous {} timed out after {}s",
+                    reason,
+                    BLOCK_TIMEOUT_SECONDS,
+                    timeout
+                );
+            } else {
+                // The stack of the blocked server thread is what makes this debuggable.
+                Exception where = new Exception("Server thread");
+                where.setStackTrace(server.getRunningThread().getStackTrace());
+                LOGGER.error(
+                    MARKER,
+                    "Asynchronous {} timed out waiting for the server thread",
+                    reason,
+                    where
+                );
+            }
             throw new IllegalStateException(
                 "Asynchronous " +
                     reason +
