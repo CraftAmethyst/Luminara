@@ -19,6 +19,9 @@ public class Main_ServerShutdownThreadMixin {
     )
     private void arclight$shutdown(MinecraftServer instance, boolean b) {
         AsyncCatcher.enabled = false;
-        instance.close();
+        // Signal the server loop to stop and wait for it when shutdown is externally
+        // initiated. If it is already stopping (for example during a restart), waiting
+        // would deadlock because the server thread is waiting for the JVM to exit.
+        instance.halt(instance.isRunning() && b);
     }
 }
