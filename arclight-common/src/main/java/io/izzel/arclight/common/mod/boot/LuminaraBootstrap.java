@@ -5,9 +5,11 @@ import com.google.gson.reflect.TypeToken;
 import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
+import io.izzel.arclight.common.mod.util.log.LuminaraMinecraftFormattingConverter;
 import io.izzel.arclight.i18n.ArclightLocale;
 import io.izzel.arclight.i18n.LuminaraVersion;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.plugins.util.PluginRegistry;
 
 import java.lang.reflect.Field;
 
@@ -15,6 +17,7 @@ public final class LuminaraBootstrap {
 
     private static boolean platformApplied;
     private static boolean gsonEnumFactoryApplied;
+    private static boolean loggingPluginsRegistered;
 
     private LuminaraBootstrap() {
     }
@@ -32,6 +35,17 @@ public final class LuminaraBootstrap {
             System.setProperty("arclight.version", LuminaraVersion.version());
         }
         platformApplied = true;
+    }
+
+    public static synchronized void registerLoggingPlugins() {
+        if (loggingPluginsRegistered) {
+            return;
+        }
+        PluginRegistry.getInstance().loadFromBundle(
+            0x4c554d494e4152L,
+            LuminaraMinecraftFormattingConverter.class.getClassLoader()
+        );
+        loggingPluginsRegistered = true;
     }
 
     // Gson's stock enum factory rejects the constants Luminara adds to the Bukkit enums.

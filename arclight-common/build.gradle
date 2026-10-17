@@ -89,6 +89,7 @@ dependencies {
 
     implementation "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
     annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.processor.get()}:processor"
+    annotationProcessor "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
 
     implementation "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
     annotationProcessor "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"

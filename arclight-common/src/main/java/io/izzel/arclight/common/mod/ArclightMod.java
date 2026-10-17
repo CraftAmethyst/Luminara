@@ -33,6 +33,9 @@ public class ArclightMod {
     );
 
     public ArclightMod(FMLJavaModLoadingContext context) {
+        // The logging configuration is loaded on first ArclightConfig access. Register the
+        // RGB pattern converter before that so Log4j can resolve it during reconfiguration.
+        LuminaraBootstrap.registerLoggingPlugins();
         if (FMLLoader.getDist() != Dist.DEDICATED_SERVER) {
             throw new IllegalStateException(
                 "Luminara " +

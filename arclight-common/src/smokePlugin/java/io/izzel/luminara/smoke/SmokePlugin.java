@@ -47,6 +47,12 @@ public final class SmokePlugin extends JavaPlugin {
         org.bukkit.Bukkit.getLogger().info(
             "LUMINARA_SMOKE_SERVER_LOGGER_BRIDGE"
         );
+        getServer().getConsoleSender().sendMessage(
+            "§x§1§2§3§4§5§6LUMINARA_SMOKE_HEX_COLOR"
+        );
+        getServer().getConsoleSender().sendMessage(
+            "§xLUMINARA_SMOKE_HEX_MALFORMED"
+        );
     }
 
     private static void assertExtendedBukkitApi() throws Exception {
