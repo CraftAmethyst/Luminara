@@ -46,6 +46,16 @@ public class ArclightMod {
             );
         }
         LuminaraBootstrap.applyPlatform();
+
+        // Capture stdout before loading the config, because LoggingConfigurator reports
+        // the selected layout through System.out after installing the new Log4j config.
+        System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
+        System.setErr(
+            new LoggingPrintStream("STDERR", System.err, Level.ERROR)
+        );
+        // First-stage config load applies Luminara's logging layout before the banner.
+        ArclightConfig.spec();
+
         try {
             LuminaraBootstrap.installGsonEnumFactory();
             LuminaraBootstrap.warmUpEnumHelper();
@@ -56,11 +66,6 @@ public class ArclightMod {
             );
         }
         LuminaraBootstrap.logBanner();
-
-        System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
-        System.setErr(
-            new LoggingPrintStream("STDERR", System.err, Level.ERROR)
-        );
 
         if (ArclightConfig.spec().getCompat().isPreloadBungeeChatClasses()) {
             BungeeComponentPreloader.preloadBungeeClasses();
