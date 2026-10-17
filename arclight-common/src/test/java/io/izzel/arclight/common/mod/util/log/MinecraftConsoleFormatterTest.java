@@ -11,8 +11,8 @@ class MinecraftConsoleFormatterTest {
         assertFormatted(
             "§x§1§2§3§4§5§6Result: §x§F§E§D§C§B§A2.0",
             true,
-            "\u001B[38;2;18;52;86mResult: " +
-                "\u001B[38;2;254;220;186m2.0\u001B[m"
+            "\u001B[0;30;1m\u001B[38;2;18;52;86mResult: " +
+                "\u001B[0;37;1m\u001B[38;2;254;220;186m2.0\u001B[m"
         );
     }
 
@@ -35,6 +35,25 @@ class MinecraftConsoleFormatterTest {
     }
 
     @Test
+    void convertsAmpersandRgbFormattingToAnsi() {
+        assertFormatted(
+            "&x&1&2&3&4&5&6Result: &x&F&E&D&C&B&A2.0",
+            true,
+            "\u001B[0;30;1m\u001B[38;2;18;52;86mResult: " +
+                "\u001B[0;37;1m\u001B[38;2;254;220;186m2.0\u001B[m"
+        );
+    }
+
+    @Test
+    void stripsAmpersandFormattingForFilesAndGui() {
+        assertFormatted(
+            "&x&1&2&3&4&5&6Result: &x&F&E&D&C&B&A2.0",
+            false,
+            "Result: 2.0"
+        );
+    }
+
+    @Test
     void preservesUnknownSectionCodes() {
         assertFormatted(
             "Ping §qValue",
@@ -51,6 +70,18 @@ class MinecraftConsoleFormatterTest {
             "\u001B[0;32;1mGreen \u001B[21mBold\u001B[m"
         );
         assertFormatted("§aGreen §lBold", false, "Green Bold");
+        assertFormatted(
+            "&aGreen &lBold",
+            true,
+            "\u001B[0;32;1mGreen \u001B[21mBold\u001B[m"
+        );
+        assertFormatted("&aGreen &lBold", false, "Green Bold");
+    }
+
+    @Test
+    void preservesOrdinaryAmpersands() {
+        assertFormatted("R & Z", true, "R & Z\u001B[m");
+        assertFormatted("R & Z", false, "R & Z");
     }
 
     @Test

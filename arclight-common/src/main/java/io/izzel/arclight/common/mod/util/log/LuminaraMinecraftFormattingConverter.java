@@ -1,6 +1,5 @@
 package io.izzel.arclight.common.mod.util.log;
 
-import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -55,7 +54,7 @@ public final class LuminaraMinecraftFormattingConverter
             content,
             output,
             start,
-            ansi && TerminalConsoleAppender.isAnsiSupported()
+            ansi
         );
     }
 

@@ -53,6 +53,12 @@ public final class SmokePlugin extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(
             "§xLUMINARA_SMOKE_HEX_MALFORMED"
         );
+        getServer().getConsoleSender().sendMessage(
+            "&x&1&2&3&4&5&6LUMINARA_SMOKE_AMP_HEX_COLOR"
+        );
+        getServer().getConsoleSender().sendMessage(
+            "&aLUMINARA_SMOKE_AMP_LEGACY_COLOR"
+        );
     }
 
     private static void assertExtendedBukkitApi() throws Exception {

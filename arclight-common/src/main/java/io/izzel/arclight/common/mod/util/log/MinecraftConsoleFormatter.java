@@ -1,14 +1,16 @@
 package io.izzel.arclight.common.mod.util.log;
 
 /**
- * Converts Minecraft section-sign formatting to terminal ANSI codes.
+ * Converts Minecraft section-sign and ampersand formatting to terminal ANSI codes.
  *
  * <p>TerminalConsoleAppender 1.2.0 understands the legacy sixteen colours but treats
- * the {@code §x} RGB prefix as an unknown code, leaving it visible in the console.
+ * the {@code §x}/{@code &x} RGB prefix as an unknown code, leaving it visible in the
+ * console. Many plugin consoles also emit the common ampersand notation directly.
  */
 public final class MinecraftConsoleFormatter {
 
-    private static final char COLOR_CHAR = '§';
+    private static final char SECTION_COLOR_CHAR = '§';
+    private static final char AMPERSAND_COLOR_CHAR = '&';
     private static final String LEGACY_CODES = "0123456789abcdefklmnor";
     private static final String ANSI_RESET = "\u001B[m";
     private static final String[] ANSI_CODES = {
@@ -35,6 +37,24 @@ public final class MinecraftConsoleFormatter {
         "\u001B[3m",
         ANSI_RESET
     };
+    private static final int[][] LEGACY_RGB = {
+        {0, 0, 0},
+        {0, 0, 170},
+        {0, 170, 0},
+        {0, 170, 170},
+        {170, 0, 0},
+        {170, 0, 170},
+        {255, 170, 0},
+        {170, 170, 170},
+        {85, 85, 85},
+        {85, 85, 255},
+        {85, 255, 85},
+        {85, 255, 255},
+        {255, 85, 85},
+        {255, 85, 255},
+        {255, 255, 85},
+        {255, 255, 255}
+    };
 
     private MinecraftConsoleFormatter() {
     }
@@ -45,7 +65,7 @@ public final class MinecraftConsoleFormatter {
         int start,
         boolean ansi
     ) {
-        int section = text.indexOf(COLOR_CHAR);
+        int section = findFormatting(text, 0);
         int last = text.length() - 1;
         if (section == -1 || section == last) {
             return;
@@ -61,10 +81,10 @@ public final class MinecraftConsoleFormatter {
                     if (ansi) appendRgbColor(text, section, output);
                     copiedUntil = section + 14;
                 } else {
-                    // Invalid RGB prefixes used to leak into the console as a literal §x.
+                    // Invalid RGB prefixes used to leak into the console as a literal §x/&x.
                     copiedUntil = section + 2;
                 }
-                section = text.indexOf(COLOR_CHAR, copiedUntil);
+                section = findFormatting(text, copiedUntil);
                 continue;
             }
             int ansiIndex = LEGACY_CODES.indexOf(code);
@@ -72,9 +92,9 @@ public final class MinecraftConsoleFormatter {
                 output.append(text, copiedUntil, section);
                 if (ansi) output.append(ANSI_CODES[ansiIndex]);
                 copiedUntil = section + 2;
-                section = text.indexOf(COLOR_CHAR, copiedUntil);
+                section = findFormatting(text, copiedUntil);
             } else {
-                section = text.indexOf(COLOR_CHAR, section + 1);
+                section = findFormatting(text, section + 1);
             }
         }
         output.append(text, copiedUntil, text.length());
@@ -88,7 +108,7 @@ public final class MinecraftConsoleFormatter {
         for (int i = 0; i < 6; i++) {
             int colorSection = section + 2 + i * 2;
             if (
-                text.charAt(colorSection) != COLOR_CHAR ||
+                !isFormattingPrefix(text.charAt(colorSection)) ||
                     Character.digit(text.charAt(colorSection + 1), 16) == -1
             ) {
                 return false;
@@ -105,6 +125,7 @@ public final class MinecraftConsoleFormatter {
         int red = hex(text, section + 3) * 16 + hex(text, section + 5);
         int green = hex(text, section + 7) * 16 + hex(text, section + 9);
         int blue = hex(text, section + 11) * 16 + hex(text, section + 13);
+        output.append(ANSI_CODES[nearestLegacyColor(red, green, blue)]);
         output.append("\u001B[38;2;")
             .append(red)
             .append(';')
@@ -112,6 +133,42 @@ public final class MinecraftConsoleFormatter {
             .append(';')
             .append(blue)
             .append('m');
+    }
+
+    private static int findFormatting(String text, int fromIndex) {
+        for (int i = fromIndex; i < text.length(); i++) {
+            if (isFormattingPrefix(text.charAt(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean isFormattingPrefix(char c) {
+        return (
+            c == SECTION_COLOR_CHAR ||
+                c == AMPERSAND_COLOR_CHAR
+        );
+    }
+
+    private static int nearestLegacyColor(int red, int green, int blue) {
+        int nearest = 0;
+        int nearestDistance = Integer.MAX_VALUE;
+        for (int i = 0; i < LEGACY_RGB.length; i++) {
+            int[] candidate = LEGACY_RGB[i];
+            int redDistance = red - candidate[0];
+            int greenDistance = green - candidate[1];
+            int blueDistance = blue - candidate[2];
+            int distance =
+                redDistance * redDistance +
+                    greenDistance * greenDistance +
+                    blueDistance * blueDistance;
+            if (distance < nearestDistance) {
+                nearest = i;
+                nearestDistance = distance;
+            }
+        }
+        return nearest;
     }
 
     private static int hex(String text, int index) {
