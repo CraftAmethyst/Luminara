@@ -34,12 +34,7 @@ public final class LuminaraBootstrap {
         platformApplied = true;
     }
 
-    /**
-     * Gson's stock enum factory asserts that every serialized enum name maps to a real
-     * constant, which breaks on the values Luminara adds to the Bukkit enums at runtime.
-     * The launcher swapped this adapter in from its own bootstrap; a standard mod has to
-     * do it from the entry point.
-     */
+    // Gson's stock enum factory rejects the constants Luminara adds to the Bukkit enums.
     public static synchronized void installGsonEnumFactory() {
         if (gsonEnumFactoryApplied) {
             return;
@@ -75,25 +70,13 @@ public final class LuminaraBootstrap {
         logger.info(LuminaraVersion.compatibilityLine());
     }
 
-    /**
-     * Forces the enum helper to initialize before any Bukkit enum is extended. A broken
-     * {@code Unsafe} implementation then fails during startup instead of on the first
-     * material registration.
-     */
+
     public static void warmUpEnumHelper() {
         Unsafe.ensureClassInitialized(EnumHelper.class);
     }
 
-    /**
-     * Whether the running JVM routes java.util.logging through log4j.
-     * <p>
-     * Mod code must not link against {@code org.apache.logging.log4j.jul} directly. Forge
-     * already owns the {@code org.apache.logging.log4j} packages, so a copy bundled in the
-     * mod JAR is not what the module class loader resolves, and a direct reference throws
-     * {@code NoClassDefFoundError} the first time a plugin is loaded. The check is therefore
-     * reflective, and the answer decides whether the plugin remapper rewrites
-     * {@code Logger.getLogger} calls.
-     */
+    // Reflective on purpose: Forge owns org.apache.logging.log4j, so linking against the JUL
+    // bridge directly throws NoClassDefFoundError when a plugin loads.
     public static boolean isJulBridgeActive() {
         return java.util.logging.LogManager.getLogManager()
             .getClass()

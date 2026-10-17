@@ -165,6 +165,7 @@ def smokeServer = tasks.register('smokeServer', SmokeServerTask) {
             'LUMINARA_SMOKE_JUL_BRIDGE',
             'LUMINARA_SMOKE_ENUM_DEFINALIZED Material=Material',
             'LUMINARA_SMOKE_ENUM_DEFINALIZED SpawnCategory=SpawnCategory',
+            'LUMINARA_SMOKE_ASYNC_GUARD_OK',
             'LUMINARA_SMOKE_COMMAND_OK',
             'Luminara Version: ',
             project.version.toString(),

@@ -16,17 +16,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Builds the per-listener {@link EventExecutor} classes that Bukkit
- * normally compiles at event registration time.
- * <p>
- * The ASM calls live here rather than in the mixin that used to contain them. Mixin's
- * preprocessor resolves the owner of every method call in an injected or overwritten body,
- * and it cannot resolve {@code org.objectweb.asm} classes: Forge owns those packages on the
- * legacy class path, which the game layer's module class loader does not search. Keeping
- * the ASM calls in an ordinary helper keeps mixin application working, while this class is
- * loaded normally and reaches ASM the same way the plugin remapper does.
- */
+// Must stay outside the mixin: Mixin resolves the owner of every call in a mixin body, and
+// org.objectweb.asm lives on the legacy class path, which the game layer cannot read.
 public final class EventExecutorFactory {
 
     private static final String HIDDEN_FORM =
@@ -39,10 +30,7 @@ public final class EventExecutorFactory {
     private EventExecutorFactory() {
     }
 
-    /**
-     * Returns the annotation value that decides whether a listener method is registered,
-     * so callers do not have to reference Bukkit's annotation type directly.
-     */
+
     public static EventHandler eventHandler(Method method) {
         return method.getAnnotation(EventHandler.class);
     }

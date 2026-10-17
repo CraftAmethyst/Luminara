@@ -16,6 +16,13 @@
   "mixinPriority": 500,
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "async.ServerLevelAsyncMixin",
+    "async.ServerLevelEntityCallbacksAsyncMixin",
+    "async.ChunkMapAsyncMixin",
+    "async.ChunkMapTrackedEntityAsyncMixin",
+    "async.BlockBehaviourAsyncMixin",
+    "async.LivingEntityAsyncMixin",
+    "async.LootTableAsyncMixin",
     "advancements.AdvancementMixin",
     "commands.CommandNodeMixin",
     "commands.CommandsMixin",

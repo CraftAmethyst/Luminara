@@ -56,6 +56,43 @@ public final class SmokePlugin extends JavaPlugin {
         System.out.println("LUMINARA_SMOKE_BUKKIT_API_OK");
     }
 
+    /**
+     * Calls a guarded world method from a non-server thread. Luminara's default
+     * async-catcher mode is BLOCK, so the guard has to refuse or replay instead of letting
+     * the call touch world state concurrently; either way the call must not return
+     * normally from this thread, because that would mean the guard is not installed.
+     */
+    private void assertAsyncGuard() throws Exception {
+        Object world = getServer().getWorlds().get(0);
+        java.util.concurrent.atomic.AtomicReference<Throwable> outcome =
+            new java.util.concurrent.atomic.AtomicReference<>();
+        Thread thread = new Thread(() -> {
+            try {
+                world.getClass().getMethod("getNMSEntities").invoke(world);
+            } catch (Throwable throwable) {
+                outcome.set(throwable);
+            }
+        }, "LuminaraSmoke-AsyncGuard");
+        thread.start();
+        // The command returns while this probe thread is still blocking, so the server
+        // thread is free to replay the guarded call for BLOCK instead of deadlocking on it.
+        thread.join(10000);
+        if (thread.isAlive()) {
+            thread.interrupt();
+            throw new IllegalStateException(
+                "Async guard blocked the probe thread; the catcher did not return"
+            );
+        }
+        Throwable thrown = outcome.get();
+        if (thrown != null) {
+            throw new IllegalStateException(
+                "Guarded world access from a plugin thread failed instead of being " +
+                    "replayed on the server thread: " + thrown,
+                thrown
+            );
+        }
+    }
+
     @Override
     public boolean onCommand(
         CommandSender sender,
@@ -64,6 +101,15 @@ public final class SmokePlugin extends JavaPlugin {
         String[] args
     ) {
         sender.sendMessage("LUMINARA_SMOKE_COMMAND_OK");
+        // The probe runs here rather than in onEnable: onEnable already runs on the server
+        // thread, and waiting there would deadlock the BLOCK strategy, which replays the
+        // guarded call on that same thread.
+        try {
+            assertAsyncGuard();
+            sender.sendMessage("LUMINARA_SMOKE_ASYNC_GUARD_OK");
+        } catch (Exception e) {
+            throw new IllegalStateException("Async guard check failed", e);
+        }
         return true;
     }
 }
