@@ -57,23 +57,4 @@ class LuminaraVersionTest {
 
         assertTrue(failure.getMessage().contains("minecraftVersion"));
     }
-
-    @Test
-    void rejectsAnUnsupportedInstallerMatrixBeforeInstallation() {
-        IllegalStateException failure = assertThrows(
-            IllegalStateException.class,
-            () -> LuminaraVersion.verify("1.20.2", "48.0.0")
-        );
-
-        assertTrue(
-            failure
-                .getMessage()
-                .contains(
-                    "expected Minecraft " +
-                        LuminaraVersion.minecraftVersion() +
-                        " / Forge " +
-                        LuminaraVersion.forgeVersion()
-                )
-        );
-    }
 }

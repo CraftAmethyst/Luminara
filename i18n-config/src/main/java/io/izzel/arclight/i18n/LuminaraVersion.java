@@ -40,34 +40,6 @@ public final class LuminaraVersion {
         return required("gitCommit");
     }
 
-    public static void verify(String minecraftVersion, String forgeVersion) {
-        if (
-            !minecraftVersion().equals(minecraftVersion) ||
-                !forgeVersion().equals(forgeVersion)
-        ) {
-            throw new IllegalStateException(
-                "Unsupported installer metadata: Minecraft " +
-                    minecraftVersion +
-                    " / Forge " +
-                    forgeVersion +
-                    "; expected Minecraft " +
-                    minecraftVersion() +
-                    " / Forge " +
-                    forgeVersion()
-            );
-        }
-        int runtimeFeature = Runtime.version().feature();
-        int requiredFeature = Integer.parseInt(javaVersion());
-        if (runtimeFeature < requiredFeature) {
-            throw new IllegalStateException(
-                "Java " +
-                    requiredFeature +
-                    " is required; found " +
-                    runtimeFeature
-            );
-        }
-    }
-
     public static String compatibilityLine() {
         return (
             "Luminara " +
