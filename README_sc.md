@@ -1,4 +1,26 @@
-# Luminara
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-zh-dark.png">
+    <img src="assets/banner-zh.png" alt="Luminara - 为 Forge 服务端提供 Bukkit、Spigot 和 Paper 插件兼容能力" width="100%">
+  </picture>
+</p>
+
+<p align="center">
+  <strong>简体中文</strong>
+  &nbsp;·&nbsp;
+  <a href="./README.md">English</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/CraftAmethyst/Luminara/releases"><img alt="最新版本" src="https://img.shields.io/github/v/release/CraftAmethyst/Luminara?style=flat&label=release"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/CraftAmethyst/Luminara?style=flat&label=stars"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/forks"><img alt="GitHub Forks" src="https://img.shields.io/github/forks/CraftAmethyst/Luminara?style=flat&label=forks"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/issues"><img alt="开放 Issue 数" src="https://img.shields.io/github/issues/CraftAmethyst/Luminara?style=flat&label=issues"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/commits/stable/Trials"><img alt="最后提交" src="https://img.shields.io/github/last-commit/CraftAmethyst/Luminara/stable/Trials?style=flat&label=last%20commit"></a>
+  <a href="LICENSE"><img alt="许可证" src="https://img.shields.io/github/license/CraftAmethyst/Luminara?style=flat&label=license"></a>
+</p>
+
+<hr>
 
 Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服务端开发的分支项目。
 

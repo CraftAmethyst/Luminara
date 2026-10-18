@@ -1,6 +1,26 @@
-# Luminara
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
+    <img src="assets/banner.png" alt="Luminara - Bukkit, Spigot, and Paper compatibility for Forge servers" width="100%">
+  </picture>
+</p>
 
-[简体中文 Chinese](./README_sc.md)
+<p align="center">
+  <a href="./README_sc.md">简体中文</a>
+  &nbsp;·&nbsp;
+  <strong>English</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/CraftAmethyst/Luminara/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/CraftAmethyst/Luminara?style=flat&label=release"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/CraftAmethyst/Luminara?style=flat&label=stars"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/forks"><img alt="GitHub forks" src="https://img.shields.io/github/forks/CraftAmethyst/Luminara?style=flat&label=forks"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/issues"><img alt="Open issues" src="https://img.shields.io/github/issues/CraftAmethyst/Luminara?style=flat&label=issues"></a>
+  <a href="https://github.com/CraftAmethyst/Luminara/commits/stable/Trials"><img alt="Last commit" src="https://img.shields.io/github/last-commit/CraftAmethyst/Luminara/stable/Trials?style=flat&label=last%20commit"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/CraftAmethyst/Luminara?style=flat&label=license"></a>
+</p>
+
+<hr>
 
 Luminara is a fork project developed based on the [Arclight](https://github.com/IzzelAliz/Arclight) server.
 
