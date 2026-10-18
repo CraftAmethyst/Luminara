@@ -1,78 +1,83 @@
-# Luminara 1.0.15 Hotfix Release Notes
+# Luminara 1.0.16
 
-> Release version: 1.0.15-hotfix
->
-> Fixed runtime target: Minecraft 1.20.1, Forge 47.4.22, Java 17.
->
-> This is a standalone hotfix release for the 1.0.15 line. It contains the three compatibility fixes listed below.
+> Minecraft 1.20.1 | Forge 47.4.23 | Java 17 | Dedicated Server
 
 <details>
 <summary>中文发布说明</summary>
 
-# Luminara 1.0.15 Hotfix 发布说明
+## 中文发布说明
 
-> 发布版本：1.0.15-hotfix
->
-> 固定运行目标：Minecraft 1.20.1、Forge 47.4.22、Java 17。
->
-> 本版本是 1.0.15 系列的独立 Hotfix，仅包含以下三个兼容性修复。
+### BREAKING CHANGES
 
-## 修复内容
+- 本项目产物现在以标准 Forge Mod JAR 形式提供，不再使用旧的混合端/补丁式分发方式。
+- 同时使用 Radium、LostCities 和 FastChunkGen 时，必须保持 FastChunkGen 的 `[threadedWorldGen] enabled = false`。启用异步世界生成会破坏 `WorldGenRegion` 的区块顺序，并导致 `No chunk exists` 崩溃。
 
-### ModernFix 模组加载死锁
+### Added
 
-禁用 ModernFix 在 Forge 模组加载阶段对 `ModWorkManager` 工作队列的替换，避免主线程长时间停留在 `ModWorkManagerQueue.pollFirst`，导致加载阶段卡死或表现为死锁。
+- 实现 `PotionEffectType#getEffectCategory()` 及效果分类颜色。
+- 实现 `PlayerAdvancementCriterionGrantEvent`，支持取消并撤销 criterion 进度。
+- 实现 `PreCreatureSpawnEvent`，覆盖自然生成、刷怪笼、`EntityType#spawn` 和 `SpawnUtil#trySpawnMob`。
+- 为 Multiverse-Core 暴露 `EntityType#getCategory()`、实体分类别名字段及无版本号 `CraftSpawnCategory#toBukkit()`。
+- 补充六种语言的 `dist.logic-world-check`。
+- 新增关服超时强制退出机制。
 
-修订号：4490fa057def483095281f50c25a87a239be8ab5
+### Fixed
 
-### YAML i18n 注释注入失效
+- 统一 Bukkit/JUL 日志到 Log4j 输出格式。
+- 修复控制台对 `§x...` 和 `&x...` RGB 颜色的渲染。
+- 确保日志配置在启动 ASCII 横幅之前应用。
+- 修复 FastChunkGen 与 Hyperbox 之间的空 `IOWorker` 路径崩溃。
+- 修复 FastChunkGen 与 Luminara `DistanceManager` 的注入冲突。
+- 修复 Multiverse 分类映射中 `getCategory`、`CraftSpawnCategory` 和实体别名字段缺失的问题。
+- 修复实体别名引起的 `minecraft`/`luminara` 模块 split package 冲突，以及接口过早初始化造成的空字段。
+- 恢复异步访问保护，并修复服务器关闭后进程残留。
 
-修复扁平化语言资源键（例如 `locale.comment`、`_v.comment`）无法匹配的问题。
+### Changed
 
-配置节点序列化前重新注入本地化注释；已有但缺少注释的 `luminara.yml` 也会在加载时自动恢复。同步更新各语言资源中的项目仓库和 Issue Tracker 链接。
+- 版本号更新为 `1.0.16`。
+- Luminara 的 Forge 依赖顺序改为在 Forge 和 Minecraft 之前加载。
+- 验证运行目标更新为 Forge `47.4.23`。
+- 发行物继续使用标准 Forge Mod JAR，并执行依赖校验和发行物校验。
 
-修订号：867b533a5b5ff24e5eb8cdb27f907a873fda44ff
+### 兼容性
 
-### FastChunkGen Mixin 冲突
-
-避免 Luminara 的 `DistanceManager` 注入与 FastChunkGen 的同一调用点注入发生冲突。FastChunkGen 存在时，Luminara 会跳过冲突的兼容注入，防止 Mixin 转换失败。
-
-修订号：d7c4dca59ee02bc680bf8ff081297c861b9cdc5b
-
-## 兼容性说明
-
-- 目标 Minecraft：1.20.1
-- 目标 Forge：47.4.22
-- 目标 Java：17
-- 本 Hotfix 不改变 Bukkit API 兼容范围，不新增平台支持。
+- Minecraft：1.20.1
+- Forge：47.4.x
+- Java：17
+- 环境：仅服务端
 
 </details>
 
 ## English Release Notes
 
-### ModernFix mod-loading deadlock
+### BREAKING CHANGES
 
-Disabled ModernFix's Forge mod-loading replacement for the `ModWorkManager` work queue. This prevents the main thread from remaining in `ModWorkManagerQueue.pollFirst` during mod loading and appearing to deadlock.
+- Project artifacts are now distributed as a standard Forge Mod JAR instead of the legacy hybrid-server/patch-style distribution.
+- When Radium, LostCities, and FastChunkGen are used together, FastChunkGen's `[threadedWorldGen] enabled` must remain `false`. Asynchronous world generation breaks `WorldGenRegion` chunk ordering and can cause `No chunk exists` crashes.
 
-Revision: 4490fa057def483095281f50c25a87a239be8ab5
+### Added
 
-### Broken YAML i18n comment injection
+- Implemented `PotionEffectType#getEffectCategory()` and effect category colors.
+- Implemented `PlayerAdvancementCriterionGrantEvent` with cancellation and criterion rollback.
+- Implemented `PreCreatureSpawnEvent` for natural spawning, spawners, `EntityType#spawn`, and `SpawnUtil#trySpawnMob`.
+- Exposed Multiverse-Core aliases for `EntityType#getCategory()`, entity category fields, and unversioned `CraftSpawnCategory#toBukkit()`.
+- Added `dist.logic-world-check` translations for all six locales.
+- Added a shutdown timeout that forcefully terminates a hung server process.
 
-Fixed lookup of flattened locale resource keys such as `locale.comment` and `_v.comment`.
+### Fixed
 
-Localized comments are now injected again before configuration nodes are serialized. Existing `luminara.yml` files that are missing comments are repaired during loading. Project repository and Issue Tracker links were also updated in every locale resource.
+- Routed Bukkit/JUL logs through Log4j with a consistent format.
+- Fixed console rendering for `§x...` and `&x...` RGB colors.
+- Applied logging configuration before the startup ASCII banner.
+- Fixed the null `IOWorker` path crash between FastChunkGen and Hyperbox.
+- Fixed the `DistanceManager` injection conflict with FastChunkGen.
+- Fixed missing Multiverse `getCategory`, `CraftSpawnCategory`, and entity alias fields.
+- Removed the `minecraft`/`luminara` split-package conflict and fixed aliases being initialized as null.
+- Restored asynchronous access guards and fixed lingering server processes after shutdown.
 
-Revision: 867b533a5b5ff24e5eb8cdb27f907a873fda44ff
+### Changed
 
-### FastChunkGen Mixin conflict
-
-Prevented Luminara's `DistanceManager` injection from colliding with FastChunkGen at the same call site. When FastChunkGen is present, Luminara skips the conflicting compatibility injection instead of failing Mixin transformation.
-
-Revision: d7c4dca59ee02bc680bf8ff081297c861b9cdc5b
-
-## Compatibility
-
-- Target Minecraft: 1.20.1
-- Target Forge: 47.4.22
-- Target Java: 17
-- This hotfix does not change the supported Bukkit API surface or add platform support.
+- Updated the project version to `1.0.16`.
+- Changed Forge dependency ordering so Luminara loads before Forge and Minecraft.
+- Updated the validated runtime target to Forge `47.4.23`.
+- Continued shipping as a standard Forge Mod JAR with dependency and distribution verification.
