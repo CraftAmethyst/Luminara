@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.entity;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityTypeBridge;
+import io.izzel.arclight.common.bridge.core.entity.EntityTypeCategoryBridge;
 import io.izzel.arclight.common.bridge.core.world.IWorldWriterBridge;
 import io.izzel.arclight.common.mod.server.event.PreCreatureSpawnEventDispatcher;
 import net.minecraft.core.BlockPos;
@@ -26,7 +27,8 @@ import java.util.function.Consumer;
 
 @Mixin(EntityType.class)
 public abstract class EntityTypeMixin<T extends Entity> implements
-    EntityTypeBridge<T> {
+    EntityTypeBridge<T>,
+    EntityTypeCategoryBridge {
 
     // @formatter:off
     @Shadow @Nullable public abstract T create(ServerLevel p_262637_, @org.jetbrains.annotations.Nullable CompoundTag p_262687_, @org.jetbrains.annotations.Nullable Consumer<T> p_262629_, BlockPos p_262595_, MobSpawnType p_262666_, boolean p_262685_, boolean p_262588_);
