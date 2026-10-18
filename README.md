@@ -20,6 +20,10 @@
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/CraftAmethyst/Luminara?style=flat&label=license"></a>
 </p>
 
+<p align="center">
+  <a href="https://lum-dl.rimecraft.top/en/"><strong>Download Luminara</strong></a>
+</p>
+
 <hr>
 
 Luminara is a fork project developed based on the [Arclight](https://github.com/IzzelAliz/Arclight) server.

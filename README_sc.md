@@ -20,6 +20,10 @@
   <a href="LICENSE"><img alt="许可证" src="https://img.shields.io/github/license/CraftAmethyst/Luminara?style=flat&label=license"></a>
 </p>
 
+<p align="center">
+  <a href="https://lum-dl.rimecraft.top/"><strong>下载 Luminara</strong></a>
+</p>
+
 <hr>
 
 Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服务端开发的分支项目。
