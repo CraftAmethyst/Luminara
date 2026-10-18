@@ -18,12 +18,12 @@ server. This build supports Minecraft 1.20.1 on Forge 47.x and is server-side on
 modId = "forge"
 mandatory = true
 versionRange = "[47,)"
-ordering = "NONE"
+ordering = "BEFORE"
 side = "BOTH"
 
 [[dependencies.luminara]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.20.1,1.20.2)"
-ordering = "NONE"
+ordering = "BEFORE"
 side = "BOTH"
