@@ -25,7 +25,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Installs a clean Forge dedicated server with the plain Forge installer, drops the built
@@ -39,6 +42,20 @@ public abstract class SmokeServerTask extends DefaultTask {
 
     private static final String INSTALLER_LOG = "forge-installer.log";
     private static final String SERVER_LOG = "smoke-server.log";
+
+    private record OutputEvent(String line, IOException failure) {
+        private static OutputEvent line(String line) {
+            return new OutputEvent(line, null);
+        }
+
+        private static OutputEvent failure(IOException failure) {
+            return new OutputEvent(null, failure);
+        }
+
+        private static OutputEvent end() {
+            return new OutputEvent(null, null);
+        }
+    }
 
     private static String javaExecutable() {
         return Path.of(
@@ -250,14 +267,35 @@ public abstract class SmokeServerTask extends DefaultTask {
             .directory(fixture.toFile())
             .redirectErrorStream(true)
             .start();
+        BlockingQueue<OutputEvent> outputQueue = new LinkedBlockingQueue<>();
+        AtomicReference<IOException> outputFailure = new AtomicReference<>();
+        Thread outputReader = new Thread(() -> {
+            try (
+                BufferedReader output = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)
+                )
+            ) {
+                String line;
+                while ((line = output.readLine()) != null) {
+                    outputQueue.put(OutputEvent.line(line));
+                }
+            } catch (IOException e) {
+                outputFailure.set(e);
+                outputQueue.offer(OutputEvent.failure(e));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                outputQueue.offer(OutputEvent.end());
+            }
+        }, "luminara-smoke-output");
+        outputReader.setDaemon(true);
+        outputReader.start();
+
         List<String> missing = new ArrayList<>(getExpectedOutput().get());
         Instant deadline = Instant.now().plus(
             Duration.ofSeconds(getStartupTimeoutSeconds().get())
         );
         try (
-            BufferedReader output = new BufferedReader(
-                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)
-            );
             BufferedWriter logWriter = Files.newBufferedWriter(log, StandardCharsets.UTF_8);
             BufferedWriter input = new BufferedWriter(
                 new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8)
@@ -266,33 +304,46 @@ public abstract class SmokeServerTask extends DefaultTask {
             boolean commandsSent = false;
             String line;
             while (Instant.now().isBefore(deadline)) {
-                if (output.ready()) {
-                    line = output.readLine();
-                    if (line == null) break;
-                    logWriter.write(line);
-                    logWriter.newLine();
-                    logWriter.flush();
-                    missing.removeIf(line::contains);
-                    if (
-                        !commandsSent &&
-                            line.contains("Done (") &&
-                            line.contains("For help, type \"help\"")
-                    ) {
-                        input.write("luminara info\n");
-                        input.write("luminara-smoke\n");
-                        input.flush();
-                        commandsSent = true;
-                    }
-                    if (missing.isEmpty()) {
-                        input.write("stop\n");
-                        input.flush();
-                        break;
-                    }
-                } else if (!process.isAlive()) {
-                    break;
-                } else {
-                    Thread.sleep(100);
+                OutputEvent event = outputQueue.poll(250, TimeUnit.MILLISECONDS);
+                if (event == null) {
+                    if (!process.isAlive()) break;
+                    continue;
                 }
+                if (event.failure() != null) {
+                    throw new GradleException(
+                        "Failed to read the native Forge server output; see " + log,
+                        event.failure()
+                    );
+                }
+                line = event.line();
+                if (line == null) break;
+
+                logWriter.write(line);
+                logWriter.newLine();
+                logWriter.flush();
+                missing.removeIf(line::contains);
+                if (
+                    !commandsSent &&
+                        line.contains("Done (") &&
+                        line.contains("For help, type \"help\"")
+                ) {
+                    input.write("luminara info\n");
+                    input.write("luminara-smoke\n");
+                    input.flush();
+                    commandsSent = true;
+                }
+                if (missing.isEmpty()) {
+                    input.write("stop\n");
+                    input.flush();
+                    break;
+                }
+            }
+            IOException readFailure = outputFailure.get();
+            if (readFailure != null) {
+                throw new GradleException(
+                    "Failed to read the native Forge server output; see " + log,
+                    readFailure
+                );
             }
             if (
                 missing.isEmpty() &&
@@ -304,6 +355,8 @@ public abstract class SmokeServerTask extends DefaultTask {
                 process.destroy();
                 if (!process.waitFor(30, TimeUnit.SECONDS)) process.destroyForcibly();
             }
+            outputReader.interrupt();
+            outputReader.join(TimeUnit.SECONDS.toMillis(5));
         }
         throw new GradleException(
             "Native Forge server smoke failed; missing " +
