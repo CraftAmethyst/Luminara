@@ -15,22 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = PermissionAPI.class, remap = false)
 public class PermissionAPIMixin {
 
-    @Shadow
-    private static IPermissionHandler activeHandler;
+  @Shadow private static IPermissionHandler activeHandler;
 
-    @Inject(method = "initializePermissionAPI", at = @At("RETURN"))
-    private static void arclight$init(CallbackInfo ci) {
-        if (
-            ArclightConfig.spec().getCompat().getPermissionForwarding() !=
-                PermissionForwarding.FORGE_TO_BUKKIT
-        ) {
-            return;
-        }
-        var handler = new ArclightPermissionHandler(activeHandler);
-        ArclightMod.LOGGER.info(
-            "permission.forge-to-bukkit",
-            activeHandler.getIdentifier()
-        );
-        activeHandler = handler;
+  @Inject(method = "initializePermissionAPI", at = @At("RETURN"))
+  private static void arclight$init(CallbackInfo ci) {
+    if (ArclightConfig.spec().getCompat().getPermissionForwarding()
+        != PermissionForwarding.FORGE_TO_BUKKIT) {
+      return;
     }
+    var handler = new ArclightPermissionHandler(activeHandler);
+    ArclightMod.LOGGER.info("permission.forge-to-bukkit", activeHandler.getIdentifier());
+    activeHandler = handler;
+  }
 }

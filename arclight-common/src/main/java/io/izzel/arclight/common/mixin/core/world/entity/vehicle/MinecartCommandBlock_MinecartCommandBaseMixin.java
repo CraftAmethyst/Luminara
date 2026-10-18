@@ -12,16 +12,18 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class MinecartCommandBlock_MinecartCommandBaseMixin
     implements ICommandSourceBridge {
 
-    @SuppressWarnings("target")
-    @Shadow(aliases = {"this$0", "f_38537_"}, remap = false)
-    private MinecartCommandBlock outerThis;
+  @SuppressWarnings("target")
+  @Shadow(
+      aliases = {"this$0", "f_38537_"},
+      remap = false)
+  private MinecartCommandBlock outerThis;
 
-    public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-        return ((EntityBridge) outerThis).bridge$getBukkitEntity();
-    }
+  public CommandSender getBukkitSender(CommandSourceStack wrapper) {
+    return ((EntityBridge) outerThis).bridge$getBukkitEntity();
+  }
 
-    @Override
-    public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
-        return getBukkitSender(wrapper);
-    }
+  @Override
+  public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
+    return getBukkitSender(wrapper);
+  }
 }

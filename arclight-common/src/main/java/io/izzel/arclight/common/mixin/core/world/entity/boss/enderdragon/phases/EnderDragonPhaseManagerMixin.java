@@ -17,60 +17,52 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EnderDragonPhaseManager.class)
 public abstract class EnderDragonPhaseManagerMixin {
 
-    // @formatter:off
-    @Shadow @Final private static Logger LOGGER;
+  // @formatter:off
+  @Shadow @Final private static Logger LOGGER;
 
-    @Shadow @Final private EnderDragon dragon;
+  @Shadow @Final private EnderDragon dragon;
 
-    @Shadow private DragonPhaseInstance currentPhase;
+  @Shadow private DragonPhaseInstance currentPhase;
 
-    @Shadow public abstract <T extends DragonPhaseInstance> T getPhase(EnderDragonPhase<T> phaseIn);
+  @Shadow
+  public abstract <T extends DragonPhaseInstance> T getPhase(EnderDragonPhase<T> phaseIn);
 
-    // @formatter:on
+  // @formatter:on
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public void setPhase(EnderDragonPhase<?> phaseIn) {
-        if (
-            this.currentPhase == null || phaseIn != this.currentPhase.getPhase()
-        ) {
-            if (this.currentPhase != null) {
-                this.currentPhase.end();
-            }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public void setPhase(EnderDragonPhase<?> phaseIn) {
+    if (this.currentPhase == null || phaseIn != this.currentPhase.getPhase()) {
+      if (this.currentPhase != null) {
+        this.currentPhase.end();
+      }
 
-            EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
-                (CraftEnderDragon) (
-                    (EntityBridge) this.dragon
-                ).bridge$getBukkitEntity(),
-                this.currentPhase == null
-                    ? null
-                    : CraftEnderDragon.getBukkitPhase(
-                    this.currentPhase.getPhase()
-                ),
-                CraftEnderDragon.getBukkitPhase(phaseIn)
-            );
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return;
-            }
-            phaseIn = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
+      EnderDragonChangePhaseEvent event =
+          new EnderDragonChangePhaseEvent(
+              (CraftEnderDragon) ((EntityBridge) this.dragon).bridge$getBukkitEntity(),
+              this.currentPhase == null
+                  ? null
+                  : CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
+              CraftEnderDragon.getBukkitPhase(phaseIn));
+      Bukkit.getPluginManager().callEvent(event);
+      if (event.isCancelled()) {
+        return;
+      }
+      phaseIn = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
 
-            this.currentPhase = this.getPhase(phaseIn);
-            if (!this.dragon.level().isClientSide) {
-                this.dragon
-                    .getEntityData()
-                    .set(EnderDragon.DATA_PHASE, phaseIn.getId());
-            }
+      this.currentPhase = this.getPhase(phaseIn);
+      if (!this.dragon.level().isClientSide) {
+        this.dragon.getEntityData().set(EnderDragon.DATA_PHASE, phaseIn.getId());
+      }
 
-            LOGGER.debug(
-                "Dragon is now in phase {} on the {}",
-                phaseIn,
-                this.dragon.level().isClientSide ? "client" : "server"
-            );
-            this.currentPhase.begin();
-        }
+      LOGGER.debug(
+          "Dragon is now in phase {} on the {}",
+          phaseIn,
+          this.dragon.level().isClientSide ? "client" : "server");
+      this.currentPhase.begin();
     }
+  }
 }

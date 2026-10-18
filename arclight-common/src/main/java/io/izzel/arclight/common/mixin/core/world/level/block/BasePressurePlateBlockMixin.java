@@ -19,45 +19,41 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(BasePressurePlateBlock.class)
 public abstract class BasePressurePlateBlockMixin {
 
-    @Shadow
-    @Final
-    protected static AABB TOUCH_AABB;
+  @Shadow @Final protected static AABB TOUCH_AABB;
 
-    // @formatter:off
-    @Shadow protected abstract int getSignalStrength(Level worldIn, BlockPos pos);
+  // @formatter:off
+  @Shadow
+  protected abstract int getSignalStrength(Level worldIn, BlockPos pos);
 
-    // @formatter:on
+  // @formatter:on
 
-    @Redirect(
-        method = "checkPressed",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/block/BasePressurePlateBlock;getSignalStrength(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I"
-        )
-    )
-    private int arclight$blockRedstone(
-        BasePressurePlateBlock abstractPressurePlateBlock,
-        Level worldIn,
-        BlockPos pos,
-        Entity entity,
-        Level world,
-        BlockPos blockPos,
-        BlockState state,
-        int oldRedstoneStrength
-    ) {
-        int newStrength = this.getSignalStrength(worldIn, pos);
-        boolean flag = oldRedstoneStrength > 0;
-        boolean flag1 = newStrength > 0;
+  @Redirect(
+      method = "checkPressed",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/BasePressurePlateBlock;getSignalStrength(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I"))
+  private int arclight$blockRedstone(
+      BasePressurePlateBlock abstractPressurePlateBlock,
+      Level worldIn,
+      BlockPos pos,
+      Entity entity,
+      Level world,
+      BlockPos blockPos,
+      BlockState state,
+      int oldRedstoneStrength) {
+    int newStrength = this.getSignalStrength(worldIn, pos);
+    boolean flag = oldRedstoneStrength > 0;
+    boolean flag1 = newStrength > 0;
 
-        if (flag != flag1 && DistValidate.isValid(world)) {
-            BlockRedstoneEvent event = new BlockRedstoneEvent(
-                CraftBlock.at(worldIn, blockPos),
-                oldRedstoneStrength,
-                newStrength
-            );
-            Bukkit.getPluginManager().callEvent(event);
-            newStrength = event.getNewCurrent();
-        }
-        return newStrength;
+    if (flag != flag1 && DistValidate.isValid(world)) {
+      BlockRedstoneEvent event =
+          new BlockRedstoneEvent(
+              CraftBlock.at(worldIn, blockPos), oldRedstoneStrength, newStrength);
+      Bukkit.getPluginManager().callEvent(event);
+      newStrength = event.getNewCurrent();
     }
+    return newStrength;
+  }
 }

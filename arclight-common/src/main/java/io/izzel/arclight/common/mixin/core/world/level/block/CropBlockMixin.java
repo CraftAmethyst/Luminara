@@ -21,93 +21,61 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CropBlock.class)
 public class CropBlockMixin {
 
-    @Inject(method = "getGrowthSpeed", cancellable = true, at = @At("RETURN"))
-    private static void arclight$spigotModifier(
-        Block block,
-        BlockGetter blockGetter,
-        BlockPos pos,
-        CallbackInfoReturnable<Float> cir
-    ) {
-        if (blockGetter instanceof WorldBridge bridge) {
-            int modifier;
-            if (block == Blocks.BEETROOTS) {
-                modifier = bridge.bridge$spigotConfig().beetrootModifier;
-            } else if (block == Blocks.CARROTS) {
-                modifier = bridge.bridge$spigotConfig().carrotModifier;
-            } else if (block == Blocks.POTATOES) {
-                modifier = bridge.bridge$spigotConfig().potatoModifier;
-            } else {
-                modifier = bridge.bridge$spigotConfig().wheatModifier;
-            }
-            var f = cir.getReturnValueF();
-            f /= 100F / modifier;
-            cir.setReturnValue(f);
-        }
+  @Inject(method = "getGrowthSpeed", cancellable = true, at = @At("RETURN"))
+  private static void arclight$spigotModifier(
+      Block block, BlockGetter blockGetter, BlockPos pos, CallbackInfoReturnable<Float> cir) {
+    if (blockGetter instanceof WorldBridge bridge) {
+      int modifier;
+      if (block == Blocks.BEETROOTS) {
+        modifier = bridge.bridge$spigotConfig().beetrootModifier;
+      } else if (block == Blocks.CARROTS) {
+        modifier = bridge.bridge$spigotConfig().carrotModifier;
+      } else if (block == Blocks.POTATOES) {
+        modifier = bridge.bridge$spigotConfig().potatoModifier;
+      } else {
+        modifier = bridge.bridge$spigotConfig().wheatModifier;
+      }
+      var f = cir.getReturnValueF();
+      f /= 100F / modifier;
+      cir.setReturnValue(f);
     }
+  }
 
-    @Redirect(
-        method = "growCrops(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
-        )
-    )
-    public boolean arclight$blockGrowGrow(
-        Level world,
-        BlockPos pos,
-        BlockState newState,
-        int flags
-    ) {
-        return CraftEventFactory.handleBlockGrowEvent(
-            world,
-            pos,
-            newState,
-            flags
-        );
-    }
+  @Redirect(
+      method =
+          "growCrops(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  public boolean arclight$blockGrowGrow(Level world, BlockPos pos, BlockState newState, int flags) {
+    return CraftEventFactory.handleBlockGrowEvent(world, pos, newState, flags);
+  }
 
-    @Redirect(
-        method = "entityInside",
-        at = @At(
-            value = "INVOKE",
-            remap = false,
-            target = "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"
-        )
-    )
-    public boolean arclight$entityChangeBlock(
-        Level world,
-        Entity entity,
-        BlockState state,
-        Level worldIn,
-        BlockPos pos
-    ) {
-        boolean result = ForgeEventFactory.getMobGriefingEvent(world, entity);
-        return !CraftEventFactory.callEntityChangeBlockEvent(
-            entity,
-            pos,
-            state,
-            result
-        );
-    }
+  @Redirect(
+      method = "entityInside",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target =
+                  "Lnet/minecraftforge/event/ForgeEventFactory;getMobGriefingEvent(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"))
+  public boolean arclight$entityChangeBlock(
+      Level world, Entity entity, BlockState state, Level worldIn, BlockPos pos) {
+    boolean result = ForgeEventFactory.getMobGriefingEvent(world, entity);
+    return !CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state, result);
+  }
 
-    @Redirect(
-        method = "randomTick",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
-        )
-    )
-    public boolean arclight$blockGrowTick(
-        ServerLevel world,
-        BlockPos pos,
-        BlockState newState,
-        int flags
-    ) {
-        return CraftEventFactory.handleBlockGrowEvent(
-            world,
-            pos,
-            newState,
-            flags
-        );
-    }
+  @Redirect(
+      method = "randomTick",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  public boolean arclight$blockGrowTick(
+      ServerLevel world, BlockPos pos, BlockState newState, int flags) {
+    return CraftEventFactory.handleBlockGrowEvent(world, pos, newState, flags);
+  }
 }

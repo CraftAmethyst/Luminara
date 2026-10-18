@@ -17,26 +17,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DamageSources.class)
 public abstract class DamageSourcesMixin implements DamageSourcesBridge {
 
-    public DamageSource melting;
-    // @formatter:on
-    public DamageSource poison;
+  public DamageSource melting;
+  // @formatter:on
+  public DamageSource poison;
 
-    // @formatter:off
-    @Shadow protected abstract DamageSource source(ResourceKey<DamageType> p_270957_);
+  // @formatter:off
+  @Shadow
+  protected abstract DamageSource source(ResourceKey<DamageType> p_270957_);
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(RegistryAccess p_270740_, CallbackInfo ci) {
-        this.melting = ((DamageSourceBridge) this.source(DamageTypes.ON_FIRE)).bridge$melting();
-        this.poison = ((DamageSourceBridge) this.source(DamageTypes.MAGIC)).bridge$poison();
-    }
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void arclight$init(RegistryAccess p_270740_, CallbackInfo ci) {
+    this.melting = ((DamageSourceBridge) this.source(DamageTypes.ON_FIRE)).bridge$melting();
+    this.poison = ((DamageSourceBridge) this.source(DamageTypes.MAGIC)).bridge$poison();
+  }
 
-    @Override
-    public DamageSource bridge$poison() {
-        return poison;
-    }
+  @Override
+  public DamageSource bridge$poison() {
+    return poison;
+  }
 
-    @Override
-    public DamageSource bridge$melting() {
-        return melting;
-    }
+  @Override
+  public DamageSource bridge$melting() {
+    return melting;
+  }
 }

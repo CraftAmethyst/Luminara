@@ -6,31 +6,31 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class VelocitySpec {
 
-    @Setting("enabled")
-    private boolean enabled;
+  @Setting("enabled")
+  private boolean enabled;
 
-    @Setting("online-mode")
-    private boolean onlineMode;
+  @Setting("online-mode")
+  private boolean onlineMode;
 
-    @Setting("forwarding-secret")
-    private String forwardingSecret;
+  @Setting("forwarding-secret")
+  private String forwardingSecret;
 
-    @Setting("debug-logging")
-    private boolean debugLogging;
+  @Setting("debug-logging")
+  private boolean debugLogging;
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-    public boolean isOnlineMode() {
-        return onlineMode;
-    }
+  public boolean isOnlineMode() {
+    return onlineMode;
+  }
 
-    public String getForwardingSecret() {
-        return forwardingSecret != null ? forwardingSecret : "";
-    }
+  public String getForwardingSecret() {
+    return forwardingSecret != null ? forwardingSecret : "";
+  }
 
-    public boolean isDebugLogging() {
-        return debugLogging;
-    }
+  public boolean isDebugLogging() {
+    return debugLogging;
+  }
 }

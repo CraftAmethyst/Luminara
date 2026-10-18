@@ -6,6 +6,10 @@ import io.izzel.arclight.common.bridge.core.block.FireBlockBridge;
 import io.izzel.arclight.common.mod.ArclightMod;
 import io.izzel.arclight.i18n.LocalizedException;
 import io.izzel.arclight.i18n.conf.MaterialPropertySpec;
+import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,625 +36,491 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.lang.reflect.Constructor;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 @Mixin(value = Material.class, remap = false)
 public abstract class MaterialMixin implements MaterialBridge {
 
-    private static final Map<
-        String,
-        BiFunction<Material, CraftMetaItem, ItemMeta>
-        > TYPES = ImmutableMap.<
-            String,
-            BiFunction<Material, CraftMetaItem, ItemMeta>
-            >builder()
-        .put("ARMOR_STAND", (a, b) ->
-            b instanceof CraftMetaArmorStand ? b : new CraftMetaArmorStand(b)
-        )
-        .put("BANNER", (a, b) ->
-            b instanceof CraftMetaBanner ? b : new CraftMetaBanner(b)
-        )
-        .put("TILE_ENTITY", (a, b) -> new CraftMetaBlockState(b, a))
-        .put("BOOK", (a, b) ->
-            b != null && b.getClass().equals(CraftMetaBook.class)
-                ? b
-                : new CraftMetaBook(b)
-        )
-        .put("BOOK_SIGNED", (a, b) ->
-            b instanceof CraftMetaBookSigned ? b : new CraftMetaBookSigned(b)
-        )
-        .put("SKULL", (a, b) ->
-            b instanceof CraftMetaSkull ? b : new CraftMetaSkull(b)
-        )
-        .put("LEATHER_ARMOR", (a, b) ->
-            b instanceof CraftMetaLeatherArmor
-                ? b
-                : new CraftMetaLeatherArmor(b)
-        )
-        .put("MAP", (a, b) ->
-            b instanceof CraftMetaMap ? b : new CraftMetaMap(b)
-        )
-        .put("POTION", (a, b) ->
-            b instanceof CraftMetaPotion ? b : new CraftMetaPotion(b)
-        )
-        .put("SPAWN_EGG", (a, b) ->
-            b instanceof CraftMetaSpawnEgg ? b : new CraftMetaSpawnEgg(b)
-        )
-        .put("ENCHANTED", (a, b) ->
-            b instanceof CraftMetaEnchantedBook
-                ? b
-                : new CraftMetaEnchantedBook(b)
-        )
-        .put("FIREWORK", (a, b) ->
-            b instanceof CraftMetaFirework ? b : new CraftMetaFirework(b)
-        )
-        .put("FIREWORK_EFFECT", (a, b) ->
-            b instanceof CraftMetaCharge ? b : new CraftMetaCharge(b)
-        )
-        .put("KNOWLEDGE_BOOK", (a, b) ->
-            b instanceof CraftMetaKnowledgeBook
-                ? b
-                : new CraftMetaKnowledgeBook(b)
-        )
-        .put("TROPICAL_FISH_BUCKET", (a, b) ->
-            b instanceof CraftMetaTropicalFishBucket
-                ? b
-                : new CraftMetaTropicalFishBucket(b)
-        )
-        .put("CROSSBOW", (a, b) ->
-            b instanceof CraftMetaCrossbow ? b : new CraftMetaCrossbow(b)
-        )
-        .put("SUSPICIOUS_STEW", (a, b) ->
-            b instanceof CraftMetaSuspiciousStew
-                ? b
-                : new CraftMetaSuspiciousStew(b)
-        )
-        .put("UNSPECIFIC", (a, b) -> new CraftMetaItem(b))
-        .put("NULL", (a, b) -> null)
-        .build();
+  private static final Map<String, BiFunction<Material, CraftMetaItem, ItemMeta>> TYPES =
+      ImmutableMap.<String, BiFunction<Material, CraftMetaItem, ItemMeta>>builder()
+          .put(
+              "ARMOR_STAND",
+              (a, b) -> b instanceof CraftMetaArmorStand ? b : new CraftMetaArmorStand(b))
+          .put("BANNER", (a, b) -> b instanceof CraftMetaBanner ? b : new CraftMetaBanner(b))
+          .put("TILE_ENTITY", (a, b) -> new CraftMetaBlockState(b, a))
+          .put(
+              "BOOK",
+              (a, b) ->
+                  b != null && b.getClass().equals(CraftMetaBook.class) ? b : new CraftMetaBook(b))
+          .put(
+              "BOOK_SIGNED",
+              (a, b) -> b instanceof CraftMetaBookSigned ? b : new CraftMetaBookSigned(b))
+          .put("SKULL", (a, b) -> b instanceof CraftMetaSkull ? b : new CraftMetaSkull(b))
+          .put(
+              "LEATHER_ARMOR",
+              (a, b) -> b instanceof CraftMetaLeatherArmor ? b : new CraftMetaLeatherArmor(b))
+          .put("MAP", (a, b) -> b instanceof CraftMetaMap ? b : new CraftMetaMap(b))
+          .put("POTION", (a, b) -> b instanceof CraftMetaPotion ? b : new CraftMetaPotion(b))
+          .put("SPAWN_EGG", (a, b) -> b instanceof CraftMetaSpawnEgg ? b : new CraftMetaSpawnEgg(b))
+          .put(
+              "ENCHANTED",
+              (a, b) -> b instanceof CraftMetaEnchantedBook ? b : new CraftMetaEnchantedBook(b))
+          .put("FIREWORK", (a, b) -> b instanceof CraftMetaFirework ? b : new CraftMetaFirework(b))
+          .put(
+              "FIREWORK_EFFECT",
+              (a, b) -> b instanceof CraftMetaCharge ? b : new CraftMetaCharge(b))
+          .put(
+              "KNOWLEDGE_BOOK",
+              (a, b) -> b instanceof CraftMetaKnowledgeBook ? b : new CraftMetaKnowledgeBook(b))
+          .put(
+              "TROPICAL_FISH_BUCKET",
+              (a, b) ->
+                  b instanceof CraftMetaTropicalFishBucket ? b : new CraftMetaTropicalFishBucket(b))
+          .put("CROSSBOW", (a, b) -> b instanceof CraftMetaCrossbow ? b : new CraftMetaCrossbow(b))
+          .put(
+              "SUSPICIOUS_STEW",
+              (a, b) -> b instanceof CraftMetaSuspiciousStew ? b : new CraftMetaSuspiciousStew(b))
+          .put("UNSPECIFIC", (a, b) -> new CraftMetaItem(b))
+          .put("NULL", (a, b) -> null)
+          .build();
 
-    @Shadow
-    @Mutable
-    @Final
-    public Class<?> data;
+  @Shadow @Mutable @Final public Class<?> data;
 
-    // @formatter:off
-    @Shadow @Mutable @Final private NamespacedKey key;
+  // @formatter:off
+  @Shadow @Mutable @Final private NamespacedKey key;
 
-    @Shadow @Mutable @Final private Constructor<? extends MaterialData> ctor;
+  @Shadow @Mutable @Final private Constructor<? extends MaterialData> ctor;
 
-    // @formatter:on
-    private MaterialPropertySpec.MaterialType arclight$type =
-        MaterialPropertySpec.MaterialType.VANILLA;
-    private MaterialPropertySpec arclight$spec;
-    private boolean arclight$block = false,
-        arclight$item = false;
-    private Function<CraftMetaItem, ItemMeta> arclight$metaFunc;
-    private Function<CraftBlock, BlockState> arclight$stateFunc;
+  // @formatter:on
+  private MaterialPropertySpec.MaterialType arclight$type =
+      MaterialPropertySpec.MaterialType.VANILLA;
+  private MaterialPropertySpec arclight$spec;
+  private boolean arclight$block = false, arclight$item = false;
+  private Function<CraftMetaItem, ItemMeta> arclight$metaFunc;
+  private Function<CraftBlock, BlockState> arclight$stateFunc;
 
-    private static int tryGetMaxStackSize(Item item) {
-        try {
-            return item.getMaxStackSize(new ItemStack(item));
-        } catch (Throwable t) {
-            try {
-                return item.getMaxStackSize();
-            } catch (Throwable t1) {
-                return 64;
-            }
-        }
+  private static int tryGetMaxStackSize(Item item) {
+    try {
+      return item.getMaxStackSize(new ItemStack(item));
+    } catch (Throwable t) {
+      try {
+        return item.getMaxStackSize();
+      } catch (Throwable t1) {
+        return 64;
+      }
     }
+  }
 
-    private static int tryGetDurability(Item item) {
-        try {
-            return item.getMaxDamage(new ItemStack(item));
-        } catch (Throwable t) {
-            try {
-                return item.getMaxDamage();
-            } catch (Throwable t1) {
-                return 0;
-            }
-        }
+  private static int tryGetDurability(Item item) {
+    try {
+      return item.getMaxDamage(new ItemStack(item));
+    } catch (Throwable t) {
+      try {
+        return item.getMaxDamage();
+      } catch (Throwable t1) {
+        return 0;
+      }
     }
+  }
 
-    @Shadow
-    public abstract boolean isBlock();
+  @Shadow
+  public abstract boolean isBlock();
 
-    @Override
-    public void bridge$setBlock() {
-        this.arclight$block = true;
+  @Override
+  public void bridge$setBlock() {
+    this.arclight$block = true;
+  }
+
+  @Override
+  public void bridge$setItem() {
+    this.arclight$item = true;
+  }
+
+  @Inject(method = "isBlock", cancellable = true, at = @At("HEAD"))
+  private void arclight$isBlock(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$type != MaterialPropertySpec.MaterialType.VANILLA) {
+      cir.setReturnValue(arclight$block);
     }
+  }
 
-    @Override
-    public void bridge$setItem() {
-        this.arclight$item = true;
+  @Inject(method = "isItem", cancellable = true, at = @At("HEAD"))
+  private void arclight$isItem(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$type != MaterialPropertySpec.MaterialType.VANILLA) {
+      cir.setReturnValue(arclight$item);
     }
+  }
 
-    @Inject(method = "isBlock", cancellable = true, at = @At("HEAD"))
-    private void arclight$isBlock(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$type != MaterialPropertySpec.MaterialType.VANILLA) {
-            cir.setReturnValue(arclight$block);
-        }
+  @Inject(method = "isEdible", cancellable = true, at = @At("HEAD"))
+  private void arclight$isEdible(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.edible);
     }
+  }
 
-    @Inject(method = "isItem", cancellable = true, at = @At("HEAD"))
-    private void arclight$isItem(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$type != MaterialPropertySpec.MaterialType.VANILLA) {
-            cir.setReturnValue(arclight$item);
-        }
+  @Inject(method = "isRecord", cancellable = true, at = @At("HEAD"))
+  private void arclight$isRecord(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.record);
     }
+  }
 
-    @Inject(method = "isEdible", cancellable = true, at = @At("HEAD"))
-    private void arclight$isEdible(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.edible);
-        }
+  @Inject(method = "isSolid", cancellable = true, at = @At("HEAD"))
+  private void arclight$isSolid(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.solid);
     }
+  }
 
-    @Inject(method = "isRecord", cancellable = true, at = @At("HEAD"))
-    private void arclight$isRecord(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.record);
-        }
+  @Inject(method = "isAir", cancellable = true, at = @At("HEAD"))
+  private void arclight$isAir(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.air);
     }
+  }
 
-    @Inject(method = "isSolid", cancellable = true, at = @At("HEAD"))
-    private void arclight$isSolid(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.solid);
-        }
+  @Inject(method = "isTransparent", cancellable = true, at = @At("HEAD"))
+  private void arclight$isTransparent(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.transparent);
     }
+  }
 
-    @Inject(method = "isAir", cancellable = true, at = @At("HEAD"))
-    private void arclight$isAir(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.air);
-        }
+  @Inject(method = "isFlammable", cancellable = true, at = @At("HEAD"))
+  private void arclight$isFlammable(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.flammable);
     }
+  }
 
-    @Inject(method = "isTransparent", cancellable = true, at = @At("HEAD"))
-    private void arclight$isTransparent(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.transparent);
-        }
+  @Inject(method = "isBurnable", cancellable = true, at = @At("HEAD"))
+  private void arclight$isBurnable(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.burnable);
     }
+  }
 
-    @Inject(method = "isFlammable", cancellable = true, at = @At("HEAD"))
-    private void arclight$isFlammable(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.flammable);
-        }
+  @Inject(method = "isFuel", cancellable = true, at = @At("HEAD"))
+  private void arclight$isFuel(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.fuel);
     }
+  }
 
-    @Inject(method = "isBurnable", cancellable = true, at = @At("HEAD"))
-    private void arclight$isBurnable(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.burnable);
-        }
+  @Inject(method = "isOccluding", cancellable = true, at = @At("HEAD"))
+  private void arclight$isOccluding(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.occluding);
     }
+  }
 
-    @Inject(method = "isFuel", cancellable = true, at = @At("HEAD"))
-    private void arclight$isFuel(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.fuel);
-        }
+  @Inject(method = "hasGravity", cancellable = true, at = @At("HEAD"))
+  private void arclight$hasGravity(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.gravity);
     }
+  }
 
-    @Inject(method = "isOccluding", cancellable = true, at = @At("HEAD"))
-    private void arclight$isOccluding(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.occluding);
-        }
+  @Inject(method = "isInteractable", cancellable = true, at = @At("HEAD"))
+  private void arclight$isInteractable(CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.interactable);
     }
+  }
 
-    @Inject(method = "hasGravity", cancellable = true, at = @At("HEAD"))
-    private void arclight$hasGravity(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.gravity);
-        }
+  @Inject(method = "getHardness", cancellable = true, at = @At("HEAD"))
+  private void arclight$getHardness(CallbackInfoReturnable<Float> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.hardness);
     }
+  }
 
-    @Inject(method = "isInteractable", cancellable = true, at = @At("HEAD"))
-    private void arclight$isInteractable(CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.interactable);
-        }
+  @Inject(method = "getBlastResistance", cancellable = true, at = @At("HEAD"))
+  private void arclight$getBlastResistance(CallbackInfoReturnable<Float> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.blastResistance);
     }
+  }
 
-    @Inject(method = "getHardness", cancellable = true, at = @At("HEAD"))
-    private void arclight$getHardness(CallbackInfoReturnable<Float> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.hardness);
-        }
+  @Inject(method = "getCraftingRemainingItem", cancellable = true, at = @At("HEAD"))
+  private void arclight$getCraftingRemainingItem(CallbackInfoReturnable<Material> cir) {
+    if (arclight$spec != null && arclight$spec.craftingRemainingItem != null) {
+      cir.setReturnValue(
+          CraftMagicNumbers.getMaterial(
+              ForgeRegistries.ITEMS.getValue(
+                  new ResourceLocation(arclight$spec.craftingRemainingItem))));
     }
+  }
 
-    @Inject(method = "getBlastResistance", cancellable = true, at = @At("HEAD"))
-    private void arclight$getBlastResistance(
-        CallbackInfoReturnable<Float> cir
-    ) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.blastResistance);
-        }
+  @Inject(method = "getMaxStackSize", cancellable = true, at = @At("HEAD"))
+  private void arclight$getMaxStackSize(CallbackInfoReturnable<Integer> cir) {
+    if (arclight$spec != null) {
+      cir.setReturnValue(arclight$spec.maxStack);
     }
+  }
 
-    @Inject(
-        method = "getCraftingRemainingItem",
-        cancellable = true,
-        at = @At("HEAD")
-    )
-    private void arclight$getCraftingRemainingItem(
-        CallbackInfoReturnable<Material> cir
-    ) {
-        if (
-            arclight$spec != null && arclight$spec.craftingRemainingItem != null
-        ) {
-            cir.setReturnValue(
-                CraftMagicNumbers.getMaterial(
-                    ForgeRegistries.ITEMS.getValue(
-                        new ResourceLocation(
-                            arclight$spec.craftingRemainingItem
-                        )
-                    )
-                )
-            );
-        }
+  @Inject(method = "getMaxDurability", cancellable = true, at = @At("HEAD"))
+  private void arclight$getMaxDurability(CallbackInfoReturnable<Short> cir) {
+    if (arclight$spec != null && arclight$spec.maxDurability != null) {
+      cir.setReturnValue(arclight$spec.maxDurability.shortValue());
     }
+  }
 
-    @Inject(method = "getMaxStackSize", cancellable = true, at = @At("HEAD"))
-    private void arclight$getMaxStackSize(CallbackInfoReturnable<Integer> cir) {
-        if (arclight$spec != null) {
-            cir.setReturnValue(arclight$spec.maxStack);
-        }
+  @Override
+  public MaterialPropertySpec bridge$getSpec() {
+    return arclight$spec;
+  }
+
+  @Override
+  public MaterialPropertySpec.MaterialType bridge$getType() {
+    return arclight$type;
+  }
+
+  @Override
+  public Function<CraftMetaItem, ItemMeta> bridge$itemMetaFactory() {
+    return arclight$metaFunc;
+  }
+
+  @Override
+  public void bridge$setItemMetaFactory(Function<CraftMetaItem, ItemMeta> func) {
+    this.arclight$metaFunc = func;
+  }
+
+  @Override
+  public Function<CraftBlock, BlockState> bridge$blockStateFactory() {
+    return arclight$stateFunc;
+  }
+
+  @Override
+  public void bridge$setBlockStateFactory(Function<CraftBlock, BlockState> func) {
+    this.arclight$stateFunc = func;
+  }
+
+  @Override
+  public void bridge$setupBlock(ResourceLocation key, Block block, MaterialPropertySpec spec) {
+    this.arclight$spec = spec.clone();
+    arclight$type = MaterialPropertySpec.MaterialType.FORGE;
+    arclight$block = true;
+    arclight$setupCommon(key, block, block.asItem());
+  }
+
+  @Override
+  public void bridge$setupVanillaBlock(MaterialPropertySpec spec) {
+    if (spec != MaterialPropertySpec.EMPTY) {
+      this.arclight$spec = spec.clone();
+      this.setupBlockStateFunc();
     }
+  }
 
-    @Inject(method = "getMaxDurability", cancellable = true, at = @At("HEAD"))
-    private void arclight$getMaxDurability(CallbackInfoReturnable<Short> cir) {
-        if (arclight$spec != null && arclight$spec.maxDurability != null) {
-            cir.setReturnValue(arclight$spec.maxDurability.shortValue());
+  @Override
+  public void bridge$setupItem(ResourceLocation key, Item item, MaterialPropertySpec spec) {
+    this.arclight$spec = spec.clone();
+    arclight$type = MaterialPropertySpec.MaterialType.FORGE;
+    arclight$item = true;
+    arclight$setupCommon(key, null, item);
+  }
+
+  @Override
+  public boolean bridge$shouldApplyStateFactory() {
+    return (this.arclight$type != MaterialPropertySpec.MaterialType.VANILLA
+        || (this.arclight$spec != null && this.arclight$spec.blockStateClass != null));
+  }
+
+  @SuppressWarnings("unchecked")
+  private void arclight$setupCommon(ResourceLocation key, Block block, Item item) {
+    this.key = CraftNamespacedKey.fromMinecraft(key);
+    if (arclight$spec.materialDataClass != null) {
+      try {
+        Class<?> data = Class.forName(arclight$spec.materialDataClass);
+        if (MaterialData.class.isAssignableFrom(data)) {
+          this.data = data;
+          this.ctor =
+              (Constructor<? extends MaterialData>) data.getConstructor(Material.class, byte.class);
         }
+      } catch (Exception e) {
+        ArclightMod.LOGGER.warn("material.bad-data-class", arclight$spec.materialDataClass, this);
+        ArclightMod.LOGGER.warn(e);
+      }
     }
-
-    @Override
-    public MaterialPropertySpec bridge$getSpec() {
-        return arclight$spec;
+    if (arclight$spec.maxStack == null) {
+      arclight$spec.maxStack = tryGetMaxStackSize(item);
     }
-
-    @Override
-    public MaterialPropertySpec.MaterialType bridge$getType() {
-        return arclight$type;
+    if (arclight$spec.maxDurability == null) {
+      arclight$spec.maxDurability = tryGetDurability(item);
     }
-
-    @Override
-    public Function<CraftMetaItem, ItemMeta> bridge$itemMetaFactory() {
-        return arclight$metaFunc;
+    if (arclight$spec.edible == null) {
+      arclight$spec.edible = false;
     }
-
-    @Override
-    public void bridge$setItemMetaFactory(
-        Function<CraftMetaItem, ItemMeta> func
-    ) {
-        this.arclight$metaFunc = func;
+    if (arclight$spec.record == null) {
+      arclight$spec.record = false;
     }
-
-    @Override
-    public Function<CraftBlock, BlockState> bridge$blockStateFactory() {
-        return arclight$stateFunc;
+    if (arclight$spec.solid == null) {
+      arclight$spec.solid = block != null && block.defaultBlockState().canOcclude();
     }
-
-    @Override
-    public void bridge$setBlockStateFactory(
-        Function<CraftBlock, BlockState> func
-    ) {
-        this.arclight$stateFunc = func;
+    if (arclight$spec.air == null) {
+      arclight$spec.air = block != null && block.defaultBlockState().isAir();
     }
-
-    @Override
-    public void bridge$setupBlock(
-        ResourceLocation key,
-        Block block,
-        MaterialPropertySpec spec
-    ) {
-        this.arclight$spec = spec.clone();
-        arclight$type = MaterialPropertySpec.MaterialType.FORGE;
-        arclight$block = true;
-        arclight$setupCommon(key, block, block.asItem());
+    if (arclight$spec.transparent == null) {
+      arclight$spec.transparent =
+          block != null && block.defaultBlockState().useShapeForLightOcclusion();
     }
-
-    @Override
-    public void bridge$setupVanillaBlock(MaterialPropertySpec spec) {
-        if (spec != MaterialPropertySpec.EMPTY) {
-            this.arclight$spec = spec.clone();
-            this.setupBlockStateFunc();
-        }
+    if (arclight$spec.flammable == null) {
+      arclight$spec.flammable =
+          block != null && ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
     }
-
-    @Override
-    public void bridge$setupItem(
-        ResourceLocation key,
-        Item item,
-        MaterialPropertySpec spec
-    ) {
-        this.arclight$spec = spec.clone();
-        arclight$type = MaterialPropertySpec.MaterialType.FORGE;
-        arclight$item = true;
-        arclight$setupCommon(key, null, item);
+    if (arclight$spec.burnable == null) {
+      arclight$spec.burnable =
+          block != null && ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
     }
-
-    @Override
-    public boolean bridge$shouldApplyStateFactory() {
-        return (
-            this.arclight$type != MaterialPropertySpec.MaterialType.VANILLA ||
-                (this.arclight$spec != null &&
-                    this.arclight$spec.blockStateClass != null)
-        );
+    if (arclight$spec.fuel == null) {
+      arclight$spec.fuel = item != null && new ItemStack(item).getBurnTime(null) > 0;
     }
+    if (arclight$spec.occluding == null) {
+      arclight$spec.occluding = arclight$spec.solid;
+    }
+    if (arclight$spec.gravity == null) {
+      arclight$spec.gravity = block instanceof FallingBlock;
+    }
+    if (arclight$spec.interactable == null) {
+      arclight$spec.interactable = true;
+    }
+    if (arclight$spec.hardness == null) {
+      arclight$spec.hardness = block != null ? block.defaultBlockState().destroySpeed : 0;
+    }
+    if (arclight$spec.blastResistance == null) {
+      arclight$spec.blastResistance = block != null ? block.getExplosionResistance() : 0;
+    }
+    if (arclight$spec.craftingRemainingItem == null) {
+      // noinspection deprecation
+      arclight$spec.craftingRemainingItem =
+          item != null && item.hasCraftingRemainingItem()
+              ? ForgeRegistries.ITEMS.getKey(item.getCraftingRemainingItem()).toString()
+              : null;
+    }
+    if (arclight$spec.itemMetaType == null) {
+      arclight$spec.itemMetaType = "UNSPECIFIC";
+    }
+    BiFunction<Material, CraftMetaItem, ItemMeta> function = TYPES.get(arclight$spec.itemMetaType);
+    if (function != null) {
+      this.arclight$metaFunc = meta -> function.apply((Material) (Object) this, meta);
+    } else {
+      this.arclight$metaFunc = dynamicMetaCreator(arclight$spec.itemMetaType);
+    }
+    this.setupBlockStateFunc();
+  }
 
-    @SuppressWarnings("unchecked")
-    private void arclight$setupCommon(
-        ResourceLocation key,
-        Block block,
-        Item item
-    ) {
-        this.key = CraftNamespacedKey.fromMinecraft(key);
-        if (arclight$spec.materialDataClass != null) {
-            try {
-                Class<?> data = Class.forName(arclight$spec.materialDataClass);
-                if (MaterialData.class.isAssignableFrom(data)) {
-                    this.data = data;
-                    this.ctor =
-                        (Constructor<? extends MaterialData>) data.getConstructor(
-                            Material.class,
-                            byte.class
-                        );
-                }
-            } catch (Exception e) {
-                ArclightMod.LOGGER.warn(
-                    "material.bad-data-class",
-                    arclight$spec.materialDataClass,
-                    this
-                );
-                ArclightMod.LOGGER.warn(e);
-            }
+  private void setupBlockStateFunc() {
+    if (arclight$spec.blockStateClass != null
+        && !arclight$spec.blockStateClass.equalsIgnoreCase("auto")) {
+      try {
+        Class<?> cl = Class.forName(arclight$spec.blockStateClass);
+        if (!CraftBlockState.class.isAssignableFrom(cl)) {
+          throw LocalizedException.checked(
+              "registry.block-state.not-subclass", cl, CraftBlockState.class);
         }
-        if (arclight$spec.maxStack == null) {
-            arclight$spec.maxStack = tryGetMaxStackSize(item);
+        for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
+          if (constructor.getParameterTypes().length == 1
+              && org.bukkit.block.Block.class.isAssignableFrom(
+                  constructor.getParameterTypes()[0])) {
+            constructor.setAccessible(true);
+            this.arclight$stateFunc =
+                b -> {
+                  try {
+                    return (BlockState) constructor.newInstance(b);
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+                };
+          }
         }
-        if (arclight$spec.maxDurability == null) {
-            arclight$spec.maxDurability = tryGetDurability(item);
-        }
-        if (arclight$spec.edible == null) {
-            arclight$spec.edible = false;
-        }
-        if (arclight$spec.record == null) {
-            arclight$spec.record = false;
-        }
-        if (arclight$spec.solid == null) {
-            arclight$spec.solid =
-                block != null && block.defaultBlockState().canOcclude();
-        }
-        if (arclight$spec.air == null) {
-            arclight$spec.air =
-                block != null && block.defaultBlockState().isAir();
-        }
-        if (arclight$spec.transparent == null) {
-            arclight$spec.transparent =
-                block != null &&
-                    block.defaultBlockState().useShapeForLightOcclusion();
-        }
-        if (arclight$spec.flammable == null) {
-            arclight$spec.flammable =
-                block != null &&
-                    ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
-        }
-        if (arclight$spec.burnable == null) {
-            arclight$spec.burnable =
-                block != null &&
-                    ((FireBlockBridge) Blocks.FIRE).bridge$canBurn(block);
-        }
-        if (arclight$spec.fuel == null) {
-            arclight$spec.fuel =
-                item != null && new ItemStack(item).getBurnTime(null) > 0;
-        }
-        if (arclight$spec.occluding == null) {
-            arclight$spec.occluding = arclight$spec.solid;
-        }
-        if (arclight$spec.gravity == null) {
-            arclight$spec.gravity = block instanceof FallingBlock;
-        }
-        if (arclight$spec.interactable == null) {
-            arclight$spec.interactable = true;
-        }
-        if (arclight$spec.hardness == null) {
-            arclight$spec.hardness =
-                block != null ? block.defaultBlockState().destroySpeed : 0;
-        }
-        if (arclight$spec.blastResistance == null) {
-            arclight$spec.blastResistance =
-                block != null ? block.getExplosionResistance() : 0;
-        }
-        if (arclight$spec.craftingRemainingItem == null) {
-            // noinspection deprecation
-            arclight$spec.craftingRemainingItem =
-                item != null && item.hasCraftingRemainingItem()
-                    ? ForgeRegistries.ITEMS.getKey(
-                    item.getCraftingRemainingItem()
-                ).toString()
-                    : null;
-        }
-        if (arclight$spec.itemMetaType == null) {
-            arclight$spec.itemMetaType = "UNSPECIFIC";
-        }
-        BiFunction<Material, CraftMetaItem, ItemMeta> function = TYPES.get(
-            arclight$spec.itemMetaType
-        );
-        if (function != null) {
-            this.arclight$metaFunc = meta ->
-                function.apply((Material) (Object) this, meta);
+      } catch (Exception e) {
+        if (e instanceof LocalizedException) {
+          ArclightMod.LOGGER.warn(((LocalizedException) e).node(), ((LocalizedException) e).args());
         } else {
-            this.arclight$metaFunc = dynamicMetaCreator(
-                arclight$spec.itemMetaType
-            );
+          ArclightMod.LOGGER.warn(
+              "registry.block-state.error", this, arclight$spec.blockStateClass, e);
         }
-        this.setupBlockStateFunc();
+      }
+      if (this.arclight$stateFunc == null) {
+        ArclightMod.LOGGER.warn(
+            "registry.block-state.no-candidate", this, arclight$spec.blockStateClass);
+      }
     }
+    if (this.arclight$stateFunc == null) {
+      this.arclight$stateFunc = CraftBlockStates::getBlockState;
+    }
+  }
 
-    private void setupBlockStateFunc() {
-        if (
-            arclight$spec.blockStateClass != null &&
-                !arclight$spec.blockStateClass.equalsIgnoreCase("auto")
-        ) {
-            try {
-                Class<?> cl = Class.forName(arclight$spec.blockStateClass);
-                if (!CraftBlockState.class.isAssignableFrom(cl)) {
-                    throw LocalizedException.checked(
-                        "registry.block-state.not-subclass",
-                        cl,
-                        CraftBlockState.class
-                    );
-                }
-                for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
-                    if (
-                        constructor.getParameterTypes().length == 1 &&
-                            org.bukkit.block.Block.class.isAssignableFrom(
-                                constructor.getParameterTypes()[0]
-                            )
-                    ) {
-                        constructor.setAccessible(true);
-                        this.arclight$stateFunc = b -> {
-                            try {
-                                return (BlockState) constructor.newInstance(b);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        };
-                    }
-                }
-            } catch (Exception e) {
-                if (e instanceof LocalizedException) {
-                    ArclightMod.LOGGER.warn(
-                        ((LocalizedException) e).node(),
-                        ((LocalizedException) e).args()
-                    );
-                } else {
-                    ArclightMod.LOGGER.warn(
-                        "registry.block-state.error",
-                        this,
-                        arclight$spec.blockStateClass,
-                        e
-                    );
-                }
-            }
-            if (this.arclight$stateFunc == null) {
-                ArclightMod.LOGGER.warn(
-                    "registry.block-state.no-candidate",
-                    this,
-                    arclight$spec.blockStateClass
-                );
-            }
+  private Function<CraftMetaItem, ItemMeta> dynamicMetaCreator(String type) {
+    Function<CraftMetaItem, ItemMeta> candidate = null;
+    try {
+      Class<?> cl = Class.forName(type);
+      if (!CraftMetaItem.class.isAssignableFrom(cl)) {
+        throw LocalizedException.checked(
+            "registry.meta-type.not-subclass", cl, CraftMetaItem.class);
+      }
+      for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        if (parameterTypes.length == 1) {
+          if (parameterTypes[0] == Material.class) {
+            constructor.setAccessible(true);
+            candidate =
+                meta -> {
+                  try {
+                    return (ItemMeta) constructor.newInstance(this);
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+                };
+            break;
+          } else if (CraftMetaItem.class.isAssignableFrom(parameterTypes[0])) {
+            constructor.setAccessible(true);
+            candidate =
+                meta -> {
+                  try {
+                    return (ItemMeta) constructor.newInstance(meta);
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+                };
+            break;
+          }
+        } else if (parameterTypes.length == 2) {
+          if (parameterTypes[0] == Material.class
+              && CraftMetaItem.class.isAssignableFrom(parameterTypes[1])) {
+            constructor.setAccessible(true);
+            candidate =
+                meta -> {
+                  try {
+                    return (ItemMeta) constructor.newInstance(this, meta);
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+                };
+            break;
+          } else if (parameterTypes[1] == Material.class
+              && CraftMetaItem.class.isAssignableFrom(parameterTypes[0])) {
+            constructor.setAccessible(true);
+            candidate =
+                meta -> {
+                  try {
+                    return (ItemMeta) constructor.newInstance(meta, this);
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+                };
+            break;
+          }
         }
-        if (this.arclight$stateFunc == null) {
-            this.arclight$stateFunc = CraftBlockStates::getBlockState;
-        }
+      }
+    } catch (Exception e) {
+      if (e instanceof LocalizedException) {
+        ArclightMod.LOGGER.warn(((LocalizedException) e).node(), ((LocalizedException) e).args());
+      } else {
+        ArclightMod.LOGGER.warn("registry.meta-type.error", this, type, e);
+      }
     }
-
-    private Function<CraftMetaItem, ItemMeta> dynamicMetaCreator(String type) {
-        Function<CraftMetaItem, ItemMeta> candidate = null;
-        try {
-            Class<?> cl = Class.forName(type);
-            if (!CraftMetaItem.class.isAssignableFrom(cl)) {
-                throw LocalizedException.checked(
-                    "registry.meta-type.not-subclass",
-                    cl,
-                    CraftMetaItem.class
-                );
-            }
-            for (Constructor<?> constructor : cl.getDeclaredConstructors()) {
-                Class<?>[] parameterTypes = constructor.getParameterTypes();
-                if (parameterTypes.length == 1) {
-                    if (parameterTypes[0] == Material.class) {
-                        constructor.setAccessible(true);
-                        candidate = meta -> {
-                            try {
-                                return (ItemMeta) constructor.newInstance(this);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        };
-                        break;
-                    } else if (
-                        CraftMetaItem.class.isAssignableFrom(parameterTypes[0])
-                    ) {
-                        constructor.setAccessible(true);
-                        candidate = meta -> {
-                            try {
-                                return (ItemMeta) constructor.newInstance(meta);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        };
-                        break;
-                    }
-                } else if (parameterTypes.length == 2) {
-                    if (
-                        parameterTypes[0] == Material.class &&
-                            CraftMetaItem.class.isAssignableFrom(parameterTypes[1])
-                    ) {
-                        constructor.setAccessible(true);
-                        candidate = meta -> {
-                            try {
-                                return (ItemMeta) constructor.newInstance(
-                                    this,
-                                    meta
-                                );
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        };
-                        break;
-                    } else if (
-                        parameterTypes[1] == Material.class &&
-                            CraftMetaItem.class.isAssignableFrom(parameterTypes[0])
-                    ) {
-                        constructor.setAccessible(true);
-                        candidate = meta -> {
-                            try {
-                                return (ItemMeta) constructor.newInstance(
-                                    meta,
-                                    this
-                                );
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        };
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (e instanceof LocalizedException) {
-                ArclightMod.LOGGER.warn(
-                    ((LocalizedException) e).node(),
-                    ((LocalizedException) e).args()
-                );
-            } else {
-                ArclightMod.LOGGER.warn(
-                    "registry.meta-type.error",
-                    this,
-                    type,
-                    e
-                );
-            }
-        }
-        if (candidate == null) {
-            ArclightMod.LOGGER.warn(
-                "registry.meta-type.no-candidate",
-                this,
-                type
-            );
-            candidate = CraftMetaItem::new;
-        }
-        return candidate;
+    if (candidate == null) {
+      ArclightMod.LOGGER.warn("registry.meta-type.no-candidate", this, type);
+      candidate = CraftMetaItem::new;
     }
+    return candidate;
+  }
 }

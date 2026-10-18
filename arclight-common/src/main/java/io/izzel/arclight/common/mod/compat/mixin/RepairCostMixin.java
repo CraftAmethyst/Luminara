@@ -11,21 +11,13 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @LoadIfMod(modid = ModIds.APOTHEOSIS, condition = LoadIfMod.ModCondition.ABSENT)
 public abstract class RepairCostMixin {
 
-    @ModifyConstant(
-        method = "createResult",
-        constant = @Constant(intValue = 40),
-        require = 0
-    )
-    private int arclight$maximumRepairCost(int raw) {
-        return raw;
-    }
+  @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40), require = 0)
+  private int arclight$maximumRepairCost(int raw) {
+    return raw;
+  }
 
-    @ModifyConstant(
-        method = "createResult",
-        constant = @Constant(intValue = 39),
-        require = 0
-    )
-    private int arclight$maximumRenameCost(int raw) {
-        return raw;
-    }
+  @ModifyConstant(method = "createResult", constant = @Constant(intValue = 39), require = 0)
+  private int arclight$maximumRenameCost(int raw) {
+    return raw;
+  }
 }

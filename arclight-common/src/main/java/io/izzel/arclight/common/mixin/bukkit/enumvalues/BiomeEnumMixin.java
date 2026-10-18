@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.block.Biome.class, remap = false)
 public class BiomeEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.block.Biome[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.block.Biome[] ENUM$VALUES;
 }

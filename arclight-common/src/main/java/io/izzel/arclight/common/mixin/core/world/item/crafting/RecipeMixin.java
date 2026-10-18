@@ -7,14 +7,12 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(net.minecraft.world.item.crafting.Recipe.class)
 public interface RecipeMixin extends IRecipeBridge {
-    default Recipe toBukkitRecipe() {
-        return bridge$toBukkitRecipe();
-    }
+  default Recipe toBukkitRecipe() {
+    return bridge$toBukkitRecipe();
+  }
 
-    @Override
-    default Recipe bridge$toBukkitRecipe() {
-        return new ArclightSpecialRecipe(
-            (net.minecraft.world.item.crafting.Recipe<?>) this
-        );
-    }
+  @Override
+  default Recipe bridge$toBukkitRecipe() {
+    return new ArclightSpecialRecipe((net.minecraft.world.item.crafting.Recipe<?>) this);
+  }
 }

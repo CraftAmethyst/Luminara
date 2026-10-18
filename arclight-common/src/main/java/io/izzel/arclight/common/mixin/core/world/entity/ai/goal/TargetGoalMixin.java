@@ -15,29 +15,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(TargetGoal.class)
 public class TargetGoalMixin {
 
-    @Shadow
-    @Final
-    protected Mob mob;
+  @Shadow @Final protected Mob mob;
 
-    @Inject(
-        method = "canContinueToUse",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/Mob;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"
-        )
-    )
-    private void arclight$reason(CallbackInfoReturnable<Boolean> cir) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
-            EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
-            true
-        );
-    }
+  @Inject(
+      method = "canContinueToUse",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/Mob;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"))
+  private void arclight$reason(CallbackInfoReturnable<Boolean> cir) {
+    ((MobEntityBridge) this.mob)
+        .bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
+  }
 
-    @Inject(method = "stop", at = @At("HEAD"))
-    private void arclight$reason(CallbackInfo ci) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
-            EntityTargetEvent.TargetReason.FORGOT_TARGET,
-            true
-        );
-    }
+  @Inject(method = "stop", at = @At("HEAD"))
+  private void arclight$reason(CallbackInfo ci) {
+    ((MobEntityBridge) this.mob)
+        .bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
+  }
 }

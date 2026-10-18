@@ -19,72 +19,47 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(PacketUtils.class)
 public class PacketThreadUtilMixin {
 
-    private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER =
-        io.izzel.arclight.common.mod.util.log.ArclightI18nLogger.getLogger(
-            "PacketThreadUtil"
-        );
+  private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER =
+      io.izzel.arclight.common.mod.util.log.ArclightI18nLogger.getLogger("PacketThreadUtil");
 
-    @Shadow
-    @Final
-    private static Logger LOGGER;
+  @Shadow @Final private static Logger LOGGER;
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public static <T extends PacketListener> void ensureRunningOnSameThread(
-        Packet<T> packetIn,
-        T processor,
-        BlockableEventLoop<?> executor
-    ) throws RunningOnDifferentThreadException {
-        if (!executor.isSameThread()) {
-            executor.executeIfPossible(() -> {
-                if (
-                    (
-                        (MinecraftServerBridge) (
-                            (CraftServer) Bukkit.getServer()
-                        ).getServer()
-                    ).bridge$hasStopped() ||
-                        (processor instanceof ServerGamePacketListenerImpl &&
-                            (
-                                (ServerPlayNetHandlerBridge) processor
-                            ).bridge$processedDisconnect())
-                ) {
-                    return;
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static <T extends PacketListener> void ensureRunningOnSameThread(
+      Packet<T> packetIn, T processor, BlockableEventLoop<?> executor)
+      throws RunningOnDifferentThreadException {
+    if (!executor.isSameThread()) {
+      executor.executeIfPossible(
+          () -> {
+            if (((MinecraftServerBridge) ((CraftServer) Bukkit.getServer()).getServer())
+                    .bridge$hasStopped()
+                || (processor instanceof ServerGamePacketListenerImpl
+                    && ((ServerPlayNetHandlerBridge) processor).bridge$processedDisconnect())) {
+              return;
+            }
+            if (processor.isAcceptingMessages()) {
+              try {
+                packetIn.handle(processor);
+              } catch (Exception exception) {
+                if (processor.shouldPropagateHandlingExceptions()) {
+                  throw exception;
                 }
-                if (processor.isAcceptingMessages()) {
-                    try {
-                        packetIn.handle(processor);
-                    } catch (Exception exception) {
-                        if (processor.shouldPropagateHandlingExceptions()) {
-                            throw exception;
-                        }
-                        ARCLIGHT_LOGGER.error(
-                            "network.packet.handle-failed",
-                            packetIn,
-                            exception
-                        );
-                    }
-                } else {
-                    LOGGER.debug(
-                        "Ignoring packet due to disconnection: " + packetIn
-                    );
-                }
-            });
-            throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
-        } else if (
-            (
-                (MinecraftServerBridge) (
-                    (CraftServer) Bukkit.getServer()
-                ).getServer()
-            ).bridge$hasStopped() ||
-                (processor instanceof ServerGamePacketListenerImpl &&
-                    (
-                        (ServerPlayNetHandlerBridge) processor
-                    ).bridge$processedDisconnect())
-        ) {
-            throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
-        }
+                ARCLIGHT_LOGGER.error("network.packet.handle-failed", packetIn, exception);
+              }
+            } else {
+              LOGGER.debug("Ignoring packet due to disconnection: " + packetIn);
+            }
+          });
+      throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
+    } else if (((MinecraftServerBridge) ((CraftServer) Bukkit.getServer()).getServer())
+            .bridge$hasStopped()
+        || (processor instanceof ServerGamePacketListenerImpl
+            && ((ServerPlayNetHandlerBridge) processor).bridge$processedDisconnect())) {
+      throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
     }
+  }
 }

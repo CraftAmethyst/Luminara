@@ -12,31 +12,27 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArclightSpecialRecipe extends CraftComplexRecipe {
 
-    private final Recipe<?> recipe;
+  private final Recipe<?> recipe;
 
-    public ArclightSpecialRecipe(Recipe<?> recipe) {
-        super(null);
-        this.recipe = recipe;
-    }
+  public ArclightSpecialRecipe(Recipe<?> recipe) {
+    super(null);
+    this.recipe = recipe;
+  }
 
-    @Override
-    public @NotNull ItemStack getResult() {
-        return CraftItemStack.asCraftMirror(
-            this.recipe.getResultItem(
-                ServerLifecycleHooks.getCurrentServer().registryAccess()
-            )
-        );
-    }
+  @Override
+  public @NotNull ItemStack getResult() {
+    return CraftItemStack.asCraftMirror(
+        this.recipe.getResultItem(ServerLifecycleHooks.getCurrentServer().registryAccess()));
+  }
 
-    @Override
-    public @NotNull NamespacedKey getKey() {
-        return CraftNamespacedKey.fromMinecraft(this.recipe.getId());
-    }
+  @Override
+  public @NotNull NamespacedKey getKey() {
+    return CraftNamespacedKey.fromMinecraft(this.recipe.getId());
+  }
 
-    @Override
-    public void addToCraftingManager() {
-        (
-            (RecipeManagerBridge) ServerLifecycleHooks.getCurrentServer().getRecipeManager()
-        ).bridge$addRecipe(this.recipe);
-    }
+  @Override
+  public void addToCraftingManager() {
+    ((RecipeManagerBridge) ServerLifecycleHooks.getCurrentServer().getRecipeManager())
+        .bridge$addRecipe(this.recipe);
+  }
 }

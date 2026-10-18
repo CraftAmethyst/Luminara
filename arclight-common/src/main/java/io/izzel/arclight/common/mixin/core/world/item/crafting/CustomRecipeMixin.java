@@ -8,10 +8,8 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(CustomRecipe.class)
 public class CustomRecipeMixin implements IRecipeBridge {
 
-    @Override
-    public Recipe bridge$toBukkitRecipe() {
-        return new org.bukkit.craftbukkit.v.inventory.CraftComplexRecipe(
-            (CustomRecipe) (Object) this
-        );
-    }
+  @Override
+  public Recipe bridge$toBukkitRecipe() {
+    return new org.bukkit.craftbukkit.v.inventory.CraftComplexRecipe((CustomRecipe) (Object) this);
+  }
 }

@@ -19,33 +19,28 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(RemoveBlockGoal.class)
 public class RemoveBlockGoalMixin {
 
-    // @formatter:off
-    @Shadow @Final private Mob removerMob;
+  // @formatter:off
+  @Shadow @Final private Mob removerMob;
 
-    // @formatter:on
+  // @formatter:on
 
-    @Inject(
-        method = "tick",
-        cancellable = true,
-        locals = LocalCapture.CAPTURE_FAILHARD,
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"
-        )
-    )
-    public void arclight$removeBlock(
-        CallbackInfo ci,
-        Level world,
-        BlockPos pos,
-        BlockPos pos1
-    ) {
-        EntityInteractEvent event = new EntityInteractEvent(
+  @Inject(
+      method = "tick",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
+  public void arclight$removeBlock(CallbackInfo ci, Level world, BlockPos pos, BlockPos pos1) {
+    EntityInteractEvent event =
+        new EntityInteractEvent(
             ((MobEntityBridge) this.removerMob).bridge$getBukkitEntity(),
-            CraftBlock.at(world, pos1)
-        );
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            ci.cancel();
-        }
+            CraftBlock.at(world, pos1));
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      ci.cancel();
     }
+  }
 }

@@ -21,33 +21,72 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SignBlock.class)
 public abstract class SignBlockMixin {
 
-    private transient PlayerSignOpenEvent.Cause arclight$edit;
+  private transient PlayerSignOpenEvent.Cause arclight$edit;
 
-    // @formatter:on
+  // @formatter:on
 
-    // @formatter:off
-    @Shadow public abstract void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_);
+  // @formatter:off
+  @Shadow
+  public abstract void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_);
 
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SignBlock;openTextEdit(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V"))
-    private void arclight$beforeEdit(BlockState p_56278_, Level p_56279_, BlockPos p_56280_, Player p_56281_, InteractionHand p_56282_, BlockHitResult p_56283_, CallbackInfoReturnable<InteractionResult> cir) {
-        arclight$edit = PlayerSignOpenEvent.Cause.INTERACT;
+  @Inject(
+      method = "use",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/SignBlock;openTextEdit(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V"))
+  private void arclight$beforeEdit(
+      BlockState p_56278_,
+      Level p_56279_,
+      BlockPos p_56280_,
+      Player p_56281_,
+      InteractionHand p_56282_,
+      BlockHitResult p_56283_,
+      CallbackInfoReturnable<InteractionResult> cir) {
+    arclight$edit = PlayerSignOpenEvent.Cause.INTERACT;
+  }
+
+  @Inject(
+      method = "use",
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/level/block/SignBlock;openTextEdit(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V"))
+  private void arclight$afterEdit(
+      BlockState p_56278_,
+      Level p_56279_,
+      BlockPos p_56280_,
+      Player p_56281_,
+      InteractionHand p_56282_,
+      BlockHitResult p_56283_,
+      CallbackInfoReturnable<InteractionResult> cir) {
+    arclight$edit = null;
+  }
+
+  public void openTextEdit(
+      Player p_277738_,
+      SignBlockEntity p_277467_,
+      boolean p_277771_,
+      PlayerSignOpenEvent.Cause cause) {
+    arclight$edit = cause;
+    this.openTextEdit(p_277738_, p_277467_, p_277771_);
+    arclight$edit = null;
+  }
+
+  @Inject(method = "openTextEdit", cancellable = true, at = @At("HEAD"))
+  private void arclight$signEdit(
+      Player player, SignBlockEntity signBlockEntity, boolean flag, CallbackInfo ci) {
+    if (!CraftEventFactory.callPlayerSignOpenEvent(
+        player,
+        signBlockEntity,
+        flag,
+        arclight$edit != null
+            ? arclight$edit
+            : (flag ? PlayerSignOpenEvent.Cause.PLACE : PlayerSignOpenEvent.Cause.UNKNOWN))) {
+      ci.cancel();
     }
-
-    @Inject(method = "use", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/block/SignBlock;openTextEdit(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V"))
-    private void arclight$afterEdit(BlockState p_56278_, Level p_56279_, BlockPos p_56280_, Player p_56281_, InteractionHand p_56282_, BlockHitResult p_56283_, CallbackInfoReturnable<InteractionResult> cir) {
-        arclight$edit = null;
-    }
-
-    public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_, PlayerSignOpenEvent.Cause cause) {
-        arclight$edit = cause;
-        this.openTextEdit(p_277738_, p_277467_, p_277771_);
-        arclight$edit = null;
-    }
-
-    @Inject(method = "openTextEdit", cancellable = true, at = @At("HEAD"))
-    private void arclight$signEdit(Player player, SignBlockEntity signBlockEntity, boolean flag, CallbackInfo ci) {
-        if (!CraftEventFactory.callPlayerSignOpenEvent(player, signBlockEntity, flag, arclight$edit != null ? arclight$edit : (flag ? PlayerSignOpenEvent.Cause.PLACE : PlayerSignOpenEvent.Cause.UNKNOWN))) {
-            ci.cancel();
-        }
-    }
+  }
 }

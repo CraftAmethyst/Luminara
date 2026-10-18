@@ -3,11 +3,11 @@ package io.izzel.arclight.common.bridge.core.util;
 import net.minecraft.world.damagesource.DamageSource;
 
 public interface DamageSourceBridge {
-    boolean bridge$isSweep();
+  boolean bridge$isSweep();
 
-    DamageSource bridge$sweep();
+  DamageSource bridge$sweep();
 
-    DamageSource bridge$poison();
+  DamageSource bridge$poison();
 
-    DamageSource bridge$melting();
+  DamageSource bridge$melting();
 }

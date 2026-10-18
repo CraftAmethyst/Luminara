@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.entity.MobEntityBridge;
+import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -17,70 +18,59 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import java.util.UUID;
-
 @Mixin(ZombifiedPiglin.class)
 public abstract class ZombifiedPiglinMixin extends ZombieMixin {
 
-    // @formatter:off
-    @Shadow public abstract UUID getPersistentAngerTarget();
+  // @formatter:off
+  @Shadow
+  public abstract UUID getPersistentAngerTarget();
 
-    @Shadow public abstract int getRemainingPersistentAngerTime();
+  @Shadow
+  public abstract int getRemainingPersistentAngerTime();
 
-    // @formatter:on
+  // @formatter:on
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    private void alertOthers() {
-        double d0 = this.getAttributeValue(Attributes.FOLLOW_RANGE);
-        AABB axisalignedbb = AABB.unitCubeFromLowerCorner(
-            this.position()
-        ).inflate(d0, 10.0D, d0);
-        for (ZombifiedPiglin piglinEntity : this.level().getEntitiesOfClass(
-            ZombifiedPiglin.class,
-            axisalignedbb
-        )) {
-            if (piglinEntity != (Object) this) {
-                if (piglinEntity.getTarget() == null) {
-                    if (!piglinEntity.isAlliedTo(this.getTarget())) {
-                        (
-                            (MobEntityBridge) piglinEntity
-                        ).bridge$pushGoalTargetReason(
-                            EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY,
-                            true
-                        );
-                        piglinEntity.setTarget(this.getTarget());
-                    }
-                }
-            }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  private void alertOthers() {
+    double d0 = this.getAttributeValue(Attributes.FOLLOW_RANGE);
+    AABB axisalignedbb = AABB.unitCubeFromLowerCorner(this.position()).inflate(d0, 10.0D, d0);
+    for (ZombifiedPiglin piglinEntity :
+        this.level().getEntitiesOfClass(ZombifiedPiglin.class, axisalignedbb)) {
+      if (piglinEntity != (Object) this) {
+        if (piglinEntity.getTarget() == null) {
+          if (!piglinEntity.isAlliedTo(this.getTarget())) {
+            ((MobEntityBridge) piglinEntity)
+                .bridge$pushGoalTargetReason(
+                    EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true);
+            piglinEntity.setTarget(this.getTarget());
+          }
         }
+      }
     }
+  }
 
-    @ModifyArg(
-        method = "startPersistentAngerTimer",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/monster/ZombifiedPiglin;setRemainingPersistentAngerTime(I)V"
-        )
-    )
-    private int arclight$pigAngry(int time) {
-        Entity entity = ((ServerLevel) this.level()).getEntity(
-            this.getPersistentAngerTarget()
-        );
-        PigZombieAngerEvent event = new PigZombieAngerEvent(
+  @ModifyArg(
+      method = "startPersistentAngerTimer",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/monster/ZombifiedPiglin;setRemainingPersistentAngerTime(I)V"))
+  private int arclight$pigAngry(int time) {
+    Entity entity = ((ServerLevel) this.level()).getEntity(this.getPersistentAngerTarget());
+    PigZombieAngerEvent event =
+        new PigZombieAngerEvent(
             (PigZombie) this.getBukkitEntity(),
-            entity == null
-                ? null
-                : ((EntityBridge) entity).bridge$getBukkitEntity(),
-            time
-        );
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return this.getRemainingPersistentAngerTime();
-        }
-        return event.getNewAnger();
+            entity == null ? null : ((EntityBridge) entity).bridge$getBukkitEntity(),
+            time);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      return this.getRemainingPersistentAngerTime();
     }
+    return event.getNewAnger();
+  }
 }

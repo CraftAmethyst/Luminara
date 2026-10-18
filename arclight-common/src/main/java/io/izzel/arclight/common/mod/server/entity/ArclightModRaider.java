@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v.entity.CraftRaider;
 
 public class ArclightModRaider extends CraftRaider {
 
-    public ArclightModRaider(CraftServer server, Raider entity) {
-        super(server, entity);
-    }
+  public ArclightModRaider(CraftServer server, Raider entity) {
+    super(server, entity);
+  }
 }

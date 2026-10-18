@@ -14,30 +14,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ThrownTrident.class)
-public abstract class ThrownTridentMixin
-    extends AbstractArrowMixin
-    implements TridentEntityBridge {
+public abstract class ThrownTridentMixin extends AbstractArrowMixin implements TridentEntityBridge {
 
-    @Shadow
-    public ItemStack tridentItem;
+  @Shadow public ItemStack tridentItem;
 
-    @Redirect(
-        method = "onHitEntity",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
-        )
-    )
-    private boolean arclight$lightning(Level world, Entity entityIn) {
-        ((ServerWorldBridge) this.level()).bridge$strikeLightning(
-            (LightningBolt) entityIn,
-            LightningStrikeEvent.Cause.TRIDENT
-        );
-        return true;
-    }
+  @Redirect(
+      method = "onHitEntity",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private boolean arclight$lightning(Level world, Entity entityIn) {
+    ((ServerWorldBridge) this.level())
+        .bridge$strikeLightning((LightningBolt) entityIn, LightningStrikeEvent.Cause.TRIDENT);
+    return true;
+  }
 
-    @Override
-    public void bridge$setThrownStack(ItemStack itemStack) {
-        this.tridentItem = itemStack;
-    }
+  @Override
+  public void bridge$setThrownStack(ItemStack itemStack) {
+    this.tridentItem = itemStack;
+  }
 }

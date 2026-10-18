@@ -1,38 +1,36 @@
 package io.izzel.arclight.i18n;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.izzel.arclight.i18n.conf.PermissionForwarding;
+import java.io.BufferedReader;
+import java.io.StringReader;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 class ConfigMigrationTest {
 
-    private static ConfigurationNode load(String yaml) throws Exception {
-        return YAMLConfigurationLoader.builder()
-            .setSource(() -> new BufferedReader(new StringReader(yaml)))
-            .build()
-            .load();
-    }
+  private static ConfigurationNode load(String yaml) throws Exception {
+    return YAMLConfigurationLoader.builder()
+        .setSource(() -> new BufferedReader(new StringReader(yaml)))
+        .build()
+        .load();
+  }
 
-    @ParameterizedTest
-    @CsvSource({
-        "true, FORGE_TO_BUKKIT",
-        "'true', FORGE_TO_BUKKIT",
-        "reverse, BUKKIT_TO_FORGE",
-        "false, DISABLED",
-    })
-    void migratesPermissionForwardingAndRemovesUnsafeSections(
-        String legacy,
-        PermissionForwarding expected
-    ) throws Exception {
-        ConfigurationNode root = load(
+  @ParameterizedTest
+  @CsvSource({
+    "true, FORGE_TO_BUKKIT",
+    "'true', FORGE_TO_BUKKIT",
+    "reverse, BUKKIT_TO_FORGE",
+    "false, DISABLED",
+  })
+  void migratesPermissionForwardingAndRemovesUnsafeSections(
+      String legacy, PermissionForwarding expected) throws Exception {
+    ConfigurationNode root =
+        load(
             """
                 _v: 1
                 locale:
@@ -53,25 +51,18 @@ class ConfigMigrationTest {
                   forward-permission: %s
                 async-world-save:
                   enabled: true
-                """.formatted(legacy)
-        );
+                """
+                .formatted(legacy));
 
-        ConfigMigration.Result result = ConfigMigration.migrate(root);
+    ConfigMigration.Result result = ConfigMigration.migrate(root);
 
-        assertEquals(2, root.getNode("_v").getInt());
-        assertEquals(
-            expected.name(),
-            root.getNode("compatibility", "permission-forwarding").getString()
-        );
-        assertTrue(
-            root.getNode("compatibility", "forward-permission").isVirtual()
-        );
-        assertEquals(6, result.removedUnsafeSettings().size());
-        for (String path : result.removedUnsafeSettings()) {
-            assertTrue(
-                root.getNode((Object[]) path.split("\\.")).isVirtual(),
-                path
-            );
-        }
+    assertEquals(2, root.getNode("_v").getInt());
+    assertEquals(
+        expected.name(), root.getNode("compatibility", "permission-forwarding").getString());
+    assertTrue(root.getNode("compatibility", "forward-permission").isVirtual());
+    assertEquals(6, result.removedUnsafeSettings().size());
+    for (String path : result.removedUnsafeSettings()) {
+      assertTrue(root.getNode((Object[]) path.split("\\.")).isVirtual(), path);
     }
+  }
 }

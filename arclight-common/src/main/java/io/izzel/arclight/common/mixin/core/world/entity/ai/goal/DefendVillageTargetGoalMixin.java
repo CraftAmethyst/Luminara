@@ -14,15 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DefendVillageTargetGoal.class)
 public class DefendVillageTargetGoalMixin {
 
-    @Shadow
-    @Final
-    private IronGolem golem;
+  @Shadow @Final private IronGolem golem;
 
-    @Inject(method = "start", at = @At("HEAD"))
-    public void arclight$reason(CallbackInfo ci) {
-        ((MobEntityBridge) this.golem).bridge$pushGoalTargetReason(
-            EntityTargetEvent.TargetReason.DEFEND_VILLAGE,
-            true
-        );
-    }
+  @Inject(method = "start", at = @At("HEAD"))
+  public void arclight$reason(CallbackInfo ci) {
+    ((MobEntityBridge) this.golem)
+        .bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.DEFEND_VILLAGE, true);
+  }
 }

@@ -9,10 +9,8 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(Mob.class)
 public class MobMixin_Optimization {
 
-    @ModifyConstant(method = "serverAiStep", constant = @Constant(intValue = 2))
-    private int arclight$goalUpdateInterval(int orig) {
-        return ArclightConfig.spec()
-            .getOptimization()
-            .getGoalSelectorInterval();
-    }
+  @ModifyConstant(method = "serverAiStep", constant = @Constant(intValue = 2))
+  private int arclight$goalUpdateInterval(int orig) {
+    return ArclightConfig.spec().getOptimization().getGoalSelectorInterval();
+  }
 }

@@ -9,18 +9,18 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class AreaEffectCloudEntityMixin_ActivationRange
     extends EntityMixin_ActivationRange {
 
-    // @formatter:off
-    @Shadow public int waitTime;
+  // @formatter:off
+  @Shadow public int waitTime;
 
-    @Shadow private int duration;
+  @Shadow private int duration;
 
-    // @formatter:on
+  // @formatter:on
 
-    @Override
-    public void inactiveTick() {
-        super.inactiveTick();
-        if (this.tickCount >= this.waitTime + this.duration) {
-            this.discard();
-        }
+  @Override
+  public void inactiveTick() {
+    super.inactiveTick();
+    if (this.tickCount >= this.waitTime + this.duration) {
+      this.discard();
     }
+  }
 }

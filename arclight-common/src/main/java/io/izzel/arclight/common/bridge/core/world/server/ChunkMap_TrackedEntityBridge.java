@@ -5,11 +5,11 @@ import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.entity.Entity;
 
 public interface ChunkMap_TrackedEntityBridge {
-    ServerEntity bridge$getServerEntity();
+  ServerEntity bridge$getServerEntity();
 
-    Entity bridge$getEntity();
+  Entity bridge$getEntity();
 
-    SectionPos bridge$getLastSectionPos();
+  SectionPos bridge$getLastSectionPos();
 
-    void bridge$setLastSectionPos(SectionPos pos);
+  void bridge$setLastSectionPos(SectionPos pos);
 }

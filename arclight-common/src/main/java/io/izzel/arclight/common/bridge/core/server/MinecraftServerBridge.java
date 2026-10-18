@@ -6,21 +6,21 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.craftbukkit.v.CraftServer;
 
 public interface MinecraftServerBridge {
-    void bridge$setAutosavePeriod(int autosavePeriod);
+  void bridge$setAutosavePeriod(int autosavePeriod);
 
-    void bridge$setConsole(ConsoleCommandSender console);
+  void bridge$setConsole(ConsoleCommandSender console);
 
-    void bridge$setServer(CraftServer server);
+  void bridge$setServer(CraftServer server);
 
-    RemoteConsoleCommandSender bridge$getRemoteConsole();
+  RemoteConsoleCommandSender bridge$getRemoteConsole();
 
-    void bridge$setRemoteConsole(RemoteConsoleCommandSender sender);
+  void bridge$setRemoteConsole(RemoteConsoleCommandSender sender);
 
-    void bridge$queuedProcess(Runnable runnable);
+  void bridge$queuedProcess(Runnable runnable);
 
-    void bridge$drainQueuedTasks();
+  void bridge$drainQueuedTasks();
 
-    boolean bridge$hasStopped();
+  boolean bridge$hasStopped();
 
-    Commands bridge$getVanillaCommands();
+  Commands bridge$getVanillaCommands();
 }

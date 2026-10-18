@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mixin.core.server.dedicated;
 
 import io.izzel.arclight.common.mixin.core.server.MinecraftServerMixin;
 import io.izzel.arclight.common.mod.server.BukkitRegistry;
+import java.io.IOException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.ConsoleInput;
@@ -24,146 +25,121 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.IOException;
-
 @Mixin(DedicatedServer.class)
 public abstract class DedicatedServerMixin extends MinecraftServerMixin {
 
-    // @formatter:off
-    @Shadow @Final public RconConsoleSource rconConsoleSource;
+  // @formatter:off
+  @Shadow @Final public RconConsoleSource rconConsoleSource;
 
-    // @formatter:on
+  // @formatter:on
 
-    public DedicatedServerMixin(String name) {
-        super(name);
+  public DedicatedServerMixin(String name) {
+    super(name);
+  }
+
+  @Inject(
+      method = "initServer",
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/server/dedicated/DedicatedServer;setPlayerList(Lnet/minecraft/server/players/PlayerList;)V"))
+  public void arclight$loadPlugins(CallbackInfoReturnable<Boolean> cir) {
+    BukkitRegistry.unlockRegistries();
+    ((CraftServer) Bukkit.getServer()).loadPlugins();
+    ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.STARTUP);
+    BukkitRegistry.lockRegistries();
+  }
+
+  @Inject(
+      method = "initServer",
+      at =
+          @At(
+              value = "FIELD",
+              target = "Lnet/minecraft/server/dedicated/DedicatedServerProperties;enableRcon:Z"))
+  public void arclight$setRcon(CallbackInfoReturnable<Boolean> cir) {
+    this.remoteConsole = new CraftRemoteConsoleCommandSender(this.rconConsoleSource);
+  }
+
+  @Redirect(
+      method = "handleConsoleInputs",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/commands/Commands;performPrefixedCommand(Lnet/minecraft/commands/CommandSourceStack;Ljava/lang/String;)I"))
+  private int arclight$serverCommandEvent(
+      Commands commands, CommandSourceStack source, String command) {
+    if (command.isEmpty()) {
+      return 0;
     }
-
-    @Inject(
-        method = "initServer",
-        at = @At(
-            value = "INVOKE",
-            shift = At.Shift.AFTER,
-            target = "Lnet/minecraft/server/dedicated/DedicatedServer;setPlayerList(Lnet/minecraft/server/players/PlayerList;)V"
-        )
-    )
-    public void arclight$loadPlugins(CallbackInfoReturnable<Boolean> cir) {
-        BukkitRegistry.unlockRegistries();
-        ((CraftServer) Bukkit.getServer()).loadPlugins();
-        ((CraftServer) Bukkit.getServer()).enablePlugins(
-            PluginLoadOrder.STARTUP
-        );
-        BukkitRegistry.lockRegistries();
+    ServerCommandEvent event = new ServerCommandEvent(console, command);
+    Bukkit.getPluginManager().callEvent(event);
+    if (!event.isCancelled()) {
+      server.dispatchServerCommand(console, new ConsoleInput(event.getCommand(), source));
     }
+    return 0;
+  }
 
-    @Inject(
-        method = "initServer",
-        at = @At(
-            value = "FIELD",
-            target = "Lnet/minecraft/server/dedicated/DedicatedServerProperties;enableRcon:Z"
-        )
-    )
-    public void arclight$setRcon(CallbackInfoReturnable<Boolean> cir) {
-        this.remoteConsole = new CraftRemoteConsoleCommandSender(
-            this.rconConsoleSource
-        );
-    }
-
-    @Redirect(
-        method = "handleConsoleInputs",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/commands/Commands;performPrefixedCommand(Lnet/minecraft/commands/CommandSourceStack;Ljava/lang/String;)I"
-        )
-    )
-    private int arclight$serverCommandEvent(
-        Commands commands,
-        CommandSourceStack source,
-        String command
-    ) {
-        if (command.isEmpty()) {
-            return 0;
-        }
-        ServerCommandEvent event = new ServerCommandEvent(console, command);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            server.dispatchServerCommand(
-                console,
-                new ConsoleInput(event.getCommand(), source)
-            );
-        }
-        return 0;
-    }
-
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public String runCommand(String command) {
-        this.rconConsoleSource.prepareForCommand();
-        this.executeBlocking(() -> {
-            RemoteServerCommandEvent event = new RemoteServerCommandEvent(
-                remoteConsole,
-                command
-            );
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return;
-            }
-            this.server.dispatchServerCommand(
-                remoteConsole,
-                new ConsoleInput(
-                    event.getCommand(),
-                    this.rconConsoleSource.createCommandSourceStack()
-                )
-            );
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public String runCommand(String command) {
+    this.rconConsoleSource.prepareForCommand();
+    this.executeBlocking(
+        () -> {
+          RemoteServerCommandEvent event = new RemoteServerCommandEvent(remoteConsole, command);
+          Bukkit.getPluginManager().callEvent(event);
+          if (event.isCancelled()) {
+            return;
+          }
+          this.server.dispatchServerCommand(
+              remoteConsole,
+              new ConsoleInput(
+                  event.getCommand(), this.rconConsoleSource.createCommandSourceStack()));
         });
-        return this.rconConsoleSource.getCommandResponse();
+    return this.rconConsoleSource.getCommandResponse();
+  }
+
+  @Inject(method = "onServerExit", at = @At("RETURN"))
+  public void arclight$exitNow(CallbackInfo ci) {
+    try {
+      TerminalConsoleAppender.close();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+  }
 
-    @Inject(method = "onServerExit", at = @At("RETURN"))
-    public void arclight$exitNow(CallbackInfo ci) {
-        try {
-            TerminalConsoleAppender.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public String getPluginNames() {
+    StringBuilder result = new StringBuilder();
+    org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public String getPluginNames() {
-        StringBuilder result = new StringBuilder();
-        org.bukkit.plugin.Plugin[] plugins = server
-            .getPluginManager()
-            .getPlugins();
+    result.append(server.getName());
+    result.append(" on Bukkit ");
+    result.append(server.getBukkitVersion());
 
-        result.append(server.getName());
-        result.append(" on Bukkit ");
-        result.append(server.getBukkitVersion());
+    if (plugins.length > 0 && server.getQueryPlugins()) {
+      result.append(": ");
 
-        if (plugins.length > 0 && server.getQueryPlugins()) {
-            result.append(": ");
-
-            for (int i = 0; i < plugins.length; i++) {
-                if (i > 0) {
-                    result.append("; ");
-                }
-
-                result.append(plugins[i].getDescription().getName());
-                result.append(" ");
-                result.append(
-                    plugins[i]
-                        .getDescription()
-                        .getVersion()
-                        .replaceAll(";", ",")
-                );
-            }
+      for (int i = 0; i < plugins.length; i++) {
+        if (i > 0) {
+          result.append("; ");
         }
 
-        return result.toString();
+        result.append(plugins[i].getDescription().getName());
+        result.append(" ");
+        result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
+      }
     }
+
+    return result.toString();
+  }
 }

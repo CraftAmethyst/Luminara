@@ -6,19 +6,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin_Optimize
-    implements ServerPlayerEntityBridge {
+public abstract class ServerPlayerMixin_Optimize implements ServerPlayerEntityBridge {
 
-    @Unique
-    private boolean trackerDirty;
+  @Unique private boolean trackerDirty;
 
-    @Override
-    public boolean bridge$isTrackerDirty() {
-        return this.trackerDirty;
-    }
+  @Override
+  public boolean bridge$isTrackerDirty() {
+    return this.trackerDirty;
+  }
 
-    @Override
-    public void bridge$setTrackerDirty(boolean flag) {
-        this.trackerDirty = flag;
-    }
+  @Override
+  public void bridge$setTrackerDirty(boolean flag) {
+    this.trackerDirty = flag;
+  }
 }

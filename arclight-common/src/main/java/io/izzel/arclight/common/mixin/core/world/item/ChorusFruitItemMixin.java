@@ -27,111 +27,74 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(ChorusFruitItem.class)
 public class ChorusFruitItemMixin extends Item {
 
-    public ChorusFruitItemMixin(Properties properties) {
-        super(properties);
-    }
+  public ChorusFruitItemMixin(Properties properties) {
+    super(properties);
+  }
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public @NotNull ItemStack finishUsingItem(
-        @NotNull ItemStack stack,
-        @NotNull Level worldIn,
-        @NotNull LivingEntity entityLiving
-    ) {
-        ItemStack itemstack = super.finishUsingItem(
-            stack,
-            worldIn,
-            entityLiving
-        );
-        if (!worldIn.isClientSide) {
-            double d0 = entityLiving.getX();
-            double d1 = entityLiving.getY();
-            double d2 = entityLiving.getZ();
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public @NotNull ItemStack finishUsingItem(
+      @NotNull ItemStack stack, @NotNull Level worldIn, @NotNull LivingEntity entityLiving) {
+    ItemStack itemstack = super.finishUsingItem(stack, worldIn, entityLiving);
+    if (!worldIn.isClientSide) {
+      double d0 = entityLiving.getX();
+      double d1 = entityLiving.getY();
+      double d2 = entityLiving.getZ();
 
-            for (int i = 0; i < 16; ++i) {
-                double d3 =
-                    entityLiving.getX() +
-                        (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
-                double d4 = Mth.clamp(
-                    entityLiving.getY() +
-                        (double) (entityLiving.getRandom().nextInt(16) - 8),
-                    0.0D,
-                    worldIn.getHeight() - 1
-                );
-                double d5 =
-                    entityLiving.getZ() +
-                        (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
+      for (int i = 0; i < 16; ++i) {
+        double d3 = entityLiving.getX() + (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
+        double d4 =
+            Mth.clamp(
+                entityLiving.getY() + (double) (entityLiving.getRandom().nextInt(16) - 8),
+                0.0D,
+                worldIn.getHeight() - 1);
+        double d5 = entityLiving.getZ() + (entityLiving.getRandom().nextDouble() - 0.5D) * 16.0D;
 
-                if (
-                    entityLiving instanceof ServerPlayer &&
-                        DistValidate.isValid(worldIn)
-                ) {
-                    Player player = (
-                        (ServerPlayerEntityBridge) entityLiving
-                    ).bridge$getBukkitEntity();
-                    PlayerTeleportEvent event = new PlayerTeleportEvent(
-                        player,
-                        player.getLocation(),
-                        new Location(player.getWorld(), d3, d4, d5),
-                        PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT
-                    );
-                    Bukkit.getPluginManager().callEvent(event);
-                    if (event.isCancelled()) {
-                        break;
-                    }
-                    d3 = event.getTo().getX();
-                    d4 = event.getTo().getY();
-                    d5 = event.getTo().getZ();
-                }
-
-                if (entityLiving.isPassenger()) {
-                    entityLiving.stopRiding();
-                }
-                Vec3 vec3d = entityLiving.position();
-                var event = ForgeEventFactory.onChorusFruitTeleport(
-                    entityLiving,
-                    d3,
-                    d4,
-                    d5
-                );
-                if (event.isCanceled()) return itemstack;
-                if (entityLiving.randomTeleport(d3, d4, d5, true)) {
-                    worldIn.gameEvent(
-                        GameEvent.TELEPORT,
-                        vec3d,
-                        GameEvent.Context.of(entityLiving)
-                    );
-                    SoundEvent soundevent =
-                        entityLiving instanceof Fox
-                            ? SoundEvents.FOX_TELEPORT
-                            : SoundEvents.CHORUS_FRUIT_TELEPORT;
-                    worldIn.playSound(
-                        null,
-                        d0,
-                        d1,
-                        d2,
-                        soundevent,
-                        SoundSource.PLAYERS,
-                        1.0F,
-                        1.0F
-                    );
-                    entityLiving.playSound(soundevent, 1.0F, 1.0F);
-                    break;
-                }
-            }
-
-            if (
-                entityLiving instanceof net.minecraft.world.entity.player.Player
-            ) {
-                ((net.minecraft.world.entity.player.Player) entityLiving)
-                    .getCooldowns()
-                    .addCooldown(this, 20);
-            }
+        if (entityLiving instanceof ServerPlayer && DistValidate.isValid(worldIn)) {
+          Player player = ((ServerPlayerEntityBridge) entityLiving).bridge$getBukkitEntity();
+          PlayerTeleportEvent event =
+              new PlayerTeleportEvent(
+                  player,
+                  player.getLocation(),
+                  new Location(player.getWorld(), d3, d4, d5),
+                  PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
+          Bukkit.getPluginManager().callEvent(event);
+          if (event.isCancelled()) {
+            break;
+          }
+          d3 = event.getTo().getX();
+          d4 = event.getTo().getY();
+          d5 = event.getTo().getZ();
         }
 
-        return itemstack;
+        if (entityLiving.isPassenger()) {
+          entityLiving.stopRiding();
+        }
+        Vec3 vec3d = entityLiving.position();
+        var event = ForgeEventFactory.onChorusFruitTeleport(entityLiving, d3, d4, d5);
+        if (event.isCanceled()) return itemstack;
+        if (entityLiving.randomTeleport(d3, d4, d5, true)) {
+          worldIn.gameEvent(GameEvent.TELEPORT, vec3d, GameEvent.Context.of(entityLiving));
+          SoundEvent soundevent =
+              entityLiving instanceof Fox
+                  ? SoundEvents.FOX_TELEPORT
+                  : SoundEvents.CHORUS_FRUIT_TELEPORT;
+          worldIn.playSound(null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+          entityLiving.playSound(soundevent, 1.0F, 1.0F);
+          break;
+        }
+      }
+
+      if (entityLiving instanceof net.minecraft.world.entity.player.Player) {
+        ((net.minecraft.world.entity.player.Player) entityLiving)
+            .getCooldowns()
+            .addCooldown(this, 20);
+      }
     }
+
+    return itemstack;
+  }
 }

@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.entity.EntityType.class, remap = false)
 public class EntityTypeEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.entity.EntityType[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.entity.EntityType[] ENUM$VALUES;
 }

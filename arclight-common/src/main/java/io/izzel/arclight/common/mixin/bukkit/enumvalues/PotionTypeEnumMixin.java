@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.potion.PotionType.class, remap = false)
 public class PotionTypeEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.potion.PotionType[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.potion.PotionType[] ENUM$VALUES;
 }

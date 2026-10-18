@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v.entity.CraftMinecart;
 
 public class ArclightModMinecart extends CraftMinecart {
 
-    public ArclightModMinecart(CraftServer server, AbstractMinecart entity) {
-        super(server, entity);
-    }
+  public ArclightModMinecart(CraftServer server, AbstractMinecart entity) {
+    super(server, entity);
+  }
 }

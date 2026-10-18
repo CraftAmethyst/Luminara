@@ -17,42 +17,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SculkCatalystBlockEntity.class)
 public abstract class SculkCatalystBlockEntityMixin extends BlockEntityMixin {
 
-    @Shadow
-    @Final
-    private SculkCatalystBlockEntity.CatalystListener catalystListener;
+  @Shadow @Final private SculkCatalystBlockEntity.CatalystListener catalystListener;
 
-    @Inject(method = "serverTick", at = @At("HEAD"))
-    private static void arclight$overrideSource(
-        Level p_222780_,
-        BlockPos p_222781_,
-        BlockState p_222782_,
-        SculkCatalystBlockEntity blockEntity,
-        CallbackInfo ci
-    ) {
-        CraftEventFactory.sourceBlockOverride = blockEntity.getBlockPos();
-    }
+  @Inject(method = "serverTick", at = @At("HEAD"))
+  private static void arclight$overrideSource(
+      Level p_222780_,
+      BlockPos p_222781_,
+      BlockState p_222782_,
+      SculkCatalystBlockEntity blockEntity,
+      CallbackInfo ci) {
+    CraftEventFactory.sourceBlockOverride = blockEntity.getBlockPos();
+  }
 
-    @Inject(method = "serverTick", at = @At("RETURN"))
-    private static void arclight$resetSource(
-        Level p_222780_,
-        BlockPos p_222781_,
-        BlockState p_222782_,
-        SculkCatalystBlockEntity blockEntity,
-        CallbackInfo ci
-    ) {
-        CraftEventFactory.sourceBlockOverride = null;
-    }
+  @Inject(method = "serverTick", at = @At("RETURN"))
+  private static void arclight$resetSource(
+      Level p_222780_,
+      BlockPos p_222781_,
+      BlockState p_222782_,
+      SculkCatalystBlockEntity blockEntity,
+      CallbackInfo ci) {
+    CraftEventFactory.sourceBlockOverride = null;
+  }
 
-    @Override
-    public void setLevel(Level p_155231_) {
-        super.setLevel(p_155231_);
-        ((SculkCatalystListenerBridge) this.catalystListener).bridge$setLevel(
-            p_155231_
-        );
-    }
+  @Override
+  public void setLevel(Level p_155231_) {
+    super.setLevel(p_155231_);
+    ((SculkCatalystListenerBridge) this.catalystListener).bridge$setLevel(p_155231_);
+  }
 
-    @Inject(method = "load", at = @At("HEAD"))
-    private void arclight$load(CompoundTag p_277597_, CallbackInfo ci) {
-        super.load(p_277597_);
-    }
+  @Inject(method = "load", at = @At("HEAD"))
+  private void arclight$load(CompoundTag p_277597_, CallbackInfo ci) {
+    super.load(p_277597_);
+  }
 }

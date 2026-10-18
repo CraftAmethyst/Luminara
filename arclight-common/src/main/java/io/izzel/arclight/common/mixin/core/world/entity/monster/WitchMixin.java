@@ -11,14 +11,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Witch.class)
 public abstract class WitchMixin extends RaiderMixin {
 
-    @Inject(
-        method = "aiStep",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/monster/Witch;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"
-        )
-    )
-    private void arclight$reason(CallbackInfo ci) {
-        bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
-    }
+  @Inject(
+      method = "aiStep",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/monster/Witch;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
+  private void arclight$reason(CallbackInfo ci) {
+    bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
+  }
 }

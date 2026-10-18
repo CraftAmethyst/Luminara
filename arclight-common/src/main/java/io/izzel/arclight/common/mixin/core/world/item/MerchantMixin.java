@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Merchant.class)
 public interface MerchantMixin extends IMerchantBridge {
-    default CraftMerchant getCraftMerchant() {
-        return bridge$getCraftMerchant();
-    }
+  default CraftMerchant getCraftMerchant() {
+    return bridge$getCraftMerchant();
+  }
 }

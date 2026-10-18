@@ -9,6 +9,8 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
 import io.izzel.arclight.common.mod.compat.CommandNodeHooks;
 import io.izzel.arclight.common.mod.util.BukkitDispatcher;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -23,121 +25,105 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.LinkedHashSet;
-import java.util.Map;
-
 @Mixin(Commands.class)
 public abstract class CommandsMixin {
 
-    @Mutable
-    @Shadow
-    @Final
-    private CommandDispatcher<CommandSourceStack> dispatcher;
+  @Mutable @Shadow @Final private CommandDispatcher<CommandSourceStack> dispatcher;
 
-    // @formatter:off
-    @Shadow public abstract int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_);
+  // @formatter:off
+  @Shadow
+  public abstract int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_);
 
-    @Shadow public abstract int performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_);
+  @Shadow
+  public abstract int performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_);
 
-    @Shadow protected abstract void fillUsableCommands(CommandNode<CommandSourceStack> rootCommandSource, CommandNode<SharedSuggestionProvider> rootSuggestion, CommandSourceStack source, Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> commandNodeToSuggestionNode);
+  @Shadow
+  protected abstract void fillUsableCommands(
+      CommandNode<CommandSourceStack> rootCommandSource,
+      CommandNode<SharedSuggestionProvider> rootSuggestion,
+      CommandSourceStack source,
+      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>>
+          commandNodeToSuggestionNode);
 
-    // @formatter:on
+  // @formatter:on
 
-    public void arclight$constructor() {
-        this.dispatcher = new BukkitDispatcher((Commands) (Object) this);
-        this.dispatcher.setConsumer((context, b, i) ->
-            context.getSource().onCommandComplete(context, b, i)
-        );
+  public void arclight$constructor() {
+    this.dispatcher = new BukkitDispatcher((Commands) (Object) this);
+    this.dispatcher.setConsumer(
+        (context, b, i) -> context.getSource().onCommandComplete(context, b, i));
+  }
+
+  public int performPrefixedCommand(CommandSourceStack commandSourceStack, String s, String label) {
+    return this.performPrefixedCommand(commandSourceStack, s);
+  }
+
+  public int performCommand(ParseResults<CommandSourceStack> parseResults, String s, String label) {
+    return this.performCommand(parseResults, s);
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public void sendCommands(ServerPlayer player) {
+    if (SpigotConfig.tabComplete < 0) return;
+    Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map =
+        Maps.newIdentityHashMap();
+
+    RootCommandNode<SharedSuggestionProvider> vanillaRoot = new RootCommandNode<>();
+    Commands vanillaCommands = ((MinecraftServerBridge) player.server).bridge$getVanillaCommands();
+    map.put(vanillaCommands.getDispatcher().getRoot(), vanillaRoot);
+    // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue
+    // #7551
+    CommandHelper.mergeCommandNode(
+        vanillaCommands.getDispatcher().getRoot(),
+        vanillaRoot,
+        map,
+        player.createCommandSourceStack(),
+        ctx -> 0,
+        suggest ->
+            SuggestionProviders.safelySwap(
+                (com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>)
+                    (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
+
+    RootCommandNode<SharedSuggestionProvider> node = new RootCommandNode<>();
+    map.put(this.dispatcher.getRoot(), node);
+    CommandHelper.mergeCommandNode(
+        this.dispatcher.getRoot(),
+        node,
+        map,
+        player.createCommandSourceStack(),
+        ctx -> 0,
+        suggest ->
+            SuggestionProviders.safelySwap(
+                (com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>)
+                    (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
+
+    LinkedHashSet<String> set = new LinkedHashSet<>();
+    for (CommandNode<SharedSuggestionProvider> child : node.getChildren()) {
+      set.add(child.getName());
     }
-
-    public int performPrefixedCommand(
-        CommandSourceStack commandSourceStack,
-        String s,
-        String label
-    ) {
-        return this.performPrefixedCommand(commandSourceStack, s);
+    PlayerCommandSendEvent event =
+        new PlayerCommandSendEvent(
+            ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity(), new LinkedHashSet<>(set));
+    Bukkit.getPluginManager().callEvent(event);
+    for (String s : set) {
+      if (!event.getCommands().contains(s)) {
+        CommandNodeHooks.removeCommand(node, s);
+      }
     }
+    player.connection.send(new ClientboundCommandsPacket(node));
+  }
 
-    public int performCommand(
-        ParseResults<CommandSourceStack> parseResults,
-        String s,
-        String label
-    ) {
-        return this.performCommand(parseResults, s);
-    }
-
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public void sendCommands(ServerPlayer player) {
-        if (SpigotConfig.tabComplete < 0) return;
-        Map<
-            CommandNode<CommandSourceStack>,
-            CommandNode<SharedSuggestionProvider>
-            > map = Maps.newIdentityHashMap();
-
-        RootCommandNode<SharedSuggestionProvider> vanillaRoot =
-            new RootCommandNode<>();
-        Commands vanillaCommands = (
-            (MinecraftServerBridge) player.server
-        ).bridge$getVanillaCommands();
-        map.put(vanillaCommands.getDispatcher().getRoot(), vanillaRoot);
-        // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
-        CommandHelper.mergeCommandNode(
-            vanillaCommands.getDispatcher().getRoot(),
-            vanillaRoot,
-            map,
-            player.createCommandSourceStack(),
-            ctx -> 0,
-            suggest ->
-                SuggestionProviders.safelySwap(
-                    (com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest
-                )
-        );
-
-        RootCommandNode<SharedSuggestionProvider> node =
-            new RootCommandNode<>();
-        map.put(this.dispatcher.getRoot(), node);
-        CommandHelper.mergeCommandNode(
-            this.dispatcher.getRoot(),
-            node,
-            map,
-            player.createCommandSourceStack(),
-            ctx -> 0,
-            suggest ->
-                SuggestionProviders.safelySwap(
-                    (com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest
-                )
-        );
-
-        LinkedHashSet<String> set = new LinkedHashSet<>();
-        for (CommandNode<SharedSuggestionProvider> child : node.getChildren()) {
-            set.add(child.getName());
-        }
-        PlayerCommandSendEvent event = new PlayerCommandSendEvent(
-            ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity(),
-            new LinkedHashSet<>(set)
-        );
-        Bukkit.getPluginManager().callEvent(event);
-        for (String s : set) {
-            if (!event.getCommands().contains(s)) {
-                CommandNodeHooks.removeCommand(node, s);
-            }
-        }
-        player.connection.send(new ClientboundCommandsPacket(node));
-    }
-
-    @Redirect(
-        method = "fillUsableCommands",
-        at = @At(
-            value = "INVOKE",
-            remap = false,
-            target = "Lcom/mojang/brigadier/tree/CommandNode;canUse(Ljava/lang/Object;)Z"
-        )
-    )
-    private <S> boolean arclight$canUse(CommandNode<S> commandNode, S source) {
-        return CommandNodeHooks.canUse(commandNode, source);
-    }
+  @Redirect(
+      method = "fillUsableCommands",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target = "Lcom/mojang/brigadier/tree/CommandNode;canUse(Ljava/lang/Object;)Z"))
+  private <S> boolean arclight$canUse(CommandNode<S> commandNode, S source) {
+    return CommandNodeHooks.canUse(commandNode, source);
+  }
 }

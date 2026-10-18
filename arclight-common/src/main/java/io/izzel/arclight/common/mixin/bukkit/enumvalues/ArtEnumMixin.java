@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.Art.class, remap = false)
 public class ArtEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.Art[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.Art[] ENUM$VALUES;
 }

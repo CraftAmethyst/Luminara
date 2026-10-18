@@ -17,50 +17,43 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MerchantMenu.class)
-public abstract class MerchantContainerMixin
-    extends AbstractContainerMenuMixin {
+public abstract class MerchantContainerMixin extends AbstractContainerMenuMixin {
 
-    // @formatter:off
-    @Shadow @Final private Merchant trader;
+  // @formatter:off
+  @Shadow @Final private Merchant trader;
 
-    @Shadow @Final private MerchantContainer tradeContainer;
+  @Shadow @Final private MerchantContainer tradeContainer;
 
-    // @formatter:on
+  // @formatter:on
 
-    private CraftInventoryView bukkitEntity = null;
-    private Inventory playerInventory;
+  private CraftInventoryView bukkitEntity = null;
+  private Inventory playerInventory;
 
-    @Inject(
-        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/item/trading/Merchant;)V",
-        at = @At("RETURN")
-    )
-    public void arclight$init(
-        int id,
-        Inventory playerInventoryIn,
-        Merchant merchantIn,
-        CallbackInfo ci
-    ) {
-        this.playerInventory = playerInventoryIn;
+  @Inject(
+      method =
+          "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/item/trading/Merchant;)V",
+      at = @At("RETURN"))
+  public void arclight$init(
+      int id, Inventory playerInventoryIn, Merchant merchantIn, CallbackInfo ci) {
+    this.playerInventory = playerInventoryIn;
+  }
+
+  @Inject(method = "playTradeSound", cancellable = true, at = @At("HEAD"))
+  public void arclight$returnIfFail(CallbackInfo ci) {
+    if (!(this.trader instanceof Entity)) {
+      ci.cancel();
     }
+  }
 
-    @Inject(method = "playTradeSound", cancellable = true, at = @At("HEAD"))
-    public void arclight$returnIfFail(CallbackInfo ci) {
-        if (!(this.trader instanceof Entity)) {
-            ci.cancel();
-        }
+  @Override
+  public CraftInventoryView getBukkitView() {
+    if (bukkitEntity == null) {
+      bukkitEntity =
+          new CraftInventoryView(
+              ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+              new CraftInventoryMerchant(this.trader, this.tradeContainer),
+              (AbstractContainerMenu) (Object) this);
     }
-
-    @Override
-    public CraftInventoryView getBukkitView() {
-        if (bukkitEntity == null) {
-            bukkitEntity = new CraftInventoryView(
-                (
-                    (PlayerEntityBridge) this.playerInventory.player
-                ).bridge$getBukkitEntity(),
-                new CraftInventoryMerchant(this.trader, this.tradeContainer),
-                (AbstractContainerMenu) (Object) this
-            );
-        }
-        return bukkitEntity;
-    }
+    return bukkitEntity;
+  }
 }

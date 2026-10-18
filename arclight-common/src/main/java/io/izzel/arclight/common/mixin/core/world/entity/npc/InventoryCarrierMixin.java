@@ -13,51 +13,40 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(InventoryCarrier.class)
 public interface InventoryCarrierMixin {
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    static void pickUpItem(
-        Mob mob,
-        InventoryCarrier carrier,
-        ItemEntity itemEntity
-    ) {
-        ItemStack itemstack = itemEntity.getItem();
-        if (mob.wantsToPickUp(itemstack)) {
-            SimpleContainer simplecontainer = carrier.getInventory();
-            boolean flag = simplecontainer.canAddItem(itemstack);
-            if (!flag) {
-                return;
-            }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  static void pickUpItem(Mob mob, InventoryCarrier carrier, ItemEntity itemEntity) {
+    ItemStack itemstack = itemEntity.getItem();
+    if (mob.wantsToPickUp(itemstack)) {
+      SimpleContainer simplecontainer = carrier.getInventory();
+      boolean flag = simplecontainer.canAddItem(itemstack);
+      if (!flag) {
+        return;
+      }
 
-            var remaining = ArclightContainer.copyOf(
-                carrier.getInventory()
-            ).addItem(itemstack);
-            if (
-                CraftEventFactory.callEntityPickupItemEvent(
-                    mob,
-                    itemEntity,
-                    remaining.getCount(),
-                    false
-                ).isCancelled()
-            ) {
-                return;
-            }
-            mob.onItemPickup(itemEntity);
-            int i = itemstack.getCount();
-            ItemStack itemstack1 = simplecontainer.addItem(itemstack);
-            mob.take(itemEntity, i - itemstack1.getCount());
-            if (itemstack1.isEmpty()) {
-                itemEntity.discard();
-            } else {
-                itemstack.setCount(itemstack1.getCount());
-            }
-        }
+      var remaining = ArclightContainer.copyOf(carrier.getInventory()).addItem(itemstack);
+      if (CraftEventFactory.callEntityPickupItemEvent(mob, itemEntity, remaining.getCount(), false)
+          .isCancelled()) {
+        return;
+      }
+      mob.onItemPickup(itemEntity);
+      int i = itemstack.getCount();
+      ItemStack itemstack1 = simplecontainer.addItem(itemstack);
+      mob.take(itemEntity, i - itemstack1.getCount());
+      if (itemstack1.isEmpty()) {
+        itemEntity.discard();
+      } else {
+        itemstack.setCount(itemstack1.getCount());
+      }
     }
+  }
 
-    // @formatter:on
+  // @formatter:on
 
-    // @formatter:off
-    @Shadow SimpleContainer getInventory();
+  // @formatter:off
+  @Shadow
+  SimpleContainer getInventory();
 }

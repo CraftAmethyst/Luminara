@@ -4,13 +4,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 
 public interface ExplosionBridge {
-    Entity bridge$getExploder();
+  Entity bridge$getExploder();
 
-    float bridge$getSize();
+  float bridge$getSize();
 
-    void bridge$setSize(float size);
+  void bridge$setSize(float size);
 
-    Explosion.BlockInteraction bridge$getMode();
+  Explosion.BlockInteraction bridge$getMode();
 
-    boolean bridge$wasCancelled();
+  boolean bridge$wasCancelled();
 }

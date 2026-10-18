@@ -5,13 +5,13 @@ import net.minecraft.commands.CommandSource;
 import org.bukkit.command.CommandSender;
 
 public interface CommandSourceBridge {
-    void bridge$setSource(CommandSource source);
+  void bridge$setSource(CommandSource source);
 
-    CommandNode<?> bridge$getCurrentCommand();
+  CommandNode<?> bridge$getCurrentCommand();
 
-    void bridge$setCurrentCommand(CommandNode<?> node);
+  void bridge$setCurrentCommand(CommandNode<?> node);
 
-    boolean bridge$hasPermission(int i, String bukkitPermission);
+  boolean bridge$hasPermission(int i, String bukkitPermission);
 
-    CommandSender bridge$getBukkitSender();
+  CommandSender bridge$getBukkitSender();
 }

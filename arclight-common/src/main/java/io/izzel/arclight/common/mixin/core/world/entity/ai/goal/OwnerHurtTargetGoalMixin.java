@@ -11,11 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(OwnerHurtTargetGoal.class)
 public class OwnerHurtTargetGoalMixin extends TargetGoalMixin {
 
-    @Inject(method = "start", at = @At("HEAD"))
-    public void arclight$reason(CallbackInfo ci) {
-        ((MobEntityBridge) this.mob).bridge$pushGoalTargetReason(
-            EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET,
-            true
-        );
-    }
+  @Inject(method = "start", at = @At("HEAD"))
+  public void arclight$reason(CallbackInfo ci) {
+    ((MobEntityBridge) this.mob)
+        .bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true);
+  }
 }

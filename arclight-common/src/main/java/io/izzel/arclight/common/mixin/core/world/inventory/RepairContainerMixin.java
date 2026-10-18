@@ -22,78 +22,74 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AnvilMenu.class)
 public abstract class RepairContainerMixin extends ItemCombinerMixin {
 
-    // @formatter:off
-    @Shadow @Final public DataSlot cost;
+  // @formatter:off
+  @Shadow @Final public DataSlot cost;
 
-    @Shadow public int repairItemCountCost;
+  @Shadow public int repairItemCountCost;
 
-    @Shadow public String itemName;
+  @Shadow public String itemName;
 
-    public int cancelThisBySettingCostToMaximum = 40;
-    // @formatter:on
-    public int maximumRenameCostThreshold = 40;
-    public int maximumAllowedRenameCost = 39;
-    public int maximumRepairCost = 40;
-    private CraftInventoryView bukkitEntity;
+  public int cancelThisBySettingCostToMaximum = 40;
+  // @formatter:on
+  public int maximumRenameCostThreshold = 40;
+  public int maximumAllowedRenameCost = 39;
+  public int maximumRepairCost = 40;
+  private CraftInventoryView bukkitEntity;
 
-    @Shadow
-    public static int calculateIncreasedRepairCost(int oldRepairCost) {
-        return 0;
+  @Shadow
+  public static int calculateIncreasedRepairCost(int oldRepairCost) {
+    return 0;
+  }
+
+  // Below overwrite is removed to support injecting into createResult()
+  // See #1636
+  /*
+   * @author IzzelAliz
+   * @reason
+   */
+  // @Overwrite
+  // public void createResult()
+
+  @Redirect(
+      method = "createResult",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
+  private void arclight$callInventoryEvent(
+      ResultContainer instance, int slot, ItemStack itemStack) {
+    // The slot id is useless for DataSlot
+    CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemStack);
+  }
+
+  @Inject(
+      method = "createResult",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/inventory/AnvilMenu;broadcastChanges()V"))
+  private void arclight$sendData(CallbackInfo ci) {
+    sendAllDataToRemote();
+  }
+
+  @Override
+  public CraftInventoryView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    // Below overwrite is removed to support injecting into createResult()
-    // See #1636
-    /*
-     * @author IzzelAliz
-     * @reason
-     */
-    //@Overwrite
-    //public void createResult()
-
-    @Redirect(
-        method = "createResult",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"
-        )
-    )
-    private void arclight$callInventoryEvent(
-        ResultContainer instance,
-        int slot,
-        ItemStack itemStack
-    ) {
-        //The slot id is useless for DataSlot
-        CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemStack);
-    }
-
-    @Inject(
-        method = "createResult",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/inventory/AnvilMenu;broadcastChanges()V"
-        )
-    )
-    private void arclight$sendData(CallbackInfo ci) {
-        sendAllDataToRemote();
-    }
-
-    @Override
-    public CraftInventoryView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventory inventory = new CraftInventoryAnvil(
+    CraftInventory inventory =
+        new CraftInventoryAnvil(
             ((IWorldPosCallableBridge) this.access).bridge$getLocation(),
             this.inputSlots,
             this.resultSlots,
-            (AnvilMenu) (Object) this
-        );
-        bukkitEntity = new CraftInventoryView(
+            (AnvilMenu) (Object) this);
+    bukkitEntity =
+        new CraftInventoryView(
             ((PlayerEntityBridge) this.player).bridge$getBukkitEntity(),
             inventory,
-            (AbstractContainerMenu) (Object) this
-        );
-        return bukkitEntity;
-    }
+            (AbstractContainerMenu) (Object) this);
+    return bukkitEntity;
+  }
 }

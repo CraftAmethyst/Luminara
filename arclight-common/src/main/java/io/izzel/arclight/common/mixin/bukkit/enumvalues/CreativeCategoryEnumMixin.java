@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.inventory.CreativeCategory.class, remap = false)
 public class CreativeCategoryEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.inventory.CreativeCategory[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.inventory.CreativeCategory[] ENUM$VALUES;
 }

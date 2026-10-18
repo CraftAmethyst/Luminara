@@ -5,16 +5,14 @@ import net.minecraftforge.common.MinecraftForge;
 
 public abstract class ArclightEventDispatcherRegistry {
 
-    public static void registerAllEventDispatchers() {
-        MinecraftForge.EVENT_BUS.register(new BlockBreakEventDispatcher());
-        MinecraftForge.EVENT_BUS.register(new BlockPlaceEventDispatcher());
-        MinecraftForge.EVENT_BUS.register(
-            new EntityPotionEffectEventDispatcher()
-        );
-        MinecraftForge.EVENT_BUS.register(new EntityEventDispatcher());
-        MinecraftForge.EVENT_BUS.register(new EntityTeleportEventDispatcher());
-        MinecraftForge.EVENT_BUS.register(new ItemEntityEventDispatcher());
-        MinecraftForge.EVENT_BUS.register(new WorldEventDispatcher());
-        ArclightMod.LOGGER.info("registry.forge-event");
-    }
+  public static void registerAllEventDispatchers() {
+    MinecraftForge.EVENT_BUS.register(new BlockBreakEventDispatcher());
+    MinecraftForge.EVENT_BUS.register(new BlockPlaceEventDispatcher());
+    MinecraftForge.EVENT_BUS.register(new EntityPotionEffectEventDispatcher());
+    MinecraftForge.EVENT_BUS.register(new EntityEventDispatcher());
+    MinecraftForge.EVENT_BUS.register(new EntityTeleportEventDispatcher());
+    MinecraftForge.EVENT_BUS.register(new ItemEntityEventDispatcher());
+    MinecraftForge.EVENT_BUS.register(new WorldEventDispatcher());
+    ArclightMod.LOGGER.info("registry.forge-event");
+  }
 }

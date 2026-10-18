@@ -14,71 +14,70 @@ import org.jetbrains.annotations.Nullable;
 @ApiStatus.Experimental
 public class AsyncChatDecorateEvent extends ServerEvent implements Cancellable {
 
-    private static final HandlerList HANDLER_LIST = new HandlerList();
+  private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final Player player;
-    private final Component originalMessage;
-    private Component result;
-    private boolean cancelled;
+  private final Player player;
+  private final Component originalMessage;
+  private Component result;
+  private boolean cancelled;
 
-    @ApiStatus.Internal
-    public AsyncChatDecorateEvent(
-        final boolean async,
-        final @Nullable Player player,
-        final @NotNull Component originalMessage,
-        final @NotNull Component result
-    ) {
-        super(async);
-        this.player = player;
-        this.originalMessage = originalMessage;
-        this.result = result;
-    }
+  @ApiStatus.Internal
+  public AsyncChatDecorateEvent(
+      final boolean async,
+      final @Nullable Player player,
+      final @NotNull Component originalMessage,
+      final @NotNull Component result) {
+    super(async);
+    this.player = player;
+    this.originalMessage = originalMessage;
+    this.result = result;
+  }
 
-    public static @NotNull HandlerList getHandlerList() {
-        return HANDLER_LIST;
-    }
+  public static @NotNull HandlerList getHandlerList() {
+    return HANDLER_LIST;
+  }
 
-    // Get player (may be null for commands)
-    public @Nullable Player player() {
-        return this.player;
-    }
+  // Get player (may be null for commands)
+  public @Nullable Player player() {
+    return this.player;
+  }
 
-    // Get original message
-    public @NotNull Component originalMessage() {
-        return this.originalMessage;
-    }
+  // Get original message
+  public @NotNull Component originalMessage() {
+    return this.originalMessage;
+  }
 
-    // Get decoration result
-    public @NotNull Component result() {
-        return this.result;
-    }
+  // Get decoration result
+  public @NotNull Component result() {
+    return this.result;
+  }
 
-    // Set decoration result
-    public void result(@NotNull Component result) {
-        this.result = result;
-    }
+  // Set decoration result
+  public void result(@NotNull Component result) {
+    this.result = result;
+  }
 
-    // Check if part of preview (deprecated)
-    @Deprecated(forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "1.21")
-    @Contract(value = "-> false", pure = true)
-    public boolean isPreview() {
-        return false;
-    }
+  // Check if part of preview (deprecated)
+  @Deprecated(forRemoval = true)
+  @ApiStatus.ScheduledForRemoval(inVersion = "1.21")
+  @Contract(value = "-> false", pure = true)
+  public boolean isPreview() {
+    return false;
+  }
 
-    @Override
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
+  @Override
+  public boolean isCancelled() {
+    return this.cancelled;
+  }
 
-    // Cancel decoration (result equals original)
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
-    }
+  // Cancel decoration (result equals original)
+  @Override
+  public void setCancelled(boolean cancel) {
+    this.cancelled = cancel;
+  }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return HANDLER_LIST;
-    }
+  @Override
+  public @NotNull HandlerList getHandlers() {
+    return HANDLER_LIST;
+  }
 }

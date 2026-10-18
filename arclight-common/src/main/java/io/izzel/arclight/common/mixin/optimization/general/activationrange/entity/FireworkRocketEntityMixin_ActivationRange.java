@@ -10,28 +10,25 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class FireworkRocketEntityMixin_ActivationRange
     extends EntityMixin_ActivationRange {
 
-    @Shadow
-    public int lifetime;
+  @Shadow public int lifetime;
 
-    // @formatter:off
-    @Shadow private int life;
+  // @formatter:off
+  @Shadow private int life;
 
-    @Shadow protected abstract void explode();
+  @Shadow
+  protected abstract void explode();
 
-    // @formatter:on
+  // @formatter:on
 
-    @Override
-    public void inactiveTick() {
-        super.inactiveTick();
-        ++this.life;
-        if (!this.level().isClientSide && this.life > this.lifetime) {
-            if (
-                !CraftEventFactory.callFireworkExplodeEvent(
-                    (FireworkRocketEntity) (Object) this
-                ).isCancelled()
-            ) {
-                this.explode();
-            }
-        }
+  @Override
+  public void inactiveTick() {
+    super.inactiveTick();
+    ++this.life;
+    if (!this.level().isClientSide && this.life > this.lifetime) {
+      if (!CraftEventFactory.callFireworkExplodeEvent((FireworkRocketEntity) (Object) this)
+          .isCancelled()) {
+        this.explode();
+      }
     }
+  }
 }

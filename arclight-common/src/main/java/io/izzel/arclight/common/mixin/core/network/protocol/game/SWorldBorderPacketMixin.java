@@ -14,24 +14,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientboundSetBorderCenterPacket.class)
 public class SWorldBorderPacketMixin {
 
-    // @formatter:off
-    @Shadow @Final @Mutable private double newCenterX;
+  // @formatter:off
+  @Shadow @Final @Mutable private double newCenterX;
 
-    @Shadow @Final @Mutable private double newCenterZ;
+  @Shadow @Final @Mutable private double newCenterZ;
 
-    // @formatter:on
+  // @formatter:on
 
-    @Inject(
-        method = "<init>(Lnet/minecraft/world/level/border/WorldBorder;)V",
-        at = @At("RETURN")
-    )
-    private void arclight$nether(WorldBorder border, CallbackInfo ci) {
-        var level = ((WorldBorderBridge) border).bridge$getWorld();
-        this.newCenterX =
-            border.getCenterX() *
-                (level != null ? level.dimensionType().coordinateScale() : 1.0);
-        this.newCenterZ =
-            border.getCenterZ() *
-                (level != null ? level.dimensionType().coordinateScale() : 1.0);
-    }
+  @Inject(method = "<init>(Lnet/minecraft/world/level/border/WorldBorder;)V", at = @At("RETURN"))
+  private void arclight$nether(WorldBorder border, CallbackInfo ci) {
+    var level = ((WorldBorderBridge) border).bridge$getWorld();
+    this.newCenterX =
+        border.getCenterX() * (level != null ? level.dimensionType().coordinateScale() : 1.0);
+    this.newCenterZ =
+        border.getCenterZ() * (level != null ? level.dimensionType().coordinateScale() : 1.0);
+  }
 }

@@ -14,61 +14,54 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(DerivedLevelData.class)
 public class DerivedWorldInfoMixin implements DerivedWorldInfoBridge {
 
-    @Shadow
-    @Final
-    private ServerLevelData wrapped;
+  @Shadow @Final private ServerLevelData wrapped;
 
-    private ResourceKey<LevelStem> typeKey;
+  private ResourceKey<LevelStem> typeKey;
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public String getLevelName() {
-        if (typeKey == null || typeKey == LevelStem.OVERWORLD) {
-            return this.wrapped.getLevelName();
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public String getLevelName() {
+    if (typeKey == null || typeKey == LevelStem.OVERWORLD) {
+      return this.wrapped.getLevelName();
+    } else {
+      if (ArclightConfig.spec().getCompat().isSymlinkWorld()) {
+        String worldName = this.wrapped.getLevelName() + "_";
+        String suffix;
+        if (typeKey == LevelStem.NETHER) {
+          suffix = "nether";
+        } else if (typeKey == LevelStem.END) {
+          suffix = "the_end";
         } else {
-            if (ArclightConfig.spec().getCompat().isSymlinkWorld()) {
-                String worldName = this.wrapped.getLevelName() + "_";
-                String suffix;
-                if (typeKey == LevelStem.NETHER) {
-                    suffix = "nether";
-                } else if (typeKey == LevelStem.END) {
-                    suffix = "the_end";
-                } else {
-                    suffix = (
-                        typeKey.location().getNamespace() +
-                            "_" +
-                            typeKey.location().getPath()
-                    ).replace('/', '_');
-                }
-                return worldName + suffix;
-            } else {
-                String worldName = this.wrapped.getLevelName() + "/";
-                String suffix;
-                if (typeKey == LevelStem.END) {
-                    suffix = "DIM1";
-                } else if (typeKey == LevelStem.NETHER) {
-                    suffix = "DIM-1";
-                } else {
-                    suffix =
-                        typeKey.location().getNamespace() +
-                            "/" +
-                            typeKey.location().getPath();
-                }
-                return worldName + suffix;
-            }
+          suffix =
+              (typeKey.location().getNamespace() + "_" + typeKey.location().getPath())
+                  .replace('/', '_');
         }
+        return worldName + suffix;
+      } else {
+        String worldName = this.wrapped.getLevelName() + "/";
+        String suffix;
+        if (typeKey == LevelStem.END) {
+          suffix = "DIM1";
+        } else if (typeKey == LevelStem.NETHER) {
+          suffix = "DIM-1";
+        } else {
+          suffix = typeKey.location().getNamespace() + "/" + typeKey.location().getPath();
+        }
+        return worldName + suffix;
+      }
     }
+  }
 
-    @Override
-    public ServerLevelData bridge$getDelegate() {
-        return wrapped;
-    }
+  @Override
+  public ServerLevelData bridge$getDelegate() {
+    return wrapped;
+  }
 
-    @Override
-    public void bridge$setDimType(ResourceKey<LevelStem> typeKey) {
-        this.typeKey = typeKey;
-    }
+  @Override
+  public void bridge$setDimType(ResourceKey<LevelStem> typeKey) {
+    this.typeKey = typeKey;
+  }
 }

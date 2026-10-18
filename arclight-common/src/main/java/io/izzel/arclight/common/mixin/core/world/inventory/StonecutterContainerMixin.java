@@ -18,57 +18,51 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(StonecutterMenu.class)
-public abstract class StonecutterContainerMixin
-    extends AbstractContainerMenuMixin
+public abstract class StonecutterContainerMixin extends AbstractContainerMenuMixin
     implements PosContainerBridge {
 
-    // @formatter:off
-    @Shadow @Final public Container container;
+  // @formatter:off
+  @Shadow @Final public Container container;
 
-    @Shadow @Final private ResultContainer resultContainer;
+  @Shadow @Final private ResultContainer resultContainer;
 
-    @Shadow @Final private ContainerLevelAccess access;
+  @Shadow @Final private ContainerLevelAccess access;
 
-    // @formatter:on
+  // @formatter:on
 
-    private CraftInventoryView bukkitEntity = null;
-    private Inventory playerInventory;
+  private CraftInventoryView bukkitEntity = null;
+  private Inventory playerInventory;
 
-    @Inject(
-        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
-        at = @At("RETURN")
-    )
-    public void arclight$init(
-        int windowIdIn,
-        Inventory playerInventoryIn,
-        ContainerLevelAccess worldPosCallableIn,
-        CallbackInfo ci
-    ) {
-        this.playerInventory = playerInventoryIn;
+  @Inject(
+      method =
+          "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
+      at = @At("RETURN"))
+  public void arclight$init(
+      int windowIdIn,
+      Inventory playerInventoryIn,
+      ContainerLevelAccess worldPosCallableIn,
+      CallbackInfo ci) {
+    this.playerInventory = playerInventoryIn;
+  }
+
+  @Override
+  public CraftInventoryView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Override
-    public CraftInventoryView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(
-            this.container,
-            this.resultContainer
-        );
-        bukkitEntity = new CraftInventoryView(
-            (
-                (PlayerEntityBridge) this.playerInventory.player
-            ).bridge$getBukkitEntity(),
+    CraftInventoryStonecutter inventory =
+        new CraftInventoryStonecutter(this.container, this.resultContainer);
+    bukkitEntity =
+        new CraftInventoryView(
+            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
             inventory,
-            (AbstractContainerMenu) (Object) this
-        );
-        return bukkitEntity;
-    }
+            (AbstractContainerMenu) (Object) this);
+    return bukkitEntity;
+  }
 
-    @Override
-    public ContainerLevelAccess bridge$getWorldPos() {
-        return this.access;
-    }
+  @Override
+  public ContainerLevelAccess bridge$getWorldPos() {
+    return this.access;
+  }
 }

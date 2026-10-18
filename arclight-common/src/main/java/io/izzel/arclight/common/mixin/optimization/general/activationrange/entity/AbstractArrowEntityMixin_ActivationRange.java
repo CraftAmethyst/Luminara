@@ -6,21 +6,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AbstractArrow.class)
-public abstract class AbstractArrowEntityMixin_ActivationRange
-    extends EntityMixin_ActivationRange {
+public abstract class AbstractArrowEntityMixin_ActivationRange extends EntityMixin_ActivationRange {
 
-    // @formatter:off
-    @Shadow public boolean inGround;
+  // @formatter:off
+  @Shadow public boolean inGround;
 
-    @Shadow protected int inGroundTime;
+  @Shadow protected int inGroundTime;
 
-    // @formatter:on
+  // @formatter:on
 
-    @Override
-    public void inactiveTick() {
-        super.inactiveTick();
-        if (this.inGround) {
-            this.inGroundTime++;
-        }
+  @Override
+  public void inactiveTick() {
+    super.inactiveTick();
+    if (this.inGround) {
+      this.inGroundTime++;
     }
+  }
 }

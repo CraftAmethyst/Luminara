@@ -10,42 +10,32 @@ import org.spongepowered.asm.mixin.*;
 @Mixin(value = CraftPotionUtil.class, remap = false)
 public class CraftPotionUtilMixin {
 
-    @Shadow
-    @Final
-    private static BiMap<PotionType, String> upgradeable;
+  @Shadow @Final private static BiMap<PotionType, String> upgradeable;
 
-    @Shadow
-    @Final
-    private static BiMap<PotionType, String> extendable;
+  @Shadow @Final private static BiMap<PotionType, String> extendable;
 
-    @Shadow
-    @Final
-    @Mutable
-    private static BiMap<PotionType, String> regular;
+  @Shadow @Final @Mutable private static BiMap<PotionType, String> regular;
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public static String fromBukkit(PotionData data) {
-        String type;
-        if (data.isUpgraded()) {
-            type = upgradeable.get(data.getType());
-        } else if (data.isExtended()) {
-            type = extendable.get(data.getType());
-        } else {
-            type = regular.get(data.getType());
-        }
-
-        Preconditions.checkNotNull(
-            type,
-            "Unknown potion type from data " + data
-        );
-        if (type.indexOf(':') != -1) {
-            return type;
-        } else {
-            return "minecraft:" + type;
-        }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static String fromBukkit(PotionData data) {
+    String type;
+    if (data.isUpgraded()) {
+      type = upgradeable.get(data.getType());
+    } else if (data.isExtended()) {
+      type = extendable.get(data.getType());
+    } else {
+      type = regular.get(data.getType());
     }
+
+    Preconditions.checkNotNull(type, "Unknown potion type from data " + data);
+    if (type.indexOf(':') != -1) {
+      return type;
+    } else {
+      return "minecraft:" + type;
+    }
+  }
 }

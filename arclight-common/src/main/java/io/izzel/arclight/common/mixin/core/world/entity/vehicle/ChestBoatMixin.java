@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.entity.vehicle;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.vehicle.ChestBoat;
@@ -12,60 +14,54 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(ChestBoat.class)
-public abstract class ChestBoatMixin
-    extends BoatMixin
-    implements IInventoryBridge, Container {
+public abstract class ChestBoatMixin extends BoatMixin implements IInventoryBridge, Container {
 
-    public List<HumanEntity> transaction = new ArrayList<>();
+  public List<HumanEntity> transaction = new ArrayList<>();
 
-    @Shadow
-    private NonNullList<ItemStack> itemStacks;
+  @Shadow private NonNullList<ItemStack> itemStacks;
 
-    private int maxStack = MAX_STACK;
+  private int maxStack = MAX_STACK;
 
-    @Override
-    public List<ItemStack> getContents() {
-        return this.itemStacks;
-    }
+  @Override
+  public List<ItemStack> getContents() {
+    return this.itemStacks;
+  }
 
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        transaction.add(who);
-    }
+  @Override
+  public void onOpen(CraftHumanEntity who) {
+    transaction.add(who);
+  }
 
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        transaction.remove(who);
-    }
+  @Override
+  public void onClose(CraftHumanEntity who) {
+    transaction.remove(who);
+  }
 
-    @Override
-    public List<HumanEntity> getViewers() {
-        return transaction;
-    }
+  @Override
+  public List<HumanEntity> getViewers() {
+    return transaction;
+  }
 
-    @Override
-    public InventoryHolder getOwner() {
-        org.bukkit.entity.Entity entity = getBukkitEntity();
-        if (entity instanceof InventoryHolder) return (InventoryHolder) entity;
-        return null;
-    }
+  @Override
+  public InventoryHolder getOwner() {
+    org.bukkit.entity.Entity entity = getBukkitEntity();
+    if (entity instanceof InventoryHolder) return (InventoryHolder) entity;
+    return null;
+  }
 
-    @Override
-    public int getMaxStackSize() {
-        return maxStack;
-    }
+  @Override
+  public int getMaxStackSize() {
+    return maxStack;
+  }
 
-    @Override
-    public void setMaxStackSize(int size) {
-        maxStack = size;
-    }
+  @Override
+  public void setMaxStackSize(int size) {
+    maxStack = size;
+  }
 
-    @Override
-    public Location getLocation() {
-        return getBukkitEntity().getLocation();
-    }
+  @Override
+  public Location getLocation() {
+    return getBukkitEntity().getLocation();
+  }
 }

@@ -7,12 +7,13 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Rabbit.class)
 public abstract class RabbitMixin extends AnimalMixin {
 
-    // @formatter:off
-    @Shadow public abstract void setSpeedModifier(double newSpeed);
+  // @formatter:off
+  @Shadow
+  public abstract void setSpeedModifier(double newSpeed);
 
-    // @formatter:on
+  // @formatter:on
 
-    public void initializePathFinderGoals() {
-        this.setSpeedModifier(0.0D);
-    }
+  public void initializePathFinderGoals() {
+    this.setSpeedModifier(0.0D);
+  }
 }

@@ -8,28 +8,22 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.CraftWorld;
 
 public interface IWorldPosCallableBridge {
-    default Level bridge$getWorld() {
-        return ((ContainerLevelAccess) this).evaluate((a, b) -> a).orElse(null);
-    }
+  default Level bridge$getWorld() {
+    return ((ContainerLevelAccess) this).evaluate((a, b) -> a).orElse(null);
+  }
 
-    default BlockPos bridge$getPosition() {
-        return ((ContainerLevelAccess) this).evaluate((a, b) -> b).orElse(null);
-    }
+  default BlockPos bridge$getPosition() {
+    return ((ContainerLevelAccess) this).evaluate((a, b) -> b).orElse(null);
+  }
 
-    default Location bridge$getLocation() {
-        BlockPos blockPos = bridge$getPosition();
-        if (blockPos == null) {
-            return null;
-        } else {
-            Level level = bridge$getWorld();
-            CraftWorld world =
-                level == null ? null : ((WorldBridge) level).bridge$getWorld();
-            return new Location(
-                world,
-                blockPos.getX(),
-                blockPos.getY(),
-                blockPos.getZ()
-            );
-        }
+  default Location bridge$getLocation() {
+    BlockPos blockPos = bridge$getPosition();
+    if (blockPos == null) {
+      return null;
+    } else {
+      Level level = bridge$getWorld();
+      CraftWorld world = level == null ? null : ((WorldBridge) level).bridge$getWorld();
+      return new Location(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
+  }
 }

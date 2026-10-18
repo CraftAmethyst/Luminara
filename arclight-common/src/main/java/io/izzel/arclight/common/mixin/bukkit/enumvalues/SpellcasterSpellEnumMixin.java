@@ -8,7 +8,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = Spell.class, remap = false)
 public class SpellcasterSpellEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static Spell[] ENUM$VALUES;
+  @Mutable @Shadow private static Spell[] ENUM$VALUES;
 }

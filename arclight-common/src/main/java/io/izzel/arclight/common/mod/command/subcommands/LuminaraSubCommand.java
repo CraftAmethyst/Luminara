@@ -3,21 +3,19 @@ package io.izzel.arclight.common.mod.command.subcommands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 
-/**
- * Luminara subcommand interface
- */
+/** Luminara subcommand interface */
 public interface LuminaraSubCommand {
-    String getName();
+  String getName();
 
-    String getDescription();
+  String getDescription();
 
-    LiteralArgumentBuilder<CommandSourceStack> build();
+  LiteralArgumentBuilder<CommandSourceStack> build();
 
-    default int getRequiredPermissionLevel() {
-        return 3;
-    }
+  default int getRequiredPermissionLevel() {
+    return 3;
+  }
 
-    default boolean isEnabled() {
-        return true;
-    }
+  default boolean isEnabled() {
+    return true;
+  }
 }

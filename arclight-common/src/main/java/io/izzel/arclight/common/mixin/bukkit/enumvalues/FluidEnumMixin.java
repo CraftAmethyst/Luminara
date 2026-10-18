@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.Fluid.class, remap = false)
 public class FluidEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.Fluid[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.Fluid[] ENUM$VALUES;
 }

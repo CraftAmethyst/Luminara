@@ -18,32 +18,30 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ShapelessRecipe.class)
 public abstract class ShapelessRecipeMixin implements IRecipeBridge {
 
-    // @formatter:off
-    @Shadow @Final ItemStack result;
+  // @formatter:off
+  @Shadow @Final ItemStack result;
 
-    @Shadow @Final String group;
+  @Shadow @Final String group;
 
-    @Shadow @Final NonNullList<Ingredient> ingredients;
+  @Shadow @Final NonNullList<Ingredient> ingredients;
 
-    @Shadow public abstract CraftingBookCategory category();
+  @Shadow
+  public abstract CraftingBookCategory category();
 
-    // @formatter:on
+  // @formatter:on
 
-    @Override
-    public Recipe bridge$toBukkitRecipe() {
-        if (this.result.isEmpty()) {
-            return new ArclightSpecialRecipe((ShapelessRecipe) (Object) this);
-        }
-        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-        CraftShapelessRecipe recipe = new CraftShapelessRecipe(
-            result,
-            (ShapelessRecipe) (Object) this
-        );
-        recipe.setGroup(this.group == null ? "" : this.group);
-        recipe.setCategory(CraftRecipe.getCategory(this.category()));
-        for (Ingredient list : this.ingredients) {
-            recipe.addIngredient(CraftRecipe.toBukkit(list));
-        }
-        return recipe;
+  @Override
+  public Recipe bridge$toBukkitRecipe() {
+    if (this.result.isEmpty()) {
+      return new ArclightSpecialRecipe((ShapelessRecipe) (Object) this);
     }
+    CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
+    CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, (ShapelessRecipe) (Object) this);
+    recipe.setGroup(this.group == null ? "" : this.group);
+    recipe.setCategory(CraftRecipe.getCategory(this.category()));
+    for (Ingredient list : this.ingredients) {
+      recipe.addIngredient(CraftRecipe.toBukkit(list));
+    }
+    return recipe;
+  }
 }

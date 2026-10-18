@@ -21,68 +21,46 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(BaseFireBlock.class)
 public class BaseFireBlockMixin {
 
-    // fireExtinguished implemented per class
+  // fireExtinguished implemented per class
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    private static boolean inPortalDimension(Level level) {
-        var typeKey = ((WorldBridge) level).bridge$getTypeKey();
-        return typeKey == LevelStem.NETHER || typeKey == LevelStem.OVERWORLD;
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  private static boolean inPortalDimension(Level level) {
+    var typeKey = ((WorldBridge) level).bridge$getTypeKey();
+    return typeKey == LevelStem.NETHER || typeKey == LevelStem.OVERWORLD;
+  }
+
+  @Redirect(
+      method = "entityInside",
+      at =
+          @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setSecondsOnFire(I)V"))
+  private void arclight$onFire(
+      Entity instance, int seconds, BlockState state, Level level, BlockPos pos) {
+    var event =
+        new EntityCombustByBlockEvent(
+            CraftBlock.at(level, pos), ((EntityBridge) instance).bridge$getBukkitEntity(), seconds);
+    Bukkit.getPluginManager().callEvent(event);
+
+    if (!event.isCancelled()) {
+      ((EntityBridge) instance).bridge$setOnFire(event.getDuration(), false);
     }
+  }
 
-    @Redirect(
-        method = "entityInside",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/Entity;setSecondsOnFire(I)V"
-        )
-    )
-    private void arclight$onFire(
-        Entity instance,
-        int seconds,
-        BlockState state,
-        Level level,
-        BlockPos pos
-    ) {
-        var event = new EntityCombustByBlockEvent(
-            CraftBlock.at(level, pos),
-            ((EntityBridge) instance).bridge$getBukkitEntity(),
-            seconds
-        );
-        Bukkit.getPluginManager().callEvent(event);
-
-        if (!event.isCancelled()) {
-            ((EntityBridge) instance).bridge$setOnFire(
-                event.getDuration(),
-                false
-            );
-        }
+  @Redirect(
+      method = "onPlace",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
+  public boolean arclight$extinguish2(Level world, BlockPos pos, boolean isMoving) {
+    if (!CraftEventFactory.callBlockFadeEvent(world, pos, Blocks.AIR.defaultBlockState())
+        .isCancelled()) {
+      world.removeBlock(pos, isMoving);
     }
-
-    @Redirect(
-        method = "onPlace",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"
-        )
-    )
-    public boolean arclight$extinguish2(
-        Level world,
-        BlockPos pos,
-        boolean isMoving
-    ) {
-        if (
-            !CraftEventFactory.callBlockFadeEvent(
-                world,
-                pos,
-                Blocks.AIR.defaultBlockState()
-            ).isCancelled()
-        ) {
-            world.removeBlock(pos, isMoving);
-        }
-        return false;
-    }
+    return false;
+  }
 }

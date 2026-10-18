@@ -22,42 +22,37 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LeverBlock.class)
 public class LeverBlockMixin {
 
-    // @formatter:off
-    @Shadow @Final public static BooleanProperty POWERED;
+  // @formatter:off
+  @Shadow @Final public static BooleanProperty POWERED;
 
-    // @formatter:on
+  // @formatter:on
 
-    @Inject(
-        method = "use",
-        cancellable = true,
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/block/LeverBlock;pull(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"
-        )
-    )
-    public void arclight$blockRedstone(
-        BlockState state,
-        Level worldIn,
-        BlockPos pos,
-        Player player,
-        InteractionHand handIn,
-        BlockHitResult hit,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        boolean flag = state.getValue(POWERED);
-        Block block = CraftBlock.at(worldIn, pos);
-        int old = flag ? 15 : 0;
-        int current = !flag ? 15 : 0;
+  @Inject(
+      method = "use",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/LeverBlock;pull(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
+  public void arclight$blockRedstone(
+      BlockState state,
+      Level worldIn,
+      BlockPos pos,
+      Player player,
+      InteractionHand handIn,
+      BlockHitResult hit,
+      CallbackInfoReturnable<Boolean> cir) {
+    boolean flag = state.getValue(POWERED);
+    Block block = CraftBlock.at(worldIn, pos);
+    int old = flag ? 15 : 0;
+    int current = !flag ? 15 : 0;
 
-        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
-            block,
-            old,
-            current
-        );
-        Bukkit.getPluginManager().callEvent(eventRedstone);
+    BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
+    Bukkit.getPluginManager().callEvent(eventRedstone);
 
-        if (eventRedstone.getNewCurrent() > 0 == flag) {
-            cir.setReturnValue(true);
-        }
+    if (eventRedstone.getNewCurrent() > 0 == flag) {
+      cir.setReturnValue(true);
     }
+  }
 }

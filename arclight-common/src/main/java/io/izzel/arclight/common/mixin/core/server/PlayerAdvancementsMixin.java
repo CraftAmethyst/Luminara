@@ -18,54 +18,46 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerAdvancements.class)
 public abstract class PlayerAdvancementsMixin {
 
-    @Shadow
-    private ServerPlayer player;
+  @Shadow private ServerPlayer player;
 
-    @Shadow
-    public abstract AdvancementProgress getOrStartProgress(Advancement advancement);
+  @Shadow
+  public abstract AdvancementProgress getOrStartProgress(Advancement advancement);
 
-    @Inject(
-        method = "award",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/advancements/Advancement;getRewards()Lnet/minecraft/advancements/AdvancementRewards;"
-        )
-    )
-    public void arclight$callEvent(
-        Advancement advancementIn,
-        String criterionKey,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        Bukkit.getPluginManager().callEvent(
+  @Inject(
+      method = "award",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/advancements/Advancement;getRewards()Lnet/minecraft/advancements/AdvancementRewards;"))
+  public void arclight$callEvent(
+      Advancement advancementIn, String criterionKey, CallbackInfoReturnable<Boolean> cir) {
+    Bukkit.getPluginManager()
+        .callEvent(
             new org.bukkit.event.player.PlayerAdvancementDoneEvent(
                 (Player) ((EntityBridge) this.player).bridge$getBukkitEntity(),
-                ((AdvancementBridge) advancementIn).bridge$getBukkit()
-            )
-        );
-    }
+                ((AdvancementBridge) advancementIn).bridge$getBukkit()));
+  }
 
-    @Inject(
-        method = "award",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/server/PlayerAdvancements;unregisterListeners(Lnet/minecraft/advancements/Advancement;)V"
-        ),
-        cancellable = true
-    )
-    public void arclight$callCriterionGrantEvent(
-        Advancement advancementIn,
-        String criterionKey,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        PlayerAdvancementCriterionGrantEvent event = new PlayerAdvancementCriterionGrantEvent(
+  @Inject(
+      method = "award",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/PlayerAdvancements;unregisterListeners(Lnet/minecraft/advancements/Advancement;)V"),
+      cancellable = true)
+  public void arclight$callCriterionGrantEvent(
+      Advancement advancementIn, String criterionKey, CallbackInfoReturnable<Boolean> cir) {
+    PlayerAdvancementCriterionGrantEvent event =
+        new PlayerAdvancementCriterionGrantEvent(
             (Player) ((EntityBridge) this.player).bridge$getBukkitEntity(),
             ((AdvancementBridge) advancementIn).bridge$getBukkit(),
-            criterionKey
-        );
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            this.getOrStartProgress(advancementIn).revokeProgress(criterionKey);
-            cir.setReturnValue(false);
-        }
+            criterionKey);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      this.getOrStartProgress(advancementIn).revokeProgress(criterionKey);
+      cir.setReturnValue(false);
     }
+  }
 }

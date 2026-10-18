@@ -8,15 +8,15 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(WorldBorder.class)
 public class WorldBorderMixin implements WorldBorderBridge {
 
-    public Level world;
+  public Level world;
 
-    @Override
-    public Level bridge$getWorld() {
-        return this.world;
-    }
+  @Override
+  public Level bridge$getWorld() {
+    return this.world;
+  }
 
-    @Override
-    public void bridge$setWorld(Level world) {
-        this.world = world;
-    }
+  @Override
+  public void bridge$setWorld(Level world) {
+    this.world = world;
+  }
 }

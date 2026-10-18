@@ -11,7 +11,16 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(BlockBehaviour.class)
 public abstract class BlockBehaviourMixin {
 
-    // @formatter:off
-    @Shadow public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) { return null; }
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public BlockState updateShape(
+      BlockState stateIn,
+      Direction facing,
+      BlockState facingState,
+      LevelAccessor worldIn,
+      BlockPos currentPos,
+      BlockPos facingPos) {
+    return null;
+  }
+  // @formatter:on
 }

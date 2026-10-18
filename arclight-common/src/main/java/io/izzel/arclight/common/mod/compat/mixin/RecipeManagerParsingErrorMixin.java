@@ -13,28 +13,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @LoadIfMod(modid = ModIds.MODERNFIX, condition = LoadIfMod.ModCondition.ABSENT)
 public abstract class RecipeManagerParsingErrorMixin {
 
-    private static final Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger(
-        "RecipeManager"
-    );
+  private static final Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger("RecipeManager");
 
-    @Redirect(
-        method = "apply",
-        at = @At(
-            value = "INVOKE",
-            target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"
-        ),
-        require = 1
-    )
-    private void arclight$logParsingError(
-        org.slf4j.Logger logger,
-        String message,
-        Object recipeId,
-        Object exception
-    ) {
-        ARCLIGHT_LOGGER.error(
-            "recipe.loading.parsing-error",
-            recipeId,
-            exception
-        );
-    }
+  @Redirect(
+      method = "apply",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"),
+      require = 1)
+  private void arclight$logParsingError(
+      org.slf4j.Logger logger, String message, Object recipeId, Object exception) {
+    ARCLIGHT_LOGGER.error("recipe.loading.parsing-error", recipeId, exception);
+  }
 }

@@ -10,11 +10,13 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(targets = "net/minecraft/world/inventory/LoomMenu$1")
 public abstract class LoomContainer1Mixin extends SimpleContainerMixin {
 
-    @Shadow(aliases = {"this$0", "f_39900_"}, remap = false)
-    private LoomMenu outerThis;
+  @Shadow(
+      aliases = {"this$0", "f_39900_"},
+      remap = false)
+  private LoomMenu outerThis;
 
-    @Override
-    public Location getLocation() {
-        return ((PosContainerBridge) outerThis).bridge$getWorldLocation();
-    }
+  @Override
+  public Location getLocation() {
+    return ((PosContainerBridge) outerThis).bridge$getWorldLocation();
+  }
 }

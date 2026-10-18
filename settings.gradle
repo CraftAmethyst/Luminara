@@ -85,4 +85,3 @@ rootProject.name = 'luminara'
 include 'arclight-common'
 include 'arclight-forge'
 include 'i18n-config'
-

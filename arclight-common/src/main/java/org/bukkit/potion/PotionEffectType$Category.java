@@ -5,18 +5,18 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 public enum PotionEffectType$Category {
-    BENEFICIAL(NamedTextColor.BLUE),
-    HARMFUL(NamedTextColor.RED),
-    NEUTRAL(NamedTextColor.BLUE);
+  BENEFICIAL(NamedTextColor.BLUE),
+  HARMFUL(NamedTextColor.RED),
+  NEUTRAL(NamedTextColor.BLUE);
 
-    private final TextColor color;
+  private final TextColor color;
 
-    PotionEffectType$Category(@NotNull TextColor color) {
-        this.color = color;
-    }
+  PotionEffectType$Category(@NotNull TextColor color) {
+    this.color = color;
+  }
 
-    @NotNull
-    public TextColor getColor() {
-        return this.color;
-    }
+  @NotNull
+  public TextColor getColor() {
+    return this.color;
+  }
 }

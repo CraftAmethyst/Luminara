@@ -9,26 +9,26 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(PortalInfo.class)
 public class PortalInfoMixin implements PortalInfoBridge {
 
-    public ServerLevel world;
-    public CraftPortalEvent portalEventInfo;
+  public ServerLevel world;
+  public CraftPortalEvent portalEventInfo;
 
-    @Override
-    public void bridge$setPortalEventInfo(CraftPortalEvent event) {
-        this.portalEventInfo = event;
-    }
+  @Override
+  public void bridge$setPortalEventInfo(CraftPortalEvent event) {
+    this.portalEventInfo = event;
+  }
 
-    @Override
-    public CraftPortalEvent bridge$getPortalEventInfo() {
-        return this.portalEventInfo;
-    }
+  @Override
+  public CraftPortalEvent bridge$getPortalEventInfo() {
+    return this.portalEventInfo;
+  }
 
-    @Override
-    public void bridge$setWorld(ServerLevel world) {
-        this.world = world;
-    }
+  @Override
+  public void bridge$setWorld(ServerLevel world) {
+    this.world = world;
+  }
 
-    @Override
-    public ServerLevel bridge$getWorld() {
-        return this.world;
-    }
+  @Override
+  public ServerLevel bridge$getWorld() {
+    return this.world;
+  }
 }

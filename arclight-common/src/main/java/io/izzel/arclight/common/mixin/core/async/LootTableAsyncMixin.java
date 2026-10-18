@@ -13,23 +13,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LootTable.class)
 public abstract class LootTableAsyncMixin {
 
-    @Shadow public abstract void fill(Container container, LootParams params, long seed);
+  @Shadow
+  public abstract void fill(Container container, LootParams params, long seed);
 
-    @Inject(
-        method = "fill(Lnet/minecraft/world/Container;Lnet/minecraft/world/level/storage/loot/LootParams;J)V",
-        at = @At("HEAD"),
-        cancellable = true
-    )
-    private void arclight$guardLootGenerate(
-        Container container,
-        LootParams params,
-        long seed,
-        CallbackInfo ci
-    ) {
-        boolean handled = AsyncCatcher.checkVoid("loot generate", () -> {
-            this.fill(container, params, seed);
-            return Boolean.TRUE;
-        });
-        if (handled) ci.cancel();
-    }
+  @Inject(
+      method =
+          "fill(Lnet/minecraft/world/Container;Lnet/minecraft/world/level/storage/loot/LootParams;J)V",
+      at = @At("HEAD"),
+      cancellable = true)
+  private void arclight$guardLootGenerate(
+      Container container, LootParams params, long seed, CallbackInfo ci) {
+    boolean handled =
+        AsyncCatcher.checkVoid(
+            "loot generate",
+            () -> {
+              this.fill(container, params, seed);
+              return Boolean.TRUE;
+            });
+    if (handled) ci.cancel();
+  }
 }

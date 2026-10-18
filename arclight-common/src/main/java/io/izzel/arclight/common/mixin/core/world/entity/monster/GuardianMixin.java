@@ -9,19 +9,19 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(Guardian.class)
 public class GuardianMixin {
 
-    public Guardian.GuardianAttackGoal guardianAttackGoal;
+  public Guardian.GuardianAttackGoal guardianAttackGoal;
 
-    @ModifyArg(
-        method = "registerGoals",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/ai/goal/GoalSelector;addGoal(ILnet/minecraft/world/entity/ai/goal/Goal;)V"
-        )
-    )
-    private Goal arclight$saveGoal(Goal goal) {
-        if (goal instanceof Guardian.GuardianAttackGoal guardianGoal) {
-            this.guardianAttackGoal = guardianGoal;
-        }
-        return goal;
+  @ModifyArg(
+      method = "registerGoals",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/ai/goal/GoalSelector;addGoal(ILnet/minecraft/world/entity/ai/goal/Goal;)V"))
+  private Goal arclight$saveGoal(Goal goal) {
+    if (goal instanceof Guardian.GuardianAttackGoal guardianGoal) {
+      this.guardianAttackGoal = guardianGoal;
     }
+    return goal;
+  }
 }

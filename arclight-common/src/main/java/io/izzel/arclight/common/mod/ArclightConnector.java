@@ -9,19 +9,17 @@ import org.spongepowered.asm.mixin.injection.struct.InjectionInfo;
 
 public class ArclightConnector implements IMixinConnector {
 
-    public static final Logger LOGGER = ArclightI18nLogger.getLogger(
-        "Arclight"
-    );
+  public static final Logger LOGGER = ArclightI18nLogger.getLogger("Arclight");
 
-    @Override
-    public void connect() {
-        InjectionInfo.register(EjectorInfo.class);
-        Mixins.addConfiguration("mixins.arclight.core.json");
-        Mixins.addConfiguration("mixins.arclight.bukkit.json");
-        Mixins.addConfiguration("mixins.arclight.forge.json");
-        Mixins.addConfiguration("mixins.arclight.compat.json");
-        LOGGER.info("mixin-load.core");
-        Mixins.addConfiguration("mixins.arclight.impl.forge.optimization.json");
-        LOGGER.info("mixin-load.optimization");
-    }
+  @Override
+  public void connect() {
+    InjectionInfo.register(EjectorInfo.class);
+    Mixins.addConfiguration("mixins.arclight.core.json");
+    Mixins.addConfiguration("mixins.arclight.bukkit.json");
+    Mixins.addConfiguration("mixins.arclight.forge.json");
+    Mixins.addConfiguration("mixins.arclight.compat.json");
+    LOGGER.info("mixin-load.core");
+    Mixins.addConfiguration("mixins.arclight.impl.forge.optimization.json");
+    LOGGER.info("mixin-load.optimization");
+  }
 }

@@ -4,6 +4,8 @@ import io.izzel.arclight.common.bridge.core.entity.player.ServerPlayerEntityBrid
 import io.izzel.arclight.common.bridge.core.item.ItemStackBridge;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
+import java.util.Objects;
+import java.util.function.Consumer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -29,141 +31,114 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Objects;
-import java.util.function.Consumer;
-
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin
-    extends CapabilityProvider<ItemStack>
+public abstract class ItemStackMixin extends CapabilityProvider<ItemStack>
     implements ItemStackBridge {
 
-    private static final Logger LOG = ArclightI18nLogger.getLogger("ItemStack");
+  private static final Logger LOG = ArclightI18nLogger.getLogger("ItemStack");
 
-    // @formatter:off
-    @Shadow @Deprecated private Item item;
+  // @formatter:off
+  @Shadow @Deprecated private Item item;
 
-    @Shadow private int count;
+  @Shadow private int count;
 
-    @Shadow(remap = false) private CompoundTag capNBT;
+  @Shadow(remap = false)
+  private CompoundTag capNBT;
 
-    // @formatter:on
-    @Mutable
-    @Shadow(remap = false)
-    @Final
-    private net.minecraft.core.Holder.Reference<Item> delegate;
+  // @formatter:on
+  @Mutable
+  @Shadow(remap = false)
+  @Final
+  private net.minecraft.core.Holder.Reference<Item> delegate;
 
-    protected ItemStackMixin(Class<ItemStack> baseClass) {
-        super(baseClass);
+  protected ItemStackMixin(Class<ItemStack> baseClass) {
+    super(baseClass);
+  }
+
+  @Redirect(
+      method = "isSameItemSameTags",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target = "Ljava/util/Objects;equals(Ljava/lang/Object;Ljava/lang/Object;)Z"))
+  private static boolean arclight$lenientItemMatch(Object a, Object b) {
+    if (ArclightConfig.spec().getCompat().isLenientItemTagMatch()) {
+      var tagA = (CompoundTag) a;
+      var tagB = (CompoundTag) b;
+      if (tagB != null) {
+        var tmp = tagA;
+        tagA = tagB;
+        tagB = tmp;
+      }
+      return (tagA == null
+          || (tagA.isEmpty() ? tagB == null || tagB.isEmpty() : tagA.equals(tagB)));
+    } else {
+      return Objects.equals(a, b);
     }
+  }
 
-    @Redirect(
-        method = "isSameItemSameTags",
-        at = @At(
-            value = "INVOKE",
-            remap = false,
-            target = "Ljava/util/Objects;equals(Ljava/lang/Object;Ljava/lang/Object;)Z"
-        )
-    )
-    private static boolean arclight$lenientItemMatch(Object a, Object b) {
-        if (ArclightConfig.spec().getCompat().isLenientItemTagMatch()) {
-            var tagA = (CompoundTag) a;
-            var tagB = (CompoundTag) b;
-            if (tagB != null) {
-                var tmp = tagA;
-                tagA = tagB;
-                tagB = tmp;
-            }
-            return (
-                tagA == null ||
-                    (tagA.isEmpty()
-                        ? tagB == null || tagB.isEmpty()
-                        : tagA.equals(tagB))
-            );
-        } else {
-            return Objects.equals(a, b);
-        }
+  @Override
+  public CompoundTag bridge$getForgeCaps() {
+    return this.serializeCaps();
+  }
+
+  @Override
+  public void bridge$setForgeCaps(CompoundTag caps) {
+    this.capNBT = caps;
+    if (caps != null) {
+      this.deserializeCaps(caps);
     }
+  }
 
-    @Override
-    public CompoundTag bridge$getForgeCaps() {
-        return this.serializeCaps();
+  public void convertStack(int version) {
+    if (0 < version && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
+      LOG.warn("i18n.legacy-itemstack", this);
     }
+  }
 
-    @Override
-    public void bridge$setForgeCaps(CompoundTag caps) {
-        this.capNBT = caps;
-        if (caps != null) {
-            this.deserializeCaps(caps);
-        }
+  @Override
+  public void bridge$convertStack(int version) {
+    this.convertStack(version);
+  }
+
+  @ModifyVariable(
+      method = "hurt",
+      index = 1,
+      at = @At(value = "JUMP", opcode = Opcodes.IFGT, ordinal = 0))
+  private int arclight$itemDamage(int i, int amount, RandomSource rand, ServerPlayer damager) {
+    if (damager != null) {
+      PlayerItemDamageEvent event =
+          new PlayerItemDamageEvent(
+              ((ServerPlayerEntityBridge) damager).bridge$getBukkitEntity(),
+              CraftItemStack.asCraftMirror((ItemStack) (Object) this),
+              i);
+      event.getPlayer().getServer().getPluginManager().callEvent(event);
+
+      if (i != event.getDamage() || event.isCancelled()) {
+        event.getPlayer().updateInventory();
+      }
+      if (event.isCancelled()) {
+        return -1;
+      }
+      return event.getDamage();
     }
+    return i;
+  }
 
-    public void convertStack(int version) {
-        if (
-            0 < version && version < CraftMagicNumbers.INSTANCE.getDataVersion()
-        ) {
-            LOG.warn("i18n.legacy-itemstack", this);
-        }
+  @Inject(
+      method = "hurtAndBreak",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"))
+  private <T extends LivingEntity> void arclight$itemBreak(
+      int amount, T entityIn, Consumer<T> onBroken, CallbackInfo ci) {
+    if (this.count == 1 && entityIn instanceof Player) {
+      CraftEventFactory.callPlayerItemBreakEvent((Player) entityIn, (ItemStack) (Object) this);
     }
+  }
 
-    @Override
-    public void bridge$convertStack(int version) {
-        this.convertStack(version);
-    }
-
-    @ModifyVariable(
-        method = "hurt",
-        index = 1,
-        at = @At(value = "JUMP", opcode = Opcodes.IFGT, ordinal = 0)
-    )
-    private int arclight$itemDamage(
-        int i,
-        int amount,
-        RandomSource rand,
-        ServerPlayer damager
-    ) {
-        if (damager != null) {
-            PlayerItemDamageEvent event = new PlayerItemDamageEvent(
-                ((ServerPlayerEntityBridge) damager).bridge$getBukkitEntity(),
-                CraftItemStack.asCraftMirror((ItemStack) (Object) this),
-                i
-            );
-            event.getPlayer().getServer().getPluginManager().callEvent(event);
-
-            if (i != event.getDamage() || event.isCancelled()) {
-                event.getPlayer().updateInventory();
-            }
-            if (event.isCancelled()) {
-                return -1;
-            }
-            return event.getDamage();
-        }
-        return i;
-    }
-
-    @Inject(
-        method = "hurtAndBreak",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"
-        )
-    )
-    private <T extends LivingEntity> void arclight$itemBreak(
-        int amount,
-        T entityIn,
-        Consumer<T> onBroken,
-        CallbackInfo ci
-    ) {
-        if (this.count == 1 && entityIn instanceof Player) {
-            CraftEventFactory.callPlayerItemBreakEvent(
-                (Player) entityIn,
-                (ItemStack) (Object) this
-            );
-        }
-    }
-
-    @Deprecated
-    public void setItem(Item item) {
-        this.item = item;
-        this.delegate = ForgeRegistries.ITEMS.getDelegateOrThrow(item);
-    }
+  @Deprecated
+  public void setItem(Item item) {
+    this.item = item;
+    this.delegate = ForgeRegistries.ITEMS.getDelegateOrThrow(item);
+  }
 }

@@ -8,16 +8,13 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = Keyed.class, remap = false)
 public interface KeyedAdventureMixin extends net.kyori.adventure.key.Keyed {
-    @Shadow
-    @NotNull
-    NamespacedKey getKey();
+  @Shadow
+  @NotNull
+  NamespacedKey getKey();
 
-    @Override
-    default net.kyori.adventure.key.@NotNull Key key() {
-        NamespacedKey namespacedKey = getKey();
-        return net.kyori.adventure.key.Key.key(
-            namespacedKey.getNamespace(),
-            namespacedKey.getKey()
-        );
-    }
+  @Override
+  default net.kyori.adventure.key.@NotNull Key key() {
+    NamespacedKey namespacedKey = getKey();
+    return net.kyori.adventure.key.Key.key(namespacedKey.getNamespace(), namespacedKey.getKey());
+  }
 }

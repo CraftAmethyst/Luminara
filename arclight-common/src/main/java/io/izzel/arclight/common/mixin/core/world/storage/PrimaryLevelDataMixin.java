@@ -34,97 +34,108 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PrimaryLevelData.class)
 public abstract class PrimaryLevelDataMixin implements WorldInfoBridge {
 
-    @Shadow
-    public LevelSettings settings;
+  @Shadow public LevelSettings settings;
 
-    public ServerLevel world;
-    public Registry<LevelStem> customDimensions;
+  public ServerLevel world;
+  public Registry<LevelStem> customDimensions;
 
-    @Shadow
-    private boolean thundering;
+  @Shadow private boolean thundering;
 
-    @Shadow
-    private boolean raining;
+  @Shadow private boolean raining;
 
-    @Shadow
-    @Final
-    private Lifecycle worldGenSettingsLifecycle;
+  @Shadow @Final private Lifecycle worldGenSettingsLifecycle;
 
-    // @formatter:on
+  // @formatter:on
 
-    // @formatter:off
-    @Shadow public abstract String getLevelName();
+  // @formatter:off
+  @Shadow
+  public abstract String getLevelName();
 
-    @Shadow public abstract boolean isDifficultyLocked();
+  @Shadow
+  public abstract boolean isDifficultyLocked();
 
-    @Redirect(method = "setTagData", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/WorldGenSettings;encode(Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/world/level/levelgen/WorldOptions;Lnet/minecraft/core/RegistryAccess;)Lcom/mojang/serialization/DataResult;"))
-    private <T extends Tag> DataResult<T> arclight$customDim(DynamicOps<T> ops, WorldOptions options, RegistryAccess registry) {
-        return WorldGenSettings.encode(ops, options, new WorldDimensions(this.customDimensions != null ? this.customDimensions : registry.registryOrThrow(Registries.LEVEL_STEM)));
+  @Redirect(
+      method = "setTagData",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/levelgen/WorldGenSettings;encode(Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/world/level/levelgen/WorldOptions;Lnet/minecraft/core/RegistryAccess;)Lcom/mojang/serialization/DataResult;"))
+  private <T extends Tag> DataResult<T> arclight$customDim(
+      DynamicOps<T> ops, WorldOptions options, RegistryAccess registry) {
+    return WorldGenSettings.encode(
+        ops,
+        options,
+        new WorldDimensions(
+            this.customDimensions != null
+                ? this.customDimensions
+                : registry.registryOrThrow(Registries.LEVEL_STEM)));
+  }
+
+  @Inject(method = "setThundering", cancellable = true, at = @At("HEAD"))
+  private void arclight$thunder(boolean thunderingIn, CallbackInfo ci) {
+    if (this.thundering == thunderingIn) {
+      return;
     }
 
-    @Inject(method = "setThundering", cancellable = true, at = @At("HEAD"))
-    private void arclight$thunder(boolean thunderingIn, CallbackInfo ci) {
-        if (this.thundering == thunderingIn) {
-            return;
-        }
+    World world = Bukkit.getWorld(this.getLevelName());
+    if (world != null) {
+      ThunderChangeEvent event = new ThunderChangeEvent(world, thunderingIn);
+      Bukkit.getServer().getPluginManager().callEvent(event);
+      if (event.isCancelled()) {
+        ci.cancel();
+      }
+    }
+  }
 
-        World world = Bukkit.getWorld(this.getLevelName());
-        if (world != null) {
-            ThunderChangeEvent event = new ThunderChangeEvent(world, thunderingIn);
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                ci.cancel();
-            }
-        }
+  @Inject(method = "setRaining", cancellable = true, at = @At("HEAD"))
+  private void arclight$storm(boolean isRaining, CallbackInfo ci) {
+    if (this.raining == isRaining) {
+      return;
     }
 
-    @Inject(method = "setRaining", cancellable = true, at = @At("HEAD"))
-    private void arclight$storm(boolean isRaining, CallbackInfo ci) {
-        if (this.raining == isRaining) {
-            return;
-        }
-
-        World world = Bukkit.getWorld(this.getLevelName());
-        if (world != null) {
-            WeatherChangeEvent event = new WeatherChangeEvent(world, isRaining);
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                ci.cancel();
-            }
-        }
+    World world = Bukkit.getWorld(this.getLevelName());
+    if (world != null) {
+      WeatherChangeEvent event = new WeatherChangeEvent(world, isRaining);
+      Bukkit.getServer().getPluginManager().callEvent(event);
+      if (event.isCancelled()) {
+        ci.cancel();
+      }
     }
+  }
 
-    @Inject(method = "setDifficulty", at = @At("RETURN"))
-    private void arclight$sendDiffChange(Difficulty newDifficulty, CallbackInfo ci) {
-        ClientboundChangeDifficultyPacket packet = new ClientboundChangeDifficultyPacket(newDifficulty, this.isDifficultyLocked());
-        for (Player player : this.world.players()) {
-            ((ServerPlayer) player).connection.send(packet);
-        }
+  @Inject(method = "setDifficulty", at = @At("RETURN"))
+  private void arclight$sendDiffChange(Difficulty newDifficulty, CallbackInfo ci) {
+    ClientboundChangeDifficultyPacket packet =
+        new ClientboundChangeDifficultyPacket(newDifficulty, this.isDifficultyLocked());
+    for (Player player : this.world.players()) {
+      ((ServerPlayer) player).connection.send(packet);
     }
+  }
 
-    @Override
-    public void bridge$setWorld(ServerLevel world) {
-        this.world = world;
-    }
+  @Override
+  public void bridge$setWorld(ServerLevel world) {
+    this.world = world;
+  }
 
-    @Override
-    public ServerLevel bridge$getWorld() {
-        return world;
-    }
+  @Override
+  public ServerLevel bridge$getWorld() {
+    return world;
+  }
 
-    public void checkName(String name) {
-        if (!this.settings.levelName.equals(name)) {
-            this.settings.levelName = name;
-        }
+  public void checkName(String name) {
+    if (!this.settings.levelName.equals(name)) {
+      this.settings.levelName = name;
     }
+  }
 
-    @Override
-    public LevelSettings bridge$getWorldSettings() {
-        return this.settings;
-    }
+  @Override
+  public LevelSettings bridge$getWorldSettings() {
+    return this.settings;
+  }
 
-    @Override
-    public Lifecycle bridge$getLifecycle() {
-        return this.worldGenSettingsLifecycle;
-    }
+  @Override
+  public Lifecycle bridge$getLifecycle() {
+    return this.worldGenSettingsLifecycle;
+  }
 }

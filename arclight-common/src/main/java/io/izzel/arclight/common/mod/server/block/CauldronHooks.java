@@ -13,61 +13,55 @@ import org.bukkit.event.block.CauldronLevelChangeEvent;
 
 public class CauldronHooks {
 
-    private static Entity entity;
-    private static CauldronLevelChangeEvent.ChangeReason reason =
-        CauldronLevelChangeEvent.ChangeReason.UNKNOWN;
-    private static boolean lastRet = true;
+  private static Entity entity;
+  private static CauldronLevelChangeEvent.ChangeReason reason =
+      CauldronLevelChangeEvent.ChangeReason.UNKNOWN;
+  private static boolean lastRet = true;
 
-    public static void setChangeReason(
-        Entity entity,
-        CauldronLevelChangeEvent.ChangeReason reason
-    ) {
-        CauldronHooks.entity = entity;
-        CauldronHooks.reason = reason;
-    }
+  public static void setChangeReason(Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
+    CauldronHooks.entity = entity;
+    CauldronHooks.reason = reason;
+  }
 
-    public static void reset() {
-        CauldronHooks.entity = null;
-        CauldronHooks.reason = CauldronLevelChangeEvent.ChangeReason.UNKNOWN;
-        CauldronHooks.lastRet = true;
-    }
+  public static void reset() {
+    CauldronHooks.entity = null;
+    CauldronHooks.reason = CauldronLevelChangeEvent.ChangeReason.UNKNOWN;
+    CauldronHooks.lastRet = true;
+  }
 
-    public static Entity getEntity() {
-        return entity;
-    }
+  public static Entity getEntity() {
+    return entity;
+  }
 
-    public static CauldronLevelChangeEvent.ChangeReason getReason() {
-        return reason;
-    }
+  public static CauldronLevelChangeEvent.ChangeReason getReason() {
+    return reason;
+  }
 
-    public static boolean getResult() {
-        return lastRet;
-    }
+  public static boolean getResult() {
+    return lastRet;
+  }
 
-    public static boolean changeLevel(
-        BlockState old,
-        Level world,
-        BlockPos pos,
-        BlockState state,
-        Entity entity,
-        CauldronLevelChangeEvent.ChangeReason reason
-    ) {
-        CraftBlockState newState = CraftBlockStates.getBlockState(world, pos);
-        newState.setData(state);
-        CauldronLevelChangeEvent event = new CauldronLevelChangeEvent(
+  public static boolean changeLevel(
+      BlockState old,
+      Level world,
+      BlockPos pos,
+      BlockState state,
+      Entity entity,
+      CauldronLevelChangeEvent.ChangeReason reason) {
+    CraftBlockState newState = CraftBlockStates.getBlockState(world, pos);
+    newState.setData(state);
+    CauldronLevelChangeEvent event =
+        new CauldronLevelChangeEvent(
             CraftBlock.at(world, pos),
-            entity == null
-                ? null
-                : ((EntityBridge) entity).bridge$getBukkitEntity(),
+            entity == null ? null : ((EntityBridge) entity).bridge$getBukkitEntity(),
             reason,
-            newState
-        );
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return (lastRet = false);
-        } else {
-            newState.update(true);
-            return (lastRet = true);
-        }
+            newState);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      return (lastRet = false);
+    } else {
+      newState.update(true);
+      return (lastRet = true);
     }
+  }
 }

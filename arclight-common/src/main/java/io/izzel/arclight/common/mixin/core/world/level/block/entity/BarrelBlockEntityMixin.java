@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -11,54 +13,49 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(BarrelBlockEntity.class)
-public abstract class BarrelBlockEntityMixin
-    extends LockableBlockEntityMixin
+public abstract class BarrelBlockEntityMixin extends LockableBlockEntityMixin
     implements IInventoryBridge, Container {
 
-    public List<HumanEntity> transaction = new ArrayList<>();
+  public List<HumanEntity> transaction = new ArrayList<>();
 
-    // @formatter:on
-    // @formatter:off
-    @Shadow private NonNullList<ItemStack> items;
+  // @formatter:on
+  // @formatter:off
+  @Shadow private NonNullList<ItemStack> items;
 
-    private int maxStack = MAX_STACK;
+  private int maxStack = MAX_STACK;
 
-    @Override
-    public List<ItemStack> getContents() {
-        return this.items;
-    }
+  @Override
+  public List<ItemStack> getContents() {
+    return this.items;
+  }
 
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        transaction.add(who);
-    }
+  @Override
+  public void onOpen(CraftHumanEntity who) {
+    transaction.add(who);
+  }
 
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        transaction.remove(who);
-    }
+  @Override
+  public void onClose(CraftHumanEntity who) {
+    transaction.remove(who);
+  }
 
-    @Override
-    public List<HumanEntity> getViewers() {
-        return transaction;
-    }
+  @Override
+  public List<HumanEntity> getViewers() {
+    return transaction;
+  }
 
-    @Override
-    public int getMaxStackSize() {
-        if (maxStack == 0) maxStack = MAX_STACK;
-        return maxStack;
-    }
+  @Override
+  public int getMaxStackSize() {
+    if (maxStack == 0) maxStack = MAX_STACK;
+    return maxStack;
+  }
 
-    @Override
-    public void setMaxStackSize(int i) {
-        maxStack = i;
-    }
+  @Override
+  public void setMaxStackSize(int i) {
+    maxStack = i;
+  }
 
-    @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+  @Override
+  public void setOwner(InventoryHolder owner) {}
 }

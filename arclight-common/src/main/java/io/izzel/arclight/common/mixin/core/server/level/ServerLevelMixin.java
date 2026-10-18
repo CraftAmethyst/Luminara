@@ -20,6 +20,11 @@ import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DelegateWorldInfo;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import io.izzel.arclight.i18n.ArclightConfig;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Executor;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -79,486 +84,751 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Executor;
-
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin
-    extends LevelMixin
-    implements ServerWorldBridge {
+public abstract class ServerLevelMixin extends LevelMixin implements ServerWorldBridge {
 
-    @Shadow
-    @Final
-    public static BlockPos END_SPAWN_POINT;
+  @Shadow @Final public static BlockPos END_SPAWN_POINT;
 
-    @Shadow
-    @Final
-    public ServerLevelData serverLevelData;
+  @Shadow @Final public ServerLevelData serverLevelData;
 
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    public PrimaryLevelData K; // Stupid CraftBukkit patch.
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
+  public PrimaryLevelData K; // Stupid CraftBukkit patch.
 
-    public LevelStorageSource.LevelStorageAccess convertable;
-    public UUID uuid;
-    public ResourceKey<LevelStem> typeKey;
+  public LevelStorageSource.LevelStorageAccess convertable;
+  public UUID uuid;
+  public ResourceKey<LevelStem> typeKey;
 
-    @Shadow
-    @Final
-    private List<ServerPlayer> players;
+  @Shadow @Final private List<ServerPlayer> players;
 
-    @Shadow
-    @Final
-    private ServerChunkCache chunkSource;
+  @Shadow @Final private ServerChunkCache chunkSource;
 
-    @Shadow
-    @Final
-    private PersistentEntitySectionManager<Entity> entityManager;
+  @Shadow @Final private PersistentEntitySectionManager<Entity> entityManager;
 
-    private transient boolean arclight$force;
-    private transient LightningStrikeEvent.Cause arclight$cause;
-    private transient CreatureSpawnEvent.SpawnReason arclight$reason;
-    private transient boolean arclight$timeSkipCancelled;
+  private transient boolean arclight$force;
+  private transient LightningStrikeEvent.Cause arclight$cause;
+  private transient CreatureSpawnEvent.SpawnReason arclight$reason;
+  private transient boolean arclight$timeSkipCancelled;
 
-    // @formatter:on
+  // @formatter:on
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Overwrite
-    public static void makeObsidianPlatform(ServerLevel world) {
-        BlockPos blockpos = END_SPAWN_POINT;
-        int i = blockpos.getX();
-        int j = blockpos.getY() - 2;
-        int k = blockpos.getZ();
-        BlockStateListPopulator blockList = new BlockStateListPopulator(world);
-        BlockPos.betweenClosed(
-            i - 2,
-            j + 1,
-            k - 2,
-            i + 2,
-            j + 3,
-            k + 2
-        ).forEach(pos -> {
-            blockList.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-        });
-        BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2).forEach(
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Overwrite
+  public static void makeObsidianPlatform(ServerLevel world) {
+    BlockPos blockpos = END_SPAWN_POINT;
+    int i = blockpos.getX();
+    int j = blockpos.getY() - 2;
+    int k = blockpos.getZ();
+    BlockStateListPopulator blockList = new BlockStateListPopulator(world);
+    BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2)
+        .forEach(
             pos -> {
-                blockList.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
-            }
-        );
-        if (!DistValidate.isValid(world)) {
-            blockList.updateList();
-            ArclightCaptures.getEndPortalEntity();
-            return;
-        }
-        CraftWorld bworld = ((WorldBridge) world).bridge$getWorld();
-        boolean spawnPortal = ArclightCaptures.getEndPortalSpawn();
-        Entity entity = ArclightCaptures.getEndPortalEntity();
-        PortalCreateEvent portalEvent = new PortalCreateEvent(
+              blockList.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+            });
+    BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2)
+        .forEach(
+            pos -> {
+              blockList.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+            });
+    if (!DistValidate.isValid(world)) {
+      blockList.updateList();
+      ArclightCaptures.getEndPortalEntity();
+      return;
+    }
+    CraftWorld bworld = ((WorldBridge) world).bridge$getWorld();
+    boolean spawnPortal = ArclightCaptures.getEndPortalSpawn();
+    Entity entity = ArclightCaptures.getEndPortalEntity();
+    PortalCreateEvent portalEvent =
+        new PortalCreateEvent(
             (List) blockList.getList(),
             bworld,
-            entity == null
-                ? null
-                : ((EntityBridge) entity).bridge$getBukkitEntity(),
-            PortalCreateEvent.CreateReason.END_PLATFORM
-        );
-        portalEvent.setCancelled(!spawnPortal);
-        Bukkit.getPluginManager().callEvent(portalEvent);
-        if (!portalEvent.isCancelled()) {
-            blockList.updateList();
+            entity == null ? null : ((EntityBridge) entity).bridge$getBukkitEntity(),
+            PortalCreateEvent.CreateReason.END_PLATFORM);
+    portalEvent.setCancelled(!spawnPortal);
+    Bukkit.getPluginManager().callEvent(portalEvent);
+    if (!portalEvent.isCancelled()) {
+      blockList.updateList();
+    }
+  }
+
+  // @formatter:off
+  @Shadow
+  public abstract boolean addFreshEntity(Entity entityIn);
+
+  @Shadow
+  public abstract boolean addWithUUID(Entity entityIn);
+
+  @Shadow
+  public abstract <T extends ParticleOptions> int sendParticles(
+      T type,
+      double posX,
+      double posY,
+      double posZ,
+      int particleCount,
+      double xOffset,
+      double yOffset,
+      double zOffset,
+      double speed);
+
+  @Shadow
+  protected abstract boolean sendParticles(
+      ServerPlayer player,
+      boolean longDistance,
+      double posX,
+      double posY,
+      double posZ,
+      Packet<?> packet);
+
+  @Shadow
+  @Nonnull
+  public abstract MinecraftServer shadow$getServer();
+
+  @Shadow
+  public abstract ServerChunkCache getChunkSource();
+
+  @Shadow
+  protected abstract void wakeUpAllPlayers();
+
+  @Shadow
+  public abstract DimensionDataStorage getDataStorage();
+
+  @Override
+  public ResourceKey<LevelStem> getTypeKey() {
+    return this.typeKey;
+  }
+
+  public void arclight$constructor(
+      MinecraftServer minecraftServer,
+      Executor backgroundExecutor,
+      LevelStorageSource.LevelStorageAccess levelSave,
+      ServerLevelData worldInfo,
+      ResourceKey<Level> dimension,
+      LevelStem levelStem,
+      ChunkProgressListener statusListener,
+      boolean isDebug,
+      long seed,
+      List<CustomSpawner> specialSpawners,
+      boolean shouldBeTicking,
+      RandomSequences seq) {
+    throw new RuntimeException();
+  }
+
+  public void arclight$constructor(
+      MinecraftServer minecraftServer,
+      Executor backgroundExecutor,
+      LevelStorageSource.LevelStorageAccess levelSave,
+      PrimaryLevelData worldInfo,
+      ResourceKey<Level> dimension,
+      LevelStem levelStem,
+      ChunkProgressListener statusListener,
+      boolean isDebug,
+      long seed,
+      List<CustomSpawner> specialSpawners,
+      boolean shouldBeTicking,
+      RandomSequences seq,
+      org.bukkit.World.Environment env,
+      org.bukkit.generator.ChunkGenerator gen,
+      org.bukkit.generator.BiomeProvider biomeProvider) {
+    arclight$constructor(
+        minecraftServer,
+        backgroundExecutor,
+        levelSave,
+        worldInfo,
+        dimension,
+        levelStem,
+        statusListener,
+        isDebug,
+        seed,
+        specialSpawners,
+        shouldBeTicking,
+        seq);
+    this.generator = gen;
+    this.environment = env;
+    this.biomeProvider = biomeProvider;
+    if (gen != null) {
+      CustomChunkGenerator generator =
+          new CustomChunkGenerator(
+              (ServerLevel) (Object) this, this.chunkSource.getGenerator(), gen);
+      ((ServerChunkProviderBridge) this.chunkSource).bridge$setChunkGenerator(generator);
+    }
+    bridge$getWorld();
+  }
+
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void arclight$init(
+      MinecraftServer minecraftServer,
+      Executor backgroundExecutor,
+      LevelStorageSource.LevelStorageAccess levelSave,
+      ServerLevelData worldInfo,
+      ResourceKey<Level> dimension,
+      LevelStem levelStem,
+      ChunkProgressListener statusListener,
+      boolean isDebug,
+      long seed,
+      List<CustomSpawner> specialSpawners,
+      boolean shouldBeTicking,
+      RandomSequences seq,
+      CallbackInfo ci) {
+    this.pvpMode = minecraftServer.isPvpAllowed();
+    this.convertable = levelSave;
+    var typeKey =
+        ((LevelStorageSourceBridge.LevelStorageAccessBridge) levelSave).bridge$getTypeKey();
+    if (typeKey != null) {
+      this.typeKey = typeKey;
+    } else {
+      var dimensions = shadow$getServer().registryAccess().registryOrThrow(Registries.LEVEL_STEM);
+      var key = dimensions.getResourceKey(levelStem);
+      if (key.isPresent()) {
+        this.typeKey = key.get();
+      } else {
+        ArclightMod.LOGGER.warn("world.unknown-level-stem", dimension.location(), levelStem);
+        this.typeKey = ResourceKey.create(Registries.LEVEL_STEM, dimension.location());
+      }
+    }
+    if (worldInfo instanceof PrimaryLevelData data) {
+      this.K = data;
+    } else {
+      // damn spigot again
+      this.K = DelegateWorldInfo.wrap(worldInfo);
+      if (worldInfo instanceof DerivedLevelData data) {
+        ((DerivedWorldInfoBridge) worldInfo).bridge$setDimType(this.getTypeKey());
+        if (ArclightConfig.spec().getCompat().isSymlinkWorld()) {
+          WorldSymlink.create(data, levelSave.getDimensionPath(this.dimension()).toFile());
         }
+      }
     }
+    this.spigotConfig = new SpigotWorldConfig(worldInfo.getLevelName());
+    this.uuid = WorldUUID.getUUID(levelSave.getDimensionPath(this.dimension()).toFile());
+    ((ServerChunkProviderBridge) this.chunkSource)
+        .bridge$setViewDistance(spigotConfig.viewDistance);
+    ((WorldInfoBridge) this.K).bridge$setWorld((ServerLevel) (Object) this);
+    var data =
+        this.getDataStorage()
+            .computeIfAbsent(
+                LevelPersistentData::new, () -> new LevelPersistentData(null), "bukkit_pdc");
+    this.bridge$getWorld().readBukkitValues(data.getTag());
+  }
 
-    // @formatter:off
-    @Shadow public abstract boolean addFreshEntity(Entity entityIn);
+  @Inject(method = "saveLevelData", at = @At("RETURN"))
+  private void arclight$savePdc(CallbackInfo ci) {
+    var data =
+        this.getDataStorage()
+            .computeIfAbsent(
+                LevelPersistentData::new, () -> new LevelPersistentData(null), "bukkit_pdc");
+    data.save(this.world);
+  }
 
-    @Shadow public abstract boolean addWithUUID(Entity entityIn);
-
-    @Shadow public abstract <T extends ParticleOptions> int sendParticles(T type, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed);
-
-    @Shadow protected abstract boolean sendParticles(ServerPlayer player, boolean longDistance, double posX, double posY, double posZ, Packet<?> packet);
-
-    @Shadow @Nonnull public abstract MinecraftServer shadow$getServer();
-
-    @Shadow public abstract ServerChunkCache getChunkSource();
-
-    @Shadow protected abstract void wakeUpAllPlayers();
-
-    @Shadow public abstract DimensionDataStorage getDataStorage();
-
-    @Override
-    public ResourceKey<LevelStem> getTypeKey() {
-        return this.typeKey;
+  @Inject(method = "gameEvent", cancellable = true, at = @At("HEAD"))
+  private void arclight$gameEventEvent(
+      GameEvent gameEvent, Vec3 pos, GameEvent.Context context, CallbackInfo ci) {
+    var entity = context.sourceEntity();
+    var i = gameEvent.getNotificationRadius();
+    GenericGameEvent event =
+        new GenericGameEvent(
+            org.bukkit.GameEvent.getByKey(
+                CraftNamespacedKey.fromMinecraft(BuiltInRegistries.GAME_EVENT.getKey(gameEvent))),
+            new Location(this.getWorld(), pos.x(), pos.y(), pos.z()),
+            (entity == null) ? null : ((EntityBridge) entity).bridge$getBukkitEntity(),
+            i,
+            !Bukkit.isPrimaryThread());
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      ci.cancel();
     }
+  }
 
-    public void arclight$constructor(MinecraftServer minecraftServer, Executor backgroundExecutor, LevelStorageSource.LevelStorageAccess levelSave, ServerLevelData worldInfo, ResourceKey<Level> dimension, LevelStem levelStem, ChunkProgressListener statusListener, boolean isDebug, long seed, List<CustomSpawner> specialSpawners, boolean shouldBeTicking, RandomSequences seq) {
-        throw new RuntimeException();
-    }
+  public LevelChunk getChunkIfLoaded(int x, int z) {
+    return this.chunkSource.getChunk(x, z, false);
+  }
 
-    public void arclight$constructor(MinecraftServer minecraftServer, Executor backgroundExecutor, LevelStorageSource.LevelStorageAccess levelSave, PrimaryLevelData worldInfo, ResourceKey<Level> dimension, LevelStem levelStem, ChunkProgressListener statusListener, boolean isDebug, long seed, List<CustomSpawner> specialSpawners, boolean shouldBeTicking, RandomSequences seq, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
-        arclight$constructor(minecraftServer, backgroundExecutor, levelSave, worldInfo, dimension, levelStem, statusListener, isDebug, seed, specialSpawners, shouldBeTicking, seq);
-        this.generator = gen;
-        this.environment = env;
-        this.biomeProvider = biomeProvider;
-        if (gen != null) {
-            CustomChunkGenerator generator = new CustomChunkGenerator((ServerLevel) (Object) this, this.chunkSource.getGenerator(), gen);
-            ((ServerChunkProviderBridge) this.chunkSource).bridge$setChunkGenerator(generator);
+  public <T extends ParticleOptions> int sendParticles(
+      final ServerPlayer sender,
+      final T t0,
+      final double d0,
+      final double d1,
+      final double d2,
+      final int i,
+      final double d3,
+      final double d4,
+      final double d5,
+      final double d6,
+      final boolean force) {
+    ClientboundLevelParticlesPacket packet =
+        new ClientboundLevelParticlesPacket(
+            t0, force, d0, d1, d2, (float) d3, (float) d4, (float) d5, (float) d6, i);
+    int j = 0;
+    for (ServerPlayer entity : this.players) {
+      if (sender == null
+          || ((ServerPlayerEntityBridge) entity)
+              .bridge$getBukkitEntity()
+              .canSee(((ServerPlayerEntityBridge) sender).bridge$getBukkitEntity())) {
+        if (this.sendParticles(entity, force, d0, d1, d2, packet)) {
+          ++j;
         }
-        bridge$getWorld();
+      }
     }
+    return j;
+  }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(MinecraftServer minecraftServer, Executor backgroundExecutor, LevelStorageSource.LevelStorageAccess levelSave, ServerLevelData worldInfo, ResourceKey<Level> dimension, LevelStem levelStem, ChunkProgressListener statusListener, boolean isDebug, long seed, List<CustomSpawner> specialSpawners, boolean shouldBeTicking, RandomSequences seq, CallbackInfo ci) {
-        this.pvpMode = minecraftServer.isPvpAllowed();
-        this.convertable = levelSave;
-        var typeKey = ((LevelStorageSourceBridge.LevelStorageAccessBridge) levelSave).bridge$getTypeKey();
-        if (typeKey != null) {
-            this.typeKey = typeKey;
-        } else {
-            var dimensions = shadow$getServer().registryAccess().registryOrThrow(Registries.LEVEL_STEM);
-            var key = dimensions.getResourceKey(levelStem);
-            if (key.isPresent()) {
-                this.typeKey = key.get();
-            } else {
-                ArclightMod.LOGGER.warn("world.unknown-level-stem", dimension.location(), levelStem);
-                this.typeKey = ResourceKey.create(Registries.LEVEL_STEM, dimension.location());
-            }
+  @Override
+  public LevelStorageSource.LevelStorageAccess bridge$getConvertable() {
+    return this.convertable;
+  }
+
+  @Inject(
+      method = "tickNonPassenger",
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+  private void arclight$tickPortal(Entity entityIn, CallbackInfo ci) {
+    ((EntityBridge) entityIn).bridge$postTick();
+  }
+
+  @Inject(
+      method = "tickPassenger",
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target = "Lnet/minecraft/world/entity/Entity;rideTick()V"))
+  private void arclight$tickPortalPassenger(
+      Entity ridingEntity, Entity passengerEntity, CallbackInfo ci) {
+    ((EntityBridge) passengerEntity).bridge$postTick();
+  }
+
+  @Inject(
+      method = "tickChunk",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 0,
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  public void arclight$thunder(LevelChunk chunkIn, int randomTickSpeed, CallbackInfo ci) {
+    bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.LIGHTNING);
+  }
+
+  @Redirect(
+      method = "tickChunk",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 1,
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private boolean arclight$thunder(ServerLevel serverWorld, Entity entityIn) {
+    return strikeLightning(entityIn, LightningStrikeEvent.Cause.WEATHER);
+  }
+
+  public boolean strikeLightning(Entity entity) {
+    return this.strikeLightning(entity, LightningStrikeEvent.Cause.UNKNOWN);
+  }
+
+  public boolean strikeLightning(Entity entity, LightningStrikeEvent.Cause cause) {
+    if (arclight$cause != null) {
+      cause = arclight$cause;
+      arclight$cause = null;
+    }
+    if (DistValidate.isValid((LevelAccessor) this)) {
+      LightningStrikeEvent lightning =
+          CraftEventFactory.callLightningStrikeEvent(
+              (LightningStrike) ((EntityBridge) entity).bridge$getBukkitEntity(), cause);
+      if (lightning.isCancelled()) {
+        return false;
+      }
+    }
+    return this.addFreshEntity(entity);
+  }
+
+  @ModifyArg(
+      method = "tickChunk",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"),
+      index = 1)
+  private BlockState arclight$handleBlockFormEvent(BlockPos pos, BlockState state) {
+    CraftEventFactory.handleBlockFormEvent((ServerLevel) (Object) this, pos, state, null);
+    return state;
+  }
+
+  @Inject(method = "save", at = @At(value = "JUMP", ordinal = 0, opcode = Opcodes.IFNULL))
+  private void arclight$worldSaveEvent(
+      ProgressListener progress, boolean flush, boolean skipSave, CallbackInfo ci) {
+    if (DistValidate.isValid((LevelAccessor) this)) {
+      Bukkit.getPluginManager().callEvent(new WorldSaveEvent(bridge$getWorld()));
+    }
+  }
+
+  @Inject(method = "save", at = @At("RETURN"))
+  private void arclight$saveLevelDat(
+      ProgressListener progress, boolean flush, boolean skipSave, CallbackInfo ci) {
+    if (this.serverLevelData instanceof PrimaryLevelData worldInfo) {
+      worldInfo.setWorldBorder(this.getWorldBorder().createSettings());
+      worldInfo.setCustomBossEvents(this.shadow$getServer().getCustomBossEvents().save());
+      this.convertable.saveDataTag(
+          this.shadow$getServer().registryAccess(),
+          worldInfo,
+          this.shadow$getServer().getPlayerList().getSingleplayerData());
+    }
+  }
+
+  @Inject(method = "unload", at = @At("HEAD"))
+  public void arclight$closeOnChunkUnloading(LevelChunk chunkIn, CallbackInfo ci) {
+    for (BlockEntity tileentity : chunkIn.getBlockEntities().values()) {
+      if (tileentity instanceof Container) {
+        for (HumanEntity h : Lists.newArrayList(((IInventoryBridge) tileentity).getViewers())) {
+          if (h instanceof CraftHumanEntity) {
+            ((CraftHumanEntity) h).getHandle().closeContainer();
+          }
         }
-        if (worldInfo instanceof PrimaryLevelData data) {
-            this.K = data;
-        } else {
-            // damn spigot again
-            this.K = DelegateWorldInfo.wrap(worldInfo);
-            if (worldInfo instanceof DerivedLevelData data) {
-                ((DerivedWorldInfoBridge) worldInfo).bridge$setDimType(this.getTypeKey());
-                if (ArclightConfig.spec().getCompat().isSymlinkWorld()) {
-                    WorldSymlink.create(data, levelSave.getDimensionPath(this.dimension()).toFile());
-                }
-            }
-        }
-        this.spigotConfig = new SpigotWorldConfig(worldInfo.getLevelName());
-        this.uuid = WorldUUID.getUUID(levelSave.getDimensionPath(this.dimension()).toFile());
-        ((ServerChunkProviderBridge) this.chunkSource).bridge$setViewDistance(spigotConfig.viewDistance);
-        ((WorldInfoBridge) this.K).bridge$setWorld((ServerLevel) (Object) this);
-        var data = this.getDataStorage().computeIfAbsent(LevelPersistentData::new, () -> new LevelPersistentData(null), "bukkit_pdc");
-        this.bridge$getWorld().readBukkitValues(data.getTag());
+      }
     }
+  }
 
-    @Inject(method = "saveLevelData", at = @At("RETURN"))
-    private void arclight$savePdc(CallbackInfo ci) {
-        var data = this.getDataStorage().computeIfAbsent(LevelPersistentData::new, () -> new LevelPersistentData(null), "bukkit_pdc");
-        data.save(this.world);
-    }
+  @Redirect(
+      method = "sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/server/level/ServerPlayer;ZDDDLnet/minecraft/network/protocol/Packet;)Z"))
+  public boolean arclight$particleVisible(
+      ServerLevel serverWorld,
+      ServerPlayer player,
+      boolean longDistance,
+      double posX,
+      double posY,
+      double posZ,
+      Packet<?> packet) {
+    return this.sendParticles(player, arclight$force, posX, posY, posZ, packet);
+  }
 
-    @Inject(method = "gameEvent", cancellable = true, at = @At("HEAD"))
-    private void arclight$gameEventEvent(GameEvent gameEvent, Vec3 pos, GameEvent.Context context, CallbackInfo ci) {
-        var entity = context.sourceEntity();
-        var i = gameEvent.getNotificationRadius();
-        GenericGameEvent event = new GenericGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.GAME_EVENT.getKey(gameEvent))), new Location(this.getWorld(), pos.x(), pos.y(), pos.z()), (entity == null) ? null : ((EntityBridge) entity).bridge$getBukkitEntity(), i, !Bukkit.isPrimaryThread());
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            ci.cancel();
-        }
-    }
+  public <T extends ParticleOptions> int sendParticles(
+      T type,
+      double posX,
+      double posY,
+      double posZ,
+      int particleCount,
+      double xOffset,
+      double yOffset,
+      double zOffset,
+      double speed,
+      boolean force) {
+    arclight$force = force;
+    return this.sendParticles(
+        type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed);
+  }
 
-    public LevelChunk getChunkIfLoaded(int x, int z) {
-        return this.chunkSource.getChunk(x, z, false);
-    }
+  @Override
+  public <T extends ParticleOptions> int bridge$sendParticles(
+      T type,
+      double posX,
+      double posY,
+      double posZ,
+      int particleCount,
+      double xOffset,
+      double yOffset,
+      double zOffset,
+      double speed,
+      boolean force) {
+    return this.sendParticles(
+        type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed, force);
+  }
 
-    public <T extends ParticleOptions> int sendParticles(final ServerPlayer sender, final T t0, final double d0, final double d1, final double d2, final int i, final double d3, final double d4, final double d5, final double d6, final boolean force) {
-        ClientboundLevelParticlesPacket packet = new ClientboundLevelParticlesPacket(t0, force, d0, d1, d2, (float) d3, (float) d4, (float) d5, (float) d6, i);
-        int j = 0;
-        for (ServerPlayer entity : this.players) {
-            if (sender == null || ((ServerPlayerEntityBridge) entity).bridge$getBukkitEntity().canSee(((ServerPlayerEntityBridge) sender).bridge$getBukkitEntity())) {
-                if (this.sendParticles(entity, force, d0, d1, d2, packet)) {
-                    ++j;
-                }
-            }
-        }
-        return j;
-    }
+  @Override
+  public void bridge$pushStrikeLightningCause(LightningStrikeEvent.Cause cause) {
+    this.arclight$cause = cause;
+  }
 
-    @Override
-    public LevelStorageSource.LevelStorageAccess bridge$getConvertable() {
-        return this.convertable;
-    }
+  @Override
+  public void bridge$strikeLightning(LightningBolt entity, LightningStrikeEvent.Cause cause) {
+    strikeLightning(entity, cause);
+  }
 
-    @Inject(method = "tickNonPassenger", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;tick()V"))
-    private void arclight$tickPortal(Entity entityIn, CallbackInfo ci) {
-        ((EntityBridge) entityIn).bridge$postTick();
+  @Inject(
+      method = "addEntity",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/entity/PersistentEntitySectionManager;addNewEntity(Lnet/minecraft/world/level/entity/EntityAccess;)Z"))
+  private void arclight$addEntityEvent(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
+    CreatureSpawnEvent.SpawnReason reason =
+        arclight$reason == null ? CreatureSpawnEvent.SpawnReason.DEFAULT : arclight$reason;
+    arclight$reason = null;
+    if (DistValidate.isValid((LevelAccessor) this)
+        && !CraftEventFactory.doEntityAddEventCalling(
+            (ServerLevel) (Object) this, entityIn, reason)) {
+      cir.setReturnValue(false);
     }
+  }
 
-    @Inject(method = "tickPassenger", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;rideTick()V"))
-    private void arclight$tickPortalPassenger(Entity ridingEntity, Entity passengerEntity, CallbackInfo ci) {
-        ((EntityBridge) passengerEntity).bridge$postTick();
-    }
+  @Inject(method = "addEntity", at = @At("RETURN"))
+  public void arclight$resetReason(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
+    arclight$reason = null;
+  }
 
-    @Inject(method = "tickChunk", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    public void arclight$thunder(LevelChunk chunkIn, int randomTickSpeed, CallbackInfo ci) {
-        bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.LIGHTNING);
-    }
+  @Override
+  public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
+    this.arclight$reason = reason;
+  }
 
-    @Redirect(method = "tickChunk", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean arclight$thunder(ServerLevel serverWorld, Entity entityIn) {
-        return strikeLightning(entityIn, LightningStrikeEvent.Cause.WEATHER);
-    }
+  @Override
+  public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
+    return this.arclight$reason;
+  }
 
-    public boolean strikeLightning(Entity entity) {
-        return this.strikeLightning(entity, LightningStrikeEvent.Cause.UNKNOWN);
-    }
+  public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    bridge$pushAddEntityReason(reason);
+    return addFreshEntity(entity);
+  }
 
-    public boolean strikeLightning(Entity entity, LightningStrikeEvent.Cause cause) {
-        if (arclight$cause != null) {
-            cause = arclight$cause;
-            arclight$cause = null;
-        }
-        if (DistValidate.isValid((LevelAccessor) this)) {
-            LightningStrikeEvent lightning = CraftEventFactory.callLightningStrikeEvent((LightningStrike) ((EntityBridge) entity).bridge$getBukkitEntity(), cause);
-            if (lightning.isCancelled()) {
-                return false;
-            }
-        }
-        return this.addFreshEntity(entity);
-    }
+  @Override
+  public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    return addFreshEntity(entity, reason);
+  }
 
-    @ModifyArg(method = "tickChunk",
-               at = @At(value = "INVOKE",
-                        target = "Lnet/minecraft/server/level/ServerLevel;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"),
-               index = 1)
-    private BlockState arclight$handleBlockFormEvent(BlockPos pos, BlockState state) {
-        CraftEventFactory.handleBlockFormEvent((ServerLevel) (Object) this, pos, state, null);
-        return state;
-    }
+  public boolean addWithUUID(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    bridge$pushAddEntityReason(reason);
+    return addWithUUID(entity);
+  }
 
-    @Inject(method = "save", at = @At(value = "JUMP", ordinal = 0, opcode = Opcodes.IFNULL))
-    private void arclight$worldSaveEvent(ProgressListener progress, boolean flush, boolean skipSave, CallbackInfo ci) {
-        if (DistValidate.isValid((LevelAccessor) this)) {
-            Bukkit.getPluginManager().callEvent(new WorldSaveEvent(bridge$getWorld()));
-        }
-    }
+  public void addDuringTeleport(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    addFreshEntity(entity, reason);
+  }
 
-    @Inject(method = "save", at = @At("RETURN"))
-    private void arclight$saveLevelDat(ProgressListener progress, boolean flush, boolean skipSave, CallbackInfo ci) {
-        if (this.serverLevelData instanceof PrimaryLevelData worldInfo) {
-            worldInfo.setWorldBorder(this.getWorldBorder().createSettings());
-            worldInfo.setCustomBossEvents(this.shadow$getServer().getCustomBossEvents().save());
-            this.convertable.saveDataTag(this.shadow$getServer().registryAccess(), worldInfo, this.shadow$getServer().getPlayerList().getSingleplayerData());
-        }
-    }
+  @Override
+  public boolean bridge$addEntitySerialized(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    return addWithUUID(entity, reason);
+  }
 
-    @Inject(method = "unload", at = @At("HEAD"))
-    public void arclight$closeOnChunkUnloading(LevelChunk chunkIn, CallbackInfo ci) {
-        for (BlockEntity tileentity : chunkIn.getBlockEntities().values()) {
-            if (tileentity instanceof Container) {
-                for (HumanEntity h : Lists.newArrayList(((IInventoryBridge) tileentity).getViewers())) {
-                    if (h instanceof CraftHumanEntity) {
-                        ((CraftHumanEntity) h).getHandle().closeContainer();
-                    }
-                }
-            }
-        }
+  public boolean tryAddFreshEntityWithPassengers(
+      Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    if (entity.getSelfAndPassengers().map(Entity::getUUID).anyMatch(this.entityManager::isLoaded)) {
+      return false;
     }
+    return this.bridge$addAllEntities(entity, reason);
+  }
 
-    @Redirect(method = "sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/server/level/ServerPlayer;ZDDDLnet/minecraft/network/protocol/Packet;)Z"))
-    public boolean arclight$particleVisible(ServerLevel serverWorld, ServerPlayer player, boolean longDistance, double posX, double posY, double posZ, Packet<?> packet) {
-        return this.sendParticles(player, arclight$force, posX, posY, posZ, packet);
-    }
+  @Override
+  public boolean bridge$addAllEntitiesSafely(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    return tryAddFreshEntityWithPassengers(entity, reason);
+  }
 
-    public <T extends ParticleOptions> int sendParticles(T type, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed, boolean force) {
-        arclight$force = force;
-        return this.sendParticles(type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed);
+  @Inject(
+      method = "explode",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/level/Explosion;interactsWithBlocks()Z"),
+      locals = LocalCapture.CAPTURE_FAILHARD)
+  private void arclight$doExplosion(
+      Entity p_256039_,
+      DamageSource p_255778_,
+      ExplosionDamageCalculator p_256002_,
+      double p_256067_,
+      double p_256370_,
+      double p_256153_,
+      float p_256045_,
+      boolean p_255686_,
+      Level.ExplosionInteraction p_255827_,
+      CallbackInfoReturnable<Explosion> cir,
+      Explosion explosion) {
+    if (((ExplosionBridge) explosion).bridge$wasCancelled()) {
+      cir.setReturnValue(explosion);
     }
+  }
 
-    @Override
-    public <T extends ParticleOptions> int bridge$sendParticles(T type, double posX, double posY, double posZ, int particleCount, double xOffset, double yOffset, double zOffset, double speed, boolean force) {
-        return this.sendParticles(type, posX, posY, posZ, particleCount, xOffset, yOffset, zOffset, speed, force);
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  @Nullable
+  public MapItemSavedData getMapData(String mapName) {
+    return this.shadow$getServer()
+        .overworld()
+        .getDataStorage()
+        .get(
+            (nbt) -> {
+              MapItemSavedData newMap = MapItemSavedData.load(nbt);
+              ((MapDataBridge) newMap).bridge$setId(mapName);
+              MapInitializeEvent event =
+                  new MapInitializeEvent(((MapDataBridge) newMap).bridge$getMapView());
+              Bukkit.getServer().getPluginManager().callEvent(event);
+              return newMap;
+            },
+            mapName);
+  }
 
-    @Override
-    public void bridge$pushStrikeLightningCause(LightningStrikeEvent.Cause cause) {
-        this.arclight$cause = cause;
-    }
+  @Inject(method = "setMapData", at = @At("HEAD"))
+  private void arclight$mapSetId(String id, MapItemSavedData data, CallbackInfo ci) {
+    ((MapDataBridge) data).bridge$setId(id);
+  }
 
-    @Override
-    public void bridge$strikeLightning(LightningBolt entity, LightningStrikeEvent.Cause cause) {
-        strikeLightning(entity, cause);
+  @Inject(
+      method = "blockUpdated",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;updateNeighborsAt(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;)V"))
+  private void arclight$returnIfPopulate(BlockPos pos, Block block, CallbackInfo ci) {
+    if (populating) {
+      ci.cancel();
     }
+  }
 
-    @Inject(method = "addEntity", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/entity/PersistentEntitySectionManager;addNewEntity(Lnet/minecraft/world/level/entity/EntityAccess;)Z"))
-    private void arclight$addEntityEvent(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
-        CreatureSpawnEvent.SpawnReason reason = arclight$reason == null ? CreatureSpawnEvent.SpawnReason.DEFAULT : arclight$reason;
-        arclight$reason = null;
-        if (DistValidate.isValid((LevelAccessor) this) && !CraftEventFactory.doEntityAddEventCalling((ServerLevel) (Object) this, entityIn, reason)) {
-            cir.setReturnValue(false);
-        }
-    }
+  @Override
+  public BlockEntity getBlockEntity(BlockPos pos, boolean validate) {
+    return this.getBlockEntity(pos);
+  }
 
-    @Inject(method = "addEntity", at = @At("RETURN"))
-    public void arclight$resetReason(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
-        arclight$reason = null;
+  @Redirect(
+      method = "tick",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setDayTime(J)V"))
+  private void arclight$timeSkip(ServerLevel world, long time) {
+    TimeSkipEvent event =
+        new TimeSkipEvent(
+            this.bridge$getWorld(),
+            TimeSkipEvent.SkipReason.NIGHT_SKIP,
+            (time - time % 24000L) - this.getDayTime());
+    Bukkit.getPluginManager().callEvent(event);
+    arclight$timeSkipCancelled = event.isCancelled();
+    if (!event.isCancelled()) {
+      world.setDayTime(this.getDayTime() + event.getSkipAmount());
     }
+  }
 
-    @Override
-    public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
-        this.arclight$reason = reason;
+  @Redirect(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/server/level/ServerLevel;wakeUpAllPlayers()V"))
+  private void arclight$notWakeIfCancelled(ServerLevel world) {
+    if (!arclight$timeSkipCancelled) {
+      this.wakeUpAllPlayers();
     }
+    arclight$timeSkipCancelled = false;
+  }
 
-    @Override
-    public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
-        return this.arclight$reason;
-    }
+  @Override
+  public ServerLevel bridge$getMinecraftWorld() {
+    return (ServerLevel) (Object) this;
+  }
 
-    public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        bridge$pushAddEntityReason(reason);
-        return addFreshEntity(entity);
-    }
+  @ModifyVariable(
+      method = "tickBlock",
+      ordinal = 0,
+      argsOnly = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/state/BlockState;tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
+  private BlockPos arclight$captureTickingBlock(BlockPos pos) {
+    ArclightCaptures.captureTickingBlock((ServerLevel) (Object) this, pos);
+    return pos;
+  }
 
-    @Override
-    public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        return addFreshEntity(entity, reason);
-    }
+  @ModifyVariable(
+      method = "tickBlock",
+      ordinal = 0,
+      argsOnly = true,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/level/block/state/BlockState;tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
+  private BlockPos arclight$resetTickingBlock(BlockPos pos) {
+    ArclightCaptures.resetTickingBlock();
+    return pos;
+  }
 
-    public boolean addWithUUID(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        bridge$pushAddEntityReason(reason);
-        return addWithUUID(entity);
-    }
+  @ModifyVariable(
+      method = "tickChunk",
+      ordinal = 0,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/state/BlockState;randomTick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
+  private BlockPos arclight$captureRandomTick(BlockPos pos) {
+    ArclightCaptures.captureTickingBlock((ServerLevel) (Object) this, pos);
+    return pos;
+  }
 
-    public void addDuringTeleport(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        addFreshEntity(entity, reason);
-    }
+  @ModifyVariable(
+      method = "tickChunk",
+      ordinal = 0,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/level/block/state/BlockState;randomTick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
+  private BlockPos arclight$resetRandomTick(BlockPos pos) {
+    ArclightCaptures.resetTickingBlock();
+    return pos;
+  }
 
-    @Override
-    public boolean bridge$addEntitySerialized(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        return addWithUUID(entity, reason);
-    }
+  @ModifyVariable(
+      method = "tickNonPassenger",
+      argsOnly = true,
+      ordinal = 0,
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+  private Entity arclight$captureTickingEntity(Entity entity) {
+    ArclightCaptures.captureTickingEntity(entity);
+    return entity;
+  }
 
-    public boolean tryAddFreshEntityWithPassengers(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        if (entity.getSelfAndPassengers().map(Entity::getUUID).anyMatch(this.entityManager::isLoaded)) {
-            return false;
-        }
-        return this.bridge$addAllEntities(entity, reason);
-    }
+  @ModifyVariable(
+      method = "tickNonPassenger",
+      argsOnly = true,
+      ordinal = 0,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target = "Lnet/minecraft/world/entity/Entity;tick()V"))
+  private Entity arclight$resetTickingEntity(Entity entity) {
+    ArclightCaptures.resetTickingEntity();
+    return entity;
+  }
 
-    @Override
-    public boolean bridge$addAllEntitiesSafely(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        return tryAddFreshEntityWithPassengers(entity, reason);
-    }
+  @ModifyVariable(
+      method = "tickPassenger",
+      argsOnly = true,
+      ordinal = 1,
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;rideTick()V"))
+  private Entity arclight$captureTickingPassenger(Entity entity) {
+    ArclightCaptures.captureTickingEntity(entity);
+    return entity;
+  }
 
-    @Inject(method = "explode", cancellable = true, at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Explosion;interactsWithBlocks()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void arclight$doExplosion(Entity p_256039_, DamageSource p_255778_, ExplosionDamageCalculator p_256002_, double p_256067_, double p_256370_, double p_256153_, float p_256045_, boolean p_255686_, Level.ExplosionInteraction p_255827_,
-                                      CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
-        if (((ExplosionBridge) explosion).bridge$wasCancelled()) {
-            cir.setReturnValue(explosion);
-        }
-    }
-
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    @Nullable
-    public MapItemSavedData getMapData(String mapName) {
-        return this.shadow$getServer().overworld().getDataStorage().get((nbt) -> {
-            MapItemSavedData newMap = MapItemSavedData.load(nbt);
-            ((MapDataBridge) newMap).bridge$setId(mapName);
-            MapInitializeEvent event = new MapInitializeEvent(((MapDataBridge) newMap).bridge$getMapView());
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            return newMap;
-        }, mapName);
-    }
-
-    @Inject(method = "setMapData", at = @At("HEAD"))
-    private void arclight$mapSetId(String id, MapItemSavedData data, CallbackInfo ci) {
-        ((MapDataBridge) data).bridge$setId(id);
-    }
-
-    @Inject(method = "blockUpdated", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;updateNeighborsAt(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;)V"))
-    private void arclight$returnIfPopulate(BlockPos pos, Block block, CallbackInfo ci) {
-        if (populating) {
-            ci.cancel();
-        }
-    }
-
-    @Override
-    public BlockEntity getBlockEntity(BlockPos pos, boolean validate) {
-        return this.getBlockEntity(pos);
-    }
-
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setDayTime(J)V"))
-    private void arclight$timeSkip(ServerLevel world, long time) {
-        TimeSkipEvent event = new TimeSkipEvent(this.bridge$getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, (time - time % 24000L) - this.getDayTime());
-        Bukkit.getPluginManager().callEvent(event);
-        arclight$timeSkipCancelled = event.isCancelled();
-        if (!event.isCancelled()) {
-            world.setDayTime(this.getDayTime() + event.getSkipAmount());
-        }
-    }
-
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;wakeUpAllPlayers()V"))
-    private void arclight$notWakeIfCancelled(ServerLevel world) {
-        if (!arclight$timeSkipCancelled) {
-            this.wakeUpAllPlayers();
-        }
-        arclight$timeSkipCancelled = false;
-    }
-
-    @Override
-    public ServerLevel bridge$getMinecraftWorld() {
-        return (ServerLevel) (Object) this;
-    }
-
-    @ModifyVariable(method = "tickBlock", ordinal = 0, argsOnly = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
-    private BlockPos arclight$captureTickingBlock(BlockPos pos) {
-        ArclightCaptures.captureTickingBlock((ServerLevel) (Object) this, pos);
-        return pos;
-    }
-
-    @ModifyVariable(method = "tickBlock", ordinal = 0, argsOnly = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/block/state/BlockState;tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
-    private BlockPos arclight$resetTickingBlock(BlockPos pos) {
-        ArclightCaptures.resetTickingBlock();
-        return pos;
-    }
-
-    @ModifyVariable(method = "tickChunk", ordinal = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;randomTick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
-    private BlockPos arclight$captureRandomTick(BlockPos pos) {
-        ArclightCaptures.captureTickingBlock((ServerLevel) (Object) this, pos);
-        return pos;
-    }
-
-    @ModifyVariable(method = "tickChunk", ordinal = 0, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/block/state/BlockState;randomTick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"))
-    private BlockPos arclight$resetRandomTick(BlockPos pos) {
-        ArclightCaptures.resetTickingBlock();
-        return pos;
-    }
-
-    @ModifyVariable(method = "tickNonPassenger", argsOnly = true, ordinal = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
-    private Entity arclight$captureTickingEntity(Entity entity) {
-        ArclightCaptures.captureTickingEntity(entity);
-        return entity;
-    }
-
-    @ModifyVariable(method = "tickNonPassenger", argsOnly = true, ordinal = 0, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;tick()V"))
-    private Entity arclight$resetTickingEntity(Entity entity) {
-        ArclightCaptures.resetTickingEntity();
-        return entity;
-    }
-
-    @ModifyVariable(method = "tickPassenger", argsOnly = true, ordinal = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;rideTick()V"))
-    private Entity arclight$captureTickingPassenger(Entity entity) {
-        ArclightCaptures.captureTickingEntity(entity);
-        return entity;
-    }
-
-    @ModifyVariable(method = "tickPassenger", argsOnly = true, ordinal = 1, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;rideTick()V"))
-    private Entity arclight$resetTickingPassenger(Entity entity) {
-        ArclightCaptures.resetTickingEntity();
-        return entity;
-    }
+  @ModifyVariable(
+      method = "tickPassenger",
+      argsOnly = true,
+      ordinal = 1,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target = "Lnet/minecraft/world/entity/Entity;rideTick()V"))
+  private Entity arclight$resetTickingPassenger(Entity entity) {
+    ArclightCaptures.resetTickingEntity();
+    return entity;
+  }
 }

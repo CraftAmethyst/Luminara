@@ -5,34 +5,29 @@ import java.util.List;
 
 final class RegistryReloads {
 
-    private RegistryReloads() {
-    }
+  private RegistryReloads() {}
 
-    static void run(List<Operation> operations) {
-        List<Throwable> failures = new ArrayList<>();
-        for (Operation operation : operations) {
-            try {
-                operation.action().run();
-            } catch (Throwable throwable) {
-                failures.add(
-                    new IllegalStateException(operation.name(), throwable)
-                );
-            }
-        }
-        if (!failures.isEmpty()) {
-            IllegalStateException failure = new IllegalStateException(
-                "Failed to reload " + failures.size() + " Bukkit registries"
-            );
-            failures.forEach(failure::addSuppressed);
-            throw failure;
-        }
+  static void run(List<Operation> operations) {
+    List<Throwable> failures = new ArrayList<>();
+    for (Operation operation : operations) {
+      try {
+        operation.action().run();
+      } catch (Throwable throwable) {
+        failures.add(new IllegalStateException(operation.name(), throwable));
+      }
     }
+    if (!failures.isEmpty()) {
+      IllegalStateException failure =
+          new IllegalStateException("Failed to reload " + failures.size() + " Bukkit registries");
+      failures.forEach(failure::addSuppressed);
+      throw failure;
+    }
+  }
 
-    @FunctionalInterface
-    interface ThrowingRunnable {
-        void run() throws Throwable;
-    }
+  @FunctionalInterface
+  interface ThrowingRunnable {
+    void run() throws Throwable;
+  }
 
-    record Operation(String name, ThrowingRunnable action) {
-    }
+  record Operation(String name, ThrowingRunnable action) {}
 }

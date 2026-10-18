@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mixin.core.world.level.chunk;
 
 import io.izzel.arclight.common.bridge.core.world.chunk.ChunkAccessBridge;
 import io.izzel.arclight.common.bridge.core.world.chunk.LevelChunkSectionBridge;
+import java.util.Map;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -31,84 +32,87 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
-
 @Mixin(ChunkAccess.class)
 public abstract class ChunkAccessMixin
     implements BlockGetter, BiomeManager.NoiseBiomeSource, ChunkAccessBridge {
 
-    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY =
-        new CraftPersistentDataTypeRegistry();
-    public DirtyCraftPersistentDataContainer persistentDataContainer =
-        new DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
-    public Registry<Biome> biomeRegistry;
+  private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY =
+      new CraftPersistentDataTypeRegistry();
+  public DirtyCraftPersistentDataContainer persistentDataContainer =
+      new DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
+  public Registry<Biome> biomeRegistry;
 
-    @Shadow
-    @Final
-    protected LevelChunkSection[] sections;
+  @Shadow @Final protected LevelChunkSection[] sections;
 
-    @Shadow
-    @Final
-    protected Map<BlockPos, CompoundTag> pendingBlockEntities;
+  @Shadow @Final protected Map<BlockPos, CompoundTag> pendingBlockEntities;
 
-    @Shadow
-    @Final
-    protected ChunkPos chunkPos;
+  @Shadow @Final protected ChunkPos chunkPos;
 
-    @Shadow
-    public abstract int getMinBuildHeight();
+  @Shadow
+  public abstract int getMinBuildHeight();
 
-    // @formatter:on
+  // @formatter:on
 
-    @Shadow
-    public abstract int getHeight();
+  @Shadow
+  public abstract int getHeight();
 
-    @Shadow
-    public boolean isUnsaved() {
-        return false;
+  @Shadow
+  public boolean isUnsaved() {
+    return false;
+  }
+
+  // @formatter:off
+  @Shadow
+  public abstract void setUnsaved(boolean p_62094_);
+
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void arclight$init(
+      ChunkPos p_187621_,
+      UpgradeData p_187622_,
+      LevelHeightAccessor p_187623_,
+      Registry<Biome> registry,
+      long p_187625_,
+      LevelChunkSection[] p_187626_,
+      BlendingData p_187627_,
+      CallbackInfo ci) {
+    this.biomeRegistry = registry;
+  }
+
+  @Inject(method = "setUnsaved", at = @At("HEAD"))
+  private void arclight$dirty(boolean flag, CallbackInfo ci) {
+    if (!flag) {
+      this.persistentDataContainer.dirty(false);
     }
+  }
 
-    // @formatter:off
-    @Shadow public abstract void setUnsaved(boolean p_62094_);
+  @Inject(method = "isUnsaved", cancellable = true, at = @At("RETURN"))
+  private void arclight$isDirty(CallbackInfoReturnable<Boolean> cir) {
+    cir.setReturnValue(cir.getReturnValueZ() || this.persistentDataContainer.dirty());
+  }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(ChunkPos p_187621_, UpgradeData p_187622_, LevelHeightAccessor p_187623_, Registry<Biome> registry, long p_187625_, LevelChunkSection[] p_187626_, BlendingData p_187627_, CallbackInfo ci) {
-        this.biomeRegistry = registry;
+  @Override
+  public PersistentDataContainer bridge$getPersistentDataContainer() {
+    return this.persistentDataContainer;
+  }
+
+  public void setBiome(int i, int j, int k, Holder<Biome> biome) {
+    try {
+      int l = QuartPos.fromBlock(this.getMinBuildHeight());
+      int i1 = l + QuartPos.fromBlock(this.getHeight()) - 1;
+      int j1 = Mth.clamp(j, l, i1);
+      int k1 = this.getSectionIndex(QuartPos.toBlock(j1));
+
+      ((LevelChunkSectionBridge) this.sections[k1]).bridge$setBiome(i & 3, j1 & 3, k & 3, biome);
+    } catch (Throwable throwable) {
+      CrashReport crashreport = CrashReport.forThrowable(throwable, "Setting biome");
+      CrashReportCategory crashreportsystemdetails = crashreport.addCategory("Biome being set");
+
+      crashreportsystemdetails.setDetail(
+          "Location",
+          () -> {
+            return CrashReportCategory.formatLocation(this, i, j, k);
+          });
+      throw new ReportedException(crashreport);
     }
-
-    @Inject(method = "setUnsaved", at = @At("HEAD"))
-    private void arclight$dirty(boolean flag, CallbackInfo ci) {
-        if (!flag) {
-            this.persistentDataContainer.dirty(false);
-        }
-    }
-
-    @Inject(method = "isUnsaved", cancellable = true, at = @At("RETURN"))
-    private void arclight$isDirty(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValueZ() || this.persistentDataContainer.dirty());
-    }
-
-    @Override
-    public PersistentDataContainer bridge$getPersistentDataContainer() {
-        return this.persistentDataContainer;
-    }
-
-    public void setBiome(int i, int j, int k, Holder<Biome> biome) {
-        try {
-            int l = QuartPos.fromBlock(this.getMinBuildHeight());
-            int i1 = l + QuartPos.fromBlock(this.getHeight()) - 1;
-            int j1 = Mth.clamp(j, l, i1);
-            int k1 = this.getSectionIndex(QuartPos.toBlock(j1));
-
-            ((LevelChunkSectionBridge) this.sections[k1]).bridge$setBiome(i & 3, j1 & 3, k & 3, biome);
-        } catch (Throwable throwable) {
-            CrashReport crashreport = CrashReport.forThrowable(throwable, "Setting biome");
-            CrashReportCategory crashreportsystemdetails = crashreport.addCategory("Biome being set");
-
-            crashreportsystemdetails.setDetail("Location", () -> {
-                return CrashReportCategory.formatLocation(this, i, j, k);
-            });
-            throw new ReportedException(crashreport);
-        }
-    }
+  }
 }

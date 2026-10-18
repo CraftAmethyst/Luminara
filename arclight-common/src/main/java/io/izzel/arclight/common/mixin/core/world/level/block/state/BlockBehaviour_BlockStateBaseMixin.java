@@ -13,23 +13,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockBehaviour.BlockStateBase.class)
 public class BlockBehaviour_BlockStateBaseMixin {
 
-    @Inject(method = "entityInside", at = @At("HEAD"))
-    private void arclight$captureBlockCollide(
-        Level worldIn,
-        BlockPos pos,
-        Entity entityIn,
-        CallbackInfo ci
-    ) {
-        ArclightCaptures.captureDamageEventBlock(pos);
-    }
+  @Inject(method = "entityInside", at = @At("HEAD"))
+  private void arclight$captureBlockCollide(
+      Level worldIn, BlockPos pos, Entity entityIn, CallbackInfo ci) {
+    ArclightCaptures.captureDamageEventBlock(pos);
+  }
 
-    @Inject(method = "entityInside", at = @At("RETURN"))
-    private void arclight$resetBlockCollide(
-        Level worldIn,
-        BlockPos pos,
-        Entity entityIn,
-        CallbackInfo ci
-    ) {
-        ArclightCaptures.captureDamageEventBlock(null);
-    }
+  @Inject(method = "entityInside", at = @At("RETURN"))
+  private void arclight$resetBlockCollide(
+      Level worldIn, BlockPos pos, Entity entityIn, CallbackInfo ci) {
+    ArclightCaptures.captureDamageEventBlock(null);
+  }
 }

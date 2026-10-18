@@ -6,10 +6,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class LoggingSpec {
 
-    @Setting("use-simple-format")
-    private boolean useSimpleFormat = false;
+  @Setting("use-simple-format")
+  private boolean useSimpleFormat = false;
 
-    public boolean isUseSimpleFormat() {
-        return useSimpleFormat;
-    }
+  public boolean isUseSimpleFormat() {
+    return useSimpleFormat;
+  }
 }

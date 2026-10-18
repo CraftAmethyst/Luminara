@@ -12,31 +12,30 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(RconConsoleSource.class)
-public class RConConsoleSourceMixin
-    implements ICommandSourceBridge, RConConsoleSourceBridge {
+public class RConConsoleSourceMixin implements ICommandSourceBridge, RConConsoleSourceBridge {
 
-    // @formatter:off
-    @Shadow @Final private StringBuffer buffer;
+  // @formatter:off
+  @Shadow @Final private StringBuffer buffer;
 
-    @Shadow @Final private MinecraftServer server;
+  @Shadow @Final private MinecraftServer server;
 
-    // @formatter:on
+  // @formatter:on
 
-    public CommandSender getBukkitSender() {
-        return ((MinecraftServerBridge) this.server).bridge$getRemoteConsole();
-    }
+  public CommandSender getBukkitSender() {
+    return ((MinecraftServerBridge) this.server).bridge$getRemoteConsole();
+  }
 
-    public void sendMessage(String message) {
-        this.buffer.append(message);
-    }
+  public void sendMessage(String message) {
+    this.buffer.append(message);
+  }
 
-    @Override
-    public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
-        return getBukkitSender();
-    }
+  @Override
+  public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
+    return getBukkitSender();
+  }
 
-    @Override
-    public void bridge$sendMessage(String message) {
-        sendMessage(message);
-    }
+  @Override
+  public void bridge$sendMessage(String message) {
+    sendMessage(message);
+  }
 }

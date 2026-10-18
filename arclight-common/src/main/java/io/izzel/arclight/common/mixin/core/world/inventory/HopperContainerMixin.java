@@ -19,48 +19,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(HopperMenu.class)
 public abstract class HopperContainerMixin extends AbstractContainerMenuMixin {
 
-    // @formatter:off
-    @Shadow @Final private Container hopper;
+  // @formatter:off
+  @Shadow @Final private Container hopper;
 
-    // @formatter:on
+  // @formatter:on
 
-    private CraftInventoryView bukkitEntity = null;
-    private Inventory playerInventory;
+  private CraftInventoryView bukkitEntity = null;
+  private Inventory playerInventory;
 
-    @Inject(
-        method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;)V",
-        at = @At("RETURN")
-    )
-    public void arclight$init(
-        int id,
-        Inventory playerInventory,
-        Container inventory,
-        CallbackInfo ci
-    ) {
-        this.playerInventory = playerInventory;
+  @Inject(
+      method =
+          "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;)V",
+      at = @At("RETURN"))
+  public void arclight$init(
+      int id, Inventory playerInventory, Container inventory, CallbackInfo ci) {
+    this.playerInventory = playerInventory;
+  }
+
+  @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
+  public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    if (!bridge$isCheckReachable()) cir.setReturnValue(true);
+  }
+
+  @Override
+  public CraftInventoryView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
-
-    @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(
-        Player playerIn,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        if (!bridge$isCheckReachable()) cir.setReturnValue(true);
-    }
-
-    @Override
-    public CraftInventoryView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-        CraftInventory inventory = new CraftInventory(this.hopper);
-        bukkitEntity = new CraftInventoryView(
-            (
-                (PlayerEntityBridge) this.playerInventory.player
-            ).bridge$getBukkitEntity(),
+    CraftInventory inventory = new CraftInventory(this.hopper);
+    bukkitEntity =
+        new CraftInventoryView(
+            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
             inventory,
-            (AbstractContainerMenu) (Object) this
-        );
-        return bukkitEntity;
-    }
+            (AbstractContainerMenu) (Object) this);
+    return bukkitEntity;
+  }
 }

@@ -9,17 +9,14 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ServerboundContainerClosePacket.class)
 public class CCloseWindowPacketMixin {
 
-    @Shadow
-    @Final
-    @Mutable
-    private int containerId;
+  @Shadow @Final @Mutable private int containerId;
 
-    public void arclight$constructor() {
-        throw new RuntimeException();
-    }
+  public void arclight$constructor() {
+    throw new RuntimeException();
+  }
 
-    public void arclight$constructor(int id) {
-        arclight$constructor();
-        this.containerId = id;
-    }
+  public void arclight$constructor(int id) {
+    arclight$constructor();
+    this.containerId = id;
+  }
 }

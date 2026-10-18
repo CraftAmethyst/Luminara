@@ -12,27 +12,27 @@ import org.bukkit.generator.ChunkGenerator;
 import org.spigotmc.SpigotWorldConfig;
 
 public interface WorldBridge extends IWorldWriterBridge, IWorldBridge {
-    CraftServer bridge$getServer();
+  CraftServer bridge$getServer();
 
-    CraftWorld bridge$getWorld();
+  CraftWorld bridge$getWorld();
 
-    boolean bridge$isPvpMode();
+  boolean bridge$isPvpMode();
 
-    boolean bridge$isKeepSpawnInMemory();
+  boolean bridge$isKeepSpawnInMemory();
 
-    boolean bridge$isPopulating();
+  boolean bridge$isPopulating();
 
-    void bridge$setPopulating(boolean populating);
+  void bridge$setPopulating(boolean populating);
 
-    ChunkGenerator bridge$getGenerator();
+  ChunkGenerator bridge$getGenerator();
 
-    BlockEntity bridge$getTileEntity(BlockPos pos, boolean validate);
+  BlockEntity bridge$getTileEntity(BlockPos pos, boolean validate);
 
-    SpigotWorldConfig bridge$spigotConfig();
+  SpigotWorldConfig bridge$spigotConfig();
 
-    Object2LongOpenHashMap<SpawnCategory> bridge$ticksPerSpawnCategory();
+  Object2LongOpenHashMap<SpawnCategory> bridge$ticksPerSpawnCategory();
 
-    ResourceKey<LevelStem> bridge$getTypeKey();
+  ResourceKey<LevelStem> bridge$getTypeKey();
 
-    void bridge$setLastPhysicsProblem(BlockPos pos);
+  void bridge$setLastPhysicsProblem(BlockPos pos);
 }

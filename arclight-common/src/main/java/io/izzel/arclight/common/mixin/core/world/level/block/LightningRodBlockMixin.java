@@ -21,42 +21,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LightningRodBlock.class)
 public class LightningRodBlockMixin {
 
-    @Inject(method = "onLightningStrike", cancellable = true, at = @At("HEAD"))
-    private void arclight$redstoneChange(
-        BlockState state,
-        Level level,
-        BlockPos pos,
-        CallbackInfo ci
-    ) {
-        boolean powered = state.getValue(LightningRodBlock.POWERED);
-        int old = powered ? 15 : 0;
-        int current = !powered ? 15 : 0;
+  @Inject(method = "onLightningStrike", cancellable = true, at = @At("HEAD"))
+  private void arclight$redstoneChange(
+      BlockState state, Level level, BlockPos pos, CallbackInfo ci) {
+    boolean powered = state.getValue(LightningRodBlock.POWERED);
+    int old = powered ? 15 : 0;
+    int current = !powered ? 15 : 0;
 
-        BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(
-            CraftBlock.at(level, pos),
-            old,
-            current
-        );
-        Bukkit.getPluginManager().callEvent(eventRedstone);
+    BlockRedstoneEvent eventRedstone =
+        new BlockRedstoneEvent(CraftBlock.at(level, pos), old, current);
+    Bukkit.getPluginManager().callEvent(eventRedstone);
 
-        if (eventRedstone.getNewCurrent() <= 0) {
-            ci.cancel();
-        }
+    if (eventRedstone.getNewCurrent() <= 0) {
+      ci.cancel();
     }
+  }
 
-    @Redirect(
-        method = "onProjectileHit",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
-        )
-    )
-    private boolean arclight$strikeReason(Level level, Entity entity) {
-        if (!DistValidate.isValid(level)) return level.addFreshEntity(entity);
-        ((ServerWorldBridge) level).bridge$strikeLightning(
-            (LightningBolt) entity,
-            LightningStrikeEvent.Cause.TRIDENT
-        );
-        return true;
-    }
+  @Redirect(
+      method = "onProjectileHit",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private boolean arclight$strikeReason(Level level, Entity entity) {
+    if (!DistValidate.isValid(level)) return level.addFreshEntity(entity);
+    ((ServerWorldBridge) level)
+        .bridge$strikeLightning((LightningBolt) entity, LightningStrikeEvent.Cause.TRIDENT);
+    return true;
+  }
 }

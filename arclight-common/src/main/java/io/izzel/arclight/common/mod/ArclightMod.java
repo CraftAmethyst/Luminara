@@ -7,6 +7,8 @@ import io.izzel.arclight.common.mod.util.BungeeComponentPreloader;
 import io.izzel.arclight.common.mod.util.log.ArclightI18nLogger;
 import io.izzel.arclight.i18n.ArclightConfig;
 import io.izzel.arclight.i18n.LuminaraVersion;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -22,102 +24,84 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 @Mod("luminara")
 public class ArclightMod {
 
-    public static final Logger LOGGER = ArclightI18nLogger.getLogger(
-        "Luminara"
-    );
+  public static final Logger LOGGER = ArclightI18nLogger.getLogger("Luminara");
 
-    public ArclightMod(FMLJavaModLoadingContext context) {
-        // The logging configuration is loaded on first ArclightConfig access. Register the
-        // RGB pattern converter before that so Log4j can resolve it during reconfiguration.
-        LuminaraBootstrap.registerLoggingPlugins();
-        if (FMLLoader.getDist() != Dist.DEDICATED_SERVER) {
-            throw new IllegalStateException(
-                "Luminara " +
-                    LuminaraVersion.version() +
-                    " only runs on a Forge dedicated server. Remove it from the client, " +
-                    "or start the server through the Forge dedicated-server launch command " +
-                    "after reading https://github.com/CraftAmethyst/Luminara"
-            );
-        }
-        LuminaraBootstrap.applyPlatform();
+  public ArclightMod(FMLJavaModLoadingContext context) {
+    // The logging configuration is loaded on first ArclightConfig access. Register the
+    // RGB pattern converter before that so Log4j can resolve it during reconfiguration.
+    LuminaraBootstrap.registerLoggingPlugins();
+    if (FMLLoader.getDist() != Dist.DEDICATED_SERVER) {
+      throw new IllegalStateException(
+          "Luminara "
+              + LuminaraVersion.version()
+              + " only runs on a Forge dedicated server. Remove it from the client, "
+              + "or start the server through the Forge dedicated-server launch command "
+              + "after reading https://github.com/CraftAmethyst/Luminara");
+    }
+    LuminaraBootstrap.applyPlatform();
 
-        // Capture stdout before loading the config, because LoggingConfigurator reports
-        // the selected layout through System.out after installing the new Log4j config.
-        System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
-        System.setErr(
-            new LoggingPrintStream("STDERR", System.err, Level.ERROR)
-        );
-        // First-stage config load applies Luminara's logging layout before the banner.
-        ArclightConfig.spec();
+    // Capture stdout before loading the config, because LoggingConfigurator reports
+    // the selected layout through System.out after installing the new Log4j config.
+    System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
+    System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
+    // First-stage config load applies Luminara's logging layout before the banner.
+    ArclightConfig.spec();
 
-        try {
-            LuminaraBootstrap.installGsonEnumFactory();
-            LuminaraBootstrap.warmUpEnumHelper();
-        } catch (Throwable t) {
-            throw new IllegalStateException(
-                "Luminara failed to install the Gson enum bootstrap",
-                t
-            );
-        }
-        LuminaraBootstrap.logBanner();
+    try {
+      LuminaraBootstrap.installGsonEnumFactory();
+      LuminaraBootstrap.warmUpEnumHelper();
+    } catch (Throwable t) {
+      throw new IllegalStateException("Luminara failed to install the Gson enum bootstrap", t);
+    }
+    LuminaraBootstrap.logBanner();
 
-        if (ArclightConfig.spec().getCompat().isPreloadBungeeChatClasses()) {
-            BungeeComponentPreloader.preloadBungeeClasses();
-        }
+    if (ArclightConfig.spec().getCompat().isPreloadBungeeChatClasses()) {
+      BungeeComponentPreloader.preloadBungeeClasses();
+    }
 
-        ArclightEventDispatcherRegistry.registerAllEventDispatchers();
-        MinecraftForge.EVENT_BUS.addListener(
-            LuminaraCommand::onRegisterCommands
-        );
-        context.registerExtensionPoint(IExtensionPoint.DisplayTest.class, () ->
+    ArclightEventDispatcherRegistry.registerAllEventDispatchers();
+    MinecraftForge.EVENT_BUS.addListener(LuminaraCommand::onRegisterCommands);
+    context.registerExtensionPoint(
+        IExtensionPoint.DisplayTest.class,
+        () ->
             new IExtensionPoint.DisplayTest(
-                () -> NetworkConstants.IGNORESERVERONLY,
-                (a, b) -> true
-            )
-        );
+                () -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 
-        context.getModEventBus().addListener(this::onCommonSetup);
+    context.getModEventBus().addListener(this::onCommonSetup);
+  }
+
+  public static boolean isModLoaded(String modid) {
+    return ModList.get() != null
+        ? ModList.get().isLoaded(modid)
+        : FMLLoader.getLoadingModList().getModFileById(modid) != null;
+  }
+
+  private void onCommonSetup(FMLCommonSetupEvent event) {
+    // Common setup complete
+  }
+
+  private static class LoggingPrintStream extends PrintStream {
+
+    private final Logger logger;
+    private final Level level;
+
+    public LoggingPrintStream(String name, @NotNull OutputStream out, Level level) {
+      super(out);
+      this.logger = LogManager.getLogger(name);
+      this.level = level;
     }
 
-    public static boolean isModLoaded(String modid) {
-        return ModList.get() != null
-            ? ModList.get().isLoaded(modid)
-            : FMLLoader.getLoadingModList().getModFileById(modid) != null;
+    @Override
+    public void println(@Nullable String x) {
+      logger.log(level, x);
     }
 
-    private void onCommonSetup(FMLCommonSetupEvent event) {
-        // Common setup complete
+    @Override
+    public void println(@Nullable Object x) {
+      logger.log(level, String.valueOf(x));
     }
-
-    private static class LoggingPrintStream extends PrintStream {
-
-        private final Logger logger;
-        private final Level level;
-
-        public LoggingPrintStream(
-            String name,
-            @NotNull OutputStream out,
-            Level level
-        ) {
-            super(out);
-            this.logger = LogManager.getLogger(name);
-            this.level = level;
-        }
-
-        @Override
-        public void println(@Nullable String x) {
-            logger.log(level, x);
-        }
-
-        @Override
-        public void println(@Nullable Object x) {
-            logger.log(level, String.valueOf(x));
-        }
-    }
+  }
 }

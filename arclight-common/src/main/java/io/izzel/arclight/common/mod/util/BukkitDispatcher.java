@@ -12,27 +12,21 @@ import org.bukkit.craftbukkit.v.command.VanillaCommandWrapper;
 
 public class BukkitDispatcher extends CommandDispatcher<CommandSourceStack> {
 
-    private final Commands commands;
+  private final Commands commands;
 
-    public BukkitDispatcher(Commands commands) {
-        this.commands = commands;
-    }
+  public BukkitDispatcher(Commands commands) {
+    this.commands = commands;
+  }
 
-    @Override
-    public LiteralCommandNode<CommandSourceStack> register(
-        LiteralArgumentBuilder<CommandSourceStack> command
-    ) {
-        LiteralCommandNode<CommandSourceStack> node = command.build();
-        if (!(node.getCommand() instanceof BukkitCommandWrapper)) {
-            VanillaCommandWrapper wrapper = new VanillaCommandWrapper(
-                this.commands,
-                node
-            );
-            ((CraftServer) Bukkit.getServer())
-                .getCommandMap()
-                .register("forge", wrapper);
-        }
-        getRoot().addChild(node);
-        return node;
+  @Override
+  public LiteralCommandNode<CommandSourceStack> register(
+      LiteralArgumentBuilder<CommandSourceStack> command) {
+    LiteralCommandNode<CommandSourceStack> node = command.build();
+    if (!(node.getCommand() instanceof BukkitCommandWrapper)) {
+      VanillaCommandWrapper wrapper = new VanillaCommandWrapper(this.commands, node);
+      ((CraftServer) Bukkit.getServer()).getCommandMap().register("forge", wrapper);
     }
+    getRoot().addChild(node);
+    return node;
+  }
 }

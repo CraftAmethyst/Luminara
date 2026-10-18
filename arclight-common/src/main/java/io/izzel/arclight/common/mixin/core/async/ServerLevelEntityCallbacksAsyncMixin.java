@@ -11,32 +11,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "net.minecraft.server.level.ServerLevel$EntityCallbacks")
 public abstract class ServerLevelEntityCallbacksAsyncMixin {
 
-    // @formatter:off
-    @Shadow public abstract void onTrackingStart(Entity entity);
-    @Shadow public abstract void onTrackingEnd(Entity entity);
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract void onTrackingStart(Entity entity);
 
-    @Inject(method = "onTrackingStart(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
-    private void arclight$guardEntityRegister(
-        Entity entity,
-        CallbackInfo ci
-    ) {
-        boolean handled = AsyncCatcher.checkVoid("entity register", () -> {
-            this.onTrackingStart(entity);
-            return Boolean.TRUE;
-        });
-        if (handled) ci.cancel();
-    }
+  @Shadow
+  public abstract void onTrackingEnd(Entity entity);
 
-    @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
-    private void arclight$guardEntityUnregister(
-        Entity entity,
-        CallbackInfo ci
-    ) {
-        boolean handled = AsyncCatcher.checkVoid("entity unregister", () -> {
-            this.onTrackingEnd(entity);
-            return Boolean.TRUE;
-        });
-        if (handled) ci.cancel();
-    }
+  // @formatter:on
+
+  @Inject(
+      method = "onTrackingStart(Lnet/minecraft/world/entity/Entity;)V",
+      at = @At("HEAD"),
+      cancellable = true)
+  private void arclight$guardEntityRegister(Entity entity, CallbackInfo ci) {
+    boolean handled =
+        AsyncCatcher.checkVoid(
+            "entity register",
+            () -> {
+              this.onTrackingStart(entity);
+              return Boolean.TRUE;
+            });
+    if (handled) ci.cancel();
+  }
+
+  @Inject(
+      method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V",
+      at = @At("HEAD"),
+      cancellable = true)
+  private void arclight$guardEntityUnregister(Entity entity, CallbackInfo ci) {
+    boolean handled =
+        AsyncCatcher.checkVoid(
+            "entity unregister",
+            () -> {
+              this.onTrackingEnd(entity);
+              return Boolean.TRUE;
+            });
+    if (handled) ci.cancel();
+  }
 }

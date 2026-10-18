@@ -9,17 +9,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArclightModHorse extends CraftAbstractHorse {
 
-    public ArclightModHorse(CraftServer server, AbstractHorse entity) {
-        super(server, entity);
-    }
+  public ArclightModHorse(CraftServer server, AbstractHorse entity) {
+    super(server, entity);
+  }
 
-    @Override
-    public Horse.@NotNull Variant getVariant() {
-        return Horse.Variant.HORSE;
-    }
+  @Override
+  public Horse.@NotNull Variant getVariant() {
+    return Horse.Variant.HORSE;
+  }
 
-    @Override
-    public @NotNull EntityCategory getCategory() {
-        return EntityCategory.NONE;
-    }
+  @Override
+  public @NotNull EntityCategory getCategory() {
+    return EntityCategory.NONE;
+  }
 }

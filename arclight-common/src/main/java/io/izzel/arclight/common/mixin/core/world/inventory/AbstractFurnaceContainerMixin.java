@@ -19,58 +19,50 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractFurnaceMenu.class)
-public abstract class AbstractFurnaceContainerMixin
-    extends AbstractContainerMenuMixin {
+public abstract class AbstractFurnaceContainerMixin extends AbstractContainerMenuMixin {
 
-    // @formatter:off
-    @Shadow @Final private Container container;
+  // @formatter:off
+  @Shadow @Final private Container container;
 
-    // @formatter:on
+  // @formatter:on
 
-    private CraftInventoryView bukkitEntity = null;
-    private Inventory playerInventory;
+  private CraftInventoryView bukkitEntity = null;
+  private Inventory playerInventory;
 
-    @Inject(
-        method = "<init>(Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/world/item/crafting/RecipeType;Lnet/minecraft/world/inventory/RecipeBookType;ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;Lnet/minecraft/world/inventory/ContainerData;)V",
-        at = @At("RETURN")
-    )
-    public void arclight$init(
-        MenuType<?> p_i241922_1_,
-        RecipeType<? extends AbstractCookingRecipe> p_i241922_2_,
-        RecipeBookType p_i241922_3_,
-        int p_i241922_4_,
-        Inventory playerInventoryIn,
-        Container p_i241922_6_,
-        ContainerData p_i241922_7_,
-        CallbackInfo ci
-    ) {
-        this.playerInventory = playerInventoryIn;
+  @Inject(
+      method =
+          "<init>(Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/world/item/crafting/RecipeType;Lnet/minecraft/world/inventory/RecipeBookType;ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;Lnet/minecraft/world/inventory/ContainerData;)V",
+      at = @At("RETURN"))
+  public void arclight$init(
+      MenuType<?> p_i241922_1_,
+      RecipeType<? extends AbstractCookingRecipe> p_i241922_2_,
+      RecipeBookType p_i241922_3_,
+      int p_i241922_4_,
+      Inventory playerInventoryIn,
+      Container p_i241922_6_,
+      ContainerData p_i241922_7_,
+      CallbackInfo ci) {
+    this.playerInventory = playerInventoryIn;
+  }
+
+  @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
+  public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    if (!bridge$isCheckReachable()) cir.setReturnValue(true);
+  }
+
+  @Override
+  public CraftInventoryView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(
-        Player playerIn,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        if (!bridge$isCheckReachable()) cir.setReturnValue(true);
-    }
-
-    @Override
-    public CraftInventoryView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventoryFurnace inventory = new CraftInventoryFurnace(
-            (AbstractFurnaceBlockEntity) this.container
-        );
-        bukkitEntity = new CraftInventoryView(
-            (
-                (PlayerEntityBridge) this.playerInventory.player
-            ).bridge$getBukkitEntity(),
+    CraftInventoryFurnace inventory =
+        new CraftInventoryFurnace((AbstractFurnaceBlockEntity) this.container);
+    bukkitEntity =
+        new CraftInventoryView(
+            ((PlayerEntityBridge) this.playerInventory.player).bridge$getBukkitEntity(),
             inventory,
-            (AbstractContainerMenu) (Object) this
-        );
-        return bukkitEntity;
-    }
+            (AbstractContainerMenu) (Object) this);
+    return bukkitEntity;
+  }
 }

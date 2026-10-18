@@ -12,27 +12,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BreakDoorGoal.class)
 public abstract class BreakDoorGoalMixin extends DoorInteractGoal {
 
-    public BreakDoorGoalMixin(Mob entityIn) {
-        super(entityIn);
-    }
+  public BreakDoorGoalMixin(Mob entityIn) {
+    super(entityIn);
+  }
 
-    @Inject(
-        method = "tick",
-        cancellable = true,
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"
-        )
-    )
-    public void arclight$breakDoor(CallbackInfo ci) {
-        if (
-            CraftEventFactory.callEntityBreakDoorEvent(
-                this.mob,
-                this.doorPos
-            ).isCancelled()
-        ) {
-            this.start();
-            ci.cancel();
-        }
+  @Inject(
+      method = "tick",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
+  public void arclight$breakDoor(CallbackInfo ci) {
+    if (CraftEventFactory.callEntityBreakDoorEvent(this.mob, this.doorPos).isCancelled()) {
+      this.start();
+      ci.cancel();
     }
+  }
 }

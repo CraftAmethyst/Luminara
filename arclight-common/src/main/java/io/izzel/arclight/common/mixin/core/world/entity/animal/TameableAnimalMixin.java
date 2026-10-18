@@ -7,7 +7,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(TamableAnimal.class)
 public abstract class TameableAnimalMixin extends AnimalMixin {
 
-    // @formatter:off
-    @Shadow public abstract boolean isTame();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract boolean isTame();
+  // @formatter:on
 }

@@ -13,32 +13,24 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ServerGamePacketListenerImpl.class)
 public class ServerGamePacketListenerImplMixin_Optimize {
 
-    @Shadow
-    public ServerPlayer player;
+  @Shadow public ServerPlayer player;
 
-    @Redirect(
-        method = "handleMovePlayer",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/server/level/ServerChunkCache;move(Lnet/minecraft/server/level/ServerPlayer;)V"
-        )
-    )
-    private void arclight$markTrackerDirty(
-        ServerChunkCache instance,
-        ServerPlayer player,
-        ServerboundMovePlayerPacket packet
-    ) {
-        if (!packet.hasPosition()) {
-            // do not update tracker when no position is updated
-            var old = (
-                (ServerPlayerEntityBridge) this.player
-            ).bridge$isTrackerDirty();
-            instance.move(player);
-            ((ServerPlayerEntityBridge) this.player).bridge$setTrackerDirty(
-                old
-            );
-        } else {
-            instance.move(player);
-        }
+  @Redirect(
+      method = "handleMovePlayer",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerChunkCache;move(Lnet/minecraft/server/level/ServerPlayer;)V"))
+  private void arclight$markTrackerDirty(
+      ServerChunkCache instance, ServerPlayer player, ServerboundMovePlayerPacket packet) {
+    if (!packet.hasPosition()) {
+      // do not update tracker when no position is updated
+      var old = ((ServerPlayerEntityBridge) this.player).bridge$isTrackerDirty();
+      instance.move(player);
+      ((ServerPlayerEntityBridge) this.player).bridge$setTrackerDirty(old);
+    } else {
+      instance.move(player);
     }
+  }
 }

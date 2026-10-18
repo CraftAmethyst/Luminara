@@ -11,18 +11,13 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(value = CraftVillager.class, remap = false)
 public class CraftVillagerMixin {
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public static Villager.Profession nmsToBukkitProfession(
-        VillagerProfession nms
-    ) {
-        return Villager.Profession.valueOf(
-            ResourceLocationUtil.standardize(
-                ForgeRegistries.VILLAGER_PROFESSIONS.getKey(nms)
-            )
-        );
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static Villager.Profession nmsToBukkitProfession(VillagerProfession nms) {
+    return Villager.Profession.valueOf(
+        ResourceLocationUtil.standardize(ForgeRegistries.VILLAGER_PROFESSIONS.getKey(nms)));
+  }
 }

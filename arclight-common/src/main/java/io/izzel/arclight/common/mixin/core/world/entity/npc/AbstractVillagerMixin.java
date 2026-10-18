@@ -24,61 +24,46 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(net.minecraft.world.entity.npc.AbstractVillager.class)
-public abstract class AbstractVillagerMixin
-    extends PathfinderMobMixin
-    implements IMerchantBridge {
+public abstract class AbstractVillagerMixin extends PathfinderMobMixin implements IMerchantBridge {
 
-    @Shadow
-    @Final
-    private SimpleContainer inventory;
+  @Shadow @Final private SimpleContainer inventory;
 
-    private CraftMerchant craftMerchant;
+  private CraftMerchant craftMerchant;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(
-        EntityType<? extends net.minecraft.world.entity.npc.AbstractVillager> type,
-        Level worldIn,
-        CallbackInfo ci
-    ) {
-        ((IInventoryBridge) this.inventory).setOwner(
-            (InventoryHolder) this.getBukkitEntity()
-        );
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void arclight$init(
+      EntityType<? extends net.minecraft.world.entity.npc.AbstractVillager> type,
+      Level worldIn,
+      CallbackInfo ci) {
+    ((IInventoryBridge) this.inventory).setOwner((InventoryHolder) this.getBukkitEntity());
+  }
+
+  @Override
+  public CraftMerchant bridge$getCraftMerchant() {
+    return craftMerchant == null
+        ? (craftMerchant =
+            new CraftMerchant((net.minecraft.world.entity.npc.AbstractVillager) (Object) this))
+        : craftMerchant;
+  }
+
+  @Redirect(
+      method = "addOffersFromItemListings",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target = "Lnet/minecraft/world/item/trading/MerchantOffers;add(Ljava/lang/Object;)Z"))
+  private boolean arclight$gainOffer(MerchantOffers merchantOffers, Object e) {
+    MerchantOffer offer = (MerchantOffer) e;
+    VillagerAcquireTradeEvent event =
+        new VillagerAcquireTradeEvent(
+            (AbstractVillager) getBukkitEntity(), ((MerchantOfferBridge) offer).bridge$asBukkit());
+    if (this.valid) {
+      Bukkit.getPluginManager().callEvent(event);
     }
-
-    @Override
-    public CraftMerchant bridge$getCraftMerchant() {
-        return craftMerchant == null
-            ? (craftMerchant = new CraftMerchant(
-            (net.minecraft.world.entity.npc.AbstractVillager) (Object) this
-        ))
-            : craftMerchant;
+    if (!event.isCancelled()) {
+      return merchantOffers.add(CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
     }
-
-    @Redirect(
-        method = "addOffersFromItemListings",
-        at = @At(
-            value = "INVOKE",
-            remap = false,
-            target = "Lnet/minecraft/world/item/trading/MerchantOffers;add(Ljava/lang/Object;)Z"
-        )
-    )
-    private boolean arclight$gainOffer(
-        MerchantOffers merchantOffers,
-        Object e
-    ) {
-        MerchantOffer offer = (MerchantOffer) e;
-        VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent(
-            (AbstractVillager) getBukkitEntity(),
-            ((MerchantOfferBridge) offer).bridge$asBukkit()
-        );
-        if (this.valid) {
-            Bukkit.getPluginManager().callEvent(event);
-        }
-        if (!event.isCancelled()) {
-            return merchantOffers.add(
-                CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft()
-            );
-        }
-        return false;
-    }
+    return false;
+  }
 }

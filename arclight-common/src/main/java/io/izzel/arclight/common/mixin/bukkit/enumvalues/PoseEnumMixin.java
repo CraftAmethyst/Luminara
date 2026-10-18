@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.entity.Pose.class, remap = false)
 public class PoseEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.entity.Pose[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.entity.Pose[] ENUM$VALUES;
 }

@@ -12,38 +12,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ChunkMap.TrackedEntity.class)
 public abstract class ChunkMapTrackedEntityAsyncMixin {
 
-    // @formatter:off
-    @Shadow public abstract void removePlayer(ServerPlayer player);
-    @Shadow public abstract void updatePlayer(ServerPlayer player);
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract void removePlayer(ServerPlayer player);
 
-    @Inject(method = "removePlayer(Lnet/minecraft/server/level/ServerPlayer;)V", at = @At("HEAD"), cancellable = true)
-    private void arclight$guardPlayerTrackerClear(
-        ServerPlayer player,
-        CallbackInfo ci
-    ) {
-        boolean handled = AsyncCatcher.checkVoid(
+  @Shadow
+  public abstract void updatePlayer(ServerPlayer player);
+
+  // @formatter:on
+
+  @Inject(
+      method = "removePlayer(Lnet/minecraft/server/level/ServerPlayer;)V",
+      at = @At("HEAD"),
+      cancellable = true)
+  private void arclight$guardPlayerTrackerClear(ServerPlayer player, CallbackInfo ci) {
+    boolean handled =
+        AsyncCatcher.checkVoid(
             "player tracker clear",
             () -> {
-                this.removePlayer(player);
-                return Boolean.TRUE;
-            }
-        );
-        if (handled) ci.cancel();
-    }
+              this.removePlayer(player);
+              return Boolean.TRUE;
+            });
+    if (handled) ci.cancel();
+  }
 
-    @Inject(method = "updatePlayer(Lnet/minecraft/server/level/ServerPlayer;)V", at = @At("HEAD"), cancellable = true)
-    private void arclight$guardPlayerTrackerUpdate(
-        ServerPlayer player,
-        CallbackInfo ci
-    ) {
-        boolean handled = AsyncCatcher.checkVoid(
+  @Inject(
+      method = "updatePlayer(Lnet/minecraft/server/level/ServerPlayer;)V",
+      at = @At("HEAD"),
+      cancellable = true)
+  private void arclight$guardPlayerTrackerUpdate(ServerPlayer player, CallbackInfo ci) {
+    boolean handled =
+        AsyncCatcher.checkVoid(
             "player tracker update",
             () -> {
-                this.updatePlayer(player);
-                return Boolean.TRUE;
-            }
-        );
-        if (handled) ci.cancel();
-    }
+              this.updatePlayer(player);
+              return Boolean.TRUE;
+            });
+    if (handled) ci.cancel();
+  }
 }

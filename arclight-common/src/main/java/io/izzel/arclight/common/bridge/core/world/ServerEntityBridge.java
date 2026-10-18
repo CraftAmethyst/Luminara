@@ -1,18 +1,17 @@
 package io.izzel.arclight.common.bridge.core.world;
 
+import java.util.Set;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
 
-import java.util.Set;
-
 public interface ServerEntityBridge {
-    void bridge$setTrackedPlayers(Set<ServerPlayerConnection> trackedPlayers);
+  void bridge$setTrackedPlayers(Set<ServerPlayerConnection> trackedPlayers);
 
-    Entity bridge$getTrackingEntity();
+  Entity bridge$getTrackingEntity();
 
-    boolean bridge$syncPosition();
+  boolean bridge$syncPosition();
 
-    boolean bridge$instantSyncPosition();
+  boolean bridge$instantSyncPosition();
 
-    boolean bridge$instantSyncMotion();
+  boolean bridge$instantSyncMotion();
 }

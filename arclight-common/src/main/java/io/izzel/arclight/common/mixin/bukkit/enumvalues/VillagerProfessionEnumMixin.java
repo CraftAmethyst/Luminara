@@ -8,7 +8,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = Profession.class, remap = false)
 public class VillagerProfessionEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static Profession[] ENUM$VALUES;
+  @Mutable @Shadow private static Profession[] ENUM$VALUES;
 }

@@ -6,12 +6,8 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 
 public class ItemEntityEventDispatcher {
 
-    @SubscribeEvent(receiveCanceled = true)
-    public void onExpire(ItemExpireEvent event) {
-        event.setCanceled(
-            CraftEventFactory.callItemDespawnEvent(
-                event.getEntity()
-            ).isCancelled()
-        );
-    }
+  @SubscribeEvent(receiveCanceled = true)
+  public void onExpire(ItemExpireEvent event) {
+    event.setCanceled(CraftEventFactory.callItemDespawnEvent(event.getEntity()).isCancelled());
+  }
 }

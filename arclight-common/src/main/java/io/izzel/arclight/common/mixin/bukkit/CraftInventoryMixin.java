@@ -14,18 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = CraftInventory.class, remap = false)
 public class CraftInventoryMixin {
 
-    @Shadow
-    @Final
-    protected Container inventory;
+  @Shadow @Final protected Container inventory;
 
-    @Inject(method = "getType", cancellable = true, at = @At("HEAD"))
-    private void arclight$lecternType(
-        CallbackInfoReturnable<InventoryType> cir
-    ) {
-        if (
-            inventory.getClass().getDeclaringClass() == LecternBlockEntity.class
-        ) {
-            cir.setReturnValue(InventoryType.LECTERN);
-        }
+  @Inject(method = "getType", cancellable = true, at = @At("HEAD"))
+  private void arclight$lecternType(CallbackInfoReturnable<InventoryType> cir) {
+    if (inventory.getClass().getDeclaringClass() == LecternBlockEntity.class) {
+      cir.setReturnValue(InventoryType.LECTERN);
     }
+  }
 }

@@ -11,28 +11,21 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(LootItemRandomChanceWithLootingCondition.class)
 public class RandomChanceWithLootingMixin {
 
-    @Shadow
-    @Final
-    private float percent;
+  @Shadow @Final private float percent;
 
-    @Shadow
-    @Final
-    private float lootingMultiplier;
+  @Shadow @Final private float lootingMultiplier;
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public boolean test(LootContext context) {
-        int i = context.getLootingModifier();
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public boolean test(LootContext context) {
+    int i = context.getLootingModifier();
 
-        if (context.hasParam(ArclightConstants.LOOTING_MOD)) {
-            i = context.getParamOrNull(ArclightConstants.LOOTING_MOD);
-        }
-        return (
-            context.getRandom().nextFloat() <
-                this.percent + (float) i * this.lootingMultiplier
-        );
+    if (context.hasParam(ArclightConstants.LOOTING_MOD)) {
+      i = context.getParamOrNull(ArclightConstants.LOOTING_MOD);
     }
+    return (context.getRandom().nextFloat() < this.percent + (float) i * this.lootingMultiplier);
+  }
 }

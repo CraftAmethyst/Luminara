@@ -3,6 +3,9 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.inventory.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.tileentity.TileEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -15,98 +18,91 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @Mixin(targets = "net/minecraft/world/level/block/entity/LecternBlockEntity$1")
-public abstract class LecternTileEntity1Mixin
-    implements IInventoryBridge, Container {
+public abstract class LecternTileEntity1Mixin implements IInventoryBridge, Container {
 
-    public List<HumanEntity> transaction = new ArrayList<>();
+  public List<HumanEntity> transaction = new ArrayList<>();
 
-    @Shadow(aliases = {"this$0", "f_59572_"}, remap = false)
-    private LecternBlockEntity outerThis;
+  @Shadow(
+      aliases = {"this$0", "f_59572_"},
+      remap = false)
+  private LecternBlockEntity outerThis;
 
-    private int maxStack = 1;
+  private int maxStack = 1;
 
-    @Override
-    public void setItem(int index, ItemStack stack) {
-        if (index == 0) {
-            outerThis.setBook(stack);
-            if (outerThis.getLevel() != null) {
-                LecternBlock.resetBookState(
-                    null,
-                    outerThis.getLevel(),
-                    outerThis.getBlockPos(),
-                    outerThis.getBlockState(),
-                    outerThis.hasBook()
-                );
-            }
-        }
+  @Override
+  public void setItem(int index, ItemStack stack) {
+    if (index == 0) {
+      outerThis.setBook(stack);
+      if (outerThis.getLevel() != null) {
+        LecternBlock.resetBookState(
+            null,
+            outerThis.getLevel(),
+            outerThis.getBlockPos(),
+            outerThis.getBlockState(),
+            outerThis.hasBook());
+      }
     }
+  }
 
-    @Override
-    public List<ItemStack> getContents() {
-        return Collections.singletonList(outerThis.getBook());
-    }
+  @Override
+  public List<ItemStack> getContents() {
+    return Collections.singletonList(outerThis.getBook());
+  }
 
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        transaction.add(who);
-    }
+  @Override
+  public void onOpen(CraftHumanEntity who) {
+    transaction.add(who);
+  }
 
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        transaction.remove(who);
-    }
+  @Override
+  public void onClose(CraftHumanEntity who) {
+    transaction.remove(who);
+  }
 
-    @Override
-    public List<HumanEntity> getViewers() {
-        return transaction;
-    }
+  @Override
+  public List<HumanEntity> getViewers() {
+    return transaction;
+  }
 
-    @Override
-    public InventoryHolder getOwner() {
-        return ((TileEntityBridge) outerThis).bridge$getOwner();
-    }
+  @Override
+  public InventoryHolder getOwner() {
+    return ((TileEntityBridge) outerThis).bridge$getOwner();
+  }
 
-    @Override
-    public void setOwner(InventoryHolder owner) {
-    }
+  @Override
+  public void setOwner(InventoryHolder owner) {}
 
-    @Override
-    public int getMaxStackSize() {
-        if (maxStack == 0) maxStack = 1;
-        return maxStack;
-    }
+  @Override
+  public int getMaxStackSize() {
+    if (maxStack == 0) maxStack = 1;
+    return maxStack;
+  }
 
-    @Override
-    public void setMaxStackSize(int size) {
-        this.maxStack = size;
-    }
+  @Override
+  public void setMaxStackSize(int size) {
+    this.maxStack = size;
+  }
 
-    @Override
-    public Location getLocation() {
-        if (outerThis.getLevel() == null) return null;
-        return new Location(
-            ((WorldBridge) outerThis.getLevel()).bridge$getWorld(),
-            outerThis.getBlockPos().getX(),
-            outerThis.getBlockPos().getY(),
-            outerThis.getBlockPos().getZ()
-        );
-    }
+  @Override
+  public Location getLocation() {
+    if (outerThis.getLevel() == null) return null;
+    return new Location(
+        ((WorldBridge) outerThis.getLevel()).bridge$getWorld(),
+        outerThis.getBlockPos().getX(),
+        outerThis.getBlockPos().getY(),
+        outerThis.getBlockPos().getZ());
+  }
 
-    @Override
-    public Recipe<?> getCurrentRecipe() {
-        return null;
-    }
+  @Override
+  public Recipe<?> getCurrentRecipe() {
+    return null;
+  }
 
-    @Override
-    public void setCurrentRecipe(Recipe<?> recipe) {
-    }
+  @Override
+  public void setCurrentRecipe(Recipe<?> recipe) {}
 
-    public LecternBlockEntity getLectern() {
-        return outerThis;
-    }
+  public LecternBlockEntity getLectern() {
+    return outerThis;
+  }
 }

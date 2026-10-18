@@ -7,23 +7,23 @@ import org.jetbrains.annotations.NotNull;
 
 public class LevelPersistentData extends SavedData {
 
-    private CompoundTag tag;
+  private CompoundTag tag;
 
-    public LevelPersistentData(CompoundTag tag) {
-        this.tag = tag == null ? new CompoundTag() : tag;
-    }
+  public LevelPersistentData(CompoundTag tag) {
+    this.tag = tag == null ? new CompoundTag() : tag;
+  }
 
-    public CompoundTag getTag() {
-        return tag;
-    }
+  public CompoundTag getTag() {
+    return tag;
+  }
 
-    public void save(CraftWorld world) {
-        this.tag = new CompoundTag();
-        world.storeBukkitValues(this.tag);
-    }
+  public void save(CraftWorld world) {
+    this.tag = new CompoundTag();
+    world.storeBukkitValues(this.tag);
+  }
 
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag it) {
-        return tag;
-    }
+  @Override
+  public @NotNull CompoundTag save(@NotNull CompoundTag it) {
+    return tag;
+  }
 }

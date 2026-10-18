@@ -15,28 +15,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SculkSpreader.class)
 public abstract class SculkSpreaderMixin implements SculkSpreaderBridge {
 
-    private transient Level arclight$level;
+  private transient Level arclight$level;
 
-    // @formatter:on
+  // @formatter:on
 
-    // @formatter:off
-    @Shadow public abstract boolean isWorldGeneration();
+  // @formatter:off
+  @Shadow
+  public abstract boolean isWorldGeneration();
 
-    @Override
-    public void bridge$setLevel(Level level) {
-        this.arclight$level = level;
+  @Override
+  public void bridge$setLevel(Level level) {
+    this.arclight$level = level;
+  }
+
+  @Inject(
+      method = "addCursor",
+      cancellable = true,
+      at =
+          @At(value = "INVOKE", remap = false, target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
+  private void arclight$bloomEvent(SculkSpreader.ChargeCursor cursor, CallbackInfo ci) {
+    if (!isWorldGeneration() && arclight$level != null) {
+      var bukkitBlock = CraftBlock.at(arclight$level, cursor.pos);
+      var event = new SculkBloomEvent(bukkitBlock, cursor.getCharge());
+      Bukkit.getPluginManager().callEvent(event);
+      if (event.isCancelled()) {
+        ci.cancel();
+      }
+      cursor.charge = event.getCharge();
     }
-
-    @Inject(method = "addCursor", cancellable = true, at = @At(value = "INVOKE", remap = false, target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
-    private void arclight$bloomEvent(SculkSpreader.ChargeCursor cursor, CallbackInfo ci) {
-        if (!isWorldGeneration() && arclight$level != null) {
-            var bukkitBlock = CraftBlock.at(arclight$level, cursor.pos);
-            var event = new SculkBloomEvent(bukkitBlock, cursor.getCharge());
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                ci.cancel();
-            }
-            cursor.charge = event.getCharge();
-        }
-    }
+  }
 }

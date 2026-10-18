@@ -12,33 +12,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientboundSystemChatPacket.class)
 public class ClientboundSystemChatPacketMixin {
 
-    private String content;
+  private String content;
 
-    public void arclight$constructor(Component content, boolean overlay) {
-        throw new RuntimeException();
-    }
+  public void arclight$constructor(Component content, boolean overlay) {
+    throw new RuntimeException();
+  }
 
-    public void arclight$constructor(String content, boolean overlay) {
-        arclight$constructor(Component.Serializer.fromJson(content), overlay);
-    }
+  public void arclight$constructor(String content, boolean overlay) {
+    arclight$constructor(Component.Serializer.fromJson(content), overlay);
+  }
 
-    public void arclight$constructor(BaseComponent[] content, boolean overlay) {
-        arclight$constructor(ComponentSerializer.toString(content), overlay);
-    }
+  public void arclight$constructor(BaseComponent[] content, boolean overlay) {
+    arclight$constructor(ComponentSerializer.toString(content), overlay);
+  }
 
-    @Inject(
-        method = "<init>(Lnet/minecraft/network/chat/Component;Z)V",
-        at = @At("RETURN")
-    )
-    private void arclight$init(
-        Component content,
-        boolean overlay,
-        CallbackInfo ci
-    ) {
-        this.content = Component.Serializer.toJson(content);
-    }
+  @Inject(method = "<init>(Lnet/minecraft/network/chat/Component;Z)V", at = @At("RETURN"))
+  private void arclight$init(Component content, boolean overlay, CallbackInfo ci) {
+    this.content = Component.Serializer.toJson(content);
+  }
 
-    public String content() {
-        return content;
-    }
+  public String content() {
+    return content;
+  }
 }

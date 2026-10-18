@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.Statistic.class, remap = false)
 public class StatisticEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.Statistic[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.Statistic[] ENUM$VALUES;
 }

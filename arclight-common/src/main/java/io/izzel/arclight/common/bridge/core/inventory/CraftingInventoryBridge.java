@@ -4,7 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 
 public interface CraftingInventoryBridge extends IInventoryBridge {
-    void bridge$setOwner(Player owner);
+  void bridge$setOwner(Player owner);
 
-    void bridge$setResultInventory(Container resultInventory);
+  void bridge$setResultInventory(Container resultInventory);
 }

@@ -15,42 +15,37 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Bee.class)
 public abstract class BeeMixin extends AnimalMixin {
 
-    // @formatter:off
-    @Shadow Bee.BeePollinateGoal beePollinateGoal;
+  // @formatter:off
+  @Shadow Bee.BeePollinateGoal beePollinateGoal;
 
-    // @formatter:on
+  // @formatter:on
 
-    @Inject(
-        method = "doHurtTarget",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"
-        )
-    )
-    private void arclight$sting(
-        Entity entityIn,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        ((LivingEntityBridge) entityIn).bridge$pushEffectCause(
-            EntityPotionEffectEvent.Cause.ATTACK
-        );
+  @Inject(
+      method = "doHurtTarget",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
+  private void arclight$sting(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
+    ((LivingEntityBridge) entityIn).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public boolean hurt(DamageSource source, float amount) {
+    if (this.isInvulnerableTo(source)) {
+      return false;
+    } else {
+      Entity entity = source.getEntity();
+      boolean ret = this.damageEntity0(source, amount);
+      if (ret && !this.level().isClientSide) {
+        this.beePollinateGoal.stopPollinating();
+      }
+      return ret;
     }
-
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public boolean hurt(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
-            return false;
-        } else {
-            Entity entity = source.getEntity();
-            boolean ret = this.damageEntity0(source, amount);
-            if (ret && !this.level().isClientSide) {
-                this.beePollinateGoal.stopPollinating();
-            }
-            return ret;
-        }
-    }
+  }
 }

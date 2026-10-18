@@ -7,7 +7,5 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = org.bukkit.inventory.recipe.CookingBookCategory.class, remap = false)
 public class CookingBookCategoryEnumMixin {
 
-    @Mutable
-    @Shadow
-    private static org.bukkit.inventory.recipe.CookingBookCategory[] ENUM$VALUES;
+  @Mutable @Shadow private static org.bukkit.inventory.recipe.CookingBookCategory[] ENUM$VALUES;
 }

@@ -1,54 +1,53 @@
 package io.izzel.arclight.common.bridge.core.entity;
 
 import io.izzel.arclight.common.bridge.core.command.ICommandSourceBridge;
+import java.util.List;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.List;
-
 public interface EntityBridge extends ICommandSourceBridge {
-    Entity bridge$teleportTo(ServerLevel world, PositionImpl blockPos);
+  Entity bridge$teleportTo(ServerLevel world, PositionImpl blockPos);
 
-    void bridge$setOnFire(int tick, boolean callEvent);
+  void bridge$setOnFire(int tick, boolean callEvent);
 
-    CraftEntity bridge$getBukkitEntity();
+  CraftEntity bridge$getBukkitEntity();
 
-    void bridge$setBukkitEntity(CraftEntity craftEntity);
+  void bridge$setBukkitEntity(CraftEntity craftEntity);
 
-    boolean bridge$isPersist();
+  boolean bridge$isPersist();
 
-    void bridge$setPersist(boolean persist);
+  void bridge$setPersist(boolean persist);
 
-    boolean bridge$isValid();
+  boolean bridge$isValid();
 
-    void bridge$setValid(boolean valid);
+  void bridge$setValid(boolean valid);
 
-    ProjectileSource bridge$getProjectileSource();
+  ProjectileSource bridge$getProjectileSource();
 
-    void bridge$setProjectileSource(ProjectileSource projectileSource);
+  void bridge$setProjectileSource(ProjectileSource projectileSource);
 
-    float bridge$getBukkitYaw();
+  float bridge$getBukkitYaw();
 
-    boolean bridge$isChunkLoaded();
+  boolean bridge$isChunkLoaded();
 
-    boolean bridge$isLastDamageCancelled();
+  boolean bridge$isLastDamageCancelled();
 
-    void bridge$setLastDamageCancelled(boolean cancelled);
+  void bridge$setLastDamageCancelled(boolean cancelled);
 
-    void bridge$postTick();
+  void bridge$postTick();
 
-    boolean bridge$removePassenger(Entity passenger);
+  boolean bridge$removePassenger(Entity passenger);
 
-    boolean bridge$addPassenger(Entity entity);
+  boolean bridge$addPassenger(Entity entity);
 
-    List<Entity> bridge$getPassengers();
+  List<Entity> bridge$getPassengers();
 
-    void bridge$setRideCooldown(int rideCooldown);
+  void bridge$setRideCooldown(int rideCooldown);
 
-    int bridge$getRideCooldown();
+  int bridge$getRideCooldown();
 
-    boolean bridge$canCollideWith(Entity entity);
+  boolean bridge$canCollideWith(Entity entity);
 }

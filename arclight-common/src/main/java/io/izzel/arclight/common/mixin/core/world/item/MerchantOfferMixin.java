@@ -13,69 +13,64 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(MerchantOffer.class)
 public class MerchantOfferMixin implements MerchantOfferBridge {
 
-    // @formatter:off
-    @Shadow public ItemStack baseCostA;
+  // @formatter:off
+  @Shadow public ItemStack baseCostA;
 
-    @Shadow private int demand;
+  @Shadow private int demand;
 
-    // @formatter:on
+  // @formatter:on
 
-    private CraftMerchantRecipe bukkitHandle;
+  private CraftMerchantRecipe bukkitHandle;
 
-    public CraftMerchantRecipe asBukkit() {
-        return bukkitHandle == null
-            ? (bukkitHandle = new CraftMerchantRecipe(
-            (MerchantOffer) (Object) this
-        ))
-            : bukkitHandle;
+  public CraftMerchantRecipe asBukkit() {
+    return bukkitHandle == null
+        ? (bukkitHandle = new CraftMerchantRecipe((MerchantOffer) (Object) this))
+        : bukkitHandle;
+  }
+
+  public void arclight$constructor(
+      ItemStack buyingStackFirstIn,
+      ItemStack buyingStackSecondIn,
+      ItemStack sellingStackIn,
+      int usesIn,
+      int maxUsesIn,
+      int givenEXPIn,
+      float priceMultiplierIn,
+      int demand) {
+    throw new RuntimeException();
+  }
+
+  public void arclight$constructor(
+      ItemStack buyingStackFirstIn,
+      ItemStack buyingStackSecondIn,
+      ItemStack sellingStackIn,
+      int usesIn,
+      int maxUsesIn,
+      int givenEXPIn,
+      float priceMultiplierIn,
+      int demand,
+      CraftMerchantRecipe bukkit) {
+    arclight$constructor(
+        buyingStackFirstIn,
+        buyingStackSecondIn,
+        sellingStackIn,
+        usesIn,
+        maxUsesIn,
+        givenEXPIn,
+        priceMultiplierIn,
+        demand);
+    this.bukkitHandle = bukkit;
+  }
+
+  @Override
+  public CraftMerchantRecipe bridge$asBukkit() {
+    return asBukkit();
+  }
+
+  @Inject(method = "getCostA", cancellable = true, at = @At("HEAD"))
+  private void arclight$fix(CallbackInfoReturnable<ItemStack> cir) {
+    if (this.baseCostA.getCount() <= 0) {
+      cir.setReturnValue(ItemStack.EMPTY);
     }
-
-    public void arclight$constructor(
-        ItemStack buyingStackFirstIn,
-        ItemStack buyingStackSecondIn,
-        ItemStack sellingStackIn,
-        int usesIn,
-        int maxUsesIn,
-        int givenEXPIn,
-        float priceMultiplierIn,
-        int demand
-    ) {
-        throw new RuntimeException();
-    }
-
-    public void arclight$constructor(
-        ItemStack buyingStackFirstIn,
-        ItemStack buyingStackSecondIn,
-        ItemStack sellingStackIn,
-        int usesIn,
-        int maxUsesIn,
-        int givenEXPIn,
-        float priceMultiplierIn,
-        int demand,
-        CraftMerchantRecipe bukkit
-    ) {
-        arclight$constructor(
-            buyingStackFirstIn,
-            buyingStackSecondIn,
-            sellingStackIn,
-            usesIn,
-            maxUsesIn,
-            givenEXPIn,
-            priceMultiplierIn,
-            demand
-        );
-        this.bukkitHandle = bukkit;
-    }
-
-    @Override
-    public CraftMerchantRecipe bridge$asBukkit() {
-        return asBukkit();
-    }
-
-    @Inject(method = "getCostA", cancellable = true, at = @At("HEAD"))
-    private void arclight$fix(CallbackInfoReturnable<ItemStack> cir) {
-        if (this.baseCostA.getCount() <= 0) {
-            cir.setReturnValue(ItemStack.EMPTY);
-        }
-    }
+  }
 }

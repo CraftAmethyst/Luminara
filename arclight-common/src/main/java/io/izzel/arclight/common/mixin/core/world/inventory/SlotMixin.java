@@ -8,13 +8,14 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Slot.class)
 public abstract class SlotMixin implements SlotBridge {
 
-    // @formatter:off
-    @Shadow protected abstract void onSwapCraft(int numItemsCrafted);
+  // @formatter:off
+  @Shadow
+  protected abstract void onSwapCraft(int numItemsCrafted);
 
-    // @formatter:on
+  // @formatter:on
 
-    @Override
-    public void bridge$onSwapCraft(int numItemsCrafted) {
-        onSwapCraft(numItemsCrafted);
-    }
+  @Override
+  public void bridge$onSwapCraft(int numItemsCrafted) {
+    onSwapCraft(numItemsCrafted);
+  }
 }

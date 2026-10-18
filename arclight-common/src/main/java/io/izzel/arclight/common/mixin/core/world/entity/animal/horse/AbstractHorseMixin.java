@@ -23,91 +23,75 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractHorse.class)
 public abstract class AbstractHorseMixin extends AnimalMixin {
 
-    public int maxDomestication;
+  public int maxDomestication;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(
-        EntityType<? extends AbstractHorse> type,
-        Level worldIn,
-        CallbackInfo ci
-    ) {
-        this.maxDomestication = 100;
-    }
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void arclight$init(
+      EntityType<? extends AbstractHorse> type, Level worldIn, CallbackInfo ci) {
+    this.maxDomestication = 100;
+  }
 
-    @Redirect(
-        method = "createInventory",
-        at = @At(value = "NEW", target = "net/minecraft/world/SimpleContainer")
-    )
-    private SimpleContainer arclight$createInv(int slots) {
-        SimpleContainer inventory = new SimpleContainer(slots);
-        ((IInventoryBridge) inventory).setOwner(
-            (InventoryHolder) this.getBukkitEntity()
-        );
-        return inventory;
-    }
+  @Redirect(
+      method = "createInventory",
+      at = @At(value = "NEW", target = "net/minecraft/world/SimpleContainer"))
+  private SimpleContainer arclight$createInv(int slots) {
+    SimpleContainer inventory = new SimpleContainer(slots);
+    ((IInventoryBridge) inventory).setOwner((InventoryHolder) this.getBukkitEntity());
+    return inventory;
+  }
 
-    @Inject(
-        method = "handleEating",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"
-        )
-    )
-    private void arclight$healByEating(
-        Player player,
-        ItemStack stack,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.EATING);
-    }
+  @Inject(
+      method = "handleEating",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"))
+  private void arclight$healByEating(
+      Player player, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.EATING);
+  }
 
-    @Inject(
-        method = "aiStep",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"
-        )
-    )
-    private void arclight$healByRegen(CallbackInfo ci) {
-        bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
-    }
+  @Inject(
+      method = "aiStep",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/animal/horse/AbstractHorse;heal(F)V"))
+  private void arclight$healByRegen(CallbackInfo ci) {
+    bridge$pushHealReason(EntityRegainHealthEvent.RegainReason.REGEN);
+  }
 
-    @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
-    private void arclight$writeTemper(CompoundTag compound, CallbackInfo ci) {
-        compound.putInt("Bukkit.MaxDomestication", this.maxDomestication);
-    }
+  @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
+  private void arclight$writeTemper(CompoundTag compound, CallbackInfo ci) {
+    compound.putInt("Bukkit.MaxDomestication", this.maxDomestication);
+  }
 
-    @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
-    private void arclight$readTemper(CompoundTag compound, CallbackInfo ci) {
-        if (compound.contains("Bukkit.MaxDomestication")) {
-            this.maxDomestication = compound.getInt("Bukkit.MaxDomestication");
-        }
+  @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
+  private void arclight$readTemper(CompoundTag compound, CallbackInfo ci) {
+    if (compound.contains("Bukkit.MaxDomestication")) {
+      this.maxDomestication = compound.getInt("Bukkit.MaxDomestication");
     }
+  }
 
-    @Inject(method = "handleStartJump", cancellable = true, at = @At("HEAD"))
-    private void arclight$horseJump(int i, CallbackInfo ci) {
-        float power;
-        if (i >= 90) {
-            power = 1.0F;
-        } else {
-            power = 0.4F + (0.4F * (float) i) / 90.0F;
-        }
-        if (
-            !CraftEventFactory.callHorseJumpEvent(
-                (AbstractHorse) (Object) this,
-                power
-            )
-        ) {
-            ci.cancel();
-        }
+  @Inject(method = "handleStartJump", cancellable = true, at = @At("HEAD"))
+  private void arclight$horseJump(int i, CallbackInfo ci) {
+    float power;
+    if (i >= 90) {
+      power = 1.0F;
+    } else {
+      power = 0.4F + (0.4F * (float) i) / 90.0F;
     }
+    if (!CraftEventFactory.callHorseJumpEvent((AbstractHorse) (Object) this, power)) {
+      ci.cancel();
+    }
+  }
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public int getMaxTemper() {
-        return maxDomestication;
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public int getMaxTemper() {
+    return maxDomestication;
+  }
 }

@@ -19,48 +19,40 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(DragonEggBlock.class)
 public class DragonEggBlockMixin {
 
-    private transient BlockPos arclight$toBlock;
+  private transient BlockPos arclight$toBlock;
 
-    @Inject(
-        method = "teleport",
-        cancellable = true,
-        locals = LocalCapture.CAPTURE_FAILHARD,
-        at = @At(
-            value = "FIELD",
-            target = "Lnet/minecraft/world/level/Level;isClientSide:Z"
-        )
-    )
-    public void arclight$blockFromTo(
-        BlockState blockState,
-        Level world,
-        BlockPos blockPos,
-        CallbackInfo ci,
-        WorldBorder wb,
-        int i,
-        BlockPos pos
-    ) {
-        org.bukkit.block.Block from = CraftBlock.at(world, blockPos);
-        org.bukkit.block.Block to = CraftBlock.at(world, pos);
-        BlockFromToEvent event = new BlockFromToEvent(from, to);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            ci.cancel();
-        } else {
-            arclight$toBlock = new BlockPos(
-                event.getToBlock().getX(),
-                event.getToBlock().getY(),
-                event.getToBlock().getZ()
-            );
-        }
+  @Inject(
+      method = "teleport",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z"))
+  public void arclight$blockFromTo(
+      BlockState blockState,
+      Level world,
+      BlockPos blockPos,
+      CallbackInfo ci,
+      WorldBorder wb,
+      int i,
+      BlockPos pos) {
+    org.bukkit.block.Block from = CraftBlock.at(world, blockPos);
+    org.bukkit.block.Block to = CraftBlock.at(world, pos);
+    BlockFromToEvent event = new BlockFromToEvent(from, to);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      ci.cancel();
+    } else {
+      arclight$toBlock =
+          new BlockPos(
+              event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
     }
+  }
 
-    @ModifyVariable(
-        method = "teleport",
-        ordinal = 1,
-        name = "blockpos",
-        at = @At(value = "JUMP", opcode = Opcodes.IFEQ, ordinal = 2)
-    )
-    public BlockPos arclight$setPos(BlockPos pos) {
-        return arclight$toBlock;
-    }
+  @ModifyVariable(
+      method = "teleport",
+      ordinal = 1,
+      name = "blockpos",
+      at = @At(value = "JUMP", opcode = Opcodes.IFEQ, ordinal = 2))
+  public BlockPos arclight$setPos(BlockPos pos) {
+    return arclight$toBlock;
+  }
 }
