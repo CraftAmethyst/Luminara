@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -179,5 +180,10 @@ public abstract class EntityTypeMixin<T extends Entity> implements
         CreatureSpawnEvent.SpawnReason spawnReason
     ) {
         return spawn(worldIn, pos, mobSpawnType, spawnReason);
+    }
+
+    @Override
+    public MobCategory bridge$getMobCategory() {
+        return ((EntityType<?>) (Object) this).getCategory();
     }
 }

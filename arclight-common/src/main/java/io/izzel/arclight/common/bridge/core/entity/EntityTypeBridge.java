@@ -3,6 +3,7 @@ package io.izzel.arclight.common.bridge.core.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -13,4 +14,10 @@ public interface EntityTypeBridge<T extends Entity> {
         MobSpawnType mobSpawnType,
         CreatureSpawnEvent.SpawnReason spawnReason
     );
+
+    MobCategory bridge$getMobCategory();
+
+    default MobCategory getCategory() {
+        return this.bridge$getMobCategory();
+    }
 }
