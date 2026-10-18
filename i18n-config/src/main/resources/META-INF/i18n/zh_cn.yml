@@ -360,6 +360,8 @@ release-name:
   GreatHorn: 大角
   Horn: 角
   Trials: 顿顽 1.20.1
+dist:
+  logic-world-check: "逻辑世界检查: {} -> {}"
 server:
   async-world-save:
     starting: 开始异步世界保存...

@@ -225,7 +225,8 @@ comments:
       comment:
         - Whether to enable online mode verification
         - Should typically match the online-mode setting in Velocity configuration
-dist: {}
+dist:
+  logic-world-check: "Logic world check: {} -> {}"
 entity:
   target:
     unknown-reason: Unknown target reason setting {} target to {}

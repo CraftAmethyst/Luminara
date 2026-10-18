@@ -201,7 +201,8 @@ enum:
 symlink: {}
 
 # Distribution validation messages
-dist: {}
+dist:
+  logic-world-check: "Vérification du monde logique : {} -> {}"
 
 # Chat system messages (合并所有chat相关配置)
 chat:
