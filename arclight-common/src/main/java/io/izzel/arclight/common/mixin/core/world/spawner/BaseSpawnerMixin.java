@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mixin.core.world.spawner;
 import io.izzel.arclight.common.bridge.core.entity.MobEntityBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
+import io.izzel.arclight.common.mod.server.event.PreCreatureSpawnEventDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -153,6 +154,22 @@ public abstract class BaseSpawnerMixin {
                                 level.getRandom()
                             )
                         ) {
+                            continue;
+                        }
+
+                        var preSpawnEvent = PreCreatureSpawnEventDispatcher.call(
+                            level,
+                            optional.get(),
+                            d0,
+                            d1,
+                            d2,
+                            CreatureSpawnEvent.SpawnReason.SPAWNER
+                        );
+                        if (preSpawnEvent != null && preSpawnEvent.isCancelled()) {
+                            flag = true;
+                            if (preSpawnEvent.shouldAbortSpawn()) {
+                                break;
+                            }
                             continue;
                         }
 

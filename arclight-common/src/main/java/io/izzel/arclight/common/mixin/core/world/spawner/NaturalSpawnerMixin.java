@@ -3,18 +3,21 @@ package io.izzel.arclight.common.mixin.core.world.spawner;
 import io.izzel.arclight.common.bridge.core.world.IWorldWriterBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.spawner.WorldEntitySpawnerBridge;
+import io.izzel.arclight.common.mod.server.event.PreCreatureSpawnEventDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.LevelData;
 import org.bukkit.craftbukkit.v.util.CraftSpawnCategory;
 import org.bukkit.entity.SpawnCategory;
@@ -27,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(NaturalSpawner.class)
 public abstract class NaturalSpawnerMixin {
@@ -100,6 +104,83 @@ public abstract class NaturalSpawnerMixin {
             }
         }
         world.getProfiler().pop();
+    }
+
+    @Inject(
+        method = "spawnCategoryForPosition(Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/NaturalSpawner$SpawnPredicate;Lnet/minecraft/world/level/NaturalSpawner$AfterSpawnCallback;)V",
+        at = @At("HEAD")
+    )
+    private static void arclight$resetNaturalSpawnAbort(
+        MobCategory category,
+        ServerLevel level,
+        ChunkAccess chunk,
+        BlockPos pos,
+        NaturalSpawner.SpawnPredicate spawnPredicate,
+        NaturalSpawner.AfterSpawnCallback afterSpawnCallback,
+        CallbackInfo ci
+    ) {
+        PreCreatureSpawnEventDispatcher.resetNaturalSpawnAbort();
+    }
+
+    @Inject(
+        method = "isValidSpawnPostitionForType",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    private static void arclight$preCreatureSpawn(
+        ServerLevel level,
+        MobCategory category,
+        net.minecraft.world.level.StructureManager structureManager,
+        net.minecraft.world.level.chunk.ChunkGenerator generator,
+        MobSpawnSettings.SpawnerData spawnerData,
+        BlockPos.MutableBlockPos pos,
+        double squaredDistance,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
+        EntityType<?> entityType = spawnerData.type;
+        if (!PreCreatureSpawnEventDispatcher.callNatural(level, entityType, pos)) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(
+        method = "spawnCategoryForPosition(Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/NaturalSpawner$SpawnPredicate;Lnet/minecraft/world/level/NaturalSpawner$AfterSpawnCallback;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/NaturalSpawner;isValidSpawnPostitionForType(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/world/level/biome/MobSpawnSettings$SpawnerData;Lnet/minecraft/core/BlockPos$MutableBlockPos;D)Z",
+            shift = At.Shift.AFTER
+        ),
+        cancellable = true
+    )
+    private static void arclight$abortNaturalSpawn(
+        MobCategory category,
+        ServerLevel level,
+        ChunkAccess chunk,
+        BlockPos pos,
+        NaturalSpawner.SpawnPredicate spawnPredicate,
+        NaturalSpawner.AfterSpawnCallback afterSpawnCallback,
+        CallbackInfo ci
+    ) {
+        if (PreCreatureSpawnEventDispatcher.shouldAbortNaturalSpawn()) {
+            PreCreatureSpawnEventDispatcher.resetNaturalSpawnAbort();
+            ci.cancel();
+        }
+    }
+
+    @Inject(
+        method = "spawnCategoryForPosition(Lnet/minecraft/world/entity/MobCategory;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/NaturalSpawner$SpawnPredicate;Lnet/minecraft/world/level/NaturalSpawner$AfterSpawnCallback;)V",
+        at = @At("RETURN")
+    )
+    private static void arclight$clearNaturalSpawnAbort(
+        MobCategory category,
+        ServerLevel level,
+        ChunkAccess chunk,
+        BlockPos pos,
+        NaturalSpawner.SpawnPredicate spawnPredicate,
+        NaturalSpawner.AfterSpawnCallback afterSpawnCallback,
+        CallbackInfo ci
+    ) {
+        PreCreatureSpawnEventDispatcher.resetNaturalSpawnAbort();
     }
 
     @Inject(

@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mixin.core.world.entity;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityTypeBridge;
 import io.izzel.arclight.common.bridge.core.world.IWorldWriterBridge;
+import io.izzel.arclight.common.mod.server.event.PreCreatureSpawnEventDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -52,6 +53,37 @@ public abstract class EntityTypeMixin<T extends Entity> implements
             ((IWorldWriterBridge) worldIn).bridge$pushAddEntityReason(
                 CreatureSpawnEvent.SpawnReason.SPAWNER_EGG
             );
+        }
+    }
+
+    @Inject(
+        method = "spawn(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/nbt/CompoundTag;Ljava/util/function/Consumer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/MobSpawnType;ZZ)Lnet/minecraft/world/entity/Entity;",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    private void arclight$preCreatureSpawn(
+        ServerLevel level,
+        CompoundTag tag,
+        Consumer<T> consumer,
+        BlockPos pos,
+        MobSpawnType spawnType,
+        boolean shouldOffsetY,
+        boolean shouldOffsetYMore,
+        CallbackInfoReturnable<T> cir
+    ) {
+        CreatureSpawnEvent.SpawnReason reason =
+            ((IWorldWriterBridge) level).bridge$getAddEntityReason();
+        if (reason == null) {
+            reason = CreatureSpawnEvent.SpawnReason.DEFAULT;
+        }
+        var event = PreCreatureSpawnEventDispatcher.call(
+            level,
+            (EntityType<?>) (Object) this,
+            pos,
+            reason
+        );
+        if (event != null && event.isCancelled()) {
+            cir.setReturnValue(null);
         }
     }
 
@@ -111,6 +143,15 @@ public abstract class EntityTypeMixin<T extends Entity> implements
         boolean p_262590_,
         CreatureSpawnEvent.SpawnReason spawnReason
     ) {
+        var event = PreCreatureSpawnEventDispatcher.call(
+            p_262704_,
+            (EntityType<?>) (Object) this,
+            p_262672_,
+            spawnReason
+        );
+        if (event != null && event.isCancelled()) {
+            return null;
+        }
         T t = this.create(
             p_262704_,
             p_262603_,

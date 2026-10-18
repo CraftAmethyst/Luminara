@@ -500,6 +500,7 @@
     "world.level.storage.loot.predicates.SurvivesExplosionMixin",
     "world.spawner.BaseSpawnerMixin",
     "world.spawner.NaturalSpawnerMixin",
+    "world.spawner.SpawnUtilMixin",
     "world.spawner.PatrolSpawnerMixin",
     "world.spawner.PhantomSpawnerMixin",
     "world.spawner.WanderingTraderSpawnerMixin",
