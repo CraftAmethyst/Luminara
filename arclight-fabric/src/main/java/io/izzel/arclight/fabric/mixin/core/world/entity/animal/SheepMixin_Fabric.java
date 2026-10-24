@@ -8,9 +8,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(net.minecraft.world.entity.animal.Sheep.class)
 public abstract class SheepMixin_Fabric extends AnimalMixin {
-    @Inject(method = "shear", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Sheep;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;I)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void arclight$forceDrop(CallbackInfo ci) { forceDrops = true; }
+  @Inject(
+      method = "shear",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/animal/Sheep;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;I)Lnet/minecraft/world/entity/item/ItemEntity;"))
+  private void arclight$forceDrop(CallbackInfo ci) {
+    forceDrops = true;
+  }
 
-    @Inject(method = "shear", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/Sheep;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;I)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void arclight$forceDropReset(CallbackInfo ci) { forceDrops = false; }
+  @Inject(
+      method = "shear",
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/entity/animal/Sheep;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;I)Lnet/minecraft/world/entity/item/ItemEntity;"))
+  private void arclight$forceDropReset(CallbackInfo ci) {
+    forceDrops = false;
+  }
 }

@@ -12,26 +12,30 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(DistanceManager.class)
 public abstract class DistanceManagerMixin_NeoForge implements DistanceManagerBridge {
 
-    // @formatter:off
-    @Shadow(remap = false) @Final private Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> forcedTickets;
-    // @formatter:on
+  // @formatter:off
+  @Shadow(remap = false)
+  @Final
+  private Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> forcedTickets;
 
-    @Override
-    public boolean bridge$platform$isTicketForceTick(Ticket<?> ticket) {
-        return ticket.isForceTicks();
-    }
+  // @formatter:on
 
-    @Override
-    public void bridge$forge$addForcedTicket(long chunkPosIn, Ticket<?> ticketIn) {
-        SortedArraySet<Ticket<?>> tickets = this.forcedTickets.computeIfAbsent(chunkPosIn, e -> SortedArraySet.create(4));
-        tickets.addOrGet(ticketIn);
-    }
+  @Override
+  public boolean bridge$platform$isTicketForceTick(Ticket<?> ticket) {
+    return ticket.isForceTicks();
+  }
 
-    @Override
-    public void bridge$forge$removeForcedTicket(long chunkPosIn, Ticket<?> ticketIn) {
-        SortedArraySet<Ticket<?>> tickets = this.forcedTickets.get(chunkPosIn);
-        if (tickets != null) {
-            tickets.remove(ticketIn);
-        }
+  @Override
+  public void bridge$forge$addForcedTicket(long chunkPosIn, Ticket<?> ticketIn) {
+    SortedArraySet<Ticket<?>> tickets =
+        this.forcedTickets.computeIfAbsent(chunkPosIn, e -> SortedArraySet.create(4));
+    tickets.addOrGet(ticketIn);
+  }
+
+  @Override
+  public void bridge$forge$removeForcedTicket(long chunkPosIn, Ticket<?> ticketIn) {
+    SortedArraySet<Ticket<?>> tickets = this.forcedTickets.get(chunkPosIn);
+    if (tickets != null) {
+      tickets.remove(ticketIn);
     }
+  }
 }

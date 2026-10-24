@@ -13,8 +13,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MilkBucketItem.class)
 public abstract class MilkBucketItemMixin_Vanilla {
-    @Inject(method = "finishUsingItem", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;removeAllEffects()Z"))
-    private void arclight$cureReason(ItemStack stack, Level worldIn, LivingEntity entityLiving, CallbackInfoReturnable<ItemStack> cir) {
-        ((LivingEntityBridge) entityLiving).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.MILK);
-    }
+  @Inject(
+      method = "finishUsingItem",
+      require = 0,
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/LivingEntity;removeAllEffects()Z"))
+  private void arclight$cureReason(
+      ItemStack stack,
+      Level worldIn,
+      LivingEntity entityLiving,
+      CallbackInfoReturnable<ItemStack> cir) {
+    ((LivingEntityBridge) entityLiving).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.MILK);
+  }
 }

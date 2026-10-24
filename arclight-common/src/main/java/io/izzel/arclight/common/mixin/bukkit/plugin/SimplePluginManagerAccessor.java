@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(value = SimplePluginManager.class, remap = false)
 public interface SimplePluginManagerAccessor {
 
-    @Accessor("dependencyGraph")
-    MutableGraph<String> arclight$dependencyGraph();
+  @Accessor("dependencyGraph")
+  MutableGraph<String> arclight$dependencyGraph();
 }

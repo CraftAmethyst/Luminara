@@ -13,8 +13,17 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ChunkStatusTasks.class)
 public class ChunkStatusTasksMixin {
 
-    @Decorate(method = "generateStructureStarts", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getWorldData()Lnet/minecraft/world/level/storage/WorldData;"))
-    private static WorldData arclight$useLevelData(MinecraftServer instance, @Local(ordinal = -1) ServerLevel level) throws Throwable {
-        return level.serverLevelData instanceof WorldData custom ? custom : (WorldData) DecorationOps.callsite().invoke(instance);
-    }
+  @Decorate(
+      method = "generateStructureStarts",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/MinecraftServer;getWorldData()Lnet/minecraft/world/level/storage/WorldData;"))
+  private static WorldData arclight$useLevelData(
+      MinecraftServer instance, @Local(ordinal = -1) ServerLevel level) throws Throwable {
+    return level.serverLevelData instanceof WorldData custom
+        ? custom
+        : (WorldData) DecorationOps.callsite().invoke(instance);
+  }
 }

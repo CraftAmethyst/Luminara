@@ -7,8 +7,5 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(CraftInventory.class)
 public class CraftInventoryMixin {
-    @Unique
-    private IItemHandler arclight$inventory;
-
-
+  @Unique private IItemHandler arclight$inventory;
 }

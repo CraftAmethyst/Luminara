@@ -1,18 +1,17 @@
 package io.izzel.arclight.gradle.util;
 
-import lombok.SneakyThrows;
-
 import java.net.URI;
 import java.net.URL;
+import lombok.SneakyThrows;
 
 public class URLHelper {
-    @SneakyThrows
-    public static URL of(String url) {
-        return URI.create(url).toURL();
-    }
+  @SneakyThrows
+  public static URL of(String url) {
+    return URI.create(url).toURL();
+  }
 
-    @SneakyThrows
-    public static URL of(URI uri) {
-        return uri.toURL();
-    }
+  @SneakyThrows
+  public static URL of(URI uri) {
+    return uri.toURL();
+  }
 }

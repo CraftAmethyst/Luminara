@@ -18,23 +18,47 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SculkVeinBlock.class)
 public class SculkVeinBlockMixin {
 
-    @Decorate(method = "attemptUseCharge", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/SculkVeinBlock;attemptPlaceSculk(Lnet/minecraft/world/level/block/SculkSpreader;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)Z"))
-    private boolean arclight$captureSpreadPos(SculkVeinBlock instance, SculkSpreader spreader, LevelAccessor level, BlockPos pos, RandomSource random) throws Throwable {
-        BlockPos old = null;
-        try {
-            old = ArclightCaptures.captureSpreadSource(pos);
-            return (boolean) DecorationOps.callsite().invoke(instance, spreader, level, pos, random);
-        } finally {
-            ArclightCaptures.resetSpreadSource(old, pos);
-        }
+  @Decorate(
+      method = "attemptUseCharge",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/SculkVeinBlock;attemptPlaceSculk(Lnet/minecraft/world/level/block/SculkSpreader;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)Z"))
+  private boolean arclight$captureSpreadPos(
+      SculkVeinBlock instance,
+      SculkSpreader spreader,
+      LevelAccessor level,
+      BlockPos pos,
+      RandomSource random)
+      throws Throwable {
+    BlockPos old = null;
+    try {
+      old = ArclightCaptures.captureSpreadSource(pos);
+      return (boolean) DecorationOps.callsite().invoke(instance, spreader, level, pos, random);
+    } finally {
+      ArclightCaptures.resetSpreadSource(old, pos);
     }
+  }
 
-    @Eject(method = "attemptPlaceSculk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private boolean arclight$blockSpread(LevelAccessor level, BlockPos pos, BlockState state, int i, CallbackInfoReturnable<Boolean> cir) {
-        if (!CraftEventFactory.handleBlockSpreadEvent(level, ArclightCaptures.getSpreadPos(), pos, state, i)) {
-            cir.setReturnValue(false);
-            return false;
-        }
-        return true;
+  @Eject(
+      method = "attemptPlaceSculk",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private boolean arclight$blockSpread(
+      LevelAccessor level,
+      BlockPos pos,
+      BlockState state,
+      int i,
+      CallbackInfoReturnable<Boolean> cir) {
+    if (!CraftEventFactory.handleBlockSpreadEvent(
+        level, ArclightCaptures.getSpreadPos(), pos, state, i)) {
+      cir.setReturnValue(false);
+      return false;
     }
+    return true;
+  }
 }

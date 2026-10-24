@@ -10,7 +10,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Player.class)
 public abstract class PlayerMixin_Fabric extends LivingEntityMixin_Fabric implements PlayerBridge {
 
-    // @formatter:off
-    @Shadow public abstract Abilities getAbilities();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract Abilities getAbilities();
+  // @formatter:on
 }

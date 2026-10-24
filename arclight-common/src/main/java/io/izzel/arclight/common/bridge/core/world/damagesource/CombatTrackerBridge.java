@@ -4,5 +4,5 @@ import net.minecraft.network.chat.Component;
 
 public interface CombatTrackerBridge {
 
-    void bridge$setDeathMessage(Component component);
+  void bridge$setDeathMessage(Component component);
 }

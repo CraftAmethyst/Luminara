@@ -20,42 +20,45 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net/minecraft/server/level/ServerLevel$EntityCallbacks")
 public class ServerLevel_EntityCallbacksMixin {
-    @Shadow(aliases = {"f_143351_", "this$0", "field_26936"})
-    private ServerLevel outerThis;
+  @Shadow(aliases = {"f_143351_", "this$0", "field_26936"})
+  private ServerLevel outerThis;
 
-    @Inject(method = "onTrackingStart(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
-    private void arclight$valid(Entity entity, CallbackInfo ci) {
-        ((EntityBridge) entity).bridge$setInWorld(true);
-        ((EntityBridge) entity).bridge$setValid(true);
-    }
+  @Inject(method = "onTrackingStart(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
+  private void arclight$valid(Entity entity, CallbackInfo ci) {
+    ((EntityBridge) entity).bridge$setInWorld(true);
+    ((EntityBridge) entity).bridge$setValid(true);
+  }
 
-    @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
-    private void arclight$entityCleanup(Entity entity, CallbackInfo ci) {
-        if (entity instanceof Player player) {
-            for (ServerLevel serverLevel : ArclightServer.getMinecraftServer().getAllLevels()) {
-                DimensionDataStorage worldData = serverLevel.getDataStorage();
-                for (Object o : worldData.cache.values()) {
-                    if (o instanceof MapItemSavedData map) {
-                        map.carriedByPlayers.remove(player);
-                        ((MapItemSavedDataBridge) map).bridge$getCarriedBy().removeIf(holdingPlayer -> holdingPlayer.player == entity);
-                    }
-                }
-            }
+  @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
+  private void arclight$entityCleanup(Entity entity, CallbackInfo ci) {
+    if (entity instanceof Player player) {
+      for (ServerLevel serverLevel : ArclightServer.getMinecraftServer().getAllLevels()) {
+        DimensionDataStorage worldData = serverLevel.getDataStorage();
+        for (Object o : worldData.cache.values()) {
+          if (o instanceof MapItemSavedData map) {
+            map.carriedByPlayers.remove(player);
+            ((MapItemSavedDataBridge) map)
+                .bridge$getCarriedBy()
+                .removeIf(holdingPlayer -> holdingPlayer.player == entity);
+          }
         }
-        if (((EntityBridge) entity).bridge$getBukkitEntity() instanceof InventoryHolder holder) {
-            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(holder.getInventory().getViewers())) {
-                h.closeInventory();
-            }
-        }
+      }
     }
+    if (((EntityBridge) entity).bridge$getBukkitEntity() instanceof InventoryHolder holder) {
+      for (org.bukkit.entity.HumanEntity h :
+          Lists.newArrayList(holder.getInventory().getViewers())) {
+        h.closeInventory();
+      }
+    }
+  }
 
-    @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
-    private void arclight$invalid(Entity entity, CallbackInfo ci) {
-        ((EntityBridge) entity).bridge$setValid(false);
-        if (!(entity instanceof ServerPlayer)) {
-            for (var player : outerThis.players()) {
-                ((ServerPlayerBridge) player).bridge$getBukkitEntity().onEntityRemove(entity);
-            }
-        }
+  @Inject(method = "onTrackingEnd(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
+  private void arclight$invalid(Entity entity, CallbackInfo ci) {
+    ((EntityBridge) entity).bridge$setValid(false);
+    if (!(entity instanceof ServerPlayer)) {
+      for (var player : outerThis.players()) {
+        ((ServerPlayerBridge) player).bridge$getBukkitEntity().onEntityRemove(entity);
+      }
     }
+  }
 }

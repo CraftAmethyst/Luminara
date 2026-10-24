@@ -3,6 +3,8 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.world.IInventoryBridge;
 import io.izzel.arclight.common.bridge.core.world.level.WorldBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -18,61 +20,62 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(ChiseledBookShelfBlockEntity.class)
-public abstract class ChiseledBookShelfBlockEntityMixin extends BlockEntityMixin implements IInventoryBridge, Container {
+public abstract class ChiseledBookShelfBlockEntityMixin extends BlockEntityMixin
+    implements IInventoryBridge, Container {
 
-    @Shadow @Final private NonNullList<ItemStack> items;
+  @Shadow @Final private NonNullList<ItemStack> items;
 
-    public List<HumanEntity> transaction = new ArrayList<>();
-    private int maxStack = 1;
+  public List<HumanEntity> transaction = new ArrayList<>();
+  private int maxStack = 1;
 
-    @Override
-    public List<ItemStack> getContents() {
-        return this.items;
+  @Override
+  public List<ItemStack> getContents() {
+    return this.items;
+  }
+
+  @Override
+  public void onOpen(CraftHumanEntity who) {
+    transaction.add(who);
+  }
+
+  @Override
+  public void onClose(CraftHumanEntity who) {
+    transaction.remove(who);
+  }
+
+  @Override
+  public List<HumanEntity> getViewers() {
+    return transaction;
+  }
+
+  @Override
+  public void setOwner(InventoryHolder owner) {}
+
+  @Override
+  public void setMaxStackSize(int size) {
+    maxStack = size;
+  }
+
+  @Override
+  public int getMaxStackSize() {
+    return maxStack;
+  }
+
+  @Override
+  public Location getLocation() {
+    if (!DistValidate.isValid(level)) return null;
+    return new org.bukkit.Location(
+        ((WorldBridge) level).bridge$getWorld(),
+        worldPosition.getX(),
+        worldPosition.getY(),
+        worldPosition.getZ());
+  }
+
+  @Inject(method = "updateState", cancellable = true, at = @At("HEAD"))
+  private void arclight$skipIfNull(int p_261806_, CallbackInfo ci) {
+    if (level == null) {
+      ci.cancel();
     }
-
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        transaction.add(who);
-    }
-
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        transaction.remove(who);
-    }
-
-    @Override
-    public List<HumanEntity> getViewers() {
-        return transaction;
-    }
-
-    @Override
-    public void setOwner(InventoryHolder owner) {
-    }
-
-    @Override
-    public void setMaxStackSize(int size) {
-        maxStack = size;
-    }
-
-    @Override
-    public int getMaxStackSize() {
-        return maxStack;
-    }
-
-    @Override
-    public Location getLocation() {
-        if (!DistValidate.isValid(level)) return null;
-        return new org.bukkit.Location(((WorldBridge) level).bridge$getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
-    }
-
-    @Inject(method = "updateState", cancellable = true, at = @At("HEAD"))
-    private void arclight$skipIfNull(int p_261806_, CallbackInfo ci) {
-        if (level == null) {
-            ci.cancel();
-        }
-    }
+  }
 }

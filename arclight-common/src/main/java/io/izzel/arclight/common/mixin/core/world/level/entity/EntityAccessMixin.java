@@ -10,14 +10,16 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntityAccess.class)
 public interface EntityAccessMixin {
 
-    // @formatter:off
-    @Shadow void setRemoved(Entity.RemovalReason arg);
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  void setRemoved(Entity.RemovalReason arg);
 
-    default void setRemoved(Entity.RemovalReason reason, EntityRemoveEvent.Cause cause) {
-        if (this instanceof EntityBridge bridge) {
-            bridge.bridge$pushEntityRemoveCause(cause);
-        }
-        setRemoved(reason);
+  // @formatter:on
+
+  default void setRemoved(Entity.RemovalReason reason, EntityRemoveEvent.Cause cause) {
+    if (this instanceof EntityBridge bridge) {
+      bridge.bridge$pushEntityRemoveCause(cause);
     }
+    setRemoved(reason);
+  }
 }

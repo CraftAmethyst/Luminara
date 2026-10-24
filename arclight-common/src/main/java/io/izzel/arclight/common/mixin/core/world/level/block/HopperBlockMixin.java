@@ -16,17 +16,44 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(HopperBlock.class)
 public class HopperBlockMixin {
 
-    private transient BlockEntity arclight$oldTicking;
+  private transient BlockEntity arclight$oldTicking;
 
-    @Inject(method = "entityInside", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;entityInside(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)V"))
-    private void arclight$captureHopper(BlockState blockState, Level level, BlockPos blockPos, Entity entity, CallbackInfo ci, BlockEntity blockEntity) {
-        arclight$oldTicking = ArclightCaptures.getTickingBlockEntity();
-        ArclightCaptures.captureTickingBlockEntity(blockEntity);
-    }
+  @Inject(
+      method = "entityInside",
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;entityInside(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)V"))
+  private void arclight$captureHopper(
+      BlockState blockState,
+      Level level,
+      BlockPos blockPos,
+      Entity entity,
+      CallbackInfo ci,
+      BlockEntity blockEntity) {
+    arclight$oldTicking = ArclightCaptures.getTickingBlockEntity();
+    ArclightCaptures.captureTickingBlockEntity(blockEntity);
+  }
 
-    @Inject(method = "entityInside", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;entityInside(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)V"))
-    private void arclight$resetHopper(BlockState blockState, Level level, BlockPos blockPos, Entity entity, CallbackInfo ci, BlockEntity blockEntity) {
-        ArclightCaptures.captureTickingBlockEntity(arclight$oldTicking);
-        arclight$oldTicking = null;
-    }
+  @Inject(
+      method = "entityInside",
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;entityInside(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)V"))
+  private void arclight$resetHopper(
+      BlockState blockState,
+      Level level,
+      BlockPos blockPos,
+      Entity entity,
+      CallbackInfo ci,
+      BlockEntity blockEntity) {
+    ArclightCaptures.captureTickingBlockEntity(arclight$oldTicking);
+    arclight$oldTicking = null;
+  }
 }

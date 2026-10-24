@@ -10,18 +10,18 @@ import org.bukkit.event.entity.EntityExhaustionEvent;
 
 public interface PlayerBridge extends LivingEntityBridge {
 
-    boolean bridge$isFauxSleeping();
+  boolean bridge$isFauxSleeping();
 
-    @Override
-    CraftHumanEntity bridge$getBukkitEntity();
+  @Override
+  CraftHumanEntity bridge$getBukkitEntity();
 
-    Either<Player.BedSleepingProblem, Unit> bridge$trySleep(BlockPos at, boolean force);
+  Either<Player.BedSleepingProblem, Unit> bridge$trySleep(BlockPos at, boolean force);
 
-    void bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason reason);
+  void bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason reason);
 
-    double bridge$platform$getBlockReach();
+  double bridge$platform$getBlockReach();
 
-    default boolean bridge$platform$mayfly() {
-        return ((Player) this).getAbilities().mayfly;
-    }
+  default boolean bridge$platform$mayfly() {
+    return ((Player) this).getAbilities().mayfly;
+  }
 }

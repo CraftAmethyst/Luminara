@@ -18,21 +18,35 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(StartAttacking.class)
 public class StartAttackingMixin {
 
-    @SuppressWarnings({"unchecked", "MixinAnnotationTarget"})
-    @Decorate(method = "*", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/declarative/MemoryAccessor;set(Ljava/lang/Object;)V"))
-    private static <F extends K1, Value> void arclight$targetEvent(MemoryAccessor<F, Value> instance, Value object, @Local(ordinal = -1) Mob mob) throws Throwable {
-        var newTarget = (LivingEntity) object;
-        EntityTargetEvent event = CraftEventFactory.callEntityTargetLivingEvent(mob, newTarget, (newTarget instanceof ServerPlayer) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
-        if (event.isCancelled()) {
-            DecorationOps.cancel().invoke(false);
-            return;
-        }
-        if (event.getTarget() == null) {
-            instance.erase();
-            DecorationOps.cancel().invoke(false);
-            return;
-        }
-        object = (Value) ((CraftLivingEntity) event.getTarget()).getHandle();
-        DecorationOps.callsite().invoke(instance, object);
+  @SuppressWarnings({"unchecked", "MixinAnnotationTarget"})
+  @Decorate(
+      method = "*",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/ai/behavior/declarative/MemoryAccessor;set(Ljava/lang/Object;)V"))
+  private static <F extends K1, Value> void arclight$targetEvent(
+      MemoryAccessor<F, Value> instance, Value object, @Local(ordinal = -1) Mob mob)
+      throws Throwable {
+    var newTarget = (LivingEntity) object;
+    EntityTargetEvent event =
+        CraftEventFactory.callEntityTargetLivingEvent(
+            mob,
+            newTarget,
+            (newTarget instanceof ServerPlayer)
+                ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER
+                : EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
+    if (event.isCancelled()) {
+      DecorationOps.cancel().invoke(false);
+      return;
     }
+    if (event.getTarget() == null) {
+      instance.erase();
+      DecorationOps.cancel().invoke(false);
+      return;
+    }
+    object = (Value) ((CraftLivingEntity) event.getTarget()).getHandle();
+    DecorationOps.callsite().invoke(instance, object);
+  }
 }

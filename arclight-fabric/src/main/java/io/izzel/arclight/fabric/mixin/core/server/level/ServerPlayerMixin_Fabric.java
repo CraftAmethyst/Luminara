@@ -14,22 +14,34 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin_Fabric extends io.izzel.arclight.fabric.mixin.core.world.entity.player.PlayerMixin_Fabric implements ServerPlayerBridge {
+public abstract class ServerPlayerMixin_Fabric
+    extends io.izzel.arclight.fabric.mixin.core.world.entity.player.PlayerMixin_Fabric
+    implements ServerPlayerBridge {
 
-    // @formatter:off
-    @Shadow public abstract ServerLevel serverLevel();
-    @Shadow public boolean isChangingDimension;
-    @Shadow public boolean wonGame;
-    @Shadow public ServerGamePacketListenerImpl connection;
-    @Shadow private boolean seenCredits;
-    @Shadow public abstract CommonPlayerSpawnInfo createCommonSpawnInfo(ServerLevel arg);
-    @Shadow @Final public MinecraftServer server;
-    @Shadow @Nullable private Vec3 enteredNetherPosition;
-    @Shadow public abstract void setServerLevel(ServerLevel arg);
-    @Shadow public abstract void triggerDimensionChangeTriggers(ServerLevel arg);
-    @Shadow @Final public ServerPlayerGameMode gameMode;
-    @Shadow public int lastSentExp;
-    @Shadow private float lastSentHealth;
-    @Shadow private int lastSentFood;
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract ServerLevel serverLevel();
+
+  @Shadow public boolean isChangingDimension;
+  @Shadow public boolean wonGame;
+  @Shadow public ServerGamePacketListenerImpl connection;
+  @Shadow private boolean seenCredits;
+
+  @Shadow
+  public abstract CommonPlayerSpawnInfo createCommonSpawnInfo(ServerLevel arg);
+
+  @Shadow @Final public MinecraftServer server;
+  @Shadow @Nullable private Vec3 enteredNetherPosition;
+
+  @Shadow
+  public abstract void setServerLevel(ServerLevel arg);
+
+  @Shadow
+  public abstract void triggerDimensionChangeTriggers(ServerLevel arg);
+
+  @Shadow @Final public ServerPlayerGameMode gameMode;
+  @Shadow public int lastSentExp;
+  @Shadow private float lastSentHealth;
+  @Shadow private int lastSentFood;
+  // @formatter:on
 }

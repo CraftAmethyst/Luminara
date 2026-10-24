@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v.entity.CraftMob;
 
 public class ArclightModMob extends CraftMob {
 
-    public ArclightModMob(CraftServer server, Mob entity) {
-        super(server, entity);
-    }
+  public ArclightModMob(CraftServer server, Mob entity) {
+    super(server, entity);
+  }
 }

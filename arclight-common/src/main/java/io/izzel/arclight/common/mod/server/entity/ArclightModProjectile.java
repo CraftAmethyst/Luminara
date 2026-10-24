@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v.entity.CraftProjectile;
 
 public class ArclightModProjectile extends CraftProjectile {
 
-    public ArclightModProjectile(CraftServer server, Projectile entity) {
-        super(server, entity);
-    }
+  public ArclightModProjectile(CraftServer server, Projectile entity) {
+    super(server, entity);
+  }
 }

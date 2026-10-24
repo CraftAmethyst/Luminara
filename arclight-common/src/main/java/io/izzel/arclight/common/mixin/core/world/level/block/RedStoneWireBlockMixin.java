@@ -15,19 +15,33 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(RedStoneWireBlock.class)
 public abstract class RedStoneWireBlockMixin {
 
-    // @formatter:off
-    @Shadow protected abstract int calculateTargetStrength(Level world, BlockPos pos);
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  protected abstract int calculateTargetStrength(Level world, BlockPos pos);
 
-    @Redirect(method = "updatePowerStrength", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/RedStoneWireBlock;calculateTargetStrength(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I"))
-    public int arclight$blockRedstone(RedStoneWireBlock redstoneWireBlock, Level world, BlockPos pos, Level world1, BlockPos pos1, BlockState state) {
-        int i = this.calculateTargetStrength(world, pos);
-        int oldPower = state.getValue(RedStoneWireBlock.POWER);
-        if (oldPower != i) {
-            BlockRedstoneEvent event = new BlockRedstoneEvent(CraftBlock.at(world, pos), oldPower, i);
-            Bukkit.getPluginManager().callEvent(event);
-            i = event.getNewCurrent();
-        }
-        return i;
+  // @formatter:on
+
+  @Redirect(
+      method = "updatePowerStrength",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/RedStoneWireBlock;calculateTargetStrength(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I"))
+  public int arclight$blockRedstone(
+      RedStoneWireBlock redstoneWireBlock,
+      Level world,
+      BlockPos pos,
+      Level world1,
+      BlockPos pos1,
+      BlockState state) {
+    int i = this.calculateTargetStrength(world, pos);
+    int oldPower = state.getValue(RedStoneWireBlock.POWER);
+    if (oldPower != i) {
+      BlockRedstoneEvent event = new BlockRedstoneEvent(CraftBlock.at(world, pos), oldPower, i);
+      Bukkit.getPluginManager().callEvent(event);
+      i = event.getNewCurrent();
     }
+    return i;
+  }
 }

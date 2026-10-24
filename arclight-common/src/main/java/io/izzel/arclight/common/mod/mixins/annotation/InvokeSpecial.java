@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * WARN: Use with caution! <br/>
- * Used to implement binary compatible method invocation involving super method call. <br/>
+ * WARN: Use with caution! <br>
+ * Used to implement binary compatible method invocation involving super method call. <br>
  * Only applying to methods annotated with @Invoker takes effect.
  */
 @Retention(RetentionPolicy.CLASS)

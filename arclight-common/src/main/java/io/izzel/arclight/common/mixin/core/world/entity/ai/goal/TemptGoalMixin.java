@@ -18,22 +18,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(TemptGoal.class)
 public abstract class TemptGoalMixin {
 
-    // @formatter:off
-    @Shadow protected Player player;
-    @Shadow @Final protected PathfinderMob mob;
-    // @formatter:on
+  // @formatter:off
+  @Shadow protected Player player;
+  @Shadow @Final protected PathfinderMob mob;
 
-    @Inject(method = "canUse", cancellable = true, at = @At(value = "FIELD", shift = At.Shift.AFTER, opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/world/entity/ai/goal/TemptGoal;player:Lnet/minecraft/world/entity/player/Player;"))
-    public void arclight$tempt(CallbackInfoReturnable<Boolean> cir) {
-        boolean tempt = this.player != null;
-        if (tempt) {
-            EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this.mob, this.player, EntityTargetEvent.TargetReason.TEMPT);
-            if (event.isCancelled()) {
-                cir.setReturnValue(false);
-                return;
-            }
-            this.player = (event.getTarget() == null) ? null : ((CraftHumanEntity) event.getTarget()).getHandle();
-        }
-        cir.setReturnValue(tempt);
+  // @formatter:on
+
+  @Inject(
+      method = "canUse",
+      cancellable = true,
+      at =
+          @At(
+              value = "FIELD",
+              shift = At.Shift.AFTER,
+              opcode = Opcodes.PUTFIELD,
+              target =
+                  "Lnet/minecraft/world/entity/ai/goal/TemptGoal;player:Lnet/minecraft/world/entity/player/Player;"))
+  public void arclight$tempt(CallbackInfoReturnable<Boolean> cir) {
+    boolean tempt = this.player != null;
+    if (tempt) {
+      EntityTargetLivingEntityEvent event =
+          CraftEventFactory.callEntityTargetLivingEvent(
+              this.mob, this.player, EntityTargetEvent.TargetReason.TEMPT);
+      if (event.isCancelled()) {
+        cir.setReturnValue(false);
+        return;
+      }
+      this.player =
+          (event.getTarget() == null) ? null : ((CraftHumanEntity) event.getTarget()).getHandle();
     }
+    cir.setReturnValue(tempt);
+  }
 }

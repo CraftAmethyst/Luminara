@@ -13,18 +13,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractWindCharge.class)
 public abstract class AbstractWindChargeMixin extends AbstractHurtingProjectileMixin {
 
-    @Inject(method = "onHitBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/windcharge/AbstractWindCharge;discard()V"))
-    private void arclight$hitBlock(BlockHitResult blockHitResult, CallbackInfo ci) {
-        bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
-    }
+  @Inject(
+      method = "onHitBlock",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/projectile/windcharge/AbstractWindCharge;discard()V"))
+  private void arclight$hitBlock(BlockHitResult blockHitResult, CallbackInfo ci) {
+    bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
+  }
 
-    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/windcharge/AbstractWindCharge;discard()V"))
-    private void arclight$hit(HitResult hitResult, CallbackInfo ci) {
-        bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
-    }
+  @Inject(
+      method = "onHit",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/projectile/windcharge/AbstractWindCharge;discard()V"))
+  private void arclight$hit(HitResult hitResult, CallbackInfo ci) {
+    bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
+  }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/windcharge/AbstractWindCharge;discard()V"))
-    private void arclight$outOfWorld(CallbackInfo ci) {
-        bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.OUT_OF_WORLD);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/projectile/windcharge/AbstractWindCharge;discard()V"))
+  private void arclight$outOfWorld(CallbackInfo ci) {
+    bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.OUT_OF_WORLD);
+  }
 }

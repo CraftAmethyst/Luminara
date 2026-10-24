@@ -4,5 +4,5 @@ import org.bukkit.boss.KeyedBossBar;
 
 public interface CustomBossEventBridge {
 
-    KeyedBossBar bridge$getBukkitEntity();
+  KeyedBossBar bridge$getBukkitEntity();
 }

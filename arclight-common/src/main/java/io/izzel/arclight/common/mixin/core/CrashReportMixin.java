@@ -15,15 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CrashReport.class)
 public class CrashReportMixin {
 
-    @Shadow @Final private SystemReport systemReport;
+  @Shadow @Final private SystemReport systemReport;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$additional(String string, Throwable throwable, CallbackInfo ci) {
-        this.systemReport.setDetail("Arclight Release", ArclightVersion.current()::getReleaseName);
-        if (ArclightServer.isInitialized()) {
-            this.systemReport.setDetail("Arclight", new CraftCrashReport());
-        } else {
-            this.systemReport.setDetail("Arclight", "The crash happens before the server initialization.");
-        }
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void arclight$additional(String string, Throwable throwable, CallbackInfo ci) {
+    this.systemReport.setDetail("Arclight Release", ArclightVersion.current()::getReleaseName);
+    if (ArclightServer.isInitialized()) {
+      this.systemReport.setDetail("Arclight", new CraftCrashReport());
+    } else {
+      this.systemReport.setDetail(
+          "Arclight", "The crash happens before the server initialization.");
     }
+  }
 }

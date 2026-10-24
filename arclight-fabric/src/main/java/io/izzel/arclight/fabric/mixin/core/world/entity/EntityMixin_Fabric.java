@@ -11,23 +11,53 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Entity.class)
 public abstract class EntityMixin_Fabric implements EntityBridge {
 
-    // @formatter:off
-    @Shadow public abstract Level level();
-    @Shadow public abstract boolean isRemoved();
-    @Shadow private float yRot;
-    @Shadow private float xRot;
-    @Shadow public abstract float getXRot();
-    @Shadow public abstract void moveTo(double d, double e, double f, float g, float h);
-    @Shadow public abstract void setDeltaMovement(Vec3 vec3);
-    @Shadow public abstract void unRide();
-    @Shadow public abstract float getYRot();
-    @Shadow public abstract EntityType<?> getType();
-    @Shadow protected abstract void removeAfterChangingDimensions();
-    @Shadow public abstract Vec3 position();
-    @Shadow public abstract int getId();
-    @Shadow public abstract void discard();
-    @Shadow public abstract double getX();
-    @Shadow public abstract double getY(double d);
-    @Shadow public abstract double getZ();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract Level level();
+
+  @Shadow
+  public abstract boolean isRemoved();
+
+  @Shadow private float yRot;
+  @Shadow private float xRot;
+
+  @Shadow
+  public abstract float getXRot();
+
+  @Shadow
+  public abstract void moveTo(double d, double e, double f, float g, float h);
+
+  @Shadow
+  public abstract void setDeltaMovement(Vec3 vec3);
+
+  @Shadow
+  public abstract void unRide();
+
+  @Shadow
+  public abstract float getYRot();
+
+  @Shadow
+  public abstract EntityType<?> getType();
+
+  @Shadow
+  protected abstract void removeAfterChangingDimensions();
+
+  @Shadow
+  public abstract Vec3 position();
+
+  @Shadow
+  public abstract int getId();
+
+  @Shadow
+  public abstract void discard();
+
+  @Shadow
+  public abstract double getX();
+
+  @Shadow
+  public abstract double getY(double d);
+
+  @Shadow
+  public abstract double getZ();
+  // @formatter:on
 }

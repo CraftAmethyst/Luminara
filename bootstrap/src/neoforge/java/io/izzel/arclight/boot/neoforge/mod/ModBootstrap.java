@@ -12,11 +12,8 @@ import cpw.mods.util.LambdaExceptionUtils;
 import io.izzel.arclight.api.ArclightPlatform;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.boot.AbstractBootstrap;
-import io.izzel.arclight.installer.NeoforgeInstaller;
 import io.izzel.arclight.installer.MinecraftProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.MarkerManager;
-
+import io.izzel.arclight.installer.NeoforgeInstaller;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.invoke.MethodType;
@@ -34,146 +31,168 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.jar.Manifest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.MarkerManager;
 
 public class ModBootstrap implements AbstractBootstrap {
 
-    public record ModBoot(Configuration configuration, ClassLoader parent) {}
+  public record ModBoot(Configuration configuration, ClassLoader parent) {}
 
-    private static ModBoot modBoot;
+  private static ModBoot modBoot;
 
-    static void run() {
-        var plugin = Launcher.INSTANCE.environment().findLaunchPlugin("arclight_implementer");
-        if (plugin.isPresent()) return;
-        var logger = LogManager.getLogger("Arclight");
-        var marker = MarkerManager.getMarker("INSTALL");
-        try {
-            var paths = MinecraftProvider.modInstall(s -> logger.info(marker, s));
-            load(paths.toArray(new Path[0]));
-            new ModBootstrap().inject();
-        } catch (Throwable e) {
-            logger.error("Error bootstrap Arclight", e);
-            throw new RuntimeException(e);
+  static void run() {
+    var plugin = Launcher.INSTANCE.environment().findLaunchPlugin("arclight_implementer");
+    if (plugin.isPresent()) return;
+    var logger = LogManager.getLogger("Arclight");
+    var marker = MarkerManager.getMarker("INSTALL");
+    try {
+      var paths = MinecraftProvider.modInstall(s -> logger.info(marker, s));
+      load(paths.toArray(new Path[0]));
+      new ModBootstrap().inject();
+    } catch (Throwable e) {
+      logger.error("Error bootstrap Arclight", e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static void postRun() {
+    if (modBoot == null) return;
+    try {
+      var conf = modBoot.configuration();
+      var parent = modBoot.parent();
+      var classLoader = (ModuleClassLoader) Thread.currentThread().getContextClassLoader();
+      var parentField = ModuleClassLoader.class.getDeclaredField("parentLoaders");
+      var parentLoaders =
+          (Map<String, ClassLoader>)
+              Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(parentField));
+      for (var mod : conf.modules()) {
+        for (var pk : mod.reference().descriptor().packages()) {
+          parentLoaders.put(pk, parent);
         }
+      }
+      modBoot = null;
+    } catch (Throwable t) {
+      throw new RuntimeException(t);
+    }
+  }
+
+  private void inject() throws Throwable {
+    dirtyHacks();
+    setupMod(ArclightPlatform.NEOFORGE);
+    injectClassPath();
+    injectLaunchPlugin();
+  }
+
+  private void injectClassPath() throws Throwable {
+    var platform = ClassLoader.getPlatformClassLoader();
+    var ucpField = platform.getClass().getSuperclass().getDeclaredField("ucp");
+    var ucp = Unsafe.lookup().unreflectGetter(ucpField).invoke(platform);
+    if (ucp == null) {
+      for (var module : ModuleLayer.boot().configuration().modules()) {
+        var optional = module.reference().location();
+        if (optional.isPresent()) {
+          var uri = optional.get();
+          if (uri.getScheme().equals("file")) {
+            NeoforgeInstaller.addToPath(new File(uri).toPath());
+          }
+        }
+      }
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void injectLaunchPlugin() throws Exception {
+    var instance = Launcher.INSTANCE;
+    var launchPlugins = Launcher.class.getDeclaredField("launchPlugins");
+    launchPlugins.setAccessible(true);
+    var handler = (LaunchPluginHandler) launchPlugins.get(instance);
+    var plugins = LaunchPluginHandler.class.getDeclaredField("plugins");
+    plugins.setAccessible(true);
+    var map = (Map<String, ILaunchPluginService>) plugins.get(handler);
+    var plugin = new ArclightImplementer();
+    map.put(plugin.name(), plugin);
+  }
+
+  private static final Set<String> EXCLUDES =
+      Set.of("org/apache/maven/artifact/repository/metadata");
+
+  @SuppressWarnings("unchecked")
+  private static void load(Path[] file) throws Throwable {
+    var classLoader = (ModuleClassLoader) ModBootstrap.class.getClassLoader();
+    var secureJar =
+        SecureJar.from(
+            new JarContentsBuilder()
+                .paths(file)
+                .pathFilter((entry, basePath) -> EXCLUDES.stream().noneMatch(entry::startsWith))
+                .build());
+    var configurationField = ModuleClassLoader.class.getDeclaredField("configuration");
+    var confOffset = Unsafe.objectFieldOffset(configurationField);
+    var oldConf = (Configuration) Unsafe.getObject(classLoader, confOffset);
+    var conf =
+        oldConf.resolveAndBind(
+            JarModuleFinder.of(secureJar), ModuleFinder.of(), List.of(secureJar.name()));
+    modBoot = new ModBoot(conf, classLoader);
+    Unsafe.putObjectVolatile(classLoader, confOffset, conf);
+    var pkgField = ModuleClassLoader.class.getDeclaredField("packageLookup");
+    var packageLookup =
+        (Map<String, ResolvedModule>)
+            Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(pkgField));
+    var rootField = ModuleClassLoader.class.getDeclaredField("resolvedRoots");
+    var resolvedRoots =
+        (Map<String, Object>) Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(rootField));
+    var moduleRefCtor =
+        Unsafe.lookup()
+            .findConstructor(
+                Class.forName("cpw.mods.cl.JarModuleFinder$JarModuleReference"),
+                MethodType.methodType(void.class, SecureJar.ModuleDataProvider.class));
+    for (var mod : conf.modules()) {
+      for (var pk : mod.reference().descriptor().packages()) {
+        packageLookup.put(pk, mod);
+      }
+      resolvedRoots.put(
+          mod.name(),
+          moduleRefCtor.invokeWithArguments(new JarModuleDataProvider((Jar) secureJar)));
+    }
+  }
+
+  private record JarModuleDataProvider(Jar jar) implements SecureJar.ModuleDataProvider {
+
+    @Override
+    public String name() {
+      return jar.name();
     }
 
-    @SuppressWarnings("unchecked")
-    public static void postRun() {
-        if (modBoot == null) return;
-        try {
-            var conf = modBoot.configuration();
-            var parent = modBoot.parent();
-            var classLoader = (ModuleClassLoader) Thread.currentThread().getContextClassLoader();
-            var parentField = ModuleClassLoader.class.getDeclaredField("parentLoaders");
-            var parentLoaders = (Map<String, ClassLoader>) Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(parentField));
-            for (var mod : conf.modules()) {
-                for (var pk : mod.reference().descriptor().packages()) {
-                    parentLoaders.put(pk, parent);
-                }
-            }
-            modBoot = null;
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+    @Override
+    public ModuleDescriptor descriptor() {
+      return jar.computeDescriptor();
     }
 
-    private void inject() throws Throwable {
-        dirtyHacks();
-        setupMod(ArclightPlatform.NEOFORGE);
-        injectClassPath();
-        injectLaunchPlugin();
+    @Override
+    public URI uri() {
+      return jar.getURI();
     }
 
-    private void injectClassPath() throws Throwable {
-        var platform = ClassLoader.getPlatformClassLoader();
-        var ucpField = platform.getClass().getSuperclass().getDeclaredField("ucp");
-        var ucp = Unsafe.lookup().unreflectGetter(ucpField).invoke(platform);
-        if (ucp == null) {
-            for (var module : ModuleLayer.boot().configuration().modules()) {
-                var optional = module.reference().location();
-                if (optional.isPresent()) {
-                    var uri = optional.get();
-                    if (uri.getScheme().equals("file")) {
-                        NeoforgeInstaller.addToPath(new File(uri).toPath());
-                    }
-                }
-            }
-        }
+    @Override
+    public Optional<URI> findFile(final String name) {
+      return jar.findFile(name);
     }
 
-    @SuppressWarnings("unchecked")
-    private void injectLaunchPlugin() throws Exception {
-        var instance = Launcher.INSTANCE;
-        var launchPlugins = Launcher.class.getDeclaredField("launchPlugins");
-        launchPlugins.setAccessible(true);
-        var handler = (LaunchPluginHandler) launchPlugins.get(instance);
-        var plugins = LaunchPluginHandler.class.getDeclaredField("plugins");
-        plugins.setAccessible(true);
-        var map = (Map<String, ILaunchPluginService>) plugins.get(handler);
-        var plugin = new ArclightImplementer();
-        map.put(plugin.name(), plugin);
+    @Override
+    public Optional<InputStream> open(final String name) {
+      return jar.findFile(name)
+          .map(Paths::get)
+          .map(LambdaExceptionUtils.rethrowFunction(Files::newInputStream));
     }
 
-    private static final Set<String> EXCLUDES = Set.of("org/apache/maven/artifact/repository/metadata");
-
-    @SuppressWarnings("unchecked")
-    private static void load(Path[] file) throws Throwable {
-        var classLoader = (ModuleClassLoader) ModBootstrap.class.getClassLoader();
-        var secureJar = SecureJar.from(new JarContentsBuilder().paths(file).pathFilter((entry, basePath) -> EXCLUDES.stream().noneMatch(entry::startsWith)).build());
-        var configurationField = ModuleClassLoader.class.getDeclaredField("configuration");
-        var confOffset = Unsafe.objectFieldOffset(configurationField);
-        var oldConf = (Configuration) Unsafe.getObject(classLoader, confOffset);
-        var conf = oldConf.resolveAndBind(JarModuleFinder.of(secureJar), ModuleFinder.of(), List.of(secureJar.name()));
-        modBoot = new ModBoot(conf, classLoader);
-        Unsafe.putObjectVolatile(classLoader, confOffset, conf);
-        var pkgField = ModuleClassLoader.class.getDeclaredField("packageLookup");
-        var packageLookup = (Map<String, ResolvedModule>) Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(pkgField));
-        var rootField = ModuleClassLoader.class.getDeclaredField("resolvedRoots");
-        var resolvedRoots = (Map<String, Object>) Unsafe.getObject(classLoader, Unsafe.objectFieldOffset(rootField));
-        var moduleRefCtor = Unsafe.lookup().findConstructor(Class.forName("cpw.mods.cl.JarModuleFinder$JarModuleReference"),
-            MethodType.methodType(void.class, SecureJar.ModuleDataProvider.class));
-        for (var mod : conf.modules()) {
-            for (var pk : mod.reference().descriptor().packages()) {
-                packageLookup.put(pk, mod);
-            }
-            resolvedRoots.put(mod.name(), moduleRefCtor.invokeWithArguments(new JarModuleDataProvider((Jar) secureJar)));
-        }
+    @Override
+    public Manifest getManifest() {
+      return jar.moduleDataProvider().getManifest();
     }
 
-    private record JarModuleDataProvider(Jar jar) implements SecureJar.ModuleDataProvider {
-
-        @Override
-        public String name() {
-            return jar.name();
-        }
-
-        @Override
-        public ModuleDescriptor descriptor() {
-            return jar.computeDescriptor();
-        }
-
-        @Override
-        public URI uri() {
-            return jar.getURI();
-        }
-
-        @Override
-        public Optional<URI> findFile(final String name) {
-            return jar.findFile(name);
-        }
-
-        @Override
-        public Optional<InputStream> open(final String name) {
-            return jar.findFile(name).map(Paths::get).map(LambdaExceptionUtils.rethrowFunction(Files::newInputStream));
-        }
-
-        @Override
-        public Manifest getManifest() {
-            return jar.moduleDataProvider().getManifest();
-        }
-
-        @Override
-        public CodeSigner[] verifyAndGetSigners(final String cname, final byte[] bytes) {
-            return jar.moduleDataProvider().verifyAndGetSigners(cname, bytes);
-        }
+    @Override
+    public CodeSigner[] verifyAndGetSigners(final String cname, final byte[] bytes) {
+      return jar.moduleDataProvider().verifyAndGetSigners(cname, bytes);
     }
+  }
 }

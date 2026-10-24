@@ -14,18 +14,28 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(TamableAnimal.class)
 public abstract class TamableAnimalMixin extends AnimalMixin {
 
-    // @formatter:off
-    @Shadow public abstract boolean isTame();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract boolean isTame();
 
-    @Decorate(method = "maybeTeleportTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/TamableAnimal;moveTo(DDDFF)V"))
-    private void arclight$teleportEvent(TamableAnimal instance, double x, double y, double z, float yaw, float pitch) throws Throwable {
-        EntityTeleportEvent event = CraftEventFactory.callEntityTeleportEvent(instance, x, y, z);
-        if (event.isCancelled()) {
-            DecorationOps.cancel().invoke(false);
-            return;
-        }
-        Location to = event.getTo();
-        DecorationOps.callsite().invoke(instance, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
+  // @formatter:on
+
+  @Decorate(
+      method = "maybeTeleportTo",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/TamableAnimal;moveTo(DDDFF)V"))
+  private void arclight$teleportEvent(
+      TamableAnimal instance, double x, double y, double z, float yaw, float pitch)
+      throws Throwable {
+    EntityTeleportEvent event = CraftEventFactory.callEntityTeleportEvent(instance, x, y, z);
+    if (event.isCancelled()) {
+      DecorationOps.cancel().invoke(false);
+      return;
     }
+    Location to = event.getTo();
+    DecorationOps.callsite()
+        .invoke(instance, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
+  }
 }

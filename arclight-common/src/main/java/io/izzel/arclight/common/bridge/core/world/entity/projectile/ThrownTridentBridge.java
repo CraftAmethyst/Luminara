@@ -4,5 +4,5 @@ import net.minecraft.world.item.ItemStack;
 
 public interface ThrownTridentBridge {
 
-    void bridge$setThrownStack(ItemStack itemStack);
+  void bridge$setThrownStack(ItemStack itemStack);
 }

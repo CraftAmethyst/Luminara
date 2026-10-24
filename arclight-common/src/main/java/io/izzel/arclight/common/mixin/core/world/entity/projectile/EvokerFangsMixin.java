@@ -15,13 +15,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EvokerFangs.class)
 public abstract class EvokerFangsMixin extends EntityMixin {
 
-    @Redirect(method = "dealDamageTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"))
-    private DamageSource arclight$entityDamage(DamageSources instance) {
-        return ((DamageSourceBridge) instance.magic()).bridge$customCausingEntity((EvokerFangs) (Object) this);
-    }
+  @Redirect(
+      method = "dealDamageTo",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"))
+  private DamageSource arclight$entityDamage(DamageSources instance) {
+    return ((DamageSourceBridge) instance.magic())
+        .bridge$customCausingEntity((EvokerFangs) (Object) this);
+  }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/EvokerFangs;discard()V"))
-    private void arclight$despawn(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/projectile/EvokerFangs;discard()V"))
+  private void arclight$despawn(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 }

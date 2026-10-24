@@ -15,8 +15,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ApplyMobEffect.class)
 public class ApplyMobEffectMixin {
 
-    @Inject(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private void arclight$cause(ServerLevel serverLevel, int i, EnchantedItemInUse enchantedItemInUse, Entity entity, Vec3 vec3, CallbackInfo ci) {
-        ((LivingEntityBridge) entity).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
-    }
+  @Inject(
+      method = "apply",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
+  private void arclight$cause(
+      ServerLevel serverLevel,
+      int i,
+      EnchantedItemInUse enchantedItemInUse,
+      Entity entity,
+      Vec3 vec3,
+      CallbackInfo ci) {
+    ((LivingEntityBridge) entity).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.ATTACK);
+  }
 }

@@ -14,11 +14,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(IceBlock.class)
 public class IceBlockMixin {
 
-    @Inject(method = "melt", cancellable = true, at = @At("HEAD"))
-    public void arclight$blockFade(BlockState blockState, Level world, BlockPos blockPos, CallbackInfo ci) {
-        if (CraftEventFactory.callBlockFadeEvent(world, blockPos, world.dimensionType().ultraWarm()
-            ? Blocks.AIR.defaultBlockState() : Blocks.WATER.defaultBlockState()).isCancelled()) {
-            ci.cancel();
-        }
+  @Inject(method = "melt", cancellable = true, at = @At("HEAD"))
+  public void arclight$blockFade(
+      BlockState blockState, Level world, BlockPos blockPos, CallbackInfo ci) {
+    if (CraftEventFactory.callBlockFadeEvent(
+            world,
+            blockPos,
+            world.dimensionType().ultraWarm()
+                ? Blocks.AIR.defaultBlockState()
+                : Blocks.WATER.defaultBlockState())
+        .isCancelled()) {
+      ci.cancel();
     }
+  }
 }

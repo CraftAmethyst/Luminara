@@ -1,7 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.inventory;
 
-import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
 import io.izzel.arclight.common.bridge.core.world.IInventoryBridge;
+import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
 import io.izzel.arclight.common.mixin.core.world.SimpleContainerMixin;
 import io.izzel.arclight.common.mod.mixins.annotation.CreateConstructor;
 import io.izzel.arclight.common.mod.mixins.annotation.ShadowConstructor;
@@ -18,43 +18,44 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PlayerEnderChestContainer.class)
-public abstract class PlayerEnderChestContainerMixin extends SimpleContainerMixin implements IInventoryBridge, Container {
+public abstract class PlayerEnderChestContainerMixin extends SimpleContainerMixin
+    implements IInventoryBridge, Container {
 
-    // @formatter:off
-    @Shadow private EnderChestBlockEntity activeChest;
-    // @formatter:on
+  // @formatter:off
+  @Shadow private EnderChestBlockEntity activeChest;
+  // @formatter:on
 
-    private Player owner;
+  private Player owner;
 
-    @ShadowConstructor.Super
-    public void arclight$constructor$super(int numSlots, InventoryHolder owner) {
-        throw new RuntimeException();
+  @ShadowConstructor.Super
+  public void arclight$constructor$super(int numSlots, InventoryHolder owner) {
+    throw new RuntimeException();
+  }
+
+  @CreateConstructor
+  public void arclight$constructor(Player owner) {
+    arclight$constructor$super(27, ((PlayerBridge) owner).bridge$getBukkitEntity());
+    this.owner = owner;
+  }
+
+  public InventoryHolder getBukkitOwner() {
+    return ((PlayerBridge) owner).bridge$getBukkitEntity();
+  }
+
+  @Override
+  public InventoryHolder getOwner() {
+    return ((PlayerBridge) owner).bridge$getBukkitEntity();
+  }
+
+  @Override
+  public void setOwner(InventoryHolder owner) {
+    if (owner instanceof HumanEntity) {
+      this.owner = ((CraftHumanEntity) owner).getHandle();
     }
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(Player owner) {
-        arclight$constructor$super(27, ((PlayerBridge) owner).bridge$getBukkitEntity());
-        this.owner = owner;
-    }
-
-    public InventoryHolder getBukkitOwner() {
-        return ((PlayerBridge) owner).bridge$getBukkitEntity();
-    }
-
-    @Override
-    public InventoryHolder getOwner() {
-        return ((PlayerBridge) owner).bridge$getBukkitEntity();
-    }
-
-    @Override
-    public void setOwner(InventoryHolder owner) {
-        if (owner instanceof HumanEntity) {
-            this.owner = ((CraftHumanEntity) owner).getHandle();
-        }
-    }
-
-    @Override
-    public Location getLocation() {
-        return CraftBlock.at(this.activeChest.getLevel(), this.activeChest.getBlockPos()).getLocation();
-    }
+  @Override
+  public Location getLocation() {
+    return CraftBlock.at(this.activeChest.getLevel(), this.activeChest.getBlockPos()).getLocation();
+  }
 }

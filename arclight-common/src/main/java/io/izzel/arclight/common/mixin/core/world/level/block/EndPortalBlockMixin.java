@@ -28,35 +28,90 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(EndPortalBlock.class)
 public class EndPortalBlockMixin {
 
-    @Inject(method = "entityInside", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z"))
-    public void arclight$enterPortal(BlockState blockState, Level level, BlockPos pos, Entity entity, CallbackInfo ci) {
-        EntityPortalEnterEvent event = new EntityPortalEnterEvent(entity.bridge$getBukkitEntity(),
+  @Inject(
+      method = "entityInside",
+      at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z"))
+  public void arclight$enterPortal(
+      BlockState blockState, Level level, BlockPos pos, Entity entity, CallbackInfo ci) {
+    EntityPortalEnterEvent event =
+        new EntityPortalEnterEvent(
+            entity.bridge$getBukkitEntity(),
             new Location(level.bridge$getWorld(), pos.getX(), pos.getY(), pos.getZ()));
-        Bukkit.getPluginManager().callEvent(event);
-    }
+    Bukkit.getPluginManager().callEvent(event);
+  }
 
-    @Inject(method = "getPortalDestination", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;findRespawnPositionAndUseSpawnBlock(ZLnet/minecraft/world/level/portal/DimensionTransition$PostDimensionTransition;)Lnet/minecraft/world/level/portal/DimensionTransition;"))
-    private void arclight$pushCause(ServerLevel serverLevel, Entity entity, BlockPos blockPos, CallbackInfoReturnable<DimensionTransition> cir) {
-        ((ServerPlayerBridge) entity).bridge$pushRespawnReason(PlayerRespawnEvent.RespawnReason.END_PORTAL);
-    }
+  @Inject(
+      method = "getPortalDestination",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerPlayer;findRespawnPositionAndUseSpawnBlock(ZLnet/minecraft/world/level/portal/DimensionTransition$PostDimensionTransition;)Lnet/minecraft/world/level/portal/DimensionTransition;"))
+  private void arclight$pushCause(
+      ServerLevel serverLevel,
+      Entity entity,
+      BlockPos blockPos,
+      CallbackInfoReturnable<DimensionTransition> cir) {
+    ((ServerPlayerBridge) entity)
+        .bridge$pushRespawnReason(PlayerRespawnEvent.RespawnReason.END_PORTAL);
+  }
 
-    @Inject(method = "getPortalDestination", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/feature/EndPlatformFeature;createEndPlatform(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Z)V"))
-    private void arclight$pushEntity(ServerLevel serverLevel, Entity entity, BlockPos blockPos, CallbackInfoReturnable<DimensionTransition> cir) {
-        ArclightCaptures.captureEndPortalEntity(entity, true);
-    }
+  @Inject(
+      method = "getPortalDestination",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/levelgen/feature/EndPlatformFeature;createEndPlatform(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Z)V"))
+  private void arclight$pushEntity(
+      ServerLevel serverLevel,
+      Entity entity,
+      BlockPos blockPos,
+      CallbackInfoReturnable<DimensionTransition> cir) {
+    ArclightCaptures.captureEndPortalEntity(entity, true);
+  }
 
-    @Inject(method = "getPortalDestination", at = @At("RETURN"), cancellable = true,
-        slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/world/level/portal/DimensionTransition;PLAY_PORTAL_SOUND:Lnet/minecraft/world/level/portal/DimensionTransition$PostDimensionTransition;")))
-    private void arclight$fireEvent(ServerLevel serverLevel, Entity entity, BlockPos blockPos, CallbackInfoReturnable<DimensionTransition> cir) {
-        var dt = cir.getReturnValue();
-        var event = ((EntityBridge) entity).bridge$callPortalEvent(entity, CraftLocation.toBukkit(dt.pos(), dt.newLevel().bridge$getWorld(), dt.yRot(), dt.xRot()), PlayerTeleportEvent.TeleportCause.END_PORTAL, 0, 0);
-        if (event == null) {
-            cir.setReturnValue(null);
-            return;
-        }
-        Location to = event.getTo();
-        var newDt = new DimensionTransition(((CraftWorld) to.getWorld()).getHandle(), CraftLocation.toVec3D(to), entity.getDeltaMovement(), to.getYaw(), to.getPitch(), DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET));
-        ((DimensionTransitionBridge) (Object) newDt).bridge$setTeleportCause(PlayerTeleportEvent.TeleportCause.END_PORTAL);
-        cir.setReturnValue(newDt);
+  @Inject(
+      method = "getPortalDestination",
+      at = @At("RETURN"),
+      cancellable = true,
+      slice =
+          @Slice(
+              from =
+                  @At(
+                      value = "FIELD",
+                      target =
+                          "Lnet/minecraft/world/level/portal/DimensionTransition;PLAY_PORTAL_SOUND:Lnet/minecraft/world/level/portal/DimensionTransition$PostDimensionTransition;")))
+  private void arclight$fireEvent(
+      ServerLevel serverLevel,
+      Entity entity,
+      BlockPos blockPos,
+      CallbackInfoReturnable<DimensionTransition> cir) {
+    var dt = cir.getReturnValue();
+    var event =
+        ((EntityBridge) entity)
+            .bridge$callPortalEvent(
+                entity,
+                CraftLocation.toBukkit(
+                    dt.pos(), dt.newLevel().bridge$getWorld(), dt.yRot(), dt.xRot()),
+                PlayerTeleportEvent.TeleportCause.END_PORTAL,
+                0,
+                0);
+    if (event == null) {
+      cir.setReturnValue(null);
+      return;
     }
+    Location to = event.getTo();
+    var newDt =
+        new DimensionTransition(
+            ((CraftWorld) to.getWorld()).getHandle(),
+            CraftLocation.toVec3D(to),
+            entity.getDeltaMovement(),
+            to.getYaw(),
+            to.getPitch(),
+            DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET));
+    ((DimensionTransitionBridge) (Object) newDt)
+        .bridge$setTeleportCause(PlayerTeleportEvent.TeleportCause.END_PORTAL);
+    cir.setReturnValue(newDt);
+  }
 }

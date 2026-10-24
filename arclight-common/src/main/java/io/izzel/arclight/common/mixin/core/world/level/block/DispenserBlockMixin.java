@@ -14,11 +14,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DispenserBlock.class)
 public class DispenserBlockMixin {
 
-    @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
-    private static boolean eventFired = false;
+  @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
+  private static boolean eventFired = false;
 
-    @Inject(method = "dispenseFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/DispenserBlockEntity;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
-    private void arclight$reset(ServerLevel serverLevel, BlockState blockState, BlockPos blockPos, CallbackInfo ci) {
-        eventFired = false;
-    }
+  @Inject(
+      method = "dispenseFrom",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/entity/DispenserBlockEntity;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
+  private void arclight$reset(
+      ServerLevel serverLevel, BlockState blockState, BlockPos blockPos, CallbackInfo ci) {
+    eventFired = false;
+  }
 }

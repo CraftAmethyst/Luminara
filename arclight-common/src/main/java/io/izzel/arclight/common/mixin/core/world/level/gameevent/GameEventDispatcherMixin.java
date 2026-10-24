@@ -20,19 +20,33 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(GameEventDispatcher.class)
 public class GameEventDispatcherMixin {
 
-    @Shadow @Final private ServerLevel level;
+  @Shadow @Final private ServerLevel level;
 
-    @Decorate(method = "post", inject = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;containing(Lnet/minecraft/core/Position;)Lnet/minecraft/core/BlockPos;"))
-    private void arclight$gameEvent(Holder<GameEvent> holder, Vec3 vec3, GameEvent.Context context, @Local(ordinal = 0) int i) throws Throwable {
-        var entity = context.sourceEntity();
-        GenericGameEvent event = new GenericGameEvent(CraftGameEvent.minecraftToBukkit(holder.value()),
-            new Location(this.level.bridge$getWorld(), vec3.x(), vec3.y(), vec3.z()), (entity == null) ? null : entity.bridge$getBukkitEntity(), i, !Bukkit.isPrimaryThread());
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            DecorationOps.cancel().invoke();
-            return;
-        }
-        i = event.getRadius();
-        DecorationOps.blackhole().invoke(i);
+  @Decorate(
+      method = "post",
+      inject = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/core/BlockPos;containing(Lnet/minecraft/core/Position;)Lnet/minecraft/core/BlockPos;"))
+  private void arclight$gameEvent(
+      Holder<GameEvent> holder, Vec3 vec3, GameEvent.Context context, @Local(ordinal = 0) int i)
+      throws Throwable {
+    var entity = context.sourceEntity();
+    GenericGameEvent event =
+        new GenericGameEvent(
+            CraftGameEvent.minecraftToBukkit(holder.value()),
+            new Location(this.level.bridge$getWorld(), vec3.x(), vec3.y(), vec3.z()),
+            (entity == null) ? null : entity.bridge$getBukkitEntity(),
+            i,
+            !Bukkit.isPrimaryThread());
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      DecorationOps.cancel().invoke();
+      return;
     }
+    i = event.getRadius();
+    DecorationOps.blackhole().invoke(i);
+  }
 }

@@ -12,15 +12,16 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(Mob.class)
 public abstract class MobMixin_NeoForge extends LivingEntityMixin_NeoForge implements MobBridge {
 
-    @Override
-    public AgeableMob bridge$forge$onBabyEntitySpawn(Mob partner, @Nullable AgeableMob proposedChild) {
-        var event = new BabyEntitySpawnEvent((Mob) (Object) this, partner, proposedChild);
-        var cancelled = NeoForge.EVENT_BUS.post(event).isCanceled();
-        return cancelled ? null : event.getChild();
-    }
+  @Override
+  public AgeableMob bridge$forge$onBabyEntitySpawn(
+      Mob partner, @Nullable AgeableMob proposedChild) {
+    var event = new BabyEntitySpawnEvent((Mob) (Object) this, partner, proposedChild);
+    var cancelled = NeoForge.EVENT_BUS.post(event).isCanceled();
+    return cancelled ? null : event.getChild();
+  }
 
-    @Override
-    public boolean bridge$common$animalTameEvent(Player player) {
-        return true;
-    }
+  @Override
+  public boolean bridge$common$animalTameEvent(Player player) {
+    return true;
+  }
 }

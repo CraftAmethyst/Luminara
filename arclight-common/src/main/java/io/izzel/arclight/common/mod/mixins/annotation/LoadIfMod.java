@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface LoadIfMod {
 
-    String[] modid();
+  String[] modid();
 
-    ModCondition condition();
+  ModCondition condition();
 
-    enum ModCondition {
-        ABSENT,
-        PRESENT
-    }
+  enum ModCondition {
+    ABSENT,
+    PRESENT
+  }
 }

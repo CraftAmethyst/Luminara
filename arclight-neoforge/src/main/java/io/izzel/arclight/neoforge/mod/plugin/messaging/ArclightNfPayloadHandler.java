@@ -8,22 +8,25 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
 import org.bukkit.plugin.Plugin;
 
-public record ArclightNfPayloadHandler(ArclightPluginChannel<ArclightNfPayloadHandler> channel) implements NeoforgePayloadHandler {
-    @Override
-    public void handle(ArclightRawPayload pkt, IPayloadContext ctx) {
-        ctx.enqueueWork(() -> {
-            var bukkit = ((ServerPlayerBridge)ctx.player()).bridge$getBukkitEntity();
-            channel.dispatchMessage(bukkit, pkt.arclight$leak());
+public record ArclightNfPayloadHandler(ArclightPluginChannel<ArclightNfPayloadHandler> channel)
+    implements NeoforgePayloadHandler {
+  @Override
+  public void handle(ArclightRawPayload pkt, IPayloadContext ctx) {
+    ctx.enqueueWork(
+        () -> {
+          var bukkit = ((ServerPlayerBridge) ctx.player()).bridge$getBukkitEntity();
+          channel.dispatchMessage(bukkit, pkt.arclight$leak());
         });
-    }
+  }
 
-    @Override
-    public void updateChannel() {
-        ArclightNfMessaging.updateChannel(channel);
-    }
+  @Override
+  public void updateChannel() {
+    ArclightNfMessaging.updateChannel(channel);
+  }
 
-    @Override
-    public void sendCustomPayload(Plugin src, CraftPlayer dst, byte[] data) {
-        PacketDistributor.sendToPlayer(dst.getHandle(), new ArclightRawPayload(channel.getType(), data));
-    }
+  @Override
+  public void sendCustomPayload(Plugin src, CraftPlayer dst, byte[] data) {
+    PacketDistributor.sendToPlayer(
+        dst.getHandle(), new ArclightRawPayload(channel.getType(), data));
+  }
 }

@@ -5,17 +5,19 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class ErrorHandlingSpec {
-    @Setting("continue-on-crash")
-    private boolean continueOnCrash;
+  @Setting("continue-on-crash")
+  private boolean continueOnCrash;
 
-    @Setting("crash-report-directory")
-    private String crashReportDirectory = "crash-reports";
+  @Setting("crash-report-directory")
+  private String crashReportDirectory = "crash-reports";
 
-    public boolean isContinueOnCrash() {
-        return continueOnCrash;
-    }
+  public boolean isContinueOnCrash() {
+    return continueOnCrash;
+  }
 
-    public String getCrashReportDirectory() {
-        return crashReportDirectory == null || crashReportDirectory.isBlank() ? "crash-reports" : crashReportDirectory;
-    }
+  public String getCrashReportDirectory() {
+    return crashReportDirectory == null || crashReportDirectory.isBlank()
+        ? "crash-reports"
+        : crashReportDirectory;
+  }
 }

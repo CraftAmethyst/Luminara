@@ -6,19 +6,20 @@ import org.bukkit.craftbukkit.v.block.CraftBlock;
 
 public class ArclightBlockSnapshot extends CraftBlock {
 
-    private final BlockState blockState;
+  private final BlockState blockState;
 
-    public ArclightBlockSnapshot(BlockSnapshot blockSnapshot, boolean current) {
-        super(blockSnapshot.getLevel(), blockSnapshot.getPos());
-        this.blockState = current ? blockSnapshot.getCurrentState() : blockSnapshot.getState();
-    }
+  public ArclightBlockSnapshot(BlockSnapshot blockSnapshot, boolean current) {
+    super(blockSnapshot.getLevel(), blockSnapshot.getPos());
+    this.blockState = current ? blockSnapshot.getCurrentState() : blockSnapshot.getState();
+  }
 
-    @Override
-    public BlockState getNMS() {
-        return blockState;
-    }
+  @Override
+  public BlockState getNMS() {
+    return blockState;
+  }
 
-    public static ArclightBlockSnapshot fromBlockSnapshot(BlockSnapshot blockSnapshot, boolean current) {
-        return new ArclightBlockSnapshot(blockSnapshot, current);
-    }
+  public static ArclightBlockSnapshot fromBlockSnapshot(
+      BlockSnapshot blockSnapshot, boolean current) {
+    return new ArclightBlockSnapshot(blockSnapshot, current);
+  }
 }

@@ -22,33 +22,47 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(BaseFireBlock.class)
 public class BaseFireBlockMixin {
 
-    // fireExtinguished implemented per class
+  // fireExtinguished implemented per class
 
-    @Decorate(method = "entityInside", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"))
-    private void arclight$onFire(Entity instance, float f, BlockState blockState, Level level, BlockPos blockPos) throws Throwable {
-        var event = new EntityCombustByBlockEvent(CraftBlock.at(level, blockPos), instance.bridge$getBukkitEntity(), f);
-        Bukkit.getPluginManager().callEvent(event);
+  @Decorate(
+      method = "entityInside",
+      at =
+          @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"))
+  private void arclight$onFire(
+      Entity instance, float f, BlockState blockState, Level level, BlockPos blockPos)
+      throws Throwable {
+    var event =
+        new EntityCombustByBlockEvent(
+            CraftBlock.at(level, blockPos), instance.bridge$getBukkitEntity(), f);
+    Bukkit.getPluginManager().callEvent(event);
 
-        if (!event.isCancelled()) {
-            DecorationOps.callsite().invoke(instance, event.getDuration());
-        }
+    if (!event.isCancelled()) {
+      DecorationOps.callsite().invoke(instance, event.getDuration());
     }
+  }
 
-    @Redirect(method = "onPlace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
-    public boolean arclight$extinguish2(Level world, BlockPos pos, boolean isMoving) {
-        if (!CraftEventFactory.callBlockFadeEvent(world, pos, Blocks.AIR.defaultBlockState()).isCancelled()) {
-            world.removeBlock(pos, isMoving);
-        }
-        return false;
+  @Redirect(
+      method = "onPlace",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
+  public boolean arclight$extinguish2(Level world, BlockPos pos, boolean isMoving) {
+    if (!CraftEventFactory.callBlockFadeEvent(world, pos, Blocks.AIR.defaultBlockState())
+        .isCancelled()) {
+      world.removeBlock(pos, isMoving);
     }
+    return false;
+  }
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    private static boolean inPortalDimension(Level level) {
-        var typeKey = ((WorldBridge) level).bridge$getTypeKey();
-        return typeKey == LevelStem.NETHER || typeKey == LevelStem.OVERWORLD;
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  private static boolean inPortalDimension(Level level) {
+    var typeKey = ((WorldBridge) level).bridge$getTypeKey();
+    return typeKey == LevelStem.NETHER || typeKey == LevelStem.OVERWORLD;
+  }
 }

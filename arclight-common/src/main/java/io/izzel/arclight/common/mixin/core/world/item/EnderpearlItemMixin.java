@@ -20,35 +20,45 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(EnderpearlItem.class)
 public class EnderpearlItemMixin extends Item {
 
-    public EnderpearlItemMixin(Properties properties) {
-        super(properties);
-    }
+  public EnderpearlItemMixin(Properties properties) {
+    super(properties);
+  }
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, @NotNull InteractionHand handIn) {
-        ItemStack itemstack = playerIn.getItemInHand(handIn);
-        if (!worldIn.isClientSide) {
-            ThrownEnderpearl enderpearlentity = new ThrownEnderpearl(worldIn, playerIn);
-            enderpearlentity.setItem(itemstack);
-            enderpearlentity.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F);
-            if (!worldIn.addFreshEntity(enderpearlentity)) {
-                if (playerIn instanceof ServerPlayerBridge) {
-                    ((ServerPlayerBridge) playerIn).bridge$getBukkitEntity().updateInventory();
-                }
-                return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
-            }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public @NotNull InteractionResultHolder<ItemStack> use(
+      Level worldIn, Player playerIn, @NotNull InteractionHand handIn) {
+    ItemStack itemstack = playerIn.getItemInHand(handIn);
+    if (!worldIn.isClientSide) {
+      ThrownEnderpearl enderpearlentity = new ThrownEnderpearl(worldIn, playerIn);
+      enderpearlentity.setItem(itemstack);
+      enderpearlentity.shootFromRotation(
+          playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F);
+      if (!worldIn.addFreshEntity(enderpearlentity)) {
+        if (playerIn instanceof ServerPlayerBridge) {
+          ((ServerPlayerBridge) playerIn).bridge$getBukkitEntity().updateInventory();
         }
-
-        worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.ENDER_PEARL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F));
-        playerIn.getCooldowns().addCooldown(this, 20);
-
-        playerIn.awardStat(Stats.ITEM_USED.get(this));
-        itemstack.consume(1, playerIn);
-
-        return InteractionResultHolder.sidedSuccess(itemstack, worldIn.isClientSide());
+        return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+      }
     }
+
+    worldIn.playSound(
+        null,
+        playerIn.getX(),
+        playerIn.getY(),
+        playerIn.getZ(),
+        SoundEvents.ENDER_PEARL_THROW,
+        SoundSource.NEUTRAL,
+        0.5F,
+        0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F));
+    playerIn.getCooldowns().addCooldown(this, 20);
+
+    playerIn.awardStat(Stats.ITEM_USED.get(this));
+    itemstack.consume(1, playerIn);
+
+    return InteractionResultHolder.sidedSuccess(itemstack, worldIn.isClientSide());
+  }
 }

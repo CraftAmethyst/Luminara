@@ -8,21 +8,21 @@ import org.bukkit.generator.ChunkGenerator;
 
 public interface CraftServerBridge {
 
-    void bridge$setPlayerList(PlayerList playerList);
+  void bridge$setPlayerList(PlayerList playerList);
 
-    void bridge$removeWorld(ServerLevel world);
+  void bridge$removeWorld(ServerLevel world);
 
-    ChunkGenerator bridge$consumeGeneratorCache(String name);
+  ChunkGenerator bridge$consumeGeneratorCache(String name);
 
-    // One-shot custom chunk generation cache
-    void bridge$offerGeneratorCache(String name, ChunkGenerator generator);
+  // One-shot custom chunk generation cache
+  void bridge$offerGeneratorCache(String name, ChunkGenerator generator);
 
-    BiomeProvider bridge$consumeBiomeProviderCache(String name);
+  BiomeProvider bridge$consumeBiomeProviderCache(String name);
 
-    // One-shot custom chunk generation cache
-    void bridge$offerBiomeProviderCache(String name, BiomeProvider provider);
+  // One-shot custom chunk generation cache
+  void bridge$offerBiomeProviderCache(String name, BiomeProvider provider);
 
-    World.Environment bridge$consumeEnvironmentCache(String name);
+  World.Environment bridge$consumeEnvironmentCache(String name);
 
-    void bridge$offerEnvironmentCache(String name, World.Environment environment);
+  void bridge$offerEnvironmentCache(String name, World.Environment environment);
 }

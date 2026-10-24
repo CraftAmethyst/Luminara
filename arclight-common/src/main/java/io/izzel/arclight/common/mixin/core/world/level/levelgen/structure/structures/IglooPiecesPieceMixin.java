@@ -14,8 +14,21 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(IglooPieces.IglooPiece.class)
 public class IglooPiecesPieceMixin {
-    @Redirect(method = "handleDataMarker", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/ChestBlockEntity;setLootTable(Lnet/minecraft/resources/ResourceKey;J)V"))
-    private void arclight$customSetLootTable(ChestBlockEntity instance, ResourceKey<LootTable> resourceKey, long l, String string, BlockPos pos, ServerLevelAccessor level, RandomSource random) {
-        ((StructurePieceBridge) this).bridge$setCraftLootTable(level, pos.below(), random, resourceKey);
-    }
+  @Redirect(
+      method = "handleDataMarker",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/entity/ChestBlockEntity;setLootTable(Lnet/minecraft/resources/ResourceKey;J)V"))
+  private void arclight$customSetLootTable(
+      ChestBlockEntity instance,
+      ResourceKey<LootTable> resourceKey,
+      long l,
+      String string,
+      BlockPos pos,
+      ServerLevelAccessor level,
+      RandomSource random) {
+    ((StructurePieceBridge) this).bridge$setCraftLootTable(level, pos.below(), random, resourceKey);
+  }
 }

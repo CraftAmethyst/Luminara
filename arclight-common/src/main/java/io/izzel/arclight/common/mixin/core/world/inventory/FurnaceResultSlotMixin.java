@@ -13,12 +13,20 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(FurnaceResultSlot.class)
 public class FurnaceResultSlotMixin {
 
-    // @formatter:off
-    @Shadow private int removeCount;
-    // @formatter:on
+  // @formatter:off
+  @Shadow private int removeCount;
 
-    @Redirect(method = "checkTakeAchievements(Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;awardUsedRecipesAndPopExperience(Lnet/minecraft/server/level/ServerPlayer;)V"))
-    public void arclight$furnaceDropExp(AbstractFurnaceBlockEntity furnace, ServerPlayer player, ItemStack stack) {
-        ((AbstractFurnaceBlockEntityBridge) furnace).bridge$dropExp(player, stack, this.removeCount);
-    }
+  // @formatter:on
+
+  @Redirect(
+      method = "checkTakeAchievements(Lnet/minecraft/world/item/ItemStack;)V",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;awardUsedRecipesAndPopExperience(Lnet/minecraft/server/level/ServerPlayer;)V"))
+  public void arclight$furnaceDropExp(
+      AbstractFurnaceBlockEntity furnace, ServerPlayer player, ItemStack stack) {
+    ((AbstractFurnaceBlockEntityBridge) furnace).bridge$dropExp(player, stack, this.removeCount);
+  }
 }

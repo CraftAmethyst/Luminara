@@ -6,19 +6,20 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryAnswerPacket;
 
 public interface ServerLoginPacketListenerImplBridge {
-    default Thread bridge$newHandleThread(String name, Runnable runnable) {
-        return new Thread(runnable, name);
-    }
+  default Thread bridge$newHandleThread(String name, Runnable runnable) {
+    return new Thread(runnable, name);
+  }
 
-    int bridge$getVelocityLoginId();
+  int bridge$getVelocityLoginId();
 
-    void bridge$preLogin(GameProfile authenticatedProfile) throws Exception;
+  void bridge$preLogin(GameProfile authenticatedProfile) throws Exception;
 
-    void bridge$disconnect(String reason);
+  void bridge$disconnect(String reason);
 
-    default FriendlyByteBuf arclight$platform$customQAData(ServerboundCustomQueryAnswerPacket packet) {
-        return ArclightCustomQueryAnswerPayload.tryUnwrap(packet.payload());
-    }
+  default FriendlyByteBuf arclight$platform$customQAData(
+      ServerboundCustomQueryAnswerPacket packet) {
+    return ArclightCustomQueryAnswerPayload.tryUnwrap(packet.payload());
+  }
 
-    default void arclight$platform$onCustomQA(ServerboundCustomQueryAnswerPacket payload) {}
+  default void arclight$platform$onCustomQA(ServerboundCustomQueryAnswerPacket payload) {}
 }

@@ -13,42 +13,47 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntitySelectorParser.class)
 public abstract class EntitySelectorParserMixin implements EntitySelectorParserBridge {
 
-    // @formatter:off
-    @Shadow private boolean usesSelectors;
-    @Shadow protected abstract void parseSelector() throws CommandSyntaxException;
-    @Shadow public abstract EntitySelector parse() throws CommandSyntaxException;
-    // @formatter:on
+  // @formatter:off
+  @Shadow private boolean usesSelectors;
 
-    private Boolean arclight$overridePermissions;
+  @Shadow
+  protected abstract void parseSelector() throws CommandSyntaxException;
 
-    @Override
-    public EntitySelector bridge$parse(boolean overridePermissions) throws CommandSyntaxException {
-        return this.parse(overridePermissions);
+  @Shadow
+  public abstract EntitySelector parse() throws CommandSyntaxException;
+
+  // @formatter:on
+
+  private Boolean arclight$overridePermissions;
+
+  @Override
+  public EntitySelector bridge$parse(boolean overridePermissions) throws CommandSyntaxException {
+    return this.parse(overridePermissions);
+  }
+
+  public EntitySelector parse(boolean overridePermissions) throws CommandSyntaxException {
+    try {
+      this.arclight$overridePermissions = overridePermissions;
+      return this.parse();
+    } finally {
+      this.arclight$overridePermissions = null;
     }
+  }
 
-    public EntitySelector parse(boolean overridePermissions) throws CommandSyntaxException {
-        try {
-            this.arclight$overridePermissions = overridePermissions;
-            return this.parse();
-        } finally {
-            this.arclight$overridePermissions = null;
-        }
-    }
+  @Override
+  public void bridge$parseSelector(boolean overridePermissions) throws CommandSyntaxException {
+    this.parseSelector(overridePermissions);
+  }
 
-    @Override
-    public void bridge$parseSelector(boolean overridePermissions) throws CommandSyntaxException {
-        this.parseSelector(overridePermissions);
-    }
+  public void parseSelector(boolean overridePermissions) throws CommandSyntaxException {
+    this.usesSelectors = !overridePermissions;
+    this.parseSelector();
+  }
 
-    public void parseSelector(boolean overridePermissions) throws CommandSyntaxException {
-        this.usesSelectors = !overridePermissions;
-        this.parseSelector();
+  @Inject(method = "parseSelector", at = @At("HEAD"))
+  public void arclight$onParserSelector(CallbackInfo ci) {
+    if (this.arclight$overridePermissions != null) {
+      this.usesSelectors = !this.arclight$overridePermissions;
     }
-
-    @Inject(method = "parseSelector", at = @At("HEAD"))
-    public void arclight$onParserSelector(CallbackInfo ci) {
-        if (this.arclight$overridePermissions != null) {
-            this.usesSelectors = !this.arclight$overridePermissions;
-        }
-    }
+  }
 }

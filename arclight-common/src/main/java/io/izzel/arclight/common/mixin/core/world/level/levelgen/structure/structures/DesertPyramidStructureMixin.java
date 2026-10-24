@@ -18,14 +18,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(DesertPyramidStructure.class)
 public class DesertPyramidStructureMixin {
 
-    @Inject(method = "placeSuspiciousSand", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/WorldGenLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private static void arclight$customPlaceSuspiciousSand(BoundingBox aabb, WorldGenLevel level, BlockPos pos, CallbackInfo ci) {
-        if (level instanceof TransformerGeneratorAccess craftLevel) {
-            CraftBrushableBlock brushable = (CraftBrushableBlock) CraftBlockStates.getBlockState(level, pos, Blocks.SUSPICIOUS_SAND.defaultBlockState(), null);
-            brushable.setLootTable(CraftLootTable.minecraftToBukkit(BuiltInLootTables.DESERT_PYRAMID_ARCHAEOLOGY));
-            brushable.setSeed(pos.asLong());
-            craftLevel.setCraftBlock(pos, brushable, 2);
-            ci.cancel();
-        }
+  @Inject(
+      method = "placeSuspiciousSand",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/WorldGenLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private static void arclight$customPlaceSuspiciousSand(
+      BoundingBox aabb, WorldGenLevel level, BlockPos pos, CallbackInfo ci) {
+    if (level instanceof TransformerGeneratorAccess craftLevel) {
+      CraftBrushableBlock brushable =
+          (CraftBrushableBlock)
+              CraftBlockStates.getBlockState(
+                  level, pos, Blocks.SUSPICIOUS_SAND.defaultBlockState(), null);
+      brushable.setLootTable(
+          CraftLootTable.minecraftToBukkit(BuiltInLootTables.DESERT_PYRAMID_ARCHAEOLOGY));
+      brushable.setSeed(pos.asLong());
+      craftLevel.setCraftBlock(pos, brushable, 2);
+      ci.cancel();
     }
+  }
 }

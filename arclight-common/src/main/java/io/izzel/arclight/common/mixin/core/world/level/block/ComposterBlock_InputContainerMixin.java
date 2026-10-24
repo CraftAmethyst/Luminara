@@ -14,8 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ComposterBlock.InputContainer.class)
 public abstract class ComposterBlock_InputContainerMixin extends SimpleContainerMixin {
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;)V", at = @At("RETURN"))
-    public void arclight$setOwner(BlockState blockState, LevelAccessor world, BlockPos blockPos, CallbackInfo ci) {
-        this.setOwner(new CraftBlockInventoryHolder(world, blockPos, this));
-    }
+  @Inject(
+      method =
+          "<init>(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;)V",
+      at = @At("RETURN"))
+  public void arclight$setOwner(
+      BlockState blockState, LevelAccessor world, BlockPos blockPos, CallbackInfo ci) {
+    this.setOwner(new CraftBlockInventoryHolder(world, blockPos, this));
+  }
 }

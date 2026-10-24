@@ -18,37 +18,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(DiscardedPayload.class)
 public abstract class DiscardedPayloadMixin implements RawPayload {
 
-    @ShadowConstructor
-    public abstract void arclight$constructor(ResourceLocation rl);
+  @ShadowConstructor
+  public abstract void arclight$constructor(ResourceLocation rl);
 
-    @CreateConstructor
-    public void arclight$constructor(ResourceLocation rl, ByteBuf data) {
-        arclight$constructor(rl);
-        this.data = data.copy();
-    }
+  @CreateConstructor
+  public void arclight$constructor(ResourceLocation rl, ByteBuf data) {
+    arclight$constructor(rl);
+    this.data = data.copy();
+  }
 
-    @Unique
-    private ByteBuf data;
+  @Unique private ByteBuf data;
 
-    @Unique
-    public ByteBuf data() {
-        return data;
-    }
+  @Unique
+  public ByteBuf data() {
+    return data;
+  }
 
-    @Unique
-    @Override
-    public ByteBuf arclight$getRawData() {
-        return data();
-    }
+  @Unique
+  @Override
+  public ByteBuf arclight$getRawData() {
+    return data();
+  }
 
-    @Unique
-    @Override
-    public void arclight$setData(ByteBuf data) {
-        this.data = data;
-    }
+  @Unique
+  @Override
+  public void arclight$setData(ByteBuf data) {
+    this.data = data;
+  }
 
-    @Inject(method = "codec", at = @At("HEAD"), cancellable = true)
-    private static<T extends FriendlyByteBuf> void arclight$interceptCodec(ResourceLocation location, int i, CallbackInfoReturnable<StreamCodec<T, CustomPacketPayload>> cir) {
-        cir.setReturnValue(RawPayload.discardedCodec(location, i));
-    }
+  @Inject(method = "codec", at = @At("HEAD"), cancellable = true)
+  private static <T extends FriendlyByteBuf> void arclight$interceptCodec(
+      ResourceLocation location,
+      int i,
+      CallbackInfoReturnable<StreamCodec<T, CustomPacketPayload>> cir) {
+    cir.setReturnValue(RawPayload.discardedCodec(location, i));
+  }
 }

@@ -12,17 +12,16 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = CraftConsoleCommandSender.class, remap = false)
 public class CraftConsoleCommandSenderMixin {
 
-    private static final Logger LOGGER = LogManager.getLogger("Console");
+  private static final Logger LOGGER = LogManager.getLogger("Console");
 
-    @Shadow @Final protected ConversationTracker conversationTracker;
+  @Shadow @Final protected ConversationTracker conversationTracker;
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public void sendRawMessage(String message) {
-        LOGGER.info(message);
-    }
-
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public void sendRawMessage(String message) {
+    LOGGER.info(message);
+  }
 }

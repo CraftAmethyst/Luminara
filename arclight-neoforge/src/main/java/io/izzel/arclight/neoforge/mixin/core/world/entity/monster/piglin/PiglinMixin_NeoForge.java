@@ -9,10 +9,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Piglin.class)
-public abstract class PiglinMixin_NeoForge extends LivingEntityMixin_NeoForge implements PiglinBridge {
+public abstract class PiglinMixin_NeoForge extends LivingEntityMixin_NeoForge
+    implements PiglinBridge {
 
-    @Redirect(method = "holdInOffHand", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
-    private boolean arclight$customBarter(ItemStack itemStack) {
-        return itemStack.isPiglinCurrency() || bridge$getAllowedBarterItems().contains(itemStack.getItem());
-    }
+  @Redirect(
+      method = "holdInOffHand",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
+  private boolean arclight$customBarter(ItemStack itemStack) {
+    return itemStack.isPiglinCurrency()
+        || bridge$getAllowedBarterItems().contains(itemStack.getItem());
+  }
 }

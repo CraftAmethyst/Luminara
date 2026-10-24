@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.bridge.core.world.entity;
 
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionHand;
@@ -19,61 +21,61 @@ import org.bukkit.event.entity.EntityKnockbackEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
-import javax.annotation.Nullable;
-import java.util.Optional;
-
 public interface LivingEntityBridge extends EntityBridge {
 
-    void bridge$setSlot(EquipmentSlot slotIn, ItemStack stack, boolean silent);
+  void bridge$setSlot(EquipmentSlot slotIn, ItemStack stack, boolean silent);
 
-    void bridge$playEquipSound(EquipmentSlot slot, ItemStack oldItem, ItemStack newItem, boolean silent);
+  void bridge$playEquipSound(
+      EquipmentSlot slot, ItemStack oldItem, ItemStack newItem, boolean silent);
 
-    boolean bridge$canPickUpLoot();
+  boolean bridge$canPickUpLoot();
 
-    int bridge$getExpReward(Entity entity);
+  int bridge$getExpReward(Entity entity);
 
-    void bridge$setExpToDrop(int amount);
+  void bridge$setExpToDrop(int amount);
 
-    int bridge$getExpToDrop();
+  int bridge$getExpToDrop();
 
-    void bridge$pushHealReason(EntityRegainHealthEvent.RegainReason regainReason);
+  void bridge$pushHealReason(EntityRegainHealthEvent.RegainReason regainReason);
 
-    void bridge$heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason);
+  void bridge$heal(float healAmount, EntityRegainHealthEvent.RegainReason regainReason);
 
-    void bridge$pushEffectCause(EntityPotionEffectEvent.Cause cause);
+  void bridge$pushEffectCause(EntityPotionEffectEvent.Cause cause);
 
-    boolean bridge$addEffect(MobEffectInstance effect, EntityPotionEffectEvent.Cause cause);
+  boolean bridge$addEffect(MobEffectInstance effect, EntityPotionEffectEvent.Cause cause);
 
-    boolean bridge$removeEffect(Holder<MobEffect> effect, EntityPotionEffectEvent.Cause cause);
+  boolean bridge$removeEffect(Holder<MobEffect> effect, EntityPotionEffectEvent.Cause cause);
 
-    boolean bridge$removeAllEffects(EntityPotionEffectEvent.Cause cause);
+  boolean bridge$removeAllEffects(EntityPotionEffectEvent.Cause cause);
 
-    Optional<EntityPotionEffectEvent.Cause> bridge$getEffectCause();
+  Optional<EntityPotionEffectEvent.Cause> bridge$getEffectCause();
 
-    void bridge$pushKnockbackCause(Entity attacker, EntityKnockbackEvent.KnockbackCause cause);
+  void bridge$pushKnockbackCause(Entity attacker, EntityKnockbackEvent.KnockbackCause cause);
 
-    @Override
-    CraftLivingEntity bridge$getBukkitEntity();
+  @Override
+  CraftLivingEntity bridge$getBukkitEntity();
 
-    default int bridge$forge$getExperienceDrop(LivingEntity entity, Player attackingPlayer, int originalExperience) {
-        return originalExperience;
-    }
+  default int bridge$forge$getExperienceDrop(
+      LivingEntity entity, Player attackingPlayer, int originalExperience) {
+    return originalExperience;
+  }
 
-    default boolean bridge$forge$onLivingUseTotem(LivingEntity entity, DamageSource damageSource, ItemStack totem, InteractionHand hand) {
-        return true;
-    }
+  default boolean bridge$forge$onLivingUseTotem(
+      LivingEntity entity, DamageSource damageSource, ItemStack totem, InteractionHand hand) {
+    return true;
+  }
 
-    enum LivingTargetType {
-        BEHAVIOR_TARGET,
-        MOB_TARGET
-    }
+  enum LivingTargetType {
+    BEHAVIOR_TARGET,
+    MOB_TARGET
+  }
 
-    default void bridge$forge$onLivingConvert(LivingEntity entity, LivingEntity outcome) {}
+  default void bridge$forge$onLivingConvert(LivingEntity entity, LivingEntity outcome) {}
 
-    default boolean bridge$forge$canEntityDestroy(Level level, BlockPos pos, LivingEntity entity) {
-        return true;
-    }
+  default boolean bridge$forge$canEntityDestroy(Level level, BlockPos pos, LivingEntity entity) {
+    return true;
+  }
 
-    @Nullable
-    EntityDamageEvent arclight$fireEntityDamageEvent(DamageSource source, float original);
+  @Nullable
+  EntityDamageEvent arclight$fireEntityDamageEvent(DamageSource source, float original);
 }

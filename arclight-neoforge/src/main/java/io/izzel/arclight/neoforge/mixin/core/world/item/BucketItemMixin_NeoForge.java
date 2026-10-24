@@ -2,11 +2,10 @@ package io.izzel.arclight.neoforge.mixin.core.world.item;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import io.izzel.arclight.common.bridge.core.server.level.ServerPlayerBridge;
-import io.izzel.arclight.common.bridge.core.world.level.LevelAccessorBridge;
 import io.izzel.arclight.common.bridge.core.world.item.BucketItemBridge;
+import io.izzel.arclight.common.bridge.core.world.level.LevelAccessorBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -25,23 +24,59 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BucketItem.class)
 public abstract class BucketItemMixin_NeoForge implements BucketItemBridge {
 
-    @Inject(method = "use", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/BucketItem;emptyContents(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z"))
-    private void arclight$capture(Level worldIn, Player playerIn, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir, @Local BlockHitResult result, @Local ItemStack stack) {
-        arclight$setDirection(result.getDirection());
-        arclight$setClick(result.getBlockPos());
-        arclight$setHand(hand);
-        arclight$setStack(stack);
-    }
+  @Inject(
+      method = "use",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target =
+                  "Lnet/minecraft/world/item/BucketItem;emptyContents(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z"))
+  private void arclight$capture(
+      Level worldIn,
+      Player playerIn,
+      InteractionHand hand,
+      CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir,
+      @Local BlockHitResult result,
+      @Local ItemStack stack) {
+    arclight$setDirection(result.getDirection());
+    arclight$setClick(result.getBlockPos());
+    arclight$setHand(hand);
+    arclight$setStack(stack);
+  }
 
-    @Inject(method = "emptyContents(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/DimensionType;ultraWarm()Z"))
-    private void arclight$bucketEmpty(Player player, Level worldIn, BlockPos posIn, BlockHitResult rayTrace, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (LevelAccessorBridge.from(worldIn) instanceof LevelAccessorBridge bridge && player != null && stack != null) {
-            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(bridge.bridge$getMinecraftWorld(), player, posIn, arclight$getClick(), arclight$getDirection(), stack, arclight$getHand() == null ? InteractionHand.MAIN_HAND : arclight$getHand());
-            if (event.isCancelled()) {
-                ((ServerPlayer) player).connection.send(new ClientboundBlockUpdatePacket(worldIn, posIn));
-                ((ServerPlayerBridge) player).bridge$getBukkitEntity().updateInventory();
-                cir.setReturnValue(false);
-            }
-        }
+  @Inject(
+      method =
+          "emptyContents(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/level/dimension/DimensionType;ultraWarm()Z"))
+  private void arclight$bucketEmpty(
+      Player player,
+      Level worldIn,
+      BlockPos posIn,
+      BlockHitResult rayTrace,
+      ItemStack stack,
+      CallbackInfoReturnable<Boolean> cir) {
+    if (LevelAccessorBridge.from(worldIn) instanceof LevelAccessorBridge bridge
+        && player != null
+        && stack != null) {
+      PlayerBucketEmptyEvent event =
+          CraftEventFactory.callPlayerBucketEmptyEvent(
+              bridge.bridge$getMinecraftWorld(),
+              player,
+              posIn,
+              arclight$getClick(),
+              arclight$getDirection(),
+              stack,
+              arclight$getHand() == null ? InteractionHand.MAIN_HAND : arclight$getHand());
+      if (event.isCancelled()) {
+        ((ServerPlayer) player).connection.send(new ClientboundBlockUpdatePacket(worldIn, posIn));
+        ((ServerPlayerBridge) player).bridge$getBukkitEntity().updateInventory();
+        cir.setReturnValue(false);
+      }
     }
+  }
 }

@@ -5,7 +5,7 @@ import org.bukkit.event.world.AsyncStructureGenerateEvent;
 
 public interface StructureStartBridge {
 
-    void bridge$setGenerateCause(AsyncStructureGenerateEvent.Cause cause);
+  void bridge$setGenerateCause(AsyncStructureGenerateEvent.Cause cause);
 
-    CraftPersistentDataContainer bridge$getPersistentDataContainer();
+  CraftPersistentDataContainer bridge$getPersistentDataContainer();
 }

@@ -1,7 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.item;
 
-import io.izzel.arclight.common.bridge.core.world.entity.LivingEntityBridge;
 import io.izzel.arclight.common.bridge.core.server.level.ServerPlayerBridge;
+import io.izzel.arclight.common.bridge.core.world.entity.LivingEntityBridge;
 import io.izzel.arclight.mixin.Decorate;
 import io.izzel.arclight.mixin.DecorationOps;
 import net.minecraft.world.InteractionHand;
@@ -22,21 +22,39 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(DyeItem.class)
 public class DyeItemMixin {
 
-    // @formatter:off
-    @Shadow @Final private DyeColor dyeColor;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private DyeColor dyeColor;
 
-    @Decorate(method = "interactLivingEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Sheep;setColor(Lnet/minecraft/world/item/DyeColor;)V"))
-    private void arclight$sheepDyeWool(net.minecraft.world.entity.animal.Sheep sheepEntity, DyeColor color, ItemStack stack, Player playerIn, LivingEntity target, InteractionHand hand) throws Throwable {
-        byte bColor = (byte) this.dyeColor.getId();
-        SheepDyeWoolEvent event = new SheepDyeWoolEvent((Sheep) ((LivingEntityBridge) target).bridge$getBukkitEntity(), org.bukkit.DyeColor.getByWoolData(bColor), ((ServerPlayerBridge) playerIn).bridge$getBukkitEntity());
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            DecorationOps.cancel().invoke(InteractionResult.PASS);
-            return;
-        } else {
-            DecorationOps.callsite().invoke(sheepEntity, DyeColor.byId(event.getColor().getWoolData()));
-        }
-        DecorationOps.blackhole().invoke();
+  // @formatter:on
+
+  @Decorate(
+      method = "interactLivingEntity",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/animal/Sheep;setColor(Lnet/minecraft/world/item/DyeColor;)V"))
+  private void arclight$sheepDyeWool(
+      net.minecraft.world.entity.animal.Sheep sheepEntity,
+      DyeColor color,
+      ItemStack stack,
+      Player playerIn,
+      LivingEntity target,
+      InteractionHand hand)
+      throws Throwable {
+    byte bColor = (byte) this.dyeColor.getId();
+    SheepDyeWoolEvent event =
+        new SheepDyeWoolEvent(
+            (Sheep) ((LivingEntityBridge) target).bridge$getBukkitEntity(),
+            org.bukkit.DyeColor.getByWoolData(bColor),
+            ((ServerPlayerBridge) playerIn).bridge$getBukkitEntity());
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      DecorationOps.cancel().invoke(InteractionResult.PASS);
+      return;
+    } else {
+      DecorationOps.callsite().invoke(sheepEntity, DyeColor.byId(event.getColor().getWoolData()));
     }
+    DecorationOps.blackhole().invoke();
+  }
 }

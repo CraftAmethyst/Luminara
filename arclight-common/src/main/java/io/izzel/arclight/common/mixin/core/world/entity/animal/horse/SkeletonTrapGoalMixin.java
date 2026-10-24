@@ -1,7 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.entity.animal.horse;
 
-import io.izzel.arclight.common.bridge.core.world.level.WorldBridge;
 import io.izzel.arclight.common.bridge.core.server.level.ServerLevelBridge;
+import io.izzel.arclight.common.bridge.core.world.level.WorldBridge;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
@@ -21,25 +21,59 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SkeletonTrapGoal.class)
 public class SkeletonTrapGoalMixin {
 
-    // @formatter:off
-    @Shadow @Final private SkeletonHorse horse;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private SkeletonHorse horse;
 
-    @Inject(method = "*", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"),
-        slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/SkeletonTrapGoal;createHorse(Lnet/minecraft/world/DifficultyInstance;)Lnet/minecraft/world/entity/animal/horse/AbstractHorse;")))
-    private void arclight$thunder(CallbackInfo ci) {
-        ((WorldBridge) this.horse.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.TRAP);
-    }
+  // @formatter:on
 
-    @Redirect(method = "*", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean arclight$addHorse(ServerLevel world, Entity entityIn) {
-        ((ServerLevelBridge) world).bridge$strikeLightning((LightningBolt) entityIn, LightningStrikeEvent.Cause.TRAP);
-        return true;
-    }
+  @Inject(
+      method = "*",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"),
+      slice =
+          @Slice(
+              to =
+                  @At(
+                      value = "INVOKE",
+                      target =
+                          "Lnet/minecraft/world/entity/animal/horse/SkeletonTrapGoal;createHorse(Lnet/minecraft/world/DifficultyInstance;)Lnet/minecraft/world/entity/animal/horse/AbstractHorse;")))
+  private void arclight$thunder(CallbackInfo ci) {
+    ((WorldBridge) this.horse.level())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.TRAP);
+  }
 
-    @Inject(method = "*", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"),
-        slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/SkeletonTrapGoal;createHorse(Lnet/minecraft/world/DifficultyInstance;)Lnet/minecraft/world/entity/animal/horse/AbstractHorse;")))
-    private void arclight$jockey(CallbackInfo ci) {
-        ((WorldBridge) this.horse.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.JOCKEY);
-    }
+  @Redirect(
+      method = "*",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private boolean arclight$addHorse(ServerLevel world, Entity entityIn) {
+    ((ServerLevelBridge) world)
+        .bridge$strikeLightning((LightningBolt) entityIn, LightningStrikeEvent.Cause.TRAP);
+    return true;
+  }
+
+  @Inject(
+      method = "*",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"),
+      slice =
+          @Slice(
+              from =
+                  @At(
+                      value = "INVOKE",
+                      target =
+                          "Lnet/minecraft/world/entity/animal/horse/SkeletonTrapGoal;createHorse(Lnet/minecraft/world/DifficultyInstance;)Lnet/minecraft/world/entity/animal/horse/AbstractHorse;")))
+  private void arclight$jockey(CallbackInfo ci) {
+    ((WorldBridge) this.horse.level())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.JOCKEY);
+  }
 }

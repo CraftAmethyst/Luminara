@@ -12,8 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Digging.class)
 public class DiggingMixin<E extends Warden> {
 
-    @Inject(method = "stop(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/monster/warden/Warden;J)V", at = @At("HEAD"))
-    private void arclight$despawn(ServerLevel serverLevel, E warden, long l, CallbackInfo ci) {
-        warden.bridge().bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method =
+          "stop(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/monster/warden/Warden;J)V",
+      at = @At("HEAD"))
+  private void arclight$despawn(ServerLevel serverLevel, E warden, long l, CallbackInfo ci) {
+    warden.bridge().bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 }

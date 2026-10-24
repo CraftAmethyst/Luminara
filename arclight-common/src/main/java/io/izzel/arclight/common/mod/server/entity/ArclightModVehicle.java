@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v.entity.CraftVehicle;
 
 public class ArclightModVehicle extends CraftVehicle {
 
-    public ArclightModVehicle(CraftServer server, VehicleEntity entity) {
-        super(server, entity);
-    }
+  public ArclightModVehicle(CraftServer server, VehicleEntity entity) {
+    super(server, entity);
+  }
 }

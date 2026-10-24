@@ -2,6 +2,7 @@ package io.izzel.arclight.common.mod.util;
 
 import com.google.common.base.Preconditions;
 import io.izzel.arclight.common.mod.ArclightConstants;
+import java.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.WorldLoader;
@@ -21,465 +22,469 @@ import org.bukkit.craftbukkit.v.event.CraftPortalEvent;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 
-import java.util.*;
-
 public class ArclightCaptures {
 
-    private static Entity entityChangeBlock;
+  private static Entity entityChangeBlock;
 
-    public static void captureEntityChangeBlock(Entity entity) {
-        entityChangeBlock = entity;
+  public static void captureEntityChangeBlock(Entity entity) {
+    entityChangeBlock = entity;
+  }
+
+  public static Entity getEntityChangeBlock() {
+    try {
+      return entityChangeBlock;
+    } finally {
+      entityChangeBlock = null;
+    }
+  }
+
+  private static boolean lastEntityChangeBlockResult;
+
+  public static boolean getLastEntityChangeBlockResult() {
+    return lastEntityChangeBlockResult;
+  }
+
+  public static boolean setLastEntityChangeBlockResult(boolean b) {
+    return lastEntityChangeBlockResult = b;
+  }
+
+  /**
+   * Indicates that next BlockBreakEvent is fired directly by ServerPlayerGameMode#destroyBlock and
+   * need to be captured as primary event.
+   *
+   * @see net.minecraft.server.level.ServerPlayerGameMode#destroyBlock(BlockPos)
+   */
+  public static boolean isPrimaryEvent = false;
+
+  public static Stack<BlockBreakEventContext> blockBreakEventStack = new Stack<>();
+
+  public static void captureNextBlockBreakEventAsPrimaryEvent() {
+    // fix #674, some mod will implement their own "destroyBlock(...)"
+    // and its context cannot be tracked by Arclight directly.
+    // This is used to tell whether the event is fired by vanilla destroyBlock.
+    isPrimaryEvent = true;
+  }
+
+  public static void captureBlockBreakPlayer(BlockBreakEvent event) {
+    blockBreakEventStack.push(new BlockBreakEventContext(event, isPrimaryEvent));
+    isPrimaryEvent = false;
+  }
+
+  public static List<ItemEntity> getBlockDrops() {
+    if (!blockBreakEventStack.empty()) {
+      return blockBreakEventStack.peek().getBlockDrops();
+    } else if (captureBlockPopRes) {
+      return Preconditions.checkNotNull(extraDrops, "Not capturing drops!");
+    } else {
+      return null;
+    }
+  }
+
+  public static boolean getBlockBreakDropItems() {
+    if (!blockBreakEventStack.empty()) {
+      return blockBreakEventStack.peek().isDropItems();
+    }
+    return true;
+  }
+
+  public static BlockBreakEventContext popPrimaryBlockBreakEvent() {
+    if (!blockBreakEventStack.empty()) {
+      BlockBreakEventContext eventContext = blockBreakEventStack.pop();
+
+      // deal with unhandled secondary events
+      // should never happen, but just in case
+      ArrayList<BlockBreakEventContext> unhandledEvents = new ArrayList<>();
+      while (!blockBreakEventStack.empty() && !eventContext.isPrimary()) {
+        unhandledEvents.add(eventContext);
+        eventContext = blockBreakEventStack.pop();
+      }
+
+      if (!unhandledEvents.isEmpty()) {
+        // ArclightMod.LOGGER.warn("Unhandled secondary block break event");
+        eventContext.mergeAllDrops(unhandledEvents);
+      }
+
+      return eventContext;
+    } else {
+      return null;
+    }
+  }
+
+  public static BlockBreakEventContext popSecondaryBlockBreakEvent() {
+    if (!blockBreakEventStack.empty()) {
+      BlockBreakEventContext eventContext = blockBreakEventStack.peek();
+      if (!eventContext.isPrimary()) {
+        return blockBreakEventStack.pop();
+      }
+    }
+    return null;
+  }
+
+  public static void clearBlockBreakEventContexts() {
+    if (!blockBreakEventStack.empty()) {
+      // ArclightMod.LOGGER.warn("Unhandled block break event");
+      blockBreakEventStack.clear();
+    }
+  }
+
+  private static String quitMessage;
+
+  public static void captureQuitMessage(String quitMessage) {
+    ArclightCaptures.quitMessage = quitMessage;
+  }
+
+  public static String getQuitMessage() {
+    try {
+      return quitMessage;
+    } finally {
+      quitMessage = null;
+    }
+  }
+
+  private static Direction placeEventDirection;
+
+  public static void capturePlaceEventDirection(Direction direction) {
+    ArclightCaptures.placeEventDirection = direction;
+  }
+
+  public static Direction getPlaceEventDirection() {
+    try {
+      return placeEventDirection;
+    } finally {
+      placeEventDirection = null;
+    }
+  }
+
+  private static InteractionHand placeEventHand;
+
+  public static void capturePlaceEventHand(InteractionHand hand) {
+    ArclightCaptures.placeEventHand = hand;
+  }
+
+  public static InteractionHand getPlaceEventHand(InteractionHand hand) {
+    try {
+      return placeEventHand == null ? hand : placeEventHand;
+    } finally {
+      placeEventHand = null;
+    }
+  }
+
+  private static TreeType treeType;
+
+  public static void captureTreeType(TreeType treeType) {
+    ArclightCaptures.treeType = treeType;
+  }
+
+  public static TreeType getTreeType() {
+    try {
+      return treeType == null ? ArclightConstants.MOD : treeType;
+    } finally {
+      treeType = null;
+    }
+  }
+
+  private static transient AbstractContainerMenu arclight$capturedContainer;
+
+  public static void captureWorkbenchContainer(AbstractContainerMenu container) {
+    arclight$capturedContainer = container;
+  }
+
+  public static AbstractContainerMenu getWorkbenchContainer() {
+    try {
+      return arclight$capturedContainer;
+    } finally {
+      arclight$capturedContainer = null;
+    }
+  }
+
+  private static transient Entity damageEventEntity;
+
+  public static void captureDamageEventEntity(Entity entity) {
+    damageEventEntity = entity;
+  }
+
+  public static Entity getDamageEventEntity() {
+    try {
+      return damageEventEntity;
+    } finally {
+      damageEventEntity = null;
+    }
+  }
+
+  private static transient BlockPos damageEventBlock;
+
+  public static void captureDamageEventBlock(BlockPos blockState) {
+    damageEventBlock = blockState;
+  }
+
+  public static BlockPos getDamageEventBlock() {
+    try {
+      return damageEventBlock;
+    } finally {
+      damageEventBlock = null;
+    }
+  }
+
+  private static transient Stack<Player> containerOwner = new Stack<>();
+
+  public static void captureContainerOwner(Player entity) {
+    containerOwner.push(entity);
+  }
+
+  public static Player getContainerOwner() {
+    return containerOwner.peek();
+  }
+
+  public static void popContainerOwner(Player entity) {
+    if (!containerOwner.empty() && entity == getContainerOwner()) {
+      containerOwner.pop();
+    }
+  }
+
+  private static transient CraftPortalEvent craftPortalEvent;
+
+  public static void captureCraftPortalEvent(CraftPortalEvent event) {
+    craftPortalEvent = event;
+  }
+
+  public static CraftPortalEvent getCraftPortalEvent() {
+    try {
+      return craftPortalEvent;
+    } finally {
+      craftPortalEvent = null;
+    }
+  }
+
+  private static transient Entity endPortalEntity;
+  private static transient boolean spawnPortal;
+
+  public static void captureEndPortalEntity(Entity entity, boolean portal) {
+    endPortalEntity = entity;
+    spawnPortal = portal;
+  }
+
+  public static boolean getEndPortalSpawn() {
+    return spawnPortal;
+  }
+
+  public static Entity getEndPortalEntity() {
+    try {
+      return endPortalEntity;
+    } finally {
+      endPortalEntity = null;
+      spawnPortal = false;
+    }
+  }
+
+  private static Stack<ArclightDamageContainer> damageContainers = new Stack<>();
+
+  public static void captureDamageContainer(ArclightDamageContainer container) {
+    damageContainers.push(container);
+  }
+
+  public static ArclightDamageContainer getDamageContainer() {
+    return damageContainers.peek();
+  }
+
+  public static void popDamageContainer() {
+    damageContainers.pop();
+  }
+
+  private static transient WorldLoader.DataLoadContext dataLoadContext;
+
+  public static void captureDataLoadContext(WorldLoader.DataLoadContext context) {
+    dataLoadContext = context;
+  }
+
+  public static WorldLoader.DataLoadContext getDataLoadContext() {
+    try {
+      return Objects.requireNonNull(dataLoadContext, "dataLoadContext");
+    } finally {
+      dataLoadContext = null;
+    }
+  }
+
+  private static transient BlockEntity tickingBlockEntity;
+
+  public static void captureTickingBlockEntity(BlockEntity entity) {
+    tickingBlockEntity = entity;
+  }
+
+  public static void resetTickingBlockEntity() {
+    tickingBlockEntity = null;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends BlockEntity> T getTickingBlockEntity() {
+    return (T) tickingBlockEntity;
+  }
+
+  private static ServerLevel tickingLevel;
+  private static BlockPos tickingPosition;
+
+  public static void captureTickingBlock(ServerLevel level, BlockPos pos) {
+    tickingLevel = level;
+    tickingPosition = pos;
+  }
+
+  public static ServerLevel getTickingLevel() {
+    return tickingLevel;
+  }
+
+  public static BlockPos getTickingPosition() {
+    return tickingPosition;
+  }
+
+  public static void resetTickingBlock() {
+    tickingLevel = null;
+    tickingPosition = null;
+  }
+
+  private static Entity tickingEntity;
+
+  public static void captureTickingEntity(Entity entity) {
+    tickingEntity = entity;
+  }
+
+  public static Entity getTickingEntity() {
+    return tickingEntity;
+  }
+
+  public static void resetTickingEntity() {
+    tickingEntity = null;
+  }
+
+  private static EntityPotionEffectEvent.Cause effectCause;
+
+  public static void captureEffectCause(EntityPotionEffectEvent.Cause cause) {
+    effectCause = cause;
+  }
+
+  public static EntityPotionEffectEvent.Cause getEffectCause() {
+    try {
+      return effectCause;
+    } finally {
+      effectCause = null;
+    }
+  }
+
+  private static BlockPos spreadPos;
+
+  public static BlockPos captureSpreadSource(BlockPos source) {
+    BlockPos old = spreadPos;
+    spreadPos = source.immutable();
+    return old;
+  }
+
+  public static BlockPos getSpreadPos() {
+    return spreadPos;
+  }
+
+  public static void resetSpreadSource(BlockPos old, BlockPos now) {
+    if (spreadPos == now) spreadPos = old;
+  }
+
+  private static boolean playerInteractCancelled;
+
+  public static void cancelNextPlayerInteract() {
+    playerInteractCancelled = true;
+  }
+
+  public static boolean shouldCancelPlayerInteract() {
+    try {
+      return playerInteractCancelled;
+    } finally {
+      playerInteractCancelled = false;
+    }
+  }
+
+  private static boolean captureBlockPopRes = false;
+
+  public static void captureBlockPopResForExtraDrops(boolean state) {
+    captureBlockPopRes = state;
+  }
+
+  private static List<ItemEntity> extraDrops;
+
+  /**
+   * 1. Used by armor stands to capture their contents. <br>
+   * 2. Used by foxes to capture their drops. <br>
+   * 3. SENTINEL
+   *
+   * @see
+   *     io.izzel.arclight.common.mod.server.event.EntityEventHandler#monitorLivingDrops(LivingEntity,
+   *     DamageSource, List, boolean)
+   */
+  public static void captureExtraDrops(List<ItemEntity> capturedDrops) {
+    extraDrops = capturedDrops;
+  }
+
+  public static List<ItemEntity> consumeExtraDrops() {
+    try {
+      return extraDrops;
+    } finally {
+      extraDrops = null;
+    }
+  }
+
+  private static Inventory deathPlayerInv;
+
+  public static void capturePlayerDeathInv(Inventory inventory) {
+    deathPlayerInv = inventory;
+  }
+
+  public static Inventory getDeathPlayerInv() {
+    try {
+      return deathPlayerInv;
+    } finally {
+      deathPlayerInv = null;
+    }
+  }
+
+  private static void recapture(String type) {
+    throw new IllegalStateException("Recapturing " + type);
+  }
+
+  public static class BlockBreakEventContext {
+
+    private final BlockBreakEvent blockBreakEvent;
+    private final ArrayList<ItemEntity> blockDrops;
+    private final BlockState blockBreakPlayerState;
+    private final boolean primary;
+    private final boolean dropItems;
+
+    public BlockBreakEventContext(BlockBreakEvent event, boolean primary) {
+      this.blockBreakEvent = event;
+      this.blockDrops = new ArrayList<>();
+      this.blockBreakPlayerState = event.getBlock().getState();
+      this.primary = primary;
+      this.dropItems = event.isDropItems();
     }
 
-    public static Entity getEntityChangeBlock() {
-        try {
-            return entityChangeBlock;
-        } finally {
-            entityChangeBlock = null;
-        }
+    public BlockBreakEvent getEvent() {
+      return blockBreakEvent;
     }
 
-    private static boolean lastEntityChangeBlockResult;
-
-    public static boolean getLastEntityChangeBlockResult() {
-        return lastEntityChangeBlockResult;
+    public ArrayList<ItemEntity> getBlockDrops() {
+      return blockDrops;
     }
 
-    public static boolean setLastEntityChangeBlockResult(boolean b) {
-        return lastEntityChangeBlockResult = b;
+    public boolean isDropItems() {
+      return dropItems;
     }
 
-    /**
-     * Indicates that next BlockBreakEvent is fired directly by ServerPlayerGameMode#destroyBlock
-     * and need to be captured as primary event.
-     *
-     * @see net.minecraft.server.level.ServerPlayerGameMode#destroyBlock(BlockPos)
-     */
-    public static boolean isPrimaryEvent = false;
-    public static Stack<BlockBreakEventContext> blockBreakEventStack = new Stack<>();
-
-    public static void captureNextBlockBreakEventAsPrimaryEvent() {
-        // fix #674, some mod will implement their own "destroyBlock(...)"
-        // and its context cannot be tracked by Arclight directly.
-        // This is used to tell whether the event is fired by vanilla destroyBlock.
-        isPrimaryEvent = true;
+    public BlockState getBlockBreakPlayerState() {
+      return blockBreakPlayerState;
     }
 
-    public static void captureBlockBreakPlayer(BlockBreakEvent event) {
-        blockBreakEventStack.push(new BlockBreakEventContext(event, isPrimaryEvent));
-        isPrimaryEvent = false;
+    public void mergeAllDrops(List<BlockBreakEventContext> others) {
+      for (BlockBreakEventContext other : others) {
+        this.getBlockDrops().addAll(other.getBlockDrops());
+      }
     }
 
-    public static List<ItemEntity> getBlockDrops() {
-        if (!blockBreakEventStack.empty()) {
-            return blockBreakEventStack.peek().getBlockDrops();
-        } else if (captureBlockPopRes) {
-            return Preconditions.checkNotNull(extraDrops, "Not capturing drops!");
-        } else {
-            return null;
-        }
+    public boolean isPrimary() {
+      return primary;
     }
-
-    public static boolean getBlockBreakDropItems() {
-        if (!blockBreakEventStack.empty()) {
-            return blockBreakEventStack.peek().isDropItems();
-        }
-        return true;
-    }
-
-    public static BlockBreakEventContext popPrimaryBlockBreakEvent() {
-        if (!blockBreakEventStack.empty()) {
-            BlockBreakEventContext eventContext = blockBreakEventStack.pop();
-
-            // deal with unhandled secondary events
-            // should never happen, but just in case
-            ArrayList<BlockBreakEventContext> unhandledEvents = new ArrayList<>();
-            while (!blockBreakEventStack.empty() && !eventContext.isPrimary()) {
-                unhandledEvents.add(eventContext);
-                eventContext = blockBreakEventStack.pop();
-            }
-
-            if (!unhandledEvents.isEmpty()) {
-                // ArclightMod.LOGGER.warn("Unhandled secondary block break event");
-                eventContext.mergeAllDrops(unhandledEvents);
-            }
-
-            return eventContext;
-        } else {
-            return null;
-        }
-    }
-
-    public static BlockBreakEventContext popSecondaryBlockBreakEvent() {
-        if (!blockBreakEventStack.empty()) {
-            BlockBreakEventContext eventContext = blockBreakEventStack.peek();
-            if (!eventContext.isPrimary()) {
-                return blockBreakEventStack.pop();
-            }
-        }
-        return null;
-    }
-
-    public static void clearBlockBreakEventContexts() {
-        if (!blockBreakEventStack.empty()) {
-            // ArclightMod.LOGGER.warn("Unhandled block break event");
-            blockBreakEventStack.clear();
-        }
-    }
-
-    private static String quitMessage;
-
-    public static void captureQuitMessage(String quitMessage) {
-        ArclightCaptures.quitMessage = quitMessage;
-    }
-
-    public static String getQuitMessage() {
-        try {
-            return quitMessage;
-        } finally {
-            quitMessage = null;
-        }
-    }
-
-    private static Direction placeEventDirection;
-
-    public static void capturePlaceEventDirection(Direction direction) {
-        ArclightCaptures.placeEventDirection = direction;
-    }
-
-    public static Direction getPlaceEventDirection() {
-        try {
-            return placeEventDirection;
-        } finally {
-            placeEventDirection = null;
-        }
-    }
-
-    private static InteractionHand placeEventHand;
-
-    public static void capturePlaceEventHand(InteractionHand hand) {
-        ArclightCaptures.placeEventHand = hand;
-    }
-
-    public static InteractionHand getPlaceEventHand(InteractionHand hand) {
-        try {
-            return placeEventHand == null ? hand : placeEventHand;
-        } finally {
-            placeEventHand = null;
-        }
-    }
-
-    private static TreeType treeType;
-
-    public static void captureTreeType(TreeType treeType) {
-        ArclightCaptures.treeType = treeType;
-    }
-
-    public static TreeType getTreeType() {
-        try {
-            return treeType == null ? ArclightConstants.MOD : treeType;
-        } finally {
-            treeType = null;
-        }
-    }
-
-    private static transient AbstractContainerMenu arclight$capturedContainer;
-
-    public static void captureWorkbenchContainer(AbstractContainerMenu container) {
-        arclight$capturedContainer = container;
-    }
-
-    public static AbstractContainerMenu getWorkbenchContainer() {
-        try {
-            return arclight$capturedContainer;
-        } finally {
-            arclight$capturedContainer = null;
-        }
-    }
-
-    private static transient Entity damageEventEntity;
-
-    public static void captureDamageEventEntity(Entity entity) {
-        damageEventEntity = entity;
-    }
-
-    public static Entity getDamageEventEntity() {
-        try {
-            return damageEventEntity;
-        } finally {
-            damageEventEntity = null;
-        }
-    }
-
-    private static transient BlockPos damageEventBlock;
-
-    public static void captureDamageEventBlock(BlockPos blockState) {
-        damageEventBlock = blockState;
-    }
-
-    public static BlockPos getDamageEventBlock() {
-        try {
-            return damageEventBlock;
-        } finally {
-            damageEventBlock = null;
-        }
-    }
-
-    private static transient Stack<Player> containerOwner = new Stack<>();
-
-    public static void captureContainerOwner(Player entity) {
-        containerOwner.push(entity);
-    }
-
-    public static Player getContainerOwner() {
-        return containerOwner.peek();
-    }
-
-    public static void popContainerOwner(Player entity) {
-        if (!containerOwner.empty() && entity == getContainerOwner()) {
-            containerOwner.pop();
-        }
-    }
-
-    private static transient CraftPortalEvent craftPortalEvent;
-
-    public static void captureCraftPortalEvent(CraftPortalEvent event) {
-        craftPortalEvent = event;
-    }
-
-    public static CraftPortalEvent getCraftPortalEvent() {
-        try {
-            return craftPortalEvent;
-        } finally {
-            craftPortalEvent = null;
-        }
-    }
-
-    private static transient Entity endPortalEntity;
-    private static transient boolean spawnPortal;
-
-    public static void captureEndPortalEntity(Entity entity, boolean portal) {
-        endPortalEntity = entity;
-        spawnPortal = portal;
-    }
-
-    public static boolean getEndPortalSpawn() {
-        return spawnPortal;
-    }
-
-    public static Entity getEndPortalEntity() {
-        try {
-            return endPortalEntity;
-        } finally {
-            endPortalEntity = null;
-            spawnPortal = false;
-        }
-    }
-
-    private static Stack<ArclightDamageContainer> damageContainers = new Stack<>();
-
-    public static void captureDamageContainer(ArclightDamageContainer container) {
-        damageContainers.push(container);
-    }
-
-    public static ArclightDamageContainer getDamageContainer() {
-        return damageContainers.peek();
-    }
-
-    public static void popDamageContainer() {
-        damageContainers.pop();
-    }
-
-    private static transient WorldLoader.DataLoadContext dataLoadContext;
-
-    public static void captureDataLoadContext(WorldLoader.DataLoadContext context) {
-        dataLoadContext = context;
-    }
-
-    public static WorldLoader.DataLoadContext getDataLoadContext() {
-        try {
-            return Objects.requireNonNull(dataLoadContext, "dataLoadContext");
-        } finally {
-            dataLoadContext = null;
-        }
-    }
-
-    private static transient BlockEntity tickingBlockEntity;
-
-    public static void captureTickingBlockEntity(BlockEntity entity) {
-        tickingBlockEntity = entity;
-    }
-
-    public static void resetTickingBlockEntity() {
-        tickingBlockEntity = null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T extends BlockEntity> T getTickingBlockEntity() {
-        return (T) tickingBlockEntity;
-    }
-
-    private static ServerLevel tickingLevel;
-    private static BlockPos tickingPosition;
-
-    public static void captureTickingBlock(ServerLevel level, BlockPos pos) {
-        tickingLevel = level;
-        tickingPosition = pos;
-    }
-
-    public static ServerLevel getTickingLevel() {
-        return tickingLevel;
-    }
-
-    public static BlockPos getTickingPosition() {
-        return tickingPosition;
-    }
-
-    public static void resetTickingBlock() {
-        tickingLevel = null;
-        tickingPosition = null;
-    }
-
-    private static Entity tickingEntity;
-
-    public static void captureTickingEntity(Entity entity) {
-        tickingEntity = entity;
-    }
-
-    public static Entity getTickingEntity() {
-        return tickingEntity;
-    }
-
-    public static void resetTickingEntity() {
-        tickingEntity = null;
-    }
-
-    private static EntityPotionEffectEvent.Cause effectCause;
-
-    public static void captureEffectCause(EntityPotionEffectEvent.Cause cause) {
-        effectCause = cause;
-    }
-
-    public static EntityPotionEffectEvent.Cause getEffectCause() {
-        try {
-            return effectCause;
-        } finally {
-            effectCause = null;
-        }
-    }
-
-    private static BlockPos spreadPos;
-
-    public static BlockPos captureSpreadSource(BlockPos source) {
-        BlockPos old = spreadPos;
-        spreadPos = source.immutable();
-        return old;
-    }
-
-    public static BlockPos getSpreadPos() {
-        return spreadPos;
-    }
-
-    public static void resetSpreadSource(BlockPos old, BlockPos now) {
-        if (spreadPos == now) spreadPos = old;
-    }
-
-    private static boolean playerInteractCancelled;
-
-    public static void cancelNextPlayerInteract() { playerInteractCancelled = true; }
-
-    public static boolean shouldCancelPlayerInteract() {
-        try {
-            return playerInteractCancelled;
-        } finally {
-            playerInteractCancelled = false;
-        }
-    }
-
-    private static boolean captureBlockPopRes = false;
-
-    public static void captureBlockPopResForExtraDrops(boolean state) {
-        captureBlockPopRes = state;
-    }
-
-    private static List<ItemEntity> extraDrops;
-
-    /**
-     * 1. Used by armor stands to capture their contents. <br/>
-     * 2. Used by foxes to capture their drops. <br/>
-     * 3. SENTINEL
-     * @see io.izzel.arclight.common.mod.server.event.EntityEventHandler#monitorLivingDrops(LivingEntity, DamageSource, List, boolean)
-     */
-    public static void captureExtraDrops(List<ItemEntity> capturedDrops) {
-        extraDrops = capturedDrops;
-    }
-
-    public static List<ItemEntity> consumeExtraDrops() {
-        try {
-            return extraDrops;
-        } finally {
-            extraDrops = null;
-        }
-    }
-
-    private static Inventory deathPlayerInv;
-
-    public static void capturePlayerDeathInv(Inventory inventory) {
-        deathPlayerInv = inventory;
-    }
-
-    public static Inventory getDeathPlayerInv() {
-        try {
-            return deathPlayerInv;
-        } finally {
-            deathPlayerInv = null;
-        }
-    }
-
-    private static void recapture(String type) {
-        throw new IllegalStateException("Recapturing " + type);
-    }
-
-    public static class BlockBreakEventContext {
-
-        private final BlockBreakEvent blockBreakEvent;
-        private final ArrayList<ItemEntity> blockDrops;
-        private final BlockState blockBreakPlayerState;
-        private final boolean primary;
-        private final boolean dropItems;
-
-        public BlockBreakEventContext(BlockBreakEvent event, boolean primary) {
-            this.blockBreakEvent = event;
-            this.blockDrops = new ArrayList<>();
-            this.blockBreakPlayerState = event.getBlock().getState();
-            this.primary = primary;
-            this.dropItems = event.isDropItems();
-        }
-
-        public BlockBreakEvent getEvent() {
-            return blockBreakEvent;
-        }
-
-        public ArrayList<ItemEntity> getBlockDrops() {
-            return blockDrops;
-        }
-
-        public boolean isDropItems() {
-            return dropItems;
-        }
-
-        public BlockState getBlockBreakPlayerState() {
-            return blockBreakPlayerState;
-        }
-
-        public void mergeAllDrops(List<BlockBreakEventContext> others) {
-            for (BlockBreakEventContext other : others) {
-                this.getBlockDrops().addAll(other.getBlockDrops());
-            }
-        }
-
-        public boolean isPrimary() {
-            return primary;
-        }
-    }
+  }
 }

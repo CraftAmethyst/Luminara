@@ -10,16 +10,17 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ItemBasedSteering.class)
 public class ItemBasedSteeringMixin {
 
-    // @formatter:off
-    @Shadow public boolean boosting;
-    @Shadow public int boostTime;
-    @Shadow @Final private SynchedEntityData entityData;
-    @Shadow @Final private EntityDataAccessor<Integer> boostTimeAccessor;
-    // @formatter:on
+  // @formatter:off
+  @Shadow public boolean boosting;
+  @Shadow public int boostTime;
+  @Shadow @Final private SynchedEntityData entityData;
+  @Shadow @Final private EntityDataAccessor<Integer> boostTimeAccessor;
 
-    public void setBoostTicks(int ticks) {
-        this.boosting = true;
-        this.boostTime = 0;
-        this.entityData.set(this.boostTimeAccessor, ticks);
-    }
+  // @formatter:on
+
+  public void setBoostTicks(int ticks) {
+    this.boosting = true;
+    this.boostTime = 0;
+    this.entityData.set(this.boostTimeAccessor, ticks);
+  }
 }

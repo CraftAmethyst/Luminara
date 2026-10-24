@@ -11,12 +11,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "net/minecraft/server/dedicated/DedicatedServer$1")
 public class DedicatedServer_ServerInputThreadMixin_Vanilla {
 
-    @Shadow(aliases = {"field_13822", "f_139700_", "this$0"}) private DedicatedServer outerThis;
+  @Shadow(aliases = {"field_13822", "f_139700_", "this$0"})
+  private DedicatedServer outerThis;
 
-    @Inject(method = "run", cancellable = true, at = @At("HEAD"))
-    private void arclight$terminalConsole(CallbackInfo ci) {
-        if (ArclightTerminalReader.handleCommands(outerThis)) {
-            ci.cancel();
-        }
+  @Inject(method = "run", cancellable = true, at = @At("HEAD"))
+  private void arclight$terminalConsole(CallbackInfo ci) {
+    if (ArclightTerminalReader.handleCommands(outerThis)) {
+      ci.cancel();
     }
+  }
 }

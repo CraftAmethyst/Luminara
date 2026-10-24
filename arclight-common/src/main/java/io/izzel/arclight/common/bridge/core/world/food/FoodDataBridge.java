@@ -5,9 +5,9 @@ import net.minecraft.world.item.ItemStack;
 
 public interface FoodDataBridge {
 
-    void bridge$setEntityHuman(Player playerEntity);
+  void bridge$setEntityHuman(Player playerEntity);
 
-    Player bridge$getEntityHuman();
+  Player bridge$getEntityHuman();
 
-    void bridge$pushEatStack(ItemStack stack);
+  void bridge$pushEatStack(ItemStack stack);
 }

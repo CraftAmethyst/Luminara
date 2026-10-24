@@ -11,25 +11,27 @@ import org.jetbrains.annotations.Nullable;
 
 public interface MobBridge extends LivingEntityBridge {
 
-    void bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason reason, boolean fireEvent);
+  void bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason reason, boolean fireEvent);
 
-    void bridge$pushTransformReason(EntityTransformEvent.TransformReason transformReason);
+  void bridge$pushTransformReason(EntityTransformEvent.TransformReason transformReason);
 
-    boolean bridge$setGoalTarget(LivingEntity livingEntity, EntityTargetEvent.TargetReason reason, boolean fireEvent);
+  boolean bridge$setGoalTarget(
+      LivingEntity livingEntity, EntityTargetEvent.TargetReason reason, boolean fireEvent);
 
-    boolean bridge$lastGoalTargetResult();
+  boolean bridge$lastGoalTargetResult();
 
-    boolean bridge$isPersistenceRequired();
+  boolean bridge$isPersistenceRequired();
 
-    void bridge$setPersistenceRequired(boolean value);
+  void bridge$setPersistenceRequired(boolean value);
 
-    void bridge$setAware(boolean aware);
+  void bridge$setAware(boolean aware);
 
-    void bridge$captureItemDrop(ItemEntity itemEntity);
+  void bridge$captureItemDrop(ItemEntity itemEntity);
 
-    default AgeableMob bridge$forge$onBabyEntitySpawn(Mob partner, @Nullable AgeableMob proposedChild) {
-        return proposedChild;
-    }
+  default AgeableMob bridge$forge$onBabyEntitySpawn(
+      Mob partner, @Nullable AgeableMob proposedChild) {
+    return proposedChild;
+  }
 
-    boolean bridge$common$animalTameEvent(Player player);
+  boolean bridge$common$animalTameEvent(Player player);
 }

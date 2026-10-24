@@ -6,10 +6,11 @@ import net.neoforged.fml.util.thread.SidedThreadGroups;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ServerLoginPacketListenerImpl.class)
-public abstract class ServerLoginPacketListenerImplMixin_NeoForge implements ServerLoginPacketListenerImplBridge {
+public abstract class ServerLoginPacketListenerImplMixin_NeoForge
+    implements ServerLoginPacketListenerImplBridge {
 
-    @Override
-    public Thread bridge$newHandleThread(String name, Runnable runnable) {
-        return new Thread(SidedThreadGroups.SERVER, runnable, name);
-    }
+  @Override
+  public Thread bridge$newHandleThread(String name, Runnable runnable) {
+    return new Thread(SidedThreadGroups.SERVER, runnable, name);
+  }
 }

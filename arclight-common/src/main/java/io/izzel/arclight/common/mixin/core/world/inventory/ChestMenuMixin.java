@@ -22,39 +22,52 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChestMenu.class)
 public abstract class ChestMenuMixin extends AbstractContainerMenuMixin {
 
-    // @formatter:off
-    @Shadow @Final private Container container;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private Container container;
+  // @formatter:on
 
-    private CraftInventoryView<ChestMenu, ?> bukkitEntity;
-    private Inventory playerInventory;
+  private CraftInventoryView<ChestMenu, ?> bukkitEntity;
+  private Inventory playerInventory;
 
-    @Inject(method = "<init>(Lnet/minecraft/world/inventory/MenuType;ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;I)V", at = @At("RETURN"))
-    public void arclight$init(MenuType<?> type, int id, Inventory playerInventoryIn, Container p_i50092_4_, int rows, CallbackInfo ci) {
-        this.playerInventory = playerInventoryIn;
+  @Inject(
+      method =
+          "<init>(Lnet/minecraft/world/inventory/MenuType;ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/Container;I)V",
+      at = @At("RETURN"))
+  public void arclight$init(
+      MenuType<?> type,
+      int id,
+      Inventory playerInventoryIn,
+      Container p_i50092_4_,
+      int rows,
+      CallbackInfo ci) {
+    this.playerInventory = playerInventoryIn;
+  }
+
+  @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
+  public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    if (!bridge$isCheckReachable()) cir.setReturnValue(true);
+  }
+
+  @Override
+  public CraftInventoryView<ChestMenu, ?> getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
-        if (!bridge$isCheckReachable()) cir.setReturnValue(true);
+    CraftInventory inventory;
+    if (this.container instanceof Inventory) {
+      inventory = new CraftInventoryPlayer((Inventory) this.container);
+    } else if (this.container instanceof CompoundContainer) {
+      inventory = new CraftInventoryDoubleChest((CompoundContainer) this.container);
+    } else {
+      inventory = new CraftInventory(this.container);
     }
 
-    @Override
-    public CraftInventoryView<ChestMenu, ?> getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventory inventory;
-        if (this.container instanceof Inventory) {
-            inventory = new CraftInventoryPlayer((Inventory) this.container);
-        } else if (this.container instanceof CompoundContainer) {
-            inventory = new CraftInventoryDoubleChest((CompoundContainer) this.container);
-        } else {
-            inventory = new CraftInventory(this.container);
-        }
-
-        bukkitEntity = new CraftInventoryView<>(((PlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(), inventory, (ChestMenu) (Object) this);
-        return bukkitEntity;
-    }
+    bukkitEntity =
+        new CraftInventoryView<>(
+            ((PlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            inventory,
+            (ChestMenu) (Object) this);
+    return bukkitEntity;
+  }
 }

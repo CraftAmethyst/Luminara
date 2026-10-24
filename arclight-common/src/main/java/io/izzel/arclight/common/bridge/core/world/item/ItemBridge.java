@@ -12,17 +12,21 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ItemBridge {
 
-    default int bridge$forge$onArrowLoose(ItemStack stack, Level level, Player player, int charge, boolean hasAmmo) {
-        return charge;
-    }
+  default int bridge$forge$onArrowLoose(
+      ItemStack stack, Level level, Player player, int charge, boolean hasAmmo) {
+    return charge;
+  }
 
-    default AbstractArrow bridge$forge$customArrow(BowItem bowItem, ItemStack weapon, ItemStack projectile, AbstractArrow arrow) {
-        return arrow;
-    }
+  default AbstractArrow bridge$forge$customArrow(
+      BowItem bowItem, ItemStack weapon, ItemStack projectile, AbstractArrow arrow) {
+    return arrow;
+  }
 
-    default boolean bridge$forge$onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ) {
-        return false;
-    }
+  default boolean bridge$forge$onChorusFruitTeleport(
+      LivingEntity entity, double targetX, double targetY, double targetZ) {
+    return false;
+  }
 
-    default void bridge$forge$onPlayerDestroyItem(Player player, @NotNull ItemStack stack, @Nullable InteractionHand hand) {}
+  default void bridge$forge$onPlayerDestroyItem(
+      Player player, @NotNull ItemStack stack, @Nullable InteractionHand hand) {}
 }

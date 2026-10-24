@@ -4,6 +4,5 @@ import org.bukkit.advancement.Advancement;
 
 public interface AdvancementHolderBridge {
 
-    Advancement bridge$getBukkit();
-
+  Advancement bridge$getBukkit();
 }

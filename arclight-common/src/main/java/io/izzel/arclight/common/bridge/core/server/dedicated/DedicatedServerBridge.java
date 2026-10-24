@@ -7,12 +7,12 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 
 public interface DedicatedServerBridge {
-    default void bridge$platform$exitNow() {
-    }
+  default void bridge$platform$exitNow() {}
 
-    WorldLoader.DataLoadContext arclight$dataLoadContext();
+  WorldLoader.DataLoadContext arclight$dataLoadContext();
 
-    void arclight$forceUpgradeIfNeeded(LevelStorageSource.LevelStorageAccess worldSession, RegistryAccess.Frozen dimensions);
+  void arclight$forceUpgradeIfNeeded(
+      LevelStorageSource.LevelStorageAccess worldSession, RegistryAccess.Frozen dimensions);
 
-    void arclight$prepareAndAddLevel(ServerLevel level, PrimaryLevelData levelData);
+  void arclight$prepareAndAddLevel(ServerLevel level, PrimaryLevelData levelData);
 }

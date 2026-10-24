@@ -3,6 +3,7 @@ package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.world.inventory.LecternMenuBridge;
+import javax.annotation.Nullable;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -29,57 +30,73 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import javax.annotation.Nullable;
-
 @Mixin(LecternBlockEntity.class)
-public abstract class LecternBlockEntityMixin extends BlockEntityMixin implements CommandSource, CommandSourceBridge {
+public abstract class LecternBlockEntityMixin extends BlockEntityMixin
+    implements CommandSource, CommandSourceBridge {
 
-    // @formatter:off
-    @Shadow @Final public Container bookAccess;
-    @Shadow @Final private ContainerData dataAccess;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final public Container bookAccess;
+  @Shadow @Final private ContainerData dataAccess;
 
-    @Redirect(method = "createCommandSourceStack", at = @At(value = "NEW", target = "(Lnet/minecraft/commands/CommandSource;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec2;Lnet/minecraft/server/level/ServerLevel;ILjava/lang/String;Lnet/minecraft/network/chat/Component;Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/commands/CommandSourceStack;"))
-    private CommandSourceStack arclight$source(CommandSource source, Vec3 vec3d, Vec2 vec2f, ServerLevel world, int i, String s, Component component, MinecraftServer server, @Nullable Entity entity) {
-        return new CommandSourceStack(this, vec3d, vec2f, world, i, s, component, server, entity);
-    }
+  // @formatter:on
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player entity) {
-        LecternMenu container = new LecternMenu(i, this.bookAccess, this.dataAccess);
-        ((LecternMenuBridge) container).bridge$setPlayerInventory(playerInventory);
-        return container;
-    }
+  @Redirect(
+      method = "createCommandSourceStack",
+      at =
+          @At(
+              value = "NEW",
+              target =
+                  "(Lnet/minecraft/commands/CommandSource;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec2;Lnet/minecraft/server/level/ServerLevel;ILjava/lang/String;Lnet/minecraft/network/chat/Component;Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/commands/CommandSourceStack;"))
+  private CommandSourceStack arclight$source(
+      CommandSource source,
+      Vec3 vec3d,
+      Vec2 vec2f,
+      ServerLevel world,
+      int i,
+      String s,
+      Component component,
+      MinecraftServer server,
+      @Nullable Entity entity) {
+    return new CommandSourceStack(this, vec3d, vec2f, world, i, s, component, server, entity);
+  }
 
-    @Override
-    public void sendSystemMessage(@NotNull Component component) {
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player entity) {
+    LecternMenu container = new LecternMenu(i, this.bookAccess, this.dataAccess);
+    ((LecternMenuBridge) container).bridge$setPlayerInventory(playerInventory);
+    return container;
+  }
 
-    @Override
-    public boolean acceptsSuccess() {
-        return false;
-    }
+  @Override
+  public void sendSystemMessage(@NotNull Component component) {}
 
-    @Override
-    public boolean acceptsFailure() {
-        return false;
-    }
+  @Override
+  public boolean acceptsSuccess() {
+    return false;
+  }
 
-    @Override
-    public boolean shouldInformAdmins() {
-        return false;
-    }
+  @Override
+  public boolean acceptsFailure() {
+    return false;
+  }
 
-    public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-        return wrapper.getEntity() != null ? ((EntityBridge) wrapper.getEntity()).bridge$getBukkitSender(wrapper) : new CraftBlockCommandSender(wrapper, (BlockEntity) (Object) this);
-    }
+  @Override
+  public boolean shouldInformAdmins() {
+    return false;
+  }
 
-    @Override
-    public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
-        return getBukkitSender(wrapper);
-    }
+  public CommandSender getBukkitSender(CommandSourceStack wrapper) {
+    return wrapper.getEntity() != null
+        ? ((EntityBridge) wrapper.getEntity()).bridge$getBukkitSender(wrapper)
+        : new CraftBlockCommandSender(wrapper, (BlockEntity) (Object) this);
+  }
+
+  @Override
+  public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
+    return getBukkitSender(wrapper);
+  }
 }

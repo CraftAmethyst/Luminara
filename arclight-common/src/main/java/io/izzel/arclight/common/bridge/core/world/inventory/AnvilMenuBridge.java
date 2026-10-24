@@ -8,15 +8,22 @@ import org.jetbrains.annotations.NotNull;
 
 public interface AnvilMenuBridge {
 
-    default boolean bridge$forge$onAnvilChange(AnvilMenu container, @NotNull ItemStack left, @NotNull ItemStack right, Container outputSlot, String name, int baseCost, Player player) {
-        return true;
-    }
+  default boolean bridge$forge$onAnvilChange(
+      AnvilMenu container,
+      @NotNull ItemStack left,
+      @NotNull ItemStack right,
+      Container outputSlot,
+      String name,
+      int baseCost,
+      Player player) {
+    return true;
+  }
 
-    default boolean bridge$forge$isBookEnchantable(ItemStack a, ItemStack b) {
-        return true;
-    }
+  default boolean bridge$forge$isBookEnchantable(ItemStack a, ItemStack b) {
+    return true;
+  }
 
-    void arclight$allowZeroCost();
+  void arclight$allowZeroCost();
 
-    boolean arclight$isZeroCostAllowed();
+  boolean arclight$isZeroCostAllowed();
 }

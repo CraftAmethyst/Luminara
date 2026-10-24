@@ -28,85 +28,118 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin extends ItemCombinerMenuMixin implements AnvilMenuBridge {
 
-    // @formatter:off
-    @Shadow @Final public DataSlot cost;
-    @Shadow public int repairItemCountCost;
-    @Shadow public String itemName;
-    @Shadow public static int calculateIncreasedRepairCost(int oldRepairCost) { return 0; }
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final public DataSlot cost;
+  @Shadow public int repairItemCountCost;
+  @Shadow public String itemName;
 
-    public int cancelThisBySettingCostToMaximum = 40;
-    public int maximumRenameCostThreshold = 40;
-    public int maximumAllowedRenameCost = 39;
-    public int maximumRepairCost = 40;
+  @Shadow
+  public static int calculateIncreasedRepairCost(int oldRepairCost) {
+    return 0;
+  }
 
-    private CraftAnvilView bukkitEntity;
+  // @formatter:on
 
-    private boolean arclight$zeroCostAllowed = false;
+  public int cancelThisBySettingCostToMaximum = 40;
+  public int maximumRenameCostThreshold = 40;
+  public int maximumAllowedRenameCost = 39;
+  public int maximumRepairCost = 40;
 
-    @Override
-    public void arclight$allowZeroCost() {
-        arclight$zeroCostAllowed = true;
+  private CraftAnvilView bukkitEntity;
+
+  private boolean arclight$zeroCostAllowed = false;
+
+  @Override
+  public void arclight$allowZeroCost() {
+    arclight$zeroCostAllowed = true;
+  }
+
+  @Override
+  public boolean arclight$isZeroCostAllowed() {
+    return arclight$zeroCostAllowed;
+  }
+
+  @Decorate(
+      method = "createResult",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
+  private void arclight$prepareAnvilEvent(ResultContainer instance, int i, ItemStack itemStack)
+      throws Throwable {
+    arclight$zeroCostAllowed = false;
+    final CraftAnvilView craft = getBukkitView();
+    if (craft instanceof ArclightAnvilView) {
+      // Call anvil event; preserve injection point
+      var event = new PrepareAnvilEvent(craft, CraftItemStack.asCraftMirror(itemStack).clone());
+      Bukkit.getServer().getPluginManager().callEvent(event);
+      DecorationOps.callsite().invoke(instance, i, CraftItemStack.asNMSCopy(event.getResult()));
+    } else {
+      // Run plugin custom logic
+      CraftEventFactory.callPrepareAnvilEvent(craft, itemStack);
+    }
+  }
+
+  @Decorate(
+      method = "mayPickup",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;get()I"))
+  private int arclight$tryAllowZeroCost(DataSlot instance) throws Throwable {
+    final int value = (int) DecorationOps.callsite().invoke(instance);
+    if (value == 0 && arclight$zeroCostAllowed) {
+      return 1;
+    }
+    return value;
+  }
+
+  @Inject(method = "mayPickup", at = @At("RETURN"), cancellable = true)
+  private void arclight$considerFlag(
+      Player player, boolean hasItem, CallbackInfoReturnable<Boolean> cir) {
+    cir.setReturnValue(cir.getReturnValueZ() && hasItem);
+  }
+
+  @Inject(
+      method = "createResult",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/inventory/AnvilMenu;broadcastChanges()V"))
+  private void arclight$sync(CallbackInfo ci) {
+    this.sendAllDataToRemote();
+  }
+
+  @ModifyExpressionValue(
+      method = "createResult",
+      at = @At(value = "CONSTANT", args = "intValue=40"),
+      require = 0)
+  private int arclight$maximumRepairCost(int i) {
+    return i - 40 + maximumRepairCost;
+  }
+
+  @ModifyExpressionValue(
+      method = "createResult",
+      at = @At(value = "CONSTANT", args = "intValue=39"),
+      require = 0)
+  private int arclight$maximumRepairCost2(int i) {
+    return i - 40 + maximumRepairCost;
+  }
+
+  @Override
+  public CraftAnvilView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Override
-    public boolean arclight$isZeroCostAllowed() {
-        return arclight$zeroCostAllowed;
-    }
-
-    @Decorate(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
-    private void arclight$prepareAnvilEvent(ResultContainer instance, int i, ItemStack itemStack) throws Throwable {
-        arclight$zeroCostAllowed = false;
-        final CraftAnvilView craft = getBukkitView();
-        if (craft instanceof ArclightAnvilView) {
-            // Call anvil event; preserve injection point
-            var event = new PrepareAnvilEvent(craft, CraftItemStack.asCraftMirror(itemStack).clone());
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            DecorationOps.callsite().invoke(instance, i, CraftItemStack.asNMSCopy(event.getResult()));
-        } else {
-            // Run plugin custom logic
-            CraftEventFactory.callPrepareAnvilEvent(craft, itemStack);
-        }
-    }
-
-    @Decorate(method = "mayPickup", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;get()I"))
-    private int arclight$tryAllowZeroCost(DataSlot instance) throws Throwable {
-        final int value = (int) DecorationOps.callsite().invoke(instance);
-        if (value == 0 && arclight$zeroCostAllowed) {
-            return 1;
-        }
-        return value;
-    }
-
-    @Inject(method = "mayPickup", at = @At("RETURN"), cancellable = true)
-    private void arclight$considerFlag(Player player, boolean hasItem, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValueZ() && hasItem);
-    }
-
-    @Inject(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AnvilMenu;broadcastChanges()V"))
-    private void arclight$sync(CallbackInfo ci) {
-        this.sendAllDataToRemote();
-    }
-
-    @ModifyExpressionValue(method = "createResult", at = @At(value = "CONSTANT", args = "intValue=40"), require = 0)
-    private int arclight$maximumRepairCost(int i) {
-        return i - 40 + maximumRepairCost;
-    }
-
-    @ModifyExpressionValue(method = "createResult", at = @At(value = "CONSTANT", args = "intValue=39"), require = 0)
-    private int arclight$maximumRepairCost2(int i) {
-        return i - 40 + maximumRepairCost;
-    }
-
-    @Override
-    public CraftAnvilView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        var inventory = new CraftInventoryAnvil(
-            ((ContainerLevelAccessBridge) this.access).bridge$getLocation(), this.inputSlots, this.resultSlots);
-        bukkitEntity = new ArclightAnvilView(((PlayerBridge) this.player).bridge$getBukkitEntity(), inventory, (AnvilMenu) (Object) this);
-        return bukkitEntity;
-    }
+    var inventory =
+        new CraftInventoryAnvil(
+            ((ContainerLevelAccessBridge) this.access).bridge$getLocation(),
+            this.inputSlots,
+            this.resultSlots);
+    bukkitEntity =
+        new ArclightAnvilView(
+            ((PlayerBridge) this.player).bridge$getBukkitEntity(),
+            inventory,
+            (AnvilMenu) (Object) this);
+    return bukkitEntity;
+  }
 }

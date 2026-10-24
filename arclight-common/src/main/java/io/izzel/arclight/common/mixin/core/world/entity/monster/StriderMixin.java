@@ -9,12 +9,17 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(Strider.class)
 public class StriderMixin {
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Strider;setSuffocating(Z)V"))
-    private void arclight$temperatureChange(Strider instance, boolean flag) {
-        if (flag ^ instance.isSuffocating()) {
-            if (CraftEventFactory.callStriderTemperatureChangeEvent(instance, flag)) {
-                instance.setSuffocating(flag);
-            }
-        }
+  @Redirect(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/monster/Strider;setSuffocating(Z)V"))
+  private void arclight$temperatureChange(Strider instance, boolean flag) {
+    if (flag ^ instance.isSuffocating()) {
+      if (CraftEventFactory.callStriderTemperatureChangeEvent(instance, flag)) {
+        instance.setSuffocating(flag);
+      }
     }
+  }
 }

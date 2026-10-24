@@ -4,11 +4,11 @@ import net.minecraft.server.level.ThreadedLevelLightEngine;
 
 public interface ServerChunkCacheBridge {
 
-    boolean bridge$tickDistanceManager();
+  boolean bridge$tickDistanceManager();
 
-    ThreadedLevelLightEngine bridge$getLightManager();
+  ThreadedLevelLightEngine bridge$getLightManager();
 
-    void bridge$setViewDistance(int viewDistance);
+  void bridge$setViewDistance(int viewDistance);
 
-    void bridge$setSimulationDistance(int simDistance);
+  void bridge$setSimulationDistance(int simDistance);
 }

@@ -8,12 +8,14 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(AbstractMinecart.class)
 public abstract class AbstractMinecartMixin_NeoForge implements AbstractMinecartBridge {
 
-    // @formatter:off
-    @Shadow(remap = false) public abstract boolean canUseRail();
-    // @formatter:on
+  // @formatter:off
+  @Shadow(remap = false)
+  public abstract boolean canUseRail();
 
-    @Override
-    public boolean bridge$forge$canUseRail() {
-        return this.canUseRail();
-    }
+  // @formatter:on
+
+  @Override
+  public boolean bridge$forge$canUseRail() {
+    return this.canUseRail();
+  }
 }

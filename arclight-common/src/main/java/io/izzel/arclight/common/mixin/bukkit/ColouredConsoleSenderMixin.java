@@ -13,21 +13,26 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = ColouredConsoleSender.class, remap = false)
 public class ColouredConsoleSenderMixin extends CraftConsoleCommandSenderMixin {
 
-    private static final Logger LOGGER = LogManager.getLogger("Console");
+  private static final Logger LOGGER = LogManager.getLogger("Console");
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Ljline/console/ConsoleReader;getTerminal()Ljline/Terminal;"))
-    private Terminal arclight$terminal(ConsoleReader instance) {
-        return null;
-    }
+  @Redirect(
+      method = "<init>",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Ljline/console/ConsoleReader;getTerminal()Ljline/Terminal;"))
+  private Terminal arclight$terminal(ConsoleReader instance) {
+    return null;
+  }
 
-    /**
-     * @author IzzelAliz
-     * @reason use TerminalConsoleAppender
-     */
-    @Overwrite
-    public void sendMessage(String message) {
-        if (!this.conversationTracker.isConversingModaly()) {
-            LOGGER.info(message);
-        }
+  /**
+   * @author IzzelAliz
+   * @reason use TerminalConsoleAppender
+   */
+  @Overwrite
+  public void sendMessage(String message) {
+    if (!this.conversationTracker.isConversingModaly()) {
+      LOGGER.info(message);
     }
+  }
 }

@@ -11,31 +11,37 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ItemEntity.class)
-public abstract class ItemEntityMixin_ActivationRange extends EntityMixin_ActivationRange implements ItemEntityBridge {
+public abstract class ItemEntityMixin_ActivationRange extends EntityMixin_ActivationRange
+    implements ItemEntityBridge {
 
-    // @formatter:off
-    @Shadow public int pickupDelay;
-    @Shadow public int age;
-    @Shadow public abstract ItemStack getItem();
-    // @formatter:on
+  // @formatter:off
+  @Shadow public int pickupDelay;
+  @Shadow public int age;
 
-    private int lastTick = ArclightConstants.currentTick - 1;
+  @Shadow
+  public abstract ItemStack getItem();
 
-    @Override
-    public void inactiveTick() {
-        super.inactiveTick();
-        int elapsedTicks = ArclightConstants.currentTick - this.lastTick;
-        if (this.pickupDelay > 0 && this.pickupDelay != 32767 && elapsedTicks > 0) this.pickupDelay -= elapsedTicks;
-        if (this.age != -32768) this.age += elapsedTicks;
-        this.lastTick = ArclightConstants.currentTick;
-        this.bridge$forge$optimization$discardItemEntity();
+  // @formatter:on
+
+  private int lastTick = ArclightConstants.currentTick - 1;
+
+  @Override
+  public void inactiveTick() {
+    super.inactiveTick();
+    int elapsedTicks = ArclightConstants.currentTick - this.lastTick;
+    if (this.pickupDelay > 0 && this.pickupDelay != 32767 && elapsedTicks > 0)
+      this.pickupDelay -= elapsedTicks;
+    if (this.age != -32768) this.age += elapsedTicks;
+    this.lastTick = ArclightConstants.currentTick;
+    this.bridge$forge$optimization$discardItemEntity();
+  }
+
+  @Override
+  public void bridge$forge$optimization$discardItemEntity() {
+    if (!this.level().isClientSide
+        && this.age >= ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate) {
+      this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DEATH);
+      this.discard();
     }
-
-    @Override
-    public void bridge$forge$optimization$discardItemEntity() {
-        if (!this.level().isClientSide && this.age >= ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate) {
-            this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DEATH);
-            this.discard();
-        }
-    }
+  }
 }

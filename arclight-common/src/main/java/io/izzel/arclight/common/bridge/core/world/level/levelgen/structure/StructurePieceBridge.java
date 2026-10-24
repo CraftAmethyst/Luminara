@@ -8,7 +8,21 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import org.bukkit.craftbukkit.v.block.CraftBlockEntityState;
 
 public interface StructurePieceBridge {
-    boolean bridge$placeCraftBlockEntity(ServerLevelAccessor worldAccess, BlockPos position, CraftBlockEntityState<?> craftBlockEntityState, int i);
-    boolean bridge$placeCraftSpawner(ServerLevelAccessor worldAccess, BlockPos position, org.bukkit.entity.EntityType entityType, int i);
-    void bridge$setCraftLootTable(ServerLevelAccessor worldAccess, BlockPos position, RandomSource randomSource, ResourceKey<LootTable> loottableKey);
+  boolean bridge$placeCraftBlockEntity(
+      ServerLevelAccessor worldAccess,
+      BlockPos position,
+      CraftBlockEntityState<?> craftBlockEntityState,
+      int i);
+
+  boolean bridge$placeCraftSpawner(
+      ServerLevelAccessor worldAccess,
+      BlockPos position,
+      org.bukkit.entity.EntityType entityType,
+      int i);
+
+  void bridge$setCraftLootTable(
+      ServerLevelAccessor worldAccess,
+      BlockPos position,
+      RandomSource randomSource,
+      ResourceKey<LootTable> loottableKey);
 }

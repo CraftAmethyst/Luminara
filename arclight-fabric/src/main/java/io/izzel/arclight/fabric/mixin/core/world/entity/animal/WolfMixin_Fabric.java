@@ -12,13 +12,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Wolf.class)
 public abstract class WolfMixin_Fabric extends TamableAnimalMixin {
-    @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Wolf;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void arclight$forceDropPre(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> cir) {
-        this.forceDrops = true;
-    }
+  @Inject(
+      method = "mobInteract",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/animal/Wolf;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"))
+  private void arclight$forceDropPre(
+      Player player,
+      InteractionHand interactionHand,
+      CallbackInfoReturnable<InteractionResult> cir) {
+    this.forceDrops = true;
+  }
 
-    @Inject(method = "mobInteract", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/animal/Wolf;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"))
-    private void arclight$forceDropPost(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> cir) {
-        this.forceDrops = false;
-    }
+  @Inject(
+      method = "mobInteract",
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/entity/animal/Wolf;spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;"))
+  private void arclight$forceDropPost(
+      Player player,
+      InteractionHand interactionHand,
+      CallbackInfoReturnable<InteractionResult> cir) {
+    this.forceDrops = false;
+  }
 }

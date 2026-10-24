@@ -1,20 +1,19 @@
 package io.izzel.arclight.common.bridge.core.server.level;
 
 import io.izzel.arclight.common.mod.util.ArclightCallbackExecutor;
+import java.util.function.BooleanSupplier;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 
-import java.util.function.BooleanSupplier;
-
 public interface ChunkMapBridge {
 
-    void bridge$tick(BooleanSupplier hasMoreTime);
+  void bridge$tick(BooleanSupplier hasMoreTime);
 
-    ArclightCallbackExecutor bridge$getCallbackExecutor();
+  ArclightCallbackExecutor bridge$getCallbackExecutor();
 
-    ChunkHolder bridge$chunkHolderAt(long chunkPos);
+  ChunkHolder bridge$chunkHolderAt(long chunkPos);
 
-    void bridge$setViewDistance(int i);
+  void bridge$setViewDistance(int i);
 
-    void bridge$setChunkGenerator(ChunkGenerator generator);
+  void bridge$setChunkGenerator(ChunkGenerator generator);
 }

@@ -6,10 +6,12 @@ import org.bukkit.plugin.Plugin;
 
 public interface PayloadDestroyer extends PluginChannelHandler {
 
-    default void sendCustomPayload(Plugin src, CraftPlayer dst, byte[] data) {
-        ArclightServer.LOGGER.debug("Ignoring sendCustomPayload for channel {} due to conflict with mod channel.", channel().getChannel());
-    }
+  default void sendCustomPayload(Plugin src, CraftPlayer dst, byte[] data) {
+    ArclightServer.LOGGER.debug(
+        "Ignoring sendCustomPayload for channel {} due to conflict with mod channel.",
+        channel().getChannel());
+  }
 
-    @Override
-    default void updateChannel() {}
+  @Override
+  default void updateChannel() {}
 }

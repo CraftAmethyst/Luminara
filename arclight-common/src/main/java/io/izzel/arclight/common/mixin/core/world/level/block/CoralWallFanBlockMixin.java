@@ -19,16 +19,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CoralWallFanBlock.class)
 public class CoralWallFanBlockMixin {
 
-    // @formatter:off
-    @Shadow @Final private Block deadBlock;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private Block deadBlock;
 
-    @Inject(method = "tick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public void arclight$blockFade(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (CraftEventFactory.callBlockFadeEvent(worldIn, pos, this.deadBlock.defaultBlockState()
-            .setValue(BaseCoralPlantTypeBlock.WATERLOGGED, Boolean.FALSE)
-            .setValue(BaseCoralWallFanBlock.FACING, state.getValue(BaseCoralWallFanBlock.FACING))).isCancelled()) {
-            ci.cancel();
-        }
+  // @formatter:on
+
+  @Inject(
+      method = "tick",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  public void arclight$blockFade(
+      BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
+    if (CraftEventFactory.callBlockFadeEvent(
+            worldIn,
+            pos,
+            this.deadBlock
+                .defaultBlockState()
+                .setValue(BaseCoralPlantTypeBlock.WATERLOGGED, Boolean.FALSE)
+                .setValue(
+                    BaseCoralWallFanBlock.FACING, state.getValue(BaseCoralWallFanBlock.FACING)))
+        .isCancelled()) {
+      ci.cancel();
     }
+  }
 }

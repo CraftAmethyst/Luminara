@@ -4,7 +4,7 @@ import org.bukkit.potion.PotionEffect;
 
 public interface BeaconBlockEntityBridge {
 
-    PotionEffect bridge$getPrimaryEffect();
+  PotionEffect bridge$getPrimaryEffect();
 
-    PotionEffect bridge$getSecondaryEffect();
+  PotionEffect bridge$getSecondaryEffect();
 }

@@ -15,11 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(EndGatewayBlock.class)
 public class EndGatewayBlockMixin {
 
-    @Inject(method = "getPortalDestination", at = @At("RETURN"))
-    private void arclight$setCause(ServerLevel serverLevel, Entity entity, BlockPos blockPos, CallbackInfoReturnable<DimensionTransition> cir) {
-        var dimensionTransition = cir.getReturnValue();
-        if (dimensionTransition != null) {
-            ((DimensionTransitionBridge) ((Object) dimensionTransition)).bridge$setTeleportCause(PlayerTeleportEvent.TeleportCause.END_GATEWAY);
-        }
+  @Inject(method = "getPortalDestination", at = @At("RETURN"))
+  private void arclight$setCause(
+      ServerLevel serverLevel,
+      Entity entity,
+      BlockPos blockPos,
+      CallbackInfoReturnable<DimensionTransition> cir) {
+    var dimensionTransition = cir.getReturnValue();
+    if (dimensionTransition != null) {
+      ((DimensionTransitionBridge) ((Object) dimensionTransition))
+          .bridge$setTeleportCause(PlayerTeleportEvent.TeleportCause.END_GATEWAY);
     }
+  }
 }

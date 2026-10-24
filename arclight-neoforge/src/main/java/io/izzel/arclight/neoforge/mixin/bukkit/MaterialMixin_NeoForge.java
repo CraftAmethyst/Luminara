@@ -9,18 +9,18 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(value = Material.class, remap = false)
 public abstract class MaterialMixin_NeoForge implements MaterialBridge {
 
-    @Override
-    public int bridge$forge$getMaxStackSize(Item item) {
-        return item.getMaxStackSize(new ItemStack(item));
-    }
+  @Override
+  public int bridge$forge$getMaxStackSize(Item item) {
+    return item.getMaxStackSize(new ItemStack(item));
+  }
 
-    @Override
-    public int bridge$forge$getDurability(Item item) {
-        return item.getMaxDamage(new ItemStack(item));
-    }
+  @Override
+  public int bridge$forge$getDurability(Item item) {
+    return item.getMaxDamage(new ItemStack(item));
+  }
 
-    @Override
-    public int bridge$forge$getBurnTime(Item item) {
-        return new ItemStack(item).getBurnTime(null);
-    }
+  @Override
+  public int bridge$forge$getBurnTime(Item item) {
+    return new ItemStack(item).getBurnTime(null);
+  }
 }

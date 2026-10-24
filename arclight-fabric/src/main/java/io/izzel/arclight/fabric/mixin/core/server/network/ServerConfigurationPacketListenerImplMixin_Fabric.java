@@ -11,15 +11,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerConfigurationPacketListenerImpl.class)
 public abstract class ServerConfigurationPacketListenerImplMixin_Fabric {
 
-    // @formatter:off
-    @Shadow public abstract void startConfiguration();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract void startConfiguration();
 
-    @Inject(method = "startConfiguration", cancellable = true, at = @At("HEAD"))
-    private void arclight$runOnMainThread(CallbackInfo ci) {
-        if (!ArclightServer.isPrimaryThread()) {
-            ArclightServer.executeOnMainThread(this::startConfiguration);
-            ci.cancel();
-        }
+  // @formatter:on
+
+  @Inject(method = "startConfiguration", cancellable = true, at = @At("HEAD"))
+  private void arclight$runOnMainThread(CallbackInfo ci) {
+    if (!ArclightServer.isPrimaryThread()) {
+      ArclightServer.executeOnMainThread(this::startConfiguration);
+      ci.cancel();
     }
+  }
 }

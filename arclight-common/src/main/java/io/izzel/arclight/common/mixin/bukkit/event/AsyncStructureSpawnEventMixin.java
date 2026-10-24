@@ -9,8 +9,13 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(value = AsyncStructureSpawnEvent.class, remap = false)
 public class AsyncStructureSpawnEventMixin {
 
-    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lorg/bukkit/event/world/WorldEvent;<init>(Lorg/bukkit/World;Z)V"))
-    private static boolean arclight$async(boolean async) {
-        return !Bukkit.isPrimaryThread();
-    }
+  @ModifyArg(
+      method = "<init>",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lorg/bukkit/event/world/WorldEvent;<init>(Lorg/bukkit/World;Z)V"))
+  private static boolean arclight$async(boolean async) {
+    return !Bukkit.isPrimaryThread();
+  }
 }

@@ -23,35 +23,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InventoryMenu.class)
 public abstract class InventoryMenuMixin extends AbstractContainerMenuMixin {
 
-    // @formatter:off
-    @Shadow @Final private CraftingContainer craftSlots;
-    @Shadow @Final private ResultContainer resultSlots;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private CraftingContainer craftSlots;
+  @Shadow @Final private ResultContainer resultSlots;
+  // @formatter:on
 
-    private CraftInventoryView<InventoryMenu, ?> bukkitEntity;
-    private Inventory playerInventory;
+  private CraftInventoryView<InventoryMenu, ?> bukkitEntity;
+  private Inventory playerInventory;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    public void arclight$init(Inventory playerInventory, boolean localWorld, Player playerIn, CallbackInfo ci) {
-        this.playerInventory = playerInventory;
-        ((TransientCraftingContainerBridge) this.craftSlots).bridge$setOwner(playerInventory.player);
-        ((TransientCraftingContainerBridge) this.craftSlots).bridge$setResultInventory(this.resultSlots);
-        this.setTitle(Component.translatable("container.crafting"));
+  @Inject(method = "<init>", at = @At("RETURN"))
+  public void arclight$init(
+      Inventory playerInventory, boolean localWorld, Player playerIn, CallbackInfo ci) {
+    this.playerInventory = playerInventory;
+    ((TransientCraftingContainerBridge) this.craftSlots).bridge$setOwner(playerInventory.player);
+    ((TransientCraftingContainerBridge) this.craftSlots)
+        .bridge$setResultInventory(this.resultSlots);
+    this.setTitle(Component.translatable("container.crafting"));
+  }
+
+  @Inject(method = "slotsChanged", at = @At("HEAD"))
+  public void arclight$captureContainer(Container inventoryIn, CallbackInfo ci) {
+    ArclightCaptures.captureWorkbenchContainer((AbstractContainerMenu) (Object) this);
+  }
+
+  @Override
+  public CraftInventoryView<InventoryMenu, ?> getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Inject(method = "slotsChanged", at = @At("HEAD"))
-    public void arclight$captureContainer(Container inventoryIn, CallbackInfo ci) {
-        ArclightCaptures.captureWorkbenchContainer((AbstractContainerMenu) (Object) this);
-    }
-
-    @Override
-    public CraftInventoryView<InventoryMenu, ?> getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftSlots, this.resultSlots);
-        bukkitEntity = new CraftInventoryView<>(((PlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(), inventory, (InventoryMenu) (Object) this);
-        return bukkitEntity;
-    }
+    CraftInventoryCrafting inventory =
+        new CraftInventoryCrafting(this.craftSlots, this.resultSlots);
+    bukkitEntity =
+        new CraftInventoryView<>(
+            ((PlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            inventory,
+            (InventoryMenu) (Object) this);
+    return bukkitEntity;
+  }
 }

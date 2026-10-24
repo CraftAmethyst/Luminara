@@ -19,25 +19,40 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(DropperBlock.class)
 public abstract class DropperBlockMixin extends BlockMixin {
 
-    @Decorate(method = "dispenseFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;addItem(Lnet/minecraft/world/Container;Lnet/minecraft/world/Container;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/item/ItemStack;"))
-    private ItemStack arclight$moveItemEvent(Container from, Container to, ItemStack stack, Direction direction) throws Throwable {
-        CraftItemStack craftItemStack = CraftItemStack.asCraftMirror(stack);
-        Inventory destinationInventory;
-        // Have to special case large chests as they work oddly
-        if (to instanceof CompoundContainer) {
-            destinationInventory = new CraftInventoryDoubleChest((CompoundContainer) to);
-        } else {
-            destinationInventory = ((IInventoryBridge) to).getOwnerInventory();
-        }
-        InventoryMoveItemEvent event = new InventoryMoveItemEvent(((IInventoryBridge) from).getOwner().getInventory(), craftItemStack, destinationInventory, true);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return (ItemStack) DecorationOps.cancel().invoke();
-        }
-        var result = (ItemStack) DecorationOps.callsite().invoke(from, to, CraftItemStack.asNMSCopy(event.getItem()), direction);
-        if (result.isEmpty() && !event.getItem().equals(craftItemStack)) {
-            result = stack.copyWithCount(1);
-        }
-        return result;
+  @Decorate(
+      method = "dispenseFrom",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;addItem(Lnet/minecraft/world/Container;Lnet/minecraft/world/Container;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/item/ItemStack;"))
+  private ItemStack arclight$moveItemEvent(
+      Container from, Container to, ItemStack stack, Direction direction) throws Throwable {
+    CraftItemStack craftItemStack = CraftItemStack.asCraftMirror(stack);
+    Inventory destinationInventory;
+    // Have to special case large chests as they work oddly
+    if (to instanceof CompoundContainer) {
+      destinationInventory = new CraftInventoryDoubleChest((CompoundContainer) to);
+    } else {
+      destinationInventory = ((IInventoryBridge) to).getOwnerInventory();
     }
+    InventoryMoveItemEvent event =
+        new InventoryMoveItemEvent(
+            ((IInventoryBridge) from).getOwner().getInventory(),
+            craftItemStack,
+            destinationInventory,
+            true);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      return (ItemStack) DecorationOps.cancel().invoke();
+    }
+    var result =
+        (ItemStack)
+            DecorationOps.callsite()
+                .invoke(from, to, CraftItemStack.asNMSCopy(event.getItem()), direction);
+    if (result.isEmpty() && !event.getItem().equals(craftItemStack)) {
+      result = stack.copyWithCount(1);
+    }
+    return result;
+  }
 }

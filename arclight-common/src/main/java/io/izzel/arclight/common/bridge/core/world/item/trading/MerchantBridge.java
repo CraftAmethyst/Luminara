@@ -4,5 +4,5 @@ import org.bukkit.craftbukkit.v.inventory.CraftMerchant;
 
 public interface MerchantBridge {
 
-    CraftMerchant bridge$getCraftMerchant();
+  CraftMerchant bridge$getCraftMerchant();
 }

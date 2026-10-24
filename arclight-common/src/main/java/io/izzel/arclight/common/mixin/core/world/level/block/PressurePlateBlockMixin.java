@@ -22,59 +22,72 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(PressurePlateBlock.class)
 public abstract class PressurePlateBlockMixin extends BasePressurePlateBlockMixin {
 
-    // @formatter:off
-    @Shadow protected abstract int getSignalForState(BlockState state);
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  protected abstract int getSignalForState(BlockState state);
 
-    private static <T extends Entity> java.util.List<T> getEntities(Level world, AABB axisalignedbb, Class<T> oclass) {
-        return world.getEntitiesOfClass(oclass, axisalignedbb, EntitySelector.NO_SPECTATORS.and((entity) -> {
-            return !entity.isIgnoringBlockTriggers();
-        }));
+  // @formatter:on
+
+  private static <T extends Entity> java.util.List<T> getEntities(
+      Level world, AABB axisalignedbb, Class<T> oclass) {
+    return world.getEntitiesOfClass(
+        oclass,
+        axisalignedbb,
+        EntitySelector.NO_SPECTATORS.and(
+            (entity) -> {
+              return !entity.isIgnoringBlockTriggers();
+            }));
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  protected int getSignalStrength(Level world, BlockPos blockposition) {
+    Class<? extends Entity> oclass; // CraftBukkit
+
+    switch (this.type.pressurePlateSensitivity()) {
+      case EVERYTHING:
+        oclass = Entity.class;
+        break;
+      case MOBS:
+        oclass = LivingEntity.class;
+        break;
+      default:
+        throw new IncompatibleClassChangeError();
     }
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    protected int getSignalStrength(Level world, BlockPos blockposition) {
-        Class<? extends Entity> oclass; // CraftBukkit
+    Class oclass1 = oclass;
 
-        switch (this.type.pressurePlateSensitivity()) {
-            case EVERYTHING:
-                oclass = Entity.class;
-                break;
-            case MOBS:
-                oclass = LivingEntity.class;
-                break;
-            default:
-                throw new IncompatibleClassChangeError();
+    // CraftBukkit start - Call interact event when turning on a pressure plate
+    for (Entity entity : getEntities(world, TOUCH_AABB.move(blockposition), oclass)) {
+      if (this.getSignalForState(world.getBlockState(blockposition)) == 0) {
+        org.bukkit.World bworld = ((WorldBridge) world).bridge$getWorld();
+        org.bukkit.plugin.PluginManager manager = Bukkit.getPluginManager();
+        org.bukkit.event.Cancellable cancellable;
+
+        if (entity instanceof Player) {
+          cancellable =
+              CraftEventFactory.callPlayerInteractEvent(
+                  (Player) entity, Action.PHYSICAL, blockposition, null, null, null);
+        } else {
+          cancellable =
+              new EntityInteractEvent(
+                  ((EntityBridge) entity).bridge$getBukkitEntity(),
+                  bworld.getBlockAt(
+                      blockposition.getX(), blockposition.getY(), blockposition.getZ()));
+          manager.callEvent((EntityInteractEvent) cancellable);
         }
-
-        Class oclass1 = oclass;
-
-        // CraftBukkit start - Call interact event when turning on a pressure plate
-        for (Entity entity : getEntities(world, TOUCH_AABB.move(blockposition), oclass)) {
-            if (this.getSignalForState(world.getBlockState(blockposition)) == 0) {
-                org.bukkit.World bworld = ((WorldBridge) world).bridge$getWorld();
-                org.bukkit.plugin.PluginManager manager = Bukkit.getPluginManager();
-                org.bukkit.event.Cancellable cancellable;
-
-                if (entity instanceof Player) {
-                    cancellable = CraftEventFactory.callPlayerInteractEvent((Player) entity, Action.PHYSICAL, blockposition, null, null, null);
-                } else {
-                    cancellable = new EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), bworld.getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()));
-                    manager.callEvent((EntityInteractEvent) cancellable);
-                }
-                // We only want to block turning the plate on if all events are cancelled
-                if (cancellable.isCancelled()) {
-                    continue;
-                }
-            }
-
-            return 15;
+        // We only want to block turning the plate on if all events are cancelled
+        if (cancellable.isCancelled()) {
+          continue;
         }
+      }
 
-        return 0;
+      return 15;
     }
+
+    return 0;
+  }
 }

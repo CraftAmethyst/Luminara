@@ -23,60 +23,125 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityMixin extends EntityMixin {
 
-    // @formatter:off
-    @Shadow private BlockState blockState;
-    @Shadow public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) { return null; }
-    // @formatter:on
+  // @formatter:off
+  @Shadow private BlockState blockState;
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
-    private void arclight$despawn1(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Shadow
+  public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) {
+    return null;
+  }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", ordinal = 2, target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
-    private void arclight$despawn2(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  // @formatter:on
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", ordinal = 5, target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
-    private void arclight$despawn3(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 0,
+              target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
+  private void arclight$despawn1(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
-    private void arclight$drop1(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DROP);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 2,
+              target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
+  private void arclight$despawn2(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
-    private void arclight$drop2(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DROP);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 5,
+              target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
+  private void arclight$despawn3(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", ordinal = 4, target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
-    private void arclight$drop3(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DROP);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 1,
+              target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
+  private void arclight$drop1(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DROP);
+  }
 
-    @Inject(method = "tick", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private void arclight$entityChangeBlock(CallbackInfo ci, Block block, BlockPos pos) {
-        if (!CraftEventFactory.callEntityChangeBlockEvent((FallingBlockEntity) (Object) this, pos, this.blockState)) {
-            this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-            this.discard();
-            ci.cancel();
-        }
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 3,
+              target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
+  private void arclight$drop2(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DROP);
+  }
 
-    @Inject(method = "fall", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private static void arclight$entityFall(Level level, BlockPos pos, BlockState state, CallbackInfoReturnable<FallingBlockEntity> cir, FallingBlockEntity entity) {
-        if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state.getFluidState().createLegacyBlock())) {
-            cir.setReturnValue(entity);
-        }
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 4,
+              target = "Lnet/minecraft/world/entity/item/FallingBlockEntity;discard()V"))
+  private void arclight$drop3(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DROP);
+  }
 
-    @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
-    private static FallingBlockEntity fall(Level level, BlockPos pos, BlockState state, CreatureSpawnEvent.SpawnReason spawnReason) {
-        ((WorldBridge) level).bridge$pushAddEntityReason(spawnReason);
-        return fall(level, pos, state);
+  @Inject(
+      method = "tick",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private void arclight$entityChangeBlock(CallbackInfo ci, Block block, BlockPos pos) {
+    if (!CraftEventFactory.callEntityChangeBlockEvent(
+        (FallingBlockEntity) (Object) this, pos, this.blockState)) {
+      this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+      this.discard();
+      ci.cancel();
     }
+  }
+
+  @Inject(
+      method = "fall",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private static void arclight$entityFall(
+      Level level,
+      BlockPos pos,
+      BlockState state,
+      CallbackInfoReturnable<FallingBlockEntity> cir,
+      FallingBlockEntity entity) {
+    if (!CraftEventFactory.callEntityChangeBlockEvent(
+        entity, pos, state.getFluidState().createLegacyBlock())) {
+      cir.setReturnValue(entity);
+    }
+  }
+
+  @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
+  private static FallingBlockEntity fall(
+      Level level, BlockPos pos, BlockState state, CreatureSpawnEvent.SpawnReason spawnReason) {
+    ((WorldBridge) level).bridge$pushAddEntityReason(spawnReason);
+    return fall(level, pos, state);
+  }
 }

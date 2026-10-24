@@ -20,18 +20,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FireBlock.class)
 public class FireBlockMixin_NeoForge {
 
-    @Inject(method = "checkBurnOut", cancellable = true, at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
-    private void arclight$blockBurn(Level worldIn, BlockPos pos, int chance, RandomSource random, int age, Direction face, CallbackInfo ci) {
-        Block theBlock = CraftBlock.at(worldIn, pos);
-        Block sourceBlock = CraftBlock.at(worldIn, pos.relative(face));
-        BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            ci.cancel();
-            return;
-        }
-        if (worldIn.getBlockState(pos).getBlock() instanceof TntBlock && !CraftEventFactory.callTNTPrimeEvent(worldIn, pos, TNTPrimeEvent.PrimeCause.FIRE, null, pos.relative(face))) {
-            ci.cancel();
-        }
+  @Inject(
+      method = "checkBurnOut",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 1,
+              target =
+                  "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
+  private void arclight$blockBurn(
+      Level worldIn,
+      BlockPos pos,
+      int chance,
+      RandomSource random,
+      int age,
+      Direction face,
+      CallbackInfo ci) {
+    Block theBlock = CraftBlock.at(worldIn, pos);
+    Block sourceBlock = CraftBlock.at(worldIn, pos.relative(face));
+    BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      ci.cancel();
+      return;
     }
+    if (worldIn.getBlockState(pos).getBlock() instanceof TntBlock
+        && !CraftEventFactory.callTNTPrimeEvent(
+            worldIn, pos, TNTPrimeEvent.PrimeCause.FIRE, null, pos.relative(face))) {
+      ci.cancel();
+    }
+  }
 }

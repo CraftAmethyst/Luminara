@@ -9,14 +9,15 @@ import net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes;
 import org.jetbrains.annotations.Nullable;
 
 public class ArclightModFileReader implements IModFileReader, IOrderedProvider {
-    @Override
-    public @Nullable IModFile read(JarContents jarContents, ModFileDiscoveryAttributes modFileDiscoveryAttributes) {
-        ArclightJarContentsImplFilter.filter((JarContentsImpl) jarContents);
-        return null;
-    }
+  @Override
+  public @Nullable IModFile read(
+      JarContents jarContents, ModFileDiscoveryAttributes modFileDiscoveryAttributes) {
+    ArclightJarContentsImplFilter.filter((JarContentsImpl) jarContents);
+    return null;
+  }
 
-    @Override
-    public int getPriority() {
-        return HIGHEST_SYSTEM_PRIORITY;
-    }
+  @Override
+  public int getPriority() {
+    return HIGHEST_SYSTEM_PRIORITY;
+  }
 }

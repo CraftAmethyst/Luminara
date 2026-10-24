@@ -28,58 +28,93 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(RedStoneOreBlock.class)
 public abstract class RedStoneOreBlockMixin {
 
-    // @formatter:off
-    @Shadow private static void interact(BlockState state, Level world, BlockPos pos) { }
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  private static void interact(BlockState state, Level world, BlockPos pos) {}
 
-    private static transient Entity arclight$entity;
+  // @formatter:on
 
-    @Inject(method = "attack", at = @At(value = "HEAD"))
-    public void arclight$interact1(BlockState state, Level worldIn, BlockPos pos, Player player, CallbackInfo ci) {
-        arclight$entity = player;
+  private static transient Entity arclight$entity;
+
+  @Inject(method = "attack", at = @At(value = "HEAD"))
+  public void arclight$interact1(
+      BlockState state, Level worldIn, BlockPos pos, Player player, CallbackInfo ci) {
+    arclight$entity = player;
+  }
+
+  @Inject(method = "stepOn", cancellable = true, at = @At(value = "HEAD"))
+  public void arclight$entityInteract(
+      Level worldIn, BlockPos pos, BlockState state, Entity entityIn, CallbackInfo ci) {
+    if (entityIn instanceof Player) {
+      PlayerInteractEvent event =
+          CraftEventFactory.callPlayerInteractEvent(
+              ((Player) entityIn), Action.PHYSICAL, pos, null, null, null);
+      if (event.isCancelled()) {
+        ci.cancel();
+        return;
+      }
+    } else {
+      EntityInteractEvent event =
+          new EntityInteractEvent(entityIn.bridge$getBukkitEntity(), CraftBlock.at(worldIn, pos));
+      Bukkit.getPluginManager().callEvent(event);
+      if (event.isCancelled()) {
+        ci.cancel();
+        return;
+      }
     }
+    arclight$entity = entityIn;
+  }
 
-    @Inject(method = "stepOn", cancellable = true, at = @At(value = "HEAD"))
-    public void arclight$entityInteract(Level worldIn, BlockPos pos, BlockState state, Entity entityIn, CallbackInfo ci) {
-        if (entityIn instanceof Player) {
-            PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(((Player) entityIn), Action.PHYSICAL, pos, null, null, null);
-            if (event.isCancelled()) {
-                ci.cancel();
-                return;
-            }
-        } else {
-            EntityInteractEvent event = new EntityInteractEvent(entityIn.bridge$getBukkitEntity(), CraftBlock.at(worldIn, pos));
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                ci.cancel();
-                return;
-            }
-        }
-        arclight$entity = entityIn;
-    }
+  @Inject(method = "useItemOn", at = @At(value = "HEAD"))
+  public void arclight$interact3(
+      ItemStack itemStack,
+      BlockState blockState,
+      Level level,
+      BlockPos blockPos,
+      Player player,
+      InteractionHand interactionHand,
+      BlockHitResult blockHitResult,
+      CallbackInfoReturnable<ItemInteractionResult> cir) {
+    arclight$entity = player;
+  }
 
-    @Inject(method = "useItemOn", at = @At(value = "HEAD"))
-    public void arclight$interact3(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult, CallbackInfoReturnable<ItemInteractionResult> cir) {
-        arclight$entity = player;
+  @Inject(
+      method = "randomTick",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private void arclight$blockFade(
+      BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
+    if (CraftEventFactory.callBlockFadeEvent(
+            worldIn, pos, state.setValue(RedStoneOreBlock.LIT, false))
+        .isCancelled()) {
+      ci.cancel();
     }
+  }
 
-    @Inject(method = "randomTick", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private void arclight$blockFade(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (CraftEventFactory.callBlockFadeEvent(worldIn, pos, state.setValue(RedStoneOreBlock.LIT, false)).isCancelled()) {
-            ci.cancel();
-        }
-    }
+  private static void interact(
+      BlockState blockState, Level world, BlockPos blockPos, Entity entity) {
+    arclight$entity = entity;
+    interact(blockState, world, blockPos);
+  }
 
-    private static void interact(BlockState blockState, Level world, BlockPos blockPos, Entity entity) {
-        arclight$entity = entity;
-        interact(blockState, world, blockPos);
+  @Inject(
+      method = "interact",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private static void arclight$entityChangeBlock(
+      BlockState blockState, Level world, BlockPos blockPos, CallbackInfo ci) {
+    if (!CraftEventFactory.callEntityChangeBlockEvent(
+        arclight$entity, blockPos, blockState.setValue(RedStoneOreBlock.LIT, true))) {
+      ci.cancel();
     }
-
-    @Inject(method = "interact", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private static void arclight$entityChangeBlock(BlockState blockState, Level world, BlockPos blockPos, CallbackInfo ci) {
-        if (!CraftEventFactory.callEntityChangeBlockEvent(arclight$entity, blockPos, blockState.setValue(RedStoneOreBlock.LIT, true))) {
-            ci.cancel();
-        }
-        arclight$entity = null;
-    }
+    arclight$entity = null;
+  }
 }

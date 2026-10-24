@@ -19,13 +19,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SwampHutPiece.class)
 public class SwampHutPieceMixin {
 
-    @Inject(method = "postProcess", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/WorldGenLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
-    private void arclight$addSpawnReasonForWitch(WorldGenLevel worldGenLevel, StructureManager structureManager, ChunkGenerator chunkGenerator, RandomSource randomSource, BoundingBox boundingBox, ChunkPos chunkPos, BlockPos blockPos, CallbackInfo ci) {
-        ((ServerLevelBridge) worldGenLevel).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
-    }
+  @Inject(
+      method = "postProcess",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/WorldGenLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
+  private void arclight$addSpawnReasonForWitch(
+      WorldGenLevel worldGenLevel,
+      StructureManager structureManager,
+      ChunkGenerator chunkGenerator,
+      RandomSource randomSource,
+      BoundingBox boundingBox,
+      ChunkPos chunkPos,
+      BlockPos blockPos,
+      CallbackInfo ci) {
+    ((ServerLevelBridge) worldGenLevel)
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
+  }
 
-    @Inject(method = "spawnCat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ServerLevelAccessor;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
-    private void arclight$addSpawnReasonForCat(ServerLevelAccessor serverLevelAccessor, BoundingBox boundingBox, CallbackInfo ci) {
-        ((ServerLevelBridge) serverLevelAccessor).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
-    }
+  @Inject(
+      method = "spawnCat",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/ServerLevelAccessor;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
+  private void arclight$addSpawnReasonForCat(
+      ServerLevelAccessor serverLevelAccessor, BoundingBox boundingBox, CallbackInfo ci) {
+    ((ServerLevelBridge) serverLevelAccessor)
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
+  }
 }

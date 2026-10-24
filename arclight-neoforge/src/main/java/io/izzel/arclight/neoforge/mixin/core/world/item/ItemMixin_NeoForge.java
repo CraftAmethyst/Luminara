@@ -17,23 +17,27 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(Item.class)
 public abstract class ItemMixin_NeoForge implements ItemBridge {
 
-    @Override
-    public AbstractArrow bridge$forge$customArrow(BowItem bowItem, ItemStack weapon, ItemStack projectile, AbstractArrow arrow) {
-        return bowItem.customArrow(arrow, projectile, weapon);
-    }
+  @Override
+  public AbstractArrow bridge$forge$customArrow(
+      BowItem bowItem, ItemStack weapon, ItemStack projectile, AbstractArrow arrow) {
+    return bowItem.customArrow(arrow, projectile, weapon);
+  }
 
-    @Override
-    public int bridge$forge$onArrowLoose(ItemStack stack, Level level, Player player, int charge, boolean hasAmmo) {
-        return EventHooks.onArrowLoose(stack, level, player, charge, hasAmmo);
-    }
+  @Override
+  public int bridge$forge$onArrowLoose(
+      ItemStack stack, Level level, Player player, int charge, boolean hasAmmo) {
+    return EventHooks.onArrowLoose(stack, level, player, charge, hasAmmo);
+  }
 
-    @Override
-    public boolean bridge$forge$onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ) {
-        return EventHooks.onChorusFruitTeleport(entity, targetX, targetY, targetZ).isCanceled();
-    }
+  @Override
+  public boolean bridge$forge$onChorusFruitTeleport(
+      LivingEntity entity, double targetX, double targetY, double targetZ) {
+    return EventHooks.onChorusFruitTeleport(entity, targetX, targetY, targetZ).isCanceled();
+  }
 
-    @Override
-    public void bridge$forge$onPlayerDestroyItem(Player player, @NotNull ItemStack stack, @Nullable InteractionHand hand) {
-        EventHooks.onPlayerDestroyItem(player, stack, hand);
-    }
+  @Override
+  public void bridge$forge$onPlayerDestroyItem(
+      Player player, @NotNull ItemStack stack, @Nullable InteractionHand hand) {
+    EventHooks.onPlayerDestroyItem(player, stack, hand);
+  }
 }

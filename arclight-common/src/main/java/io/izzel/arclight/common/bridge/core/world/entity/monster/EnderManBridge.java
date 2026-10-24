@@ -4,5 +4,5 @@ import net.minecraft.world.entity.LivingEntity;
 
 public interface EnderManBridge {
 
-    void bridge$updateTarget(LivingEntity livingEntity);
+  void bridge$updateTarget(LivingEntity livingEntity);
 }

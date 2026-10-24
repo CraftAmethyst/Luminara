@@ -14,14 +14,19 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(SmithingTrimRecipe.class)
 public class SmithingTrimRecipeMixin implements RecipeBridge {
 
-    // @formatter:off
-    @Shadow @Final Ingredient template;
-    @Shadow @Final Ingredient base;
-    @Shadow @Final Ingredient addition;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final Ingredient template;
+  @Shadow @Final Ingredient base;
+  @Shadow @Final Ingredient addition;
 
-    @Override
-    public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
-        return new CraftSmithingTrimRecipe(id, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
-    }
+  // @formatter:on
+
+  @Override
+  public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
+    return new CraftSmithingTrimRecipe(
+        id,
+        CraftRecipe.toBukkit(this.template),
+        CraftRecipe.toBukkit(this.base),
+        CraftRecipe.toBukkit(this.addition));
+  }
 }

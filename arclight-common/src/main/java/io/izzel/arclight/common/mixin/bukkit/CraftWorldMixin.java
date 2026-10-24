@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.bukkit;
 
 import io.izzel.arclight.common.bridge.core.server.level.ServerLevelBridge;
+import java.io.File;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
 import org.bukkit.GameRule;
@@ -14,33 +15,41 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.File;
-
 @Mixin(CraftWorld.class)
 public abstract class CraftWorldMixin {
 
-    // @formatter:off
-    @Shadow @Final private ServerLevel world;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private ServerLevel world;
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite(remap = false)
-    public File getWorldFolder() {
-        return ((ServerLevelBridge) this.world).bridge$getConvertable().getDimensionPath(this.world.dimension()).toFile();
-    }
+  // @formatter:on
 
-    @Inject(method = "convert", cancellable = true, at = @At("HEAD"), remap = false)
-    private<T> void arclight$fallbackConvert(GameRule<T> rule, GameRules.Value<?> value, CallbackInfoReturnable<T> cir) {
-        if (rule.getType() == String.class) {
-            cir.setReturnValue(rule.getType().cast(value.serialize()));
-        }
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite(remap = false)
+  public File getWorldFolder() {
+    return ((ServerLevelBridge) this.world)
+        .bridge$getConvertable()
+        .getDimensionPath(this.world.dimension())
+        .toFile();
+  }
 
-    @Redirect(method = "getGameRuleValue(Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/GameRules$Value;toString()Ljava/lang/String;"))
-    private String arclight$useSerialize(GameRules.Value<?> instance) {
-        return instance.serialize();
+  @Inject(method = "convert", cancellable = true, at = @At("HEAD"), remap = false)
+  private <T> void arclight$fallbackConvert(
+      GameRule<T> rule, GameRules.Value<?> value, CallbackInfoReturnable<T> cir) {
+    if (rule.getType() == String.class) {
+      cir.setReturnValue(rule.getType().cast(value.serialize()));
     }
+  }
+
+  @Redirect(
+      method = "getGameRuleValue(Ljava/lang/String;)Ljava/lang/String;",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/level/GameRules$Value;toString()Ljava/lang/String;"))
+  private String arclight$useSerialize(GameRules.Value<?> instance) {
+    return instance.serialize();
+  }
 }

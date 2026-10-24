@@ -15,18 +15,24 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(Block.class)
 public abstract class BlockMixin_NeoForge implements BlockBridge, IBlockExtension {
 
-    @Override
-    public boolean bridge$forge$onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def) {
-        return CommonHooks.canCropGrow(level, pos, state, def);
-    }
+  @Override
+  public boolean bridge$forge$onCropsGrowPre(
+      Level level, BlockPos pos, BlockState state, boolean def) {
+    return CommonHooks.canCropGrow(level, pos, state, def);
+  }
 
-    @Override
-    public void bridge$forge$onCropsGrowPost(Level level, BlockPos pos, BlockState state) {
-        CommonHooks.fireCropGrowPost(level, pos, state);
-    }
+  @Override
+  public void bridge$forge$onCropsGrowPost(Level level, BlockPos pos, BlockState state) {
+    CommonHooks.fireCropGrowPost(level, pos, state);
+  }
 
-    @Override
-    public void bridge$forge$onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
-        this.onCaughtFire(state, level, pos, direction, igniter);
-    }
+  @Override
+  public void bridge$forge$onCaughtFire(
+      BlockState state,
+      Level level,
+      BlockPos pos,
+      @Nullable Direction direction,
+      @Nullable LivingEntity igniter) {
+    this.onCaughtFire(state, level, pos, direction, igniter);
+  }
 }

@@ -10,13 +10,13 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(AdvancementHolder.class)
 public class AdvancementHolderMixin implements AdvancementHolderBridge {
 
-    @Override
-    public Advancement bridge$getBukkit() {
-        return new CraftAdvancement((AdvancementHolder) (Object) this);
-    }
+  @Override
+  public Advancement bridge$getBukkit() {
+    return new CraftAdvancement((AdvancementHolder) (Object) this);
+  }
 
-    @Unique
-    public org.bukkit.advancement.Advancement toBukkit() {
-        return new CraftAdvancement((AdvancementHolder)(Object) this);
-    }
+  @Unique
+  public org.bukkit.advancement.Advancement toBukkit() {
+    return new CraftAdvancement((AdvancementHolder) (Object) this);
+  }
 }

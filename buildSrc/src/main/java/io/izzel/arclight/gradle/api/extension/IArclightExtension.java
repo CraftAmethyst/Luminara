@@ -1,30 +1,35 @@
 package io.izzel.arclight.gradle.api.extension;
 
-import org.gradle.api.Action;
-
 import java.io.File;
 import java.nio.file.Path;
+import org.gradle.api.Action;
 
 public interface IArclightExtension {
-    Path getCacheDir();
-    void setCacheDir(Path path);
+  Path getCacheDir();
 
-    String getMcVersion();
-    void setMcVersion(String mcVersion);
+  void setCacheDir(Path path);
 
-    String getBukkitVersion();
-    void setBukkitVersion(String bukkitVersion);
+  String getMcVersion();
 
-    String getSpigotReversion();
-    void setSpigotReversion(String spigotReversion);
+  void setMcVersion(String mcVersion);
 
-    File getAccessTransformer();
-    void setAccessTransformer(File accessTransformer);
+  String getBukkitVersion();
 
-    File getExtraMapping();
-    void setExtraMapping(File extraMapping);
+  void setBukkitVersion(String bukkitVersion);
 
-    IArclightMappingsExtension getMappingsConfiguration();
+  String getSpigotReversion();
 
-    void mappings(Action<IArclightMappingsExtension> spec);
+  void setSpigotReversion(String spigotReversion);
+
+  File getAccessTransformer();
+
+  void setAccessTransformer(File accessTransformer);
+
+  File getExtraMapping();
+
+  void setExtraMapping(File extraMapping);
+
+  IArclightMappingsExtension getMappingsConfiguration();
+
+  void mappings(Action<IArclightMappingsExtension> spec);
 }

@@ -14,19 +14,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = CraftEntity.class, remap = false)
 public abstract class CraftEntityMixin implements org.bukkit.entity.Entity {
 
-    @Shadow protected Entity entity;
-    @Shadow @Final protected CraftServer server;
+  @Shadow protected Entity entity;
+  @Shadow @Final protected CraftServer server;
 
-    // @Inject(method = "getEntity", cancellable = true, at = @At("HEAD"))
-    // private static void arclight$fakePlayer(CraftServer server, Entity entity, CallbackInfoReturnable<CraftEntity> cir) {
-    //     if (entity instanceof FakePlayer) {
-    //         cir.setReturnValue(new ArclightFakePlayer(server, (FakePlayer) entity));
-    //     }
-    // }
+  // @Inject(method = "getEntity", cancellable = true, at = @At("HEAD"))
+  // private static void arclight$fakePlayer(CraftServer server, Entity entity,
+  // CallbackInfoReturnable<CraftEntity> cir) {
+  //     if (entity instanceof FakePlayer) {
+  //         cir.setReturnValue(new ArclightFakePlayer(server, (FakePlayer) entity));
+  //     }
+  // }
 
-    @Inject(method = "getEntity", cancellable = true, at = @At(value = "NEW", target = "java/lang/AssertionError"))
-    private static void arclight$modEntity(CraftServer server, Entity entity, CallbackInfoReturnable<CraftEntity> cir) {
-        var craftEntity = (CraftEntity) EntityClassLookup.getEntityTypeData(entity).convertFunction().apply(server, entity);
-        cir.setReturnValue(craftEntity);
-    }
+  @Inject(
+      method = "getEntity",
+      cancellable = true,
+      at = @At(value = "NEW", target = "java/lang/AssertionError"))
+  private static void arclight$modEntity(
+      CraftServer server, Entity entity, CallbackInfoReturnable<CraftEntity> cir) {
+    var craftEntity =
+        (CraftEntity)
+            EntityClassLookup.getEntityTypeData(entity).convertFunction().apply(server, entity);
+    cir.setReturnValue(craftEntity);
+  }
 }

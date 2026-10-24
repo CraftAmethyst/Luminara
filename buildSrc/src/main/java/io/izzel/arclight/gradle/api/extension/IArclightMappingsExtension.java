@@ -3,30 +3,36 @@ package io.izzel.arclight.gradle.api.extension;
 import java.io.File;
 
 public interface IArclightMappingsExtension {
-    File getBukkitToForge();
-    void setBukkitToForge(File bukkitToForge);
+  File getBukkitToForge();
 
-    File getBukkitToNeoForge();
-    void setBukkitToNeoForge(File bukkitToNeoForge);
+  void setBukkitToForge(File bukkitToForge);
 
-    File getBukkitToFabric();
-    void setBukkitToFabric(File bukkitToFabric);
+  File getBukkitToNeoForge();
 
-    File getBukkitToFabricInheritance();
-    void setBukkitToFabricInheritance(File bukkitToFabricInheritance);
+  void setBukkitToNeoForge(File bukkitToNeoForge);
 
-    File getBukkitToForgeInheritance();
-    void setBukkitToForgeInheritance(File bukkitToForgeInheritance);
+  File getBukkitToFabric();
 
-    File getReobfBukkitPackage();
-    void setReobfBukkitPackage(File reobfBukkitPackage);
+  void setBukkitToFabric(File bukkitToFabric);
 
-    default boolean areMappingsExist() {
-        return getBukkitToForge().exists()
-                && getBukkitToNeoForge().exists()
-                && getBukkitToFabric().exists()
-                && getBukkitToFabricInheritance().exists()
-                && getBukkitToForgeInheritance().exists()
-                && getReobfBukkitPackage().exists();
-    }
+  File getBukkitToFabricInheritance();
+
+  void setBukkitToFabricInheritance(File bukkitToFabricInheritance);
+
+  File getBukkitToForgeInheritance();
+
+  void setBukkitToForgeInheritance(File bukkitToForgeInheritance);
+
+  File getReobfBukkitPackage();
+
+  void setReobfBukkitPackage(File reobfBukkitPackage);
+
+  default boolean areMappingsExist() {
+    return getBukkitToForge().exists()
+        && getBukkitToNeoForge().exists()
+        && getBukkitToFabric().exists()
+        && getBukkitToFabricInheritance().exists()
+        && getBukkitToForgeInheritance().exists()
+        && getReobfBukkitPackage().exists();
+  }
 }

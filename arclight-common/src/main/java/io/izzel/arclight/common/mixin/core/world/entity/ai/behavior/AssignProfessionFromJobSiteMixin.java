@@ -13,12 +13,24 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(AssignProfessionFromJobSite.class)
 public class AssignProfessionFromJobSiteMixin {
 
-    @Redirect(method = "*", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/Villager;setVillagerData(Lnet/minecraft/world/entity/npc/VillagerData;)V"))
-    private static void arclight$jobChange(Villager instance, VillagerData villagerData) {
-        VillagerCareerChangeEvent event = CraftEventFactory.callVillagerCareerChangeEvent(instance, CraftVillager.CraftProfession.minecraftToBukkit(villagerData.getProfession()), VillagerCareerChangeEvent.ChangeReason.EMPLOYED);
-        if (!event.isCancelled()) {
-            VillagerData newData = villagerData.setProfession(CraftVillager.CraftProfession.bukkitToMinecraft(event.getProfession()));
-            instance.setVillagerData(newData);
-        }
+  @Redirect(
+      method = "*",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/npc/Villager;setVillagerData(Lnet/minecraft/world/entity/npc/VillagerData;)V"))
+  private static void arclight$jobChange(Villager instance, VillagerData villagerData) {
+    VillagerCareerChangeEvent event =
+        CraftEventFactory.callVillagerCareerChangeEvent(
+            instance,
+            CraftVillager.CraftProfession.minecraftToBukkit(villagerData.getProfession()),
+            VillagerCareerChangeEvent.ChangeReason.EMPLOYED);
+    if (!event.isCancelled()) {
+      VillagerData newData =
+          villagerData.setProfession(
+              CraftVillager.CraftProfession.bukkitToMinecraft(event.getProfession()));
+      instance.setVillagerData(newData);
     }
+  }
 }

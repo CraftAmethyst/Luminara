@@ -10,33 +10,34 @@ import org.bukkit.craftbukkit.v.CraftServer;
 
 public interface MinecraftServerBridge {
 
-    void bridge$setConsole(ConsoleCommandSender console);
+  void bridge$setConsole(ConsoleCommandSender console);
 
-    void bridge$setServer(CraftServer server);
+  void bridge$setServer(CraftServer server);
 
-    CraftServer bridge$getServer();
+  CraftServer bridge$getServer();
 
-    RemoteConsoleCommandSender bridge$getRemoteConsole();
+  RemoteConsoleCommandSender bridge$getRemoteConsole();
 
-    void bridge$queuedProcess(Runnable runnable);
+  void bridge$queuedProcess(Runnable runnable);
 
-    void bridge$drainQueuedTasks();
+  void bridge$drainQueuedTasks();
 
-    boolean bridge$hasStopped();
+  boolean bridge$hasStopped();
 
-    Commands bridge$getVanillaCommands();
+  Commands bridge$getVanillaCommands();
 
-    void arclight$onServerLoad(ServerLevel level);
+  void arclight$onServerLoad(ServerLevel level);
 
-    void arclight$onServerUnload(ServerLevel level);
+  void arclight$onServerUnload(ServerLevel level);
 
-    default void bridge$forge$markLevelsDirty() {}
+  default void bridge$forge$markLevelsDirty() {}
 
-    default void bridge$forge$reinstatePersistentChunks(ServerLevel level, ForcedChunksSavedData savedData) {}
+  default void bridge$forge$reinstatePersistentChunks(
+      ServerLevel level, ForcedChunksSavedData savedData) {}
 
-    default void bridge$forge$lockRegistries() {}
+  default void bridge$forge$lockRegistries() {}
 
-    default void bridge$forge$unlockRegistries() {}
+  default void bridge$forge$unlockRegistries() {}
 
-    void arclight$extendNextTickTimeTo(TimeSource.NanoTimeSource timeSource);
+  void arclight$extendNextTickTimeTo(TimeSource.NanoTimeSource timeSource);
 }

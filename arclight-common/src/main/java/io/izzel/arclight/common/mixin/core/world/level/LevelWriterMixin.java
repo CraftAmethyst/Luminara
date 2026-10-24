@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(LevelWriter.class)
 public interface LevelWriterMixin extends IWorldWriterBridge {
 
-    default boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        return bridge$addEntity(entity, reason);
-    }
+  default boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    return bridge$addEntity(entity, reason);
+  }
 }

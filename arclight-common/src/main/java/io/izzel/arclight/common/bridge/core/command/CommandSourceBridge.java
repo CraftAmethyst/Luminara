@@ -5,11 +5,11 @@ import org.bukkit.command.CommandSender;
 
 public interface CommandSourceBridge {
 
-    /*
-     * Offer a way to recognize whether we have implemented a proper getBukkitSender
-     * for the specified CommandSource.
-     */
-    default CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
-        return null;
-    }
+  /*
+   * Offer a way to recognize whether we have implemented a proper getBukkitSender
+   * for the specified CommandSource.
+   */
+  default CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
+    return null;
+  }
 }

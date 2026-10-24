@@ -7,18 +7,28 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface BucketItemBridge {
-    @Nullable Direction arclight$getDirection();
-    void arclight$setDirection(@Nullable Direction value);
+  @Nullable
+  Direction arclight$getDirection();
 
-    @Nullable BlockPos arclight$getClick();
-    void arclight$setClick(@Nullable BlockPos value);
+  void arclight$setDirection(@Nullable Direction value);
 
-    @Nullable InteractionHand arclight$getHand();
-    void arclight$setHand(@Nullable InteractionHand value);
+  @Nullable
+  BlockPos arclight$getClick();
 
-    @Nullable ItemStack arclight$getStack();
-    void arclight$setStack(@Nullable ItemStack value);
+  void arclight$setClick(@Nullable BlockPos value);
 
-    @Nullable org.bukkit.inventory.ItemStack arclight$getCaptureItem();
-    void arclight$setCaptureItem(@Nullable org.bukkit.inventory.ItemStack value);
+  @Nullable
+  InteractionHand arclight$getHand();
+
+  void arclight$setHand(@Nullable InteractionHand value);
+
+  @Nullable
+  ItemStack arclight$getStack();
+
+  void arclight$setStack(@Nullable ItemStack value);
+
+  @Nullable
+  org.bukkit.inventory.ItemStack arclight$getCaptureItem();
+
+  void arclight$setCaptureItem(@Nullable org.bukkit.inventory.ItemStack value);
 }

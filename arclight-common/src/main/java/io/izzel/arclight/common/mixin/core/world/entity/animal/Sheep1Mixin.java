@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(targets = "net/minecraft/world/entity/animal/Sheep$1")
 public abstract class Sheep1Mixin implements AbstractContainerMenuBridge {
 
-    @Override
-    public InventoryView bridge$getBukkitView() {
-        return null;
-    }
+  @Override
+  public InventoryView bridge$getBukkitView() {
+    return null;
+  }
 }

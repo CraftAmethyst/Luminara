@@ -12,10 +12,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(HopperBlockEntity.class)
 public class HopperBlockEntity_NeoForge {
 
-    @Inject(method = "ejectItems", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;getAttachedContainer(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)Lnet/minecraft/world/Container;"))
-    private static void arclight$cancelIfFound(Level level, BlockPos blockPos, HopperBlockEntity hopperBlockEntity, CallbackInfoReturnable<Boolean> cir) {
-        if (DelegatedContainer.foundLastHandler()) {
-            cir.setReturnValue(false);
-        }
+  @Inject(
+      method = "ejectItems",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/entity/HopperBlockEntity;getAttachedContainer(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/HopperBlockEntity;)Lnet/minecraft/world/Container;"))
+  private static void arclight$cancelIfFound(
+      Level level,
+      BlockPos blockPos,
+      HopperBlockEntity hopperBlockEntity,
+      CallbackInfoReturnable<Boolean> cir) {
+    if (DelegatedContainer.foundLastHandler()) {
+      cir.setReturnValue(false);
     }
+  }
 }

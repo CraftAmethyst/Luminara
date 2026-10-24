@@ -15,29 +15,39 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NaturalSpawner.SpawnState.class)
-public abstract class NaturalSpawner_SpawnStateMixin implements WorldEntitySpawnerBridge.EntityDensityManagerBridge {
+public abstract class NaturalSpawner_SpawnStateMixin
+    implements WorldEntitySpawnerBridge.EntityDensityManagerBridge {
 
-    // @formatter:off
-    @Shadow protected abstract void afterSpawn(Mob p_234990_1_, ChunkAccess p_234990_2_);
-    @Shadow @Final private int spawnableChunkCount;
-    @Shadow @Final private Object2IntOpenHashMap<MobCategory> mobCategoryCounts;
-    @Shadow protected abstract boolean canSpawn(EntityType<?> p_234989_1_, BlockPos p_234989_2_, ChunkAccess p_234989_3_);
-    @Shadow @Final private LocalMobCapCalculator localMobCapCalculator;
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  protected abstract void afterSpawn(Mob p_234990_1_, ChunkAccess p_234990_2_);
 
-    @Override
-    public boolean bridge$canSpawn(EntityType<?> entityType, BlockPos pos, ChunkAccess chunk) {
-        return this.canSpawn(entityType, pos, chunk);
-    }
+  @Shadow @Final private int spawnableChunkCount;
+  @Shadow @Final private Object2IntOpenHashMap<MobCategory> mobCategoryCounts;
 
-    @Override
-    public void bridge$updateDensity(Mob mobEntity, ChunkAccess chunk) {
-        this.afterSpawn(mobEntity, chunk);
-    }
+  @Shadow
+  protected abstract boolean canSpawn(
+      EntityType<?> p_234989_1_, BlockPos p_234989_2_, ChunkAccess p_234989_3_);
 
-    @Override
-    public boolean bridge$canSpawn(MobCategory classification, ChunkPos pos, int limit) {
-        int i = limit * this.spawnableChunkCount / 289;
-        return this.mobCategoryCounts.getInt(classification) >= i ? false : this.localMobCapCalculator.canSpawn(classification, pos);
-    }
+  @Shadow @Final private LocalMobCapCalculator localMobCapCalculator;
+
+  // @formatter:on
+
+  @Override
+  public boolean bridge$canSpawn(EntityType<?> entityType, BlockPos pos, ChunkAccess chunk) {
+    return this.canSpawn(entityType, pos, chunk);
+  }
+
+  @Override
+  public void bridge$updateDensity(Mob mobEntity, ChunkAccess chunk) {
+    this.afterSpawn(mobEntity, chunk);
+  }
+
+  @Override
+  public boolean bridge$canSpawn(MobCategory classification, ChunkPos pos, int limit) {
+    int i = limit * this.spawnableChunkCount / 289;
+    return this.mobCategoryCounts.getInt(classification) >= i
+        ? false
+        : this.localMobCapCalculator.canSpawn(classification, pos);
+  }
 }

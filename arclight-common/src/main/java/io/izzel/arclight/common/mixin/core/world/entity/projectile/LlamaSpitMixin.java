@@ -11,13 +11,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LlamaSpit.class)
 public abstract class LlamaSpitMixin extends ProjectileMixin {
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/LlamaSpit;discard()V"))
-    private void arclight$despawn(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/projectile/LlamaSpit;discard()V"))
+  private void arclight$despawn(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 
-    @Inject(method = "onHitBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/LlamaSpit;discard()V"))
-    private void arclight$hit(BlockHitResult blockHitResult, CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
-    }
+  @Inject(
+      method = "onHitBlock",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/projectile/LlamaSpit;discard()V"))
+  private void arclight$hit(BlockHitResult blockHitResult, CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
+  }
 }

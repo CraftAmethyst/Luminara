@@ -13,27 +13,28 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ItemStackBridge {
 
-    // @formatter:off
-    @Shadow @Final PatchedDataComponentMap components;
-    @Shadow @Deprecated @Nullable private Item item;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final PatchedDataComponentMap components;
+  @Shadow @Deprecated @Nullable private Item item;
 
-    public void restorePatch(DataComponentPatch datacomponentpatch) {
-        this.components.restorePatch(datacomponentpatch);
-    }
+  // @formatter:on
 
-    @Override
-    public void arclight$restorePatch(DataComponentPatch datacomponentpatch) {
-        this.restorePatch(datacomponentpatch);
-    }
+  public void restorePatch(DataComponentPatch datacomponentpatch) {
+    this.components.restorePatch(datacomponentpatch);
+  }
 
-    @Deprecated
-    public void setItem(@Nullable Item item) {
-        this.item = item;
-    }
+  @Override
+  public void arclight$restorePatch(DataComponentPatch datacomponentpatch) {
+    this.restorePatch(datacomponentpatch);
+  }
 
-    @Override
-    public void arclight$setItem(Item item) {
-        this.setItem(item);
-    }
+  @Deprecated
+  public void setItem(@Nullable Item item) {
+    this.item = item;
+  }
+
+  @Override
+  public void arclight$setItem(Item item) {
+    this.setItem(item);
+  }
 }

@@ -21,30 +21,40 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(SnowballItem.class)
 public class SnowballItemMixin extends Item {
 
-    public SnowballItemMixin(Properties properties) {
-        super(properties);
+  public SnowballItemMixin(Properties properties) {
+    super(properties);
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public @NotNull InteractionResultHolder<ItemStack> use(
+      Level worldIn, Player playerIn, @NotNull InteractionHand handIn) {
+    ItemStack itemstack = playerIn.getItemInHand(handIn);
+    if (!worldIn.isClientSide) {
+      Snowball snowballentity = new Snowball(worldIn, playerIn);
+      snowballentity.setItem(itemstack);
+      snowballentity.shootFromRotation(
+          playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F);
+      if (worldIn.addFreshEntity(snowballentity)) {
+        itemstack.consume(1, playerIn);
+        worldIn.playSound(
+            null,
+            playerIn.getX(),
+            playerIn.getY(),
+            playerIn.getZ(),
+            SoundEvents.SNOWBALL_THROW,
+            SoundSource.NEUTRAL,
+            0.5F,
+            0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F));
+      } else if (playerIn instanceof ServerPlayer) {
+        ((ServerPlayerBridge) playerIn).bridge$getBukkitEntity().updateInventory();
+      }
     }
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, @NotNull InteractionHand handIn) {
-        ItemStack itemstack = playerIn.getItemInHand(handIn);
-        if (!worldIn.isClientSide) {
-            Snowball snowballentity = new Snowball(worldIn, playerIn);
-            snowballentity.setItem(itemstack);
-            snowballentity.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.5F, 1.0F);
-            if (worldIn.addFreshEntity(snowballentity)) {
-                itemstack.consume(1, playerIn);
-                worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (worldIn.getRandom().nextFloat() * 0.4F + 0.8F));
-            } else if (playerIn instanceof ServerPlayer) {
-                ((ServerPlayerBridge) playerIn).bridge$getBukkitEntity().updateInventory();
-            }
-        }
-
-        playerIn.awardStat(Stats.ITEM_USED.get(this));
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
-    }
+    playerIn.awardStat(Stats.ITEM_USED.get(this));
+    return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+  }
 }

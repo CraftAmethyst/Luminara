@@ -10,15 +10,15 @@ import net.minecraft.world.level.LevelReader;
 
 public interface ItemStackBridge {
 
-    void arclight$restorePatch(DataComponentPatch datacomponentpatch);
+  void arclight$restorePatch(DataComponentPatch datacomponentpatch);
 
-    void arclight$setItem(Item item);
+  void arclight$setItem(Item item);
 
-    default InteractionResult bridge$forge$onItemUseFirst(UseOnContext context) {
-        return InteractionResult.PASS;
-    }
+  default InteractionResult bridge$forge$onItemUseFirst(UseOnContext context) {
+    return InteractionResult.PASS;
+  }
 
-    default boolean bridge$forge$doesSneakBypassUse(LevelReader level, BlockPos pos, Player player) {
-        return false;
-    }
+  default boolean bridge$forge$doesSneakBypassUse(LevelReader level, BlockPos pos, Player player) {
+    return false;
+  }
 }

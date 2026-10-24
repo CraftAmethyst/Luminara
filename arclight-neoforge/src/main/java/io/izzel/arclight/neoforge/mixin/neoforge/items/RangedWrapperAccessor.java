@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(RangedWrapper.class)
 public interface RangedWrapperAccessor {
-    @Accessor("compose")
-    IItemHandlerModifiable arclight$unwrap();
+  @Accessor("compose")
+  IItemHandlerModifiable arclight$unwrap();
 }

@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 
 public interface ITextComponentBridge {
 
-    Stream<Component> bridge$stream();
+  Stream<Component> bridge$stream();
 
-    Iterator<Component> bridge$iterator();
+  Iterator<Component> bridge$iterator();
 }

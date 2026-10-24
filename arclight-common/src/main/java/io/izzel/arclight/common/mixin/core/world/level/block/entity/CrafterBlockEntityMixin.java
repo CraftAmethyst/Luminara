@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.CrafterBlockEntity;
@@ -10,49 +11,47 @@ import org.bukkit.entity.HumanEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.List;
-
 @Mixin(CrafterBlockEntity.class)
 public abstract class CrafterBlockEntityMixin extends BaseContainerBlockEntityMixin {
 
-    @Shadow private NonNullList<ItemStack> items;
+  @Shadow private NonNullList<ItemStack> items;
 
-    public List<HumanEntity> transaction = new java.util.ArrayList<>();
-    private int maxStack = MAX_STACK;
+  public List<HumanEntity> transaction = new java.util.ArrayList<>();
+  private int maxStack = MAX_STACK;
 
-    @Override
-    public List<ItemStack> getContents() {
-        return this.items;
-    }
+  @Override
+  public List<ItemStack> getContents() {
+    return this.items;
+  }
 
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        transaction.add(who);
-    }
+  @Override
+  public void onOpen(CraftHumanEntity who) {
+    transaction.add(who);
+  }
 
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        transaction.remove(who);
-    }
+  @Override
+  public void onClose(CraftHumanEntity who) {
+    transaction.remove(who);
+  }
 
-    @Override
-    public List<HumanEntity> getViewers() {
-        return transaction;
-    }
+  @Override
+  public List<HumanEntity> getViewers() {
+    return transaction;
+  }
 
-    @Override
-    public int getMaxStackSize() {
-        return maxStack;
-    }
+  @Override
+  public int getMaxStackSize() {
+    return maxStack;
+  }
 
-    @Override
-    public void setMaxStackSize(int size) {
-        maxStack = size;
-    }
+  @Override
+  public void setMaxStackSize(int size) {
+    maxStack = size;
+  }
 
-    @Override
-    public Location getLocation() {
-        if (level == null) return null;
-        return CraftLocation.toBukkit(worldPosition, level);
-    }
+  @Override
+  public Location getLocation() {
+    if (level == null) return null;
+    return CraftLocation.toBukkit(worldPosition, level);
+  }
 }

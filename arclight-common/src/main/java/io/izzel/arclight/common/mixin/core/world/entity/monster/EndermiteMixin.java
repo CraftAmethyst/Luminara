@@ -11,8 +11,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Endermite.class)
 public abstract class EndermiteMixin extends PathfinderMobMixin {
 
-    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Endermite;discard()V"))
-    private void arclight$despawn(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method = "aiStep",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/monster/Endermite;discard()V"))
+  private void arclight$despawn(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 }

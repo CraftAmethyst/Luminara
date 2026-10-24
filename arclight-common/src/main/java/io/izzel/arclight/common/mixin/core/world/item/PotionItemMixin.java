@@ -13,9 +13,17 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(PotionItem.class)
 public class PotionItemMixin {
 
-    @Decorate(method = "*", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private static boolean arclight$drinkPotion(LivingEntity instance, MobEffectInstance mobEffectInstance) throws Throwable {
-        ((LivingEntityBridge) instance).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.POTION_DRINK);
-        return (boolean) DecorationOps.callsite().invoke(instance, mobEffectInstance);
-    }
+  @Decorate(
+      method = "*",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/LivingEntity;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
+  private static boolean arclight$drinkPotion(
+      LivingEntity instance, MobEffectInstance mobEffectInstance) throws Throwable {
+    ((LivingEntityBridge) instance)
+        .bridge$pushEffectCause(EntityPotionEffectEvent.Cause.POTION_DRINK);
+    return (boolean) DecorationOps.callsite().invoke(instance, mobEffectInstance);
+  }
 }

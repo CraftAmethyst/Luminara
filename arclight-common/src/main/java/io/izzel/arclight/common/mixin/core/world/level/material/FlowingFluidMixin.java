@@ -29,44 +29,85 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FlowingFluid.class)
 public abstract class FlowingFluidMixin {
 
-    // @formatter:off
-    @Shadow protected abstract boolean canSpreadTo(BlockGetter worldIn, BlockPos fromPos, BlockState fromBlockState, Direction direction, BlockPos toPos, BlockState toBlockState, FluidState toFluidState, Fluid fluidIn);
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  protected abstract boolean canSpreadTo(
+      BlockGetter worldIn,
+      BlockPos fromPos,
+      BlockState fromBlockState,
+      Direction direction,
+      BlockPos toPos,
+      BlockState toBlockState,
+      FluidState toFluidState,
+      Fluid fluidIn);
 
-    @Inject(method = "spread", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FlowingFluid;spreadTo(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/world/level/material/FluidState;)V"))
-    public void arclight$flowInto(Level worldIn, BlockPos pos, FluidState stateIn, CallbackInfo ci) {
-        if (!DistValidate.isValid(worldIn)) return;
-        Block source = CraftBlock.at(worldIn, pos);
-        BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            ci.cancel();
-        }
-    }
+  // @formatter:on
 
-    @Redirect(method = "spreadToSides", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FlowingFluid;canSpreadTo(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/world/level/material/Fluid;)Z"))
-    public boolean arclight$flowInto(FlowingFluid flowingFluid, BlockGetter worldIn, BlockPos fromPos, BlockState fromBlockState, Direction direction, BlockPos toPos, BlockState toBlockState, FluidState toFluidState, Fluid fluidIn) {
-        if (this.canSpreadTo(worldIn, fromPos, fromBlockState, direction, toPos, toBlockState, toFluidState, fluidIn)) {
-            if (!DistValidate.isValid(worldIn)) return true;
-            Block source = CraftBlock.at(((Level) worldIn), fromPos);
-            BlockFromToEvent event = new BlockFromToEvent(source, CraftBlock.notchToBlockFace(direction));
-            Bukkit.getPluginManager().callEvent(event);
-            return !event.isCancelled();
-        } else {
-            return false;
-        }
+  @Inject(
+      method = "spread",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/material/FlowingFluid;spreadTo(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/world/level/material/FluidState;)V"))
+  public void arclight$flowInto(Level worldIn, BlockPos pos, FluidState stateIn, CallbackInfo ci) {
+    if (!DistValidate.isValid(worldIn)) return;
+    Block source = CraftBlock.at(worldIn, pos);
+    BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      ci.cancel();
     }
+  }
 
-    @Decorate(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private boolean arclight$fluidLevelChange(Level world, BlockPos pos, BlockState newState, int flags) throws Throwable {
-        if (DistValidate.isValid(world)) {
-            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(world, pos, newState);
-            if (event.isCancelled()) {
-                return (boolean) DecorationOps.cancel().invoke();
-            } else {
-                newState = ((CraftBlockData) event.getNewData()).getState();
-            }
-        }
-        return (boolean) DecorationOps.callsite().invoke(world, pos, newState, flags);
+  @Redirect(
+      method = "spreadToSides",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/material/FlowingFluid;canSpreadTo(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/world/level/material/Fluid;)Z"))
+  public boolean arclight$flowInto(
+      FlowingFluid flowingFluid,
+      BlockGetter worldIn,
+      BlockPos fromPos,
+      BlockState fromBlockState,
+      Direction direction,
+      BlockPos toPos,
+      BlockState toBlockState,
+      FluidState toFluidState,
+      Fluid fluidIn) {
+    if (this.canSpreadTo(
+        worldIn, fromPos, fromBlockState, direction, toPos, toBlockState, toFluidState, fluidIn)) {
+      if (!DistValidate.isValid(worldIn)) return true;
+      Block source = CraftBlock.at(((Level) worldIn), fromPos);
+      BlockFromToEvent event = new BlockFromToEvent(source, CraftBlock.notchToBlockFace(direction));
+      Bukkit.getPluginManager().callEvent(event);
+      return !event.isCancelled();
+    } else {
+      return false;
     }
+  }
+
+  @Decorate(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private boolean arclight$fluidLevelChange(
+      Level world, BlockPos pos, BlockState newState, int flags) throws Throwable {
+    if (DistValidate.isValid(world)) {
+      FluidLevelChangeEvent event =
+          CraftEventFactory.callFluidLevelChangeEvent(world, pos, newState);
+      if (event.isCancelled()) {
+        return (boolean) DecorationOps.cancel().invoke();
+      } else {
+        newState = ((CraftBlockData) event.getNewData()).getState();
+      }
+    }
+    return (boolean) DecorationOps.callsite().invoke(world, pos, newState, flags);
+  }
 }

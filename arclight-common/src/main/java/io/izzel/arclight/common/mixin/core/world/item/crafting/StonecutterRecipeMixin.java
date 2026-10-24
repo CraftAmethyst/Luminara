@@ -18,18 +18,24 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(StonecutterRecipe.class)
 public abstract class StonecutterRecipeMixin extends SingleItemRecipe implements RecipeBridge {
 
-    public StonecutterRecipeMixin(RecipeType<?> p_44416_, RecipeSerializer<?> p_44417_, String p_44419_, Ingredient p_44420_, ItemStack p_44421_) {
-        super(p_44416_, p_44417_, p_44419_, p_44420_, p_44421_);
-    }
+  public StonecutterRecipeMixin(
+      RecipeType<?> p_44416_,
+      RecipeSerializer<?> p_44417_,
+      String p_44419_,
+      Ingredient p_44420_,
+      ItemStack p_44421_) {
+    super(p_44416_, p_44417_, p_44419_, p_44420_, p_44421_);
+  }
 
-    @Override
-    public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
-        if (this.result.isEmpty()) {
-            return new ArclightSpecialRecipe(id, this);
-        }
-        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-        CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient));
-        recipe.setGroup(this.group == null ? "" : this.group);
-        return recipe;
+  @Override
+  public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
+    if (this.result.isEmpty()) {
+      return new ArclightSpecialRecipe(id, this);
     }
+    CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
+    CraftStonecuttingRecipe recipe =
+        new CraftStonecuttingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient));
+    recipe.setGroup(this.group == null ? "" : this.group);
+    return recipe;
+  }
 }

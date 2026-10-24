@@ -9,11 +9,13 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(targets = "net/minecraft/world/inventory/StonecutterMenu$1")
 public abstract class StonecutterContainer1Mixin implements IInventoryBridge {
-    @Shadow(aliases = {"this$0", "f_40344_", "field_17637"}, remap = false)
-    private StonecutterMenu outerThis;
+  @Shadow(
+      aliases = {"this$0", "f_40344_", "field_17637"},
+      remap = false)
+  private StonecutterMenu outerThis;
 
-    @Override
-    public Location getLocation() {
-        return ((PosContainerBridge) outerThis).bridge$getWorldLocation();
-    }
+  @Override
+  public Location getLocation() {
+    return ((PosContainerBridge) outerThis).bridge$getWorldLocation();
+  }
 }

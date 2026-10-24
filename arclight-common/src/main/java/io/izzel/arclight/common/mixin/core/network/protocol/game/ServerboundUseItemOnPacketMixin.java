@@ -11,15 +11,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerboundUseItemOnPacket.class)
 public class ServerboundUseItemOnPacketMixin implements TimestampedPacket {
 
-    public long timestamp;
+  public long timestamp;
 
-    @Inject(method = "<init>(Lnet/minecraft/network/FriendlyByteBuf;)V", at = @At("RETURN"))
-    private void arclight$read(FriendlyByteBuf buf, CallbackInfo ci) {
-        this.timestamp = System.currentTimeMillis();
-    }
+  @Inject(method = "<init>(Lnet/minecraft/network/FriendlyByteBuf;)V", at = @At("RETURN"))
+  private void arclight$read(FriendlyByteBuf buf, CallbackInfo ci) {
+    this.timestamp = System.currentTimeMillis();
+  }
 
-    @Override
-    public long bridge$timestamp() {
-        return timestamp;
-    }
+  @Override
+  public long bridge$timestamp() {
+    return timestamp;
+  }
 }

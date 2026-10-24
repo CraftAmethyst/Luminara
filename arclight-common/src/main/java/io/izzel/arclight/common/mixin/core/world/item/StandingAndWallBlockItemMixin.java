@@ -18,16 +18,39 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(StandingAndWallBlockItem.class)
 public class StandingAndWallBlockItemMixin {
 
-    @Inject(method = "getPlacementState", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelReader;isUnobstructed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Z"))
-    private void arclight$blockCanPlace(BlockPlaceContext context, CallbackInfoReturnable<BlockState> cir, BlockState place, BlockState defaultReturn) {
-        if (defaultReturn != null) {
-            var result = context.getLevel().isUnobstructed(defaultReturn, context.getClickedPos(), CollisionContext.empty());
-            var player = (context.getPlayer() instanceof ServerPlayerBridge bridge) ? bridge.bridge$getBukkitEntity() : null;
+  @Inject(
+      method = "getPlacementState",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/LevelReader;isUnobstructed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Z"))
+  private void arclight$blockCanPlace(
+      BlockPlaceContext context,
+      CallbackInfoReturnable<BlockState> cir,
+      BlockState place,
+      BlockState defaultReturn) {
+    if (defaultReturn != null) {
+      var result =
+          context
+              .getLevel()
+              .isUnobstructed(defaultReturn, context.getClickedPos(), CollisionContext.empty());
+      var player =
+          (context.getPlayer() instanceof ServerPlayerBridge bridge)
+              ? bridge.bridge$getBukkitEntity()
+              : null;
 
-            var event = new BlockCanBuildEvent(CraftBlock.at(context.getLevel(), context.getClickedPos()), player, CraftBlockData.fromData(defaultReturn), result);
-            Bukkit.getPluginManager().callEvent(event);
+      var event =
+          new BlockCanBuildEvent(
+              CraftBlock.at(context.getLevel(), context.getClickedPos()),
+              player,
+              CraftBlockData.fromData(defaultReturn),
+              result);
+      Bukkit.getPluginManager().callEvent(event);
 
-            cir.setReturnValue(event.isBuildable() ? defaultReturn : null);
-        }
+      cir.setReturnValue(event.isBuildable() ? defaultReturn : null);
     }
+  }
 }

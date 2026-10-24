@@ -16,20 +16,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Axolotl.class)
 public abstract class AxolotlMixin extends AnimalMixin {
 
-    @Shadow @Final private static int AXOLOTL_TOTAL_AIR_SUPPLY;
+  @Shadow @Final private static int AXOLOTL_TOTAL_AIR_SUPPLY;
 
-    @Inject(method = "getMaxAirSupply", cancellable = true, at = @At("RETURN"))
-    private void arclight$useBukkitMaxAir(CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(this.maxAirTicks);
-    }
+  @Inject(method = "getMaxAirSupply", cancellable = true, at = @At("RETURN"))
+  private void arclight$useBukkitMaxAir(CallbackInfoReturnable<Integer> cir) {
+    cir.setReturnValue(this.maxAirTicks);
+  }
 
-    @Override
-    public int getDefaultMaxAirSupply() {
-        return AXOLOTL_TOTAL_AIR_SUPPLY;
-    }
+  @Override
+  public int getDefaultMaxAirSupply() {
+    return AXOLOTL_TOTAL_AIR_SUPPLY;
+  }
 
-    @Inject(method = "applySupportingEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$cause(Player player, CallbackInfo ci) {
-        ((LivingEntityBridge) player).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.AXOLOTL);
-    }
+  @Inject(
+      method = "applySupportingEffects",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z"))
+  private void arclight$cause(Player player, CallbackInfo ci) {
+    ((LivingEntityBridge) player).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.AXOLOTL);
+  }
 }

@@ -11,16 +11,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(StringUtil.class)
 public class StringUtilMixin {
 
-    @Unique
-    private static boolean arclight$validUsernameCheck(String name) {
-        var regex = ArclightConfig.spec().getCompat().getValidUsernameRegex();
-        return !regex.isBlank() && name.matches(regex);
-    }
+  @Unique
+  private static boolean arclight$validUsernameCheck(String name) {
+    var regex = ArclightConfig.spec().getCompat().getValidUsernameRegex();
+    return !regex.isBlank() && name.matches(regex);
+  }
 
-    @Inject(method = "isValidPlayerName", cancellable = true, at = @At("HEAD"))
-    private static void arclight$checkUsername(String name, CallbackInfoReturnable<Boolean> cir) {
-        if (arclight$validUsernameCheck(name)) {
-            cir.setReturnValue(true);
-        }
+  @Inject(method = "isValidPlayerName", cancellable = true, at = @At("HEAD"))
+  private static void arclight$checkUsername(String name, CallbackInfoReturnable<Boolean> cir) {
+    if (arclight$validUsernameCheck(name)) {
+      cir.setReturnValue(true);
     }
+  }
 }

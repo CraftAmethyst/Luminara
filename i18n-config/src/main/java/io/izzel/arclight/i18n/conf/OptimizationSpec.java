@@ -6,24 +6,24 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class OptimizationSpec {
 
-    @Setting("cache-plugin-class")
-    private boolean cachePluginClass;
+  @Setting("cache-plugin-class")
+  private boolean cachePluginClass;
 
-    @Setting("goal-selector-update-interval")
-    private int goalSelectorInterval;
+  @Setting("goal-selector-update-interval")
+  private int goalSelectorInterval;
 
-    @Setting("use-activation-and-tracking-range")
-    private boolean useActivationAndTrackingRange;
+  @Setting("use-activation-and-tracking-range")
+  private boolean useActivationAndTrackingRange;
 
-    public boolean useActivationAndTrackingRange() {
-        return useActivationAndTrackingRange;
-    }
+  public boolean useActivationAndTrackingRange() {
+    return useActivationAndTrackingRange;
+  }
 
-    public boolean isCachePluginClass() {
-        return cachePluginClass;
-    }
+  public boolean isCachePluginClass() {
+    return cachePluginClass;
+  }
 
-    public int getGoalSelectorInterval() {
-        return goalSelectorInterval;
-    }
+  public int getGoalSelectorInterval() {
+    return goalSelectorInterval;
+  }
 }

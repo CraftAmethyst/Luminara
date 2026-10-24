@@ -14,17 +14,20 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(LavaFluid.class)
 public abstract class LavaFluidMixin_NeoForge implements LavaFluidBridge {
 
-    // @formatter:off
-    @Shadow(remap = false) protected abstract boolean isFlammable(LevelReader level, BlockPos pos, Direction face);
-    // @formatter:on
+  // @formatter:off
+  @Shadow(remap = false)
+  protected abstract boolean isFlammable(LevelReader level, BlockPos pos, Direction face);
 
-    @Override
-    public BlockState bridge$forge$fireFluidPlaceBlockEvent(LevelAccessor level, BlockPos pos, BlockPos liquidPos, BlockState state) {
-        return EventHooks.fireFluidPlaceBlockEvent(level, pos, liquidPos, state);
-    }
+  // @formatter:on
 
-    @Override
-    public boolean bridge$forge$isFlammable(LevelReader level, BlockPos pos, Direction face) {
-        return this.isFlammable(level, pos, face);
-    }
+  @Override
+  public BlockState bridge$forge$fireFluidPlaceBlockEvent(
+      LevelAccessor level, BlockPos pos, BlockPos liquidPos, BlockState state) {
+    return EventHooks.fireFluidPlaceBlockEvent(level, pos, liquidPos, state);
+  }
+
+  @Override
+  public boolean bridge$forge$isFlammable(LevelReader level, BlockPos pos, Direction face) {
+    return this.isFlammable(level, pos, face);
+  }
 }

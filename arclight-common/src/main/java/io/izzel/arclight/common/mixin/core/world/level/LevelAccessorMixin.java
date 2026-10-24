@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(LevelAccessor.class)
 public interface LevelAccessorMixin extends LevelAccessorBridge {
 
-    default ServerLevel getMinecraftWorld() {
-        return this.bridge$getMinecraftWorld();
-    }
+  default ServerLevel getMinecraftWorld() {
+    return this.bridge$getMinecraftWorld();
+  }
 }

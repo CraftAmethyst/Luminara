@@ -14,8 +14,16 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(EndCityPieces.EndCityPiece.class)
 public class EndCityPiecesPieceMixin {
-    @Redirect(method = "handleDataMarker", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/RandomizableContainer;setBlockEntityLootTable(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;Lnet/minecraft/resources/ResourceKey;)V"))
-    private void arclight$customSetLootTable(BlockGetter level, RandomSource random, BlockPos pos, ResourceKey<LootTable> resourceKey) {
-        ((StructurePieceBridge) this).bridge$setCraftLootTable((ServerLevelAccessor)  level, pos, random, resourceKey);
-    }
+  @Redirect(
+      method = "handleDataMarker",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/RandomizableContainer;setBlockEntityLootTable(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;Lnet/minecraft/resources/ResourceKey;)V"))
+  private void arclight$customSetLootTable(
+      BlockGetter level, RandomSource random, BlockPos pos, ResourceKey<LootTable> resourceKey) {
+    ((StructurePieceBridge) this)
+        .bridge$setCraftLootTable((ServerLevelAccessor) level, pos, random, resourceKey);
+  }
 }

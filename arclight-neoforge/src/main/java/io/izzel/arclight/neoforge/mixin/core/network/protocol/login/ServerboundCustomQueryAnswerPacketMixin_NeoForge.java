@@ -14,11 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ServerboundCustomQueryAnswerPacket.class)
 public class ServerboundCustomQueryAnswerPacketMixin_NeoForge {
 
-    @Shadow @Final private static int MAX_PAYLOAD_SIZE;
+  @Shadow @Final private static int MAX_PAYLOAD_SIZE;
 
-    // For FFAPI; See ServerLoginPacketListenerImplMixin
-    @Inject(method = "readUnknownPayload", cancellable = true, at = @At("HEAD"))
-    private static void readResponse(FriendlyByteBuf buf, CallbackInfoReturnable<CustomQueryAnswerPayload> cir) {
-        cir.setReturnValue(ArclightCustomQueryAnswerPayload.tryRead(buf, MAX_PAYLOAD_SIZE));
-    }
+  // For FFAPI; See ServerLoginPacketListenerImplMixin
+  @Inject(method = "readUnknownPayload", cancellable = true, at = @At("HEAD"))
+  private static void readResponse(
+      FriendlyByteBuf buf, CallbackInfoReturnable<CustomQueryAnswerPayload> cir) {
+    cir.setReturnValue(ArclightCustomQueryAnswerPayload.tryRead(buf, MAX_PAYLOAD_SIZE));
+  }
 }

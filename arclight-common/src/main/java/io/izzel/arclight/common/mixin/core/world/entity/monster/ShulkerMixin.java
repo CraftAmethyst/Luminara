@@ -19,23 +19,37 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Shulker.class)
 public abstract class ShulkerMixin extends PathfinderMobMixin {
 
-    @Decorate(method = "teleportSomewhere", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Shulker;unRide()V"))
-    private void arclight$teleportEvent(Shulker instance, @Local(ordinal = -1) BlockPos pos) throws Throwable {
-        EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(this.level().bridge$getWorld(), pos.getX(), pos.getY(), pos.getZ()));
-        Bukkit.getPluginManager().callEvent(teleport);
-        if (!teleport.isCancelled()) {
-            Location to = teleport.getTo();
-            pos = BlockPos.containing(to.getX(), to.getY(), to.getZ());
-        } else {
-            DecorationOps.cancel().invoke(false);
-            return;
-        }
-        DecorationOps.blackhole().invoke(pos);
-        DecorationOps.callsite().invoke(instance);
+  @Decorate(
+      method = "teleportSomewhere",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Shulker;unRide()V"))
+  private void arclight$teleportEvent(Shulker instance, @Local(ordinal = -1) BlockPos pos)
+      throws Throwable {
+    EntityTeleportEvent teleport =
+        new EntityTeleportEvent(
+            this.getBukkitEntity(),
+            this.getBukkitEntity().getLocation(),
+            new Location(this.level().bridge$getWorld(), pos.getX(), pos.getY(), pos.getZ()));
+    Bukkit.getPluginManager().callEvent(teleport);
+    if (!teleport.isCancelled()) {
+      Location to = teleport.getTo();
+      pos = BlockPos.containing(to.getX(), to.getY(), to.getZ());
+    } else {
+      DecorationOps.cancel().invoke(false);
+      return;
     }
+    DecorationOps.blackhole().invoke(pos);
+    DecorationOps.callsite().invoke(instance);
+  }
 
-    @Inject(method = "hitByShulkerBullet", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$breedCause(CallbackInfo ci) {
-        ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.BREEDING);
-    }
+  @Inject(
+      method = "hitByShulkerBullet",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private void arclight$breedCause(CallbackInfo ci) {
+    ((WorldBridge) this.level())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.BREEDING);
+  }
 }

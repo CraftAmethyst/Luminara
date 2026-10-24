@@ -14,10 +14,23 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(SleepInBed.class)
 public class SleepInBedMixin_Optimize {
 
-    @Inject(method = "checkExtraStartConditions",cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
-    private void arclight$returnIfNotLoaded(ServerLevel level, LivingEntity entity, CallbackInfoReturnable<Boolean> cir, Brain<?> brain, GlobalPos pos) {
-        if (!level.isLoaded(pos.pos())) {
-            cir.setReturnValue(false);
-        }
+  @Inject(
+      method = "checkExtraStartConditions",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"))
+  private void arclight$returnIfNotLoaded(
+      ServerLevel level,
+      LivingEntity entity,
+      CallbackInfoReturnable<Boolean> cir,
+      Brain<?> brain,
+      GlobalPos pos) {
+    if (!level.isLoaded(pos.pos())) {
+      cir.setReturnValue(false);
     }
+  }
 }

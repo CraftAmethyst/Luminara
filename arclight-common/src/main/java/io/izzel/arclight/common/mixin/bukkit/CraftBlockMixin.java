@@ -13,15 +13,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = CraftBlock.class, remap = false)
 public abstract class CraftBlockMixin {
 
-    // @formatter:off
-    @Shadow public abstract Material getType();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract Material getType();
 
-    @Inject(method = "getState", cancellable = true, at = @At("HEAD"))
-    private void arclight$getState(CallbackInfoReturnable<BlockState> cir) {
-        MaterialBridge bridge = (MaterialBridge) (Object) getType();
-        if (bridge.bridge$shouldApplyStateFactory()) {
-            cir.setReturnValue(bridge.bridge$blockStateFactory().apply((CraftBlock) (Object) this));
-        }
+  // @formatter:on
+
+  @Inject(method = "getState", cancellable = true, at = @At("HEAD"))
+  private void arclight$getState(CallbackInfoReturnable<BlockState> cir) {
+    MaterialBridge bridge = (MaterialBridge) (Object) getType();
+    if (bridge.bridge$shouldApplyStateFactory()) {
+      cir.setReturnValue(bridge.bridge$blockStateFactory().apply((CraftBlock) (Object) this));
     }
+  }
 }

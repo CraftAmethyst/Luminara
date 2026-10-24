@@ -5,10 +5,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CrafterMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultContainer;
+import org.bukkit.craftbukkit.v.inventory.CraftInventoryCrafter;
 import org.bukkit.craftbukkit.v.inventory.view.CraftCrafterView;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.bukkit.craftbukkit.v.inventory.CraftInventoryCrafter;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,25 +17,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CrafterMenu.class)
 public abstract class CrafterMenuMixin extends AbstractContainerMenuMixin {
 
-    @Shadow @Final private CraftingContainer container;
-    @Shadow @Final private ResultContainer resultContainer;
-    @Shadow @Final private Player player;
+  @Shadow @Final private CraftingContainer container;
+  @Shadow @Final private ResultContainer resultContainer;
+  @Shadow @Final private Player player;
 
-    private CraftCrafterView bukkitEntity;
+  private CraftCrafterView bukkitEntity;
 
-    @Override
-    public CraftCrafterView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventoryCrafter inventory = new CraftInventoryCrafter(this.container, this.resultContainer);
-        bukkitEntity = new CraftCrafterView(((ServerPlayerBridge) this.player).bridge$getBukkitEntity(), inventory, (CrafterMenu) (Object) this);
-        return bukkitEntity;
+  @Override
+  public CraftCrafterView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
-        if (!bridge$isCheckReachable()) cir.setReturnValue(true);
-    }
+    CraftInventoryCrafter inventory =
+        new CraftInventoryCrafter(this.container, this.resultContainer);
+    bukkitEntity =
+        new CraftCrafterView(
+            ((ServerPlayerBridge) this.player).bridge$getBukkitEntity(),
+            inventory,
+            (CrafterMenu) (Object) this);
+    return bukkitEntity;
+  }
+
+  @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
+  public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    if (!bridge$isCheckReachable()) cir.setReturnValue(true);
+  }
 }

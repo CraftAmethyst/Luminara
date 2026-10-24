@@ -10,9 +10,12 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(targets = "net/minecraft/server/Main$1")
 public class Main_ServerShutdownThreadMixin {
 
-    @Decorate(method = "run", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;halt(Z)V"))
-    private void arclight$shutdown(MinecraftServer instance, boolean b) throws Throwable {
-        AsyncCatcher.enabled = false;
-        DecorationOps.callsite().invoke(instance, instance.isRunning() && b);
-    }
+  @Decorate(
+      method = "run",
+      require = 0,
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;halt(Z)V"))
+  private void arclight$shutdown(MinecraftServer instance, boolean b) throws Throwable {
+    AsyncCatcher.enabled = false;
+    DecorationOps.callsite().invoke(instance, instance.isRunning() && b);
+  }
 }

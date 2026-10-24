@@ -6,8 +6,9 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 
 public class EntityEventDispatcher {
 
-    @SubscribeEvent
-    public void onEntityTame(AnimalTameEvent event) {
-        event.setCanceled(CraftEventFactory.callEntityTameEvent(event.getAnimal(), event.getTamer()).isCancelled());
-    }
+  @SubscribeEvent
+  public void onEntityTame(AnimalTameEvent event) {
+    event.setCanceled(
+        CraftEventFactory.callEntityTameEvent(event.getAnimal(), event.getTamer()).isCancelled());
+  }
 }

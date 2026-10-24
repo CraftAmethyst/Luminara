@@ -4,6 +4,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public enum LookAnchor {
-    FEET,
-    EYES,
+  FEET,
+  EYES,
 }

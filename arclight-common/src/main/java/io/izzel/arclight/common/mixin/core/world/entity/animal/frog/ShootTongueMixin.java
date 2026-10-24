@@ -12,8 +12,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ShootTongue.class)
 public class ShootTongueMixin {
 
-    @Inject(method = "eatEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;remove(Lnet/minecraft/world/entity/Entity$RemovalReason;)V"))
-    private void arclight$eatCause(ServerLevel serverLevel, Frog frog, CallbackInfo ci) {
-        frog.getTongueTarget().ifPresent(entity -> entity.bridge().bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DEATH));
-    }
+  @Inject(
+      method = "eatEntity",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/Entity;remove(Lnet/minecraft/world/entity/Entity$RemovalReason;)V"))
+  private void arclight$eatCause(ServerLevel serverLevel, Frog frog, CallbackInfo ci) {
+    frog.getTongueTarget()
+        .ifPresent(
+            entity -> entity.bridge().bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DEATH));
+  }
 }

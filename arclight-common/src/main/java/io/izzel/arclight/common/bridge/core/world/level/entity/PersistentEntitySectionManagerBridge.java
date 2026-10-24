@@ -4,5 +4,5 @@ import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.entity.EntitySectionStorage;
 
 public interface PersistentEntitySectionManagerBridge {
-    EntitySectionStorage<? extends EntityAccess> getSectionStorage();
+  EntitySectionStorage<? extends EntityAccess> getSectionStorage();
 }

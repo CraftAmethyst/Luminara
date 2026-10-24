@@ -15,14 +15,22 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(MinecartItem.class)
 public class MinecartItemMixin {
 
-    @Decorate(method = "useOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean arclight$entityPlace(ServerLevel world, Entity entityIn, UseOnContext context) throws Throwable {
-        if (DistValidate.isValid(world) && CraftEventFactory.callEntityPlaceEvent(context, entityIn).isCancelled()) {
-            return (boolean) DecorationOps.cancel().invoke(InteractionResult.FAIL);
-        } else if (!(boolean) DecorationOps.callsite().invoke(world, entityIn)) {
-            return (boolean) DecorationOps.cancel().invoke(InteractionResult.PASS);
-        } else {
-            return true;
-        }
+  @Decorate(
+      method = "useOn",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private boolean arclight$entityPlace(ServerLevel world, Entity entityIn, UseOnContext context)
+      throws Throwable {
+    if (DistValidate.isValid(world)
+        && CraftEventFactory.callEntityPlaceEvent(context, entityIn).isCancelled()) {
+      return (boolean) DecorationOps.cancel().invoke(InteractionResult.FAIL);
+    } else if (!(boolean) DecorationOps.callsite().invoke(world, entityIn)) {
+      return (boolean) DecorationOps.cancel().invoke(InteractionResult.PASS);
+    } else {
+      return true;
     }
+  }
 }

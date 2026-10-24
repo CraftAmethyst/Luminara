@@ -8,8 +8,10 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(FoodData.class)
 public abstract class FoodDataMixin_NeoForge implements FoodDataBridge {
 
-    // @formatter:off
-    @Shadow public int foodLevel;
-    @Shadow public abstract void eat(int i, float f);
-    // @formatter:on
+  // @formatter:off
+  @Shadow public int foodLevel;
+
+  @Shadow
+  public abstract void eat(int i, float f);
+  // @formatter:on
 }

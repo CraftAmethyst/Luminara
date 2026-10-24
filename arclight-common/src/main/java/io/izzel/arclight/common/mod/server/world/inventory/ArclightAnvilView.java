@@ -6,7 +6,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.AnvilInventory;
 
 public class ArclightAnvilView extends CraftAnvilView {
-    public ArclightAnvilView(HumanEntity player, AnvilInventory viewing, AnvilMenu container) {
-        super(player, viewing, container);
-    }
+  public ArclightAnvilView(HumanEntity player, AnvilInventory viewing, AnvilMenu container) {
+    super(player, viewing, container);
+  }
 }

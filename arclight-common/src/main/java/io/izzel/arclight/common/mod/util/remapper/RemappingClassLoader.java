@@ -2,7 +2,7 @@ package io.izzel.arclight.common.mod.util.remapper;
 
 public interface RemappingClassLoader {
 
-    ClassLoaderRemapper getRemapper();
+  ClassLoaderRemapper getRemapper();
 
-    ArclightRemapConfig getRemapConfig();
+  ArclightRemapConfig getRemapConfig();
 }

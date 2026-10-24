@@ -12,22 +12,47 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(PiglinAi.class)
 public abstract class PiglinAiMixin_NeoForge {
 
-    // @formatter:off
-    @Shadow private static boolean isBarterCurrency(ItemStack arg) { return false; }
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  private static boolean isBarterCurrency(ItemStack arg) {
+    return false;
+  }
 
-    @Redirect(method = "stopHoldingOffHandItem", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
-    private static boolean arclight$customBarter(ItemStack stack, Piglin piglin) {
-        return isBarterCurrency(stack) || ((PiglinBridge) piglin).bridge$getAllowedBarterItems().contains(stack.getItem());
-    }
+  // @formatter:on
 
-    @Redirect(method = "wantsToPickup", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
-    private static boolean arclight$customBanter2(ItemStack stack, Piglin piglin) {
-        return isBarterCurrency(stack) || ((PiglinBridge) piglin).bridge$getAllowedBarterItems().contains(stack.getItem());
-    }
+  @Redirect(
+      method = "stopHoldingOffHandItem",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
+  private static boolean arclight$customBarter(ItemStack stack, Piglin piglin) {
+    return isBarterCurrency(stack)
+        || ((PiglinBridge) piglin).bridge$getAllowedBarterItems().contains(stack.getItem());
+  }
 
-    @Redirect(method = "canAdmire", at = @At(value = "INVOKE", remap = false, target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
-    private static boolean arclight$customBanter3(ItemStack stack, Piglin piglin) {
-        return isBarterCurrency(stack) || ((PiglinBridge) piglin).bridge$getAllowedBarterItems().contains(stack.getItem());
-    }
+  @Redirect(
+      method = "wantsToPickup",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
+  private static boolean arclight$customBanter2(ItemStack stack, Piglin piglin) {
+    return isBarterCurrency(stack)
+        || ((PiglinBridge) piglin).bridge$getAllowedBarterItems().contains(stack.getItem());
+  }
+
+  @Redirect(
+      method = "canAdmire",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target = "Lnet/minecraft/world/item/ItemStack;isPiglinCurrency()Z"))
+  private static boolean arclight$customBanter3(ItemStack stack, Piglin piglin) {
+    return isBarterCurrency(stack)
+        || ((PiglinBridge) piglin).bridge$getAllowedBarterItems().contains(stack.getItem());
+  }
 }

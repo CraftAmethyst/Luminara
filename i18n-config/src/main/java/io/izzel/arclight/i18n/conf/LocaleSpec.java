@@ -6,17 +6,17 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class LocaleSpec {
 
-    @Setting("current")
-    private String current;
+  @Setting("current")
+  private String current;
 
-    @Setting("fallback")
-    private String fallback;
+  @Setting("fallback")
+  private String fallback;
 
-    public String getCurrent() {
-        return current;
-    }
+  public String getCurrent() {
+    return current;
+  }
 
-    public String getFallback() {
-        return fallback;
-    }
+  public String getFallback() {
+    return fallback;
+  }
 }

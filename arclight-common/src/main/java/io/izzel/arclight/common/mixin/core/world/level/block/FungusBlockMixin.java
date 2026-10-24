@@ -16,13 +16,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FungusBlock.class)
 public class FungusBlockMixin {
 
-    @SuppressWarnings("ConstantConditions")
-    @Inject(method = "performBonemeal", at = @At("HEAD"))
-    private void arclight$captureTree(ServerLevel worldIn, RandomSource rand, BlockPos pos, BlockState state, CallbackInfo ci) {
-        if ((Object) this == Blocks.WARPED_FUNGUS) {
-            ArclightCaptures.captureTreeType(TreeType.WARPED_FUNGUS);
-        } else if ((Object) this == Blocks.CRIMSON_FUNGUS) {
-            ArclightCaptures.captureTreeType(TreeType.CRIMSON_FUNGUS);
-        }
+  @SuppressWarnings("ConstantConditions")
+  @Inject(method = "performBonemeal", at = @At("HEAD"))
+  private void arclight$captureTree(
+      ServerLevel worldIn, RandomSource rand, BlockPos pos, BlockState state, CallbackInfo ci) {
+    if ((Object) this == Blocks.WARPED_FUNGUS) {
+      ArclightCaptures.captureTreeType(TreeType.WARPED_FUNGUS);
+    } else if ((Object) this == Blocks.CRIMSON_FUNGUS) {
+      ArclightCaptures.captureTreeType(TreeType.CRIMSON_FUNGUS);
     }
+  }
 }

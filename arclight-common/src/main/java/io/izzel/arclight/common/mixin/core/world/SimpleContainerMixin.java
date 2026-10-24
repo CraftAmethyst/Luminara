@@ -3,6 +3,8 @@ package io.izzel.arclight.common.mixin.core.world;
 import io.izzel.arclight.common.bridge.core.world.IInventoryBridge;
 import io.izzel.arclight.common.mod.mixins.annotation.CreateConstructor;
 import io.izzel.arclight.common.mod.mixins.annotation.ShadowConstructor;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -16,84 +18,79 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(SimpleContainer.class)
 public abstract class SimpleContainerMixin implements Container, IInventoryBridge {
 
-    // @formatter:off
-    @Shadow @Final public NonNullList<ItemStack> items;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final public NonNullList<ItemStack> items;
+  // @formatter:on
 
-    public List<HumanEntity> transaction = new ArrayList<>();
-    private int maxStack = MAX_STACK;
-    protected InventoryHolder bukkitOwner;
+  public List<HumanEntity> transaction = new ArrayList<>();
+  private int maxStack = MAX_STACK;
+  protected InventoryHolder bukkitOwner;
 
-    @ShadowConstructor
-    public void arclight$constructor(int numSlots) {
-        throw new RuntimeException();
-    }
+  @ShadowConstructor
+  public void arclight$constructor(int numSlots) {
+    throw new RuntimeException();
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(int numSlots, InventoryHolder owner) {
-        this.arclight$constructor(numSlots);
-        this.bukkitOwner = owner;
-    }
+  @CreateConstructor
+  public void arclight$constructor(int numSlots, InventoryHolder owner) {
+    this.arclight$constructor(numSlots);
+    this.bukkitOwner = owner;
+  }
 
-    @Override
-    public List<ItemStack> getContents() {
-        return this.items;
-    }
+  @Override
+  public List<ItemStack> getContents() {
+    return this.items;
+  }
 
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        transaction.add(who);
-    }
+  @Override
+  public void onOpen(CraftHumanEntity who) {
+    transaction.add(who);
+  }
 
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        transaction.remove(who);
-    }
+  @Override
+  public void onClose(CraftHumanEntity who) {
+    transaction.remove(who);
+  }
 
-    @Override
-    public List<HumanEntity> getViewers() {
-        return transaction;
-    }
+  @Override
+  public List<HumanEntity> getViewers() {
+    return transaction;
+  }
 
-    @Override
-    public InventoryHolder getOwner() {
-        return bukkitOwner;
-    }
+  @Override
+  public InventoryHolder getOwner() {
+    return bukkitOwner;
+  }
 
-    @Override
-    public void setOwner(InventoryHolder owner) {
-        this.bukkitOwner = owner;
-    }
+  @Override
+  public void setOwner(InventoryHolder owner) {
+    this.bukkitOwner = owner;
+  }
 
-    @Override
-    public int getMaxStackSize() {
-        if (maxStack == 0) maxStack = MAX_STACK;
-        return maxStack;
-    }
+  @Override
+  public int getMaxStackSize() {
+    if (maxStack == 0) maxStack = MAX_STACK;
+    return maxStack;
+  }
 
-    @Override
-    public void setMaxStackSize(int size) {
-        this.maxStack = size;
-    }
+  @Override
+  public void setMaxStackSize(int size) {
+    this.maxStack = size;
+  }
 
-    @Override
-    public Location getLocation() {
-        return null;
-    }
+  @Override
+  public Location getLocation() {
+    return null;
+  }
 
-    @Override
-    public RecipeHolder<?> getCurrentRecipe() {
-        return null;
-    }
+  @Override
+  public RecipeHolder<?> getCurrentRecipe() {
+    return null;
+  }
 
-    @Override
-    public void setCurrentRecipe(RecipeHolder<?> recipe) {
-
-    }
+  @Override
+  public void setCurrentRecipe(RecipeHolder<?> recipe) {}
 }

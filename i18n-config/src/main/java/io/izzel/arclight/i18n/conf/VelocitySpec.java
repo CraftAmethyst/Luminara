@@ -6,17 +6,17 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class VelocitySpec {
 
-    @Setting("enable")
-    private boolean enable;
+  @Setting("enable")
+  private boolean enable;
 
-    @Setting("secret")
-    private String secret;
+  @Setting("secret")
+  private String secret;
 
-    public boolean isEnable() {
-        return enable;
-    }
+  public boolean isEnable() {
+    return enable;
+  }
 
-    public String getSecret() {
-        return secret;
-    }
+  public String getSecret() {
+    return secret;
+  }
 }

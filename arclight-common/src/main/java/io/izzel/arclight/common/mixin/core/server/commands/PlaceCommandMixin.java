@@ -19,9 +19,24 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(PlaceCommand.class)
 public class PlaceCommandMixin {
 
-    @Inject(method = "placeStructure", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/structure/StructureStart;getBoundingBox()Lnet/minecraft/world/level/levelgen/structure/BoundingBox;"))
-    private static void arclight$cause(CommandSourceStack p_214588_, Holder.Reference<Structure> p_251799_, BlockPos p_214590_, CallbackInfoReturnable<Integer> cir,
-                                       ServerLevel level, Structure structure, ChunkGenerator chunkGenerator, StructureStart structureStart) {
-        ((StructureStartBridge) (Object) structureStart).bridge$setGenerateCause(AsyncStructureGenerateEvent.Cause.COMMAND);
-    }
+  @Inject(
+      method = "placeStructure",
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/levelgen/structure/StructureStart;getBoundingBox()Lnet/minecraft/world/level/levelgen/structure/BoundingBox;"))
+  private static void arclight$cause(
+      CommandSourceStack p_214588_,
+      Holder.Reference<Structure> p_251799_,
+      BlockPos p_214590_,
+      CallbackInfoReturnable<Integer> cir,
+      ServerLevel level,
+      Structure structure,
+      ChunkGenerator chunkGenerator,
+      StructureStart structureStart) {
+    ((StructureStartBridge) (Object) structureStart)
+        .bridge$setGenerateCause(AsyncStructureGenerateEvent.Cause.COMMAND);
+  }
 }

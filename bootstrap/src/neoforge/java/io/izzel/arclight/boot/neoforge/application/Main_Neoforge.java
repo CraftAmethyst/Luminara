@@ -14,31 +14,41 @@ import java.util.stream.Stream;
 
 public class Main_Neoforge {
 
-    public static void main(String[] args) throws Throwable {
-        try {
-            Map.Entry<String, List<String>> install = forgeInstall();
-            var cl = Class.forName(install.getKey());
-            var method = cl.getMethod("main", String[].class);
-            var target = Stream.concat(install.getValue().stream(), Arrays.stream(args)).toArray(String[]::new);
-            method.invoke(null, (Object) target);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Fail to launch Arclight.");
-            System.exit(-1);
-        }
+  public static void main(String[] args) throws Throwable {
+    try {
+      Map.Entry<String, List<String>> install = forgeInstall();
+      var cl = Class.forName(install.getKey());
+      var method = cl.getMethod("main", String[].class);
+      var target =
+          Stream.concat(install.getValue().stream(), Arrays.stream(args)).toArray(String[]::new);
+      method.invoke(null, (Object) target);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.err.println("Fail to launch Arclight.");
+      System.exit(-1);
     }
+  }
 
-    @SuppressWarnings("unchecked")
-    private static Map.Entry<String, List<String>> forgeInstall() throws Throwable {
-        var path = Paths.get(".arclight", "gson.jar");
-        if (!Files.exists(path)) {
-            Files.createDirectories(path.getParent());
-            Files.copy(Objects.requireNonNull(Main_Neoforge.class.getResourceAsStream("/gson.jar")), path);
-        }
-        try (var loader = new URLClassLoader(new URL[]{path.toUri().toURL(), Main_Neoforge.class.getProtectionDomain().getCodeSource().getLocation()}, ClassLoader.getPlatformClassLoader())) {
-            var cl = loader.loadClass("io.izzel.arclight.installer.NeoforgeInstaller");
-            var handle = MethodHandles.lookup().findStatic(cl, "applicationInstall", MethodType.methodType(Map.Entry.class));
-            return (Map.Entry<String, List<String>>) handle.invoke();
-        }
+  @SuppressWarnings("unchecked")
+  private static Map.Entry<String, List<String>> forgeInstall() throws Throwable {
+    var path = Paths.get(".arclight", "gson.jar");
+    if (!Files.exists(path)) {
+      Files.createDirectories(path.getParent());
+      Files.copy(
+          Objects.requireNonNull(Main_Neoforge.class.getResourceAsStream("/gson.jar")), path);
     }
+    try (var loader =
+        new URLClassLoader(
+            new URL[] {
+              path.toUri().toURL(),
+              Main_Neoforge.class.getProtectionDomain().getCodeSource().getLocation()
+            },
+            ClassLoader.getPlatformClassLoader())) {
+      var cl = loader.loadClass("io.izzel.arclight.installer.NeoforgeInstaller");
+      var handle =
+          MethodHandles.lookup()
+              .findStatic(cl, "applicationInstall", MethodType.methodType(Map.Entry.class));
+      return (Map.Entry<String, List<String>>) handle.invoke();
+    }
+  }
 }

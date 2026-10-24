@@ -7,19 +7,19 @@ import org.bukkit.craftbukkit.v.persistence.CraftPersistentDataContainer;
 
 public interface LevelChunkBridge {
 
-    Chunk bridge$getBukkitChunk();
+  Chunk bridge$getBukkitChunk();
 
-    BlockState bridge$setType(BlockPos pos, BlockState state, boolean isMoving, boolean doPlace);
+  BlockState bridge$setType(BlockPos pos, BlockState state, boolean isMoving, boolean doPlace);
 
-    boolean bridge$isMustNotSave();
+  boolean bridge$isMustNotSave();
 
-    void bridge$setMustNotSave(boolean mustNotSave);
+  void bridge$setMustNotSave(boolean mustNotSave);
 
-    boolean bridge$isNeedsDecoration();
+  boolean bridge$isNeedsDecoration();
 
-    void bridge$loadCallback();
+  void bridge$loadCallback();
 
-    void bridge$unloadCallback();
+  void bridge$unloadCallback();
 
-    CraftPersistentDataContainer bridge$getPersistentContainer();
+  CraftPersistentDataContainer bridge$getPersistentContainer();
 }

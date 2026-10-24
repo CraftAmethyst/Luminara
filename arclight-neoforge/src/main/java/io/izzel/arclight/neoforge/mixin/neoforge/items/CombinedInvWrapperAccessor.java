@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(CombinedInvWrapper.class)
 public interface CombinedInvWrapperAccessor {
-    @Invoker("getHandlerFromIndex")
-    IItemHandlerModifiable arclight$getHandlerFromIndex(int index);
+  @Invoker("getHandlerFromIndex")
+  IItemHandlerModifiable arclight$getHandlerFromIndex(int index);
 }

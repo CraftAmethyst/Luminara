@@ -5,5 +5,5 @@ import net.minecraft.world.entity.raid.Raider;
 
 public interface RaidBridge {
 
-    Collection<Raider> bridge$getRaiders();
+  Collection<Raider> bridge$getRaiders();
 }

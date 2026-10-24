@@ -8,12 +8,11 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(CraftingContainer.class)
 public interface CraftingContainerMixin extends IInventoryBridge {
 
-    @Override
-    default RecipeHolder<?> getCurrentRecipe() {
-        return null;
-    }
+  @Override
+  default RecipeHolder<?> getCurrentRecipe() {
+    return null;
+  }
 
-    @Override
-    default void setCurrentRecipe(RecipeHolder<?> recipe) {
-    }
+  @Override
+  default void setCurrentRecipe(RecipeHolder<?> recipe) {}
 }

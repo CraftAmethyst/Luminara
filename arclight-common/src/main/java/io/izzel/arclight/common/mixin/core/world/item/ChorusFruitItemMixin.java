@@ -15,10 +15,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChorusFruitItem.class)
 public class ChorusFruitItemMixin extends ItemMixin {
 
-    @Inject(method = "finishUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z"))
-    private void arclight$teleportCause(ItemStack itemStack, Level level, LivingEntity livingEntity, CallbackInfoReturnable<ItemStack> cir) {
-        if (livingEntity instanceof ServerPlayer p) {
-            ((ServerGamePacketListenerImplBridge) p.connection).bridge$pushTeleportCause(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
-        }
+  @Inject(
+      method = "finishUsingItem",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/LivingEntity;randomTeleport(DDDZ)Z"))
+  private void arclight$teleportCause(
+      ItemStack itemStack,
+      Level level,
+      LivingEntity livingEntity,
+      CallbackInfoReturnable<ItemStack> cir) {
+    if (livingEntity instanceof ServerPlayer p) {
+      ((ServerGamePacketListenerImplBridge) p.connection)
+          .bridge$pushTeleportCause(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
     }
+  }
 }

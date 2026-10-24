@@ -9,15 +9,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(targets = {
-        "net.minecraft.world.level.block.MultifaceSpreader$SpreadType$1",
-        "net.minecraft.world.level.block.MultifaceSpreader$SpreadType$2",
-        "net.minecraft.world.level.block.MultifaceSpreader$SpreadType$3"
-})
+@Mixin(
+    targets = {
+      "net.minecraft.world.level.block.MultifaceSpreader$SpreadType$1",
+      "net.minecraft.world.level.block.MultifaceSpreader$SpreadType$2",
+      "net.minecraft.world.level.block.MultifaceSpreader$SpreadType$3"
+    })
 public class MultifaceSpreader_SpreadTypeMixin {
 
-    @Inject(method = "getSpreadPos", at = @At("RETURN"))
-    private void arclight$attachSource(BlockPos pos, Direction face, Direction spreadDirection, CallbackInfoReturnable<MultifaceSpreader.SpreadPos> cir) {
-        ((MultifaceSpreaderSpreadPosBridge)(Object) cir.getReturnValue()).arclight$setSource(pos);
-    }
+  @Inject(method = "getSpreadPos", at = @At("RETURN"))
+  private void arclight$attachSource(
+      BlockPos pos,
+      Direction face,
+      Direction spreadDirection,
+      CallbackInfoReturnable<MultifaceSpreader.SpreadPos> cir) {
+    ((MultifaceSpreaderSpreadPosBridge) (Object) cir.getReturnValue()).arclight$setSource(pos);
+  }
 }

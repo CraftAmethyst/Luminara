@@ -23,14 +23,40 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(OceanRuinPieces.OceanRuinPiece.class)
 public class OceanRuinPiecesPieceMixin {
 
-    @Shadow @Final private boolean isLarge;
+  @Shadow @Final private boolean isLarge;
 
-    @Inject(method = "handleDataMarker", cancellable = true, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/ServerLevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    private void arclight$customSetLootChest(String s, BlockPos pos, ServerLevelAccessor level, RandomSource random, BoundingBox aabb, CallbackInfo ci) {
-        CraftChest chest = (CraftChest) CraftBlockStates.getBlockState(level, pos, Blocks.CHEST.defaultBlockState().setValue(ChestBlock.WATERLOGGED, level.getFluidState(pos).is(FluidTags.WATER)), null);
-        chest.setSeed(random.nextLong());
-        chest.setLootTable(CraftLootTable.minecraftToBukkit(isLarge ? BuiltInLootTables.UNDERWATER_RUIN_BIG : BuiltInLootTables.UNDERWATER_RUIN_SMALL));
-        ((StructurePieceBridge) this).bridge$placeCraftBlockEntity(level, pos, chest, 2);
-        ci.cancel();
-    }
+  @Inject(
+      method = "handleDataMarker",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 0,
+              target =
+                  "Lnet/minecraft/world/level/ServerLevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  private void arclight$customSetLootChest(
+      String s,
+      BlockPos pos,
+      ServerLevelAccessor level,
+      RandomSource random,
+      BoundingBox aabb,
+      CallbackInfo ci) {
+    CraftChest chest =
+        (CraftChest)
+            CraftBlockStates.getBlockState(
+                level,
+                pos,
+                Blocks.CHEST
+                    .defaultBlockState()
+                    .setValue(ChestBlock.WATERLOGGED, level.getFluidState(pos).is(FluidTags.WATER)),
+                null);
+    chest.setSeed(random.nextLong());
+    chest.setLootTable(
+        CraftLootTable.minecraftToBukkit(
+            isLarge
+                ? BuiltInLootTables.UNDERWATER_RUIN_BIG
+                : BuiltInLootTables.UNDERWATER_RUIN_SMALL));
+    ((StructurePieceBridge) this).bridge$placeCraftBlockEntity(level, pos, chest, 2);
+    ci.cancel();
+  }
 }

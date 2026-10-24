@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = CraftMetaItem.class, remap = false)
 public class CraftMetaItemMixin implements ItemMetaBridge {
 
-    // @formatter:off
-    @Shadow(remap = false) protected net.minecraft.core.component.DataComponentPatch.Builder unhandledTags;
-    // @formatter:on
+  // @formatter:off
+  @Shadow(remap = false)
+  protected net.minecraft.core.component.DataComponentPatch.Builder unhandledTags;
+  // @formatter:on
 }

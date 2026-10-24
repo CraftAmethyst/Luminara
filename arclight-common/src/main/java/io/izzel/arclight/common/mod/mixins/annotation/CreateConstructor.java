@@ -9,8 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface CreateConstructor {
 
-    @Retention(RetentionPolicy.CLASS)
-    @Target(ElementType.METHOD)
-    @interface Merged {
-    }
+  @Retention(RetentionPolicy.CLASS)
+  @Target(ElementType.METHOD)
+  @interface Merged {}
 }

@@ -16,13 +16,23 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(CakeBlock.class)
 public class CakeBlockMixin {
 
-    @Redirect(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;eat(IF)V"))
-    private static void arclight$eatCake(FoodData foodStats, int foodLevelIn, float foodSaturationModifier, LevelAccessor worldIn, BlockPos pos, BlockState state, Player player) {
-        int old = foodStats.getFoodLevel();
-        FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(player, old + foodLevelIn);
-        if (!event.isCancelled()) {
-            foodStats.eat(event.getFoodLevel() - old, foodSaturationModifier);
-        }
-        ((ServerPlayerBridge) player).bridge$getBukkitEntity().sendHealthUpdate();
+  @Redirect(
+      method = "eat",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;eat(IF)V"))
+  private static void arclight$eatCake(
+      FoodData foodStats,
+      int foodLevelIn,
+      float foodSaturationModifier,
+      LevelAccessor worldIn,
+      BlockPos pos,
+      BlockState state,
+      Player player) {
+    int old = foodStats.getFoodLevel();
+    FoodLevelChangeEvent event =
+        CraftEventFactory.callFoodLevelChangeEvent(player, old + foodLevelIn);
+    if (!event.isCancelled()) {
+      foodStats.eat(event.getFoodLevel() - old, foodSaturationModifier);
     }
+    ((ServerPlayerBridge) player).bridge$getBukkitEntity().sendHealthUpdate();
+  }
 }

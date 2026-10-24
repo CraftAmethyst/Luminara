@@ -12,12 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FireworkRocketEntity.class)
 public abstract class FireworkRocketEntityMixin extends EntityMixin {
 
-    @Inject(method = "explode", cancellable = true, at = @At("HEAD"))
-    private void arclight$fireworksExplode(CallbackInfo ci) {
-        if (CraftEventFactory.callFireworkExplodeEvent((FireworkRocketEntity) (Object) this).isCancelled()) {
-            ci.cancel();
-        } else {
-            this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.EXPLODE);
-        }
+  @Inject(method = "explode", cancellable = true, at = @At("HEAD"))
+  private void arclight$fireworksExplode(CallbackInfo ci) {
+    if (CraftEventFactory.callFireworkExplodeEvent((FireworkRocketEntity) (Object) this)
+        .isCancelled()) {
+      ci.cancel();
+    } else {
+      this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.EXPLODE);
     }
+  }
 }

@@ -12,24 +12,26 @@ import org.bukkit.inventory.InventoryView;
 
 public class ArclightInventoryView {
 
-    /*
-     * Treat all modded containers not having a "bottom" inventory.
-     */
-    public static InventoryView createInvView(AbstractContainerMenu container) {
-        var containerOwner = ArclightCaptures.getContainerOwner();
-        Inventory viewing = createInv(containerOwner, container);
-        return new CraftInventoryView<>(((PlayerBridge) containerOwner).bridge$getBukkitEntity(), viewing, container);
-    }
+  /*
+   * Treat all modded containers not having a "bottom" inventory.
+   */
+  public static InventoryView createInvView(AbstractContainerMenu container) {
+    var containerOwner = ArclightCaptures.getContainerOwner();
+    Inventory viewing = createInv(containerOwner, container);
+    return new CraftInventoryView<>(
+        ((PlayerBridge) containerOwner).bridge$getBukkitEntity(), viewing, container);
+  }
 
-    public static CraftInventory createInv(Player containerOwner, AbstractContainerMenu container) {
-        return new ArclightModdedMenuInventory(new ArclightModdedMenuContainer(container, containerOwner));
-    }
+  public static CraftInventory createInv(Player containerOwner, AbstractContainerMenu container) {
+    return new ArclightModdedMenuInventory(
+        new ArclightModdedMenuContainer(container, containerOwner));
+  }
 
-    public static SimpleContainer copyOf(SimpleContainer container) {
-        var copy = new SimpleContainer(container.getContainerSize());
-        for (int slot = 0; slot < container.getContainerSize(); slot++) {
-            copy.items.set(slot, container.items.get(slot).copy());
-        }
-        return copy;
+  public static SimpleContainer copyOf(SimpleContainer container) {
+    var copy = new SimpleContainer(container.getContainerSize());
+    for (int slot = 0; slot < container.getContainerSize(); slot++) {
+      copy.items.set(slot, container.items.get(slot).copy());
     }
+    return copy;
+  }
 }

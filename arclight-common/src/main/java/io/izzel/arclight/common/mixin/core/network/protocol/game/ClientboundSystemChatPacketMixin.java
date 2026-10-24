@@ -12,13 +12,13 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(ClientboundSystemChatPacket.class)
 public class ClientboundSystemChatPacketMixin {
 
-    @ShadowConstructor
-    public void arclight$constructor(Component content, boolean overlay) {
-        throw new RuntimeException();
-    }
+  @ShadowConstructor
+  public void arclight$constructor(Component content, boolean overlay) {
+    throw new RuntimeException();
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(BaseComponent[] content, boolean overlay) {
-        arclight$constructor(CraftChatMessage.fromJSON(ComponentSerializer.toString(content)), overlay);
-    }
+  @CreateConstructor
+  public void arclight$constructor(BaseComponent[] content, boolean overlay) {
+    arclight$constructor(CraftChatMessage.fromJSON(ComponentSerializer.toString(content)), overlay);
+  }
 }

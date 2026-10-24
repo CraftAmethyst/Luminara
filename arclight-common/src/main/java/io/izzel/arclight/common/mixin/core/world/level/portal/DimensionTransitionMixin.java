@@ -13,37 +13,66 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(DimensionTransition.class)
 public class DimensionTransitionMixin implements DimensionTransitionBridge {
 
-    @ShadowConstructor
-    public void arclight$constructor(ServerLevel newLevel, Vec3 pos, Vec3 speed, float yRot, float xRot, boolean missingRespawnBlock, DimensionTransition.PostDimensionTransition postDimensionTransition) {
-        throw new RuntimeException();
-    }
+  @ShadowConstructor
+  public void arclight$constructor(
+      ServerLevel newLevel,
+      Vec3 pos,
+      Vec3 speed,
+      float yRot,
+      float xRot,
+      boolean missingRespawnBlock,
+      DimensionTransition.PostDimensionTransition postDimensionTransition) {
+    throw new RuntimeException();
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(ServerLevel newLevel, Vec3 pos, Vec3 speed, float yRot, float xRot, boolean missingRespawnBlock, DimensionTransition.PostDimensionTransition postDimensionTransition, PlayerTeleportEvent.TeleportCause cause) {
-        arclight$constructor(newLevel, pos, speed, yRot, xRot, missingRespawnBlock, postDimensionTransition);
-        this.arclight$cause = cause;
-    }
+  @CreateConstructor
+  public void arclight$constructor(
+      ServerLevel newLevel,
+      Vec3 pos,
+      Vec3 speed,
+      float yRot,
+      float xRot,
+      boolean missingRespawnBlock,
+      DimensionTransition.PostDimensionTransition postDimensionTransition,
+      PlayerTeleportEvent.TeleportCause cause) {
+    arclight$constructor(
+        newLevel, pos, speed, yRot, xRot, missingRespawnBlock, postDimensionTransition);
+    this.arclight$cause = cause;
+  }
 
-    @ShadowConstructor
-    public void arclight$constructor(ServerLevel serverLevel, Vec3 vec3, Vec3 vec32, float f, float g, DimensionTransition.PostDimensionTransition postDimensionTransition) {
-        throw new RuntimeException();
-    }
+  @ShadowConstructor
+  public void arclight$constructor(
+      ServerLevel serverLevel,
+      Vec3 vec3,
+      Vec3 vec32,
+      float f,
+      float g,
+      DimensionTransition.PostDimensionTransition postDimensionTransition) {
+    throw new RuntimeException();
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(ServerLevel serverLevel, Vec3 vec3, Vec3 vec32, float f, float g, DimensionTransition.PostDimensionTransition postDimensionTransition, PlayerTeleportEvent.TeleportCause cause) {
-        arclight$constructor(serverLevel, vec3, vec32, f, g, postDimensionTransition);
-        this.arclight$cause = cause;
-    }
+  @CreateConstructor
+  public void arclight$constructor(
+      ServerLevel serverLevel,
+      Vec3 vec3,
+      Vec3 vec32,
+      float f,
+      float g,
+      DimensionTransition.PostDimensionTransition postDimensionTransition,
+      PlayerTeleportEvent.TeleportCause cause) {
+    arclight$constructor(serverLevel, vec3, vec32, f, g, postDimensionTransition);
+    this.arclight$cause = cause;
+  }
 
-    @Unique private PlayerTeleportEvent.TeleportCause arclight$cause;
+  @Unique private PlayerTeleportEvent.TeleportCause arclight$cause;
 
-    @Override
-    public void bridge$setTeleportCause(PlayerTeleportEvent.TeleportCause cause) {
-        arclight$cause = cause;
-    }
+  @Override
+  public void bridge$setTeleportCause(PlayerTeleportEvent.TeleportCause cause) {
+    arclight$cause = cause;
+  }
 
-    @Override
-    public PlayerTeleportEvent.TeleportCause bridge$getTeleportCause() {
-        return arclight$cause == null ? PlayerTeleportEvent.TeleportCause.UNKNOWN : arclight$cause;
-    }
+  @Override
+  public PlayerTeleportEvent.TeleportCause bridge$getTeleportCause() {
+    return arclight$cause == null ? PlayerTeleportEvent.TeleportCause.UNKNOWN : arclight$cause;
+  }
 }

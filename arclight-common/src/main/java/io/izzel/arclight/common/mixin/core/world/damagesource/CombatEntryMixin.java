@@ -8,15 +8,15 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(CombatEntry.class)
 public class CombatEntryMixin implements CombatEntryBridge {
 
-    private Component arclight$deathMessage;
+  private Component arclight$deathMessage;
 
-    @Override
-    public void bridge$setDeathMessage(Component component) {
-        this.arclight$deathMessage = component;
-    }
+  @Override
+  public void bridge$setDeathMessage(Component component) {
+    this.arclight$deathMessage = component;
+  }
 
-    @Override
-    public Component bridge$getDeathMessage() {
-        return this.arclight$deathMessage;
-    }
+  @Override
+  public Component bridge$getDeathMessage() {
+    return this.arclight$deathMessage;
+  }
 }

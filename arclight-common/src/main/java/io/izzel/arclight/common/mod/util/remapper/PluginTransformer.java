@@ -4,9 +4,9 @@ import org.objectweb.asm.tree.ClassNode;
 
 public interface PluginTransformer {
 
-    void handleClass(ClassNode node, ClassLoaderRemapper remapper, ArclightRemapConfig config);
+  void handleClass(ClassNode node, ClassLoaderRemapper remapper, ArclightRemapConfig config);
 
-    default int priority() {
-        return 0;
-    }
+  default int priority() {
+    return 0;
+  }
 }

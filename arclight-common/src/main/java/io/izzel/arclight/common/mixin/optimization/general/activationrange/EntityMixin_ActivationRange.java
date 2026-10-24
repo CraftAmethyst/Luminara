@@ -17,51 +17,61 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin_ActivationRange implements EntityBridge_ActivationRange, EntityBridge {
+public abstract class EntityMixin_ActivationRange
+    implements EntityBridge_ActivationRange, EntityBridge {
 
-    // @formatter:off
-    @Shadow public abstract void refreshDimensions();
-    @Shadow public int tickCount;
-    @Shadow public abstract Level level();
-    @Shadow public abstract AABB getBoundingBox();
-    @Shadow public abstract void discard();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract void refreshDimensions();
 
-    public ActivationRange.ActivationType activationType;
-    public boolean defaultActivationState;
-    public long activatedTick = Integer.MIN_VALUE;
+  @Shadow public int tickCount;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void arclight$init(EntityType<?> entityTypeIn, Level worldIn, CallbackInfo ci) {
-        activationType = ActivationRange.initializeEntityActivationType((Entity) (Object) this);
-        if (DistValidate.isValid(worldIn)) {
-            var config = ((WorldBridge) worldIn).bridge$spigotConfig();
-            if (config != null) {
-                this.defaultActivationState = ActivationRange.initializeEntityActivationState((Entity) (Object) this, config);
-            } else {
-                this.defaultActivationState = false;
-            }
-        } else {
-            this.defaultActivationState = false;
-        }
+  @Shadow
+  public abstract Level level();
+
+  @Shadow
+  public abstract AABB getBoundingBox();
+
+  @Shadow
+  public abstract void discard();
+
+  // @formatter:on
+
+  public ActivationRange.ActivationType activationType;
+  public boolean defaultActivationState;
+  public long activatedTick = Integer.MIN_VALUE;
+
+  @Inject(method = "<init>", at = @At("RETURN"))
+  private void arclight$init(EntityType<?> entityTypeIn, Level worldIn, CallbackInfo ci) {
+    activationType = ActivationRange.initializeEntityActivationType((Entity) (Object) this);
+    if (DistValidate.isValid(worldIn)) {
+      var config = ((WorldBridge) worldIn).bridge$spigotConfig();
+      if (config != null) {
+        this.defaultActivationState =
+            ActivationRange.initializeEntityActivationState((Entity) (Object) this, config);
+      } else {
+        this.defaultActivationState = false;
+      }
+    } else {
+      this.defaultActivationState = false;
     }
+  }
 
-    public void inactiveTick() {
-    }
+  public void inactiveTick() {}
 
-    @Override
-    public void bridge$inactiveTick() {
-        this.inactiveTick();
-    }
+  @Override
+  public void bridge$inactiveTick() {
+    this.inactiveTick();
+  }
 
-    @Override
-    public void bridge$updateActivation() {
-        if (ArclightConstants.currentTick > this.activatedTick) {
-            if (this.defaultActivationState) {
-                this.activatedTick = ArclightConstants.currentTick;
-            } else if (this.activationType.boundingBox.intersects(this.getBoundingBox())) {
-                this.activatedTick = ArclightConstants.currentTick;
-            }
-        }
+  @Override
+  public void bridge$updateActivation() {
+    if (ArclightConstants.currentTick > this.activatedTick) {
+      if (this.defaultActivationState) {
+        this.activatedTick = ArclightConstants.currentTick;
+      } else if (this.activationType.boundingBox.intersects(this.getBoundingBox())) {
+        this.activatedTick = ArclightConstants.currentTick;
+      }
     }
+  }
 }

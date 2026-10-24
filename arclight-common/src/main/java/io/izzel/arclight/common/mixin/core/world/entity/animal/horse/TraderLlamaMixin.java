@@ -10,8 +10,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TraderLlama.class)
 public abstract class TraderLlamaMixin extends LlamaMixin {
 
-    @Inject(method = "maybeDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/horse/TraderLlama;discard()V"))
-    private void arclight$despawn(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method = "maybeDespawn",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/animal/horse/TraderLlama;discard()V"))
+  private void arclight$despawn(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 }

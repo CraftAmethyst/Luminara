@@ -1,12 +1,13 @@
 package io.izzel.arclight.common.mixin.core.world.entity.monster;
 
-import io.izzel.arclight.common.bridge.core.world.entity.monster.CreeperBridge;
 import io.izzel.arclight.common.bridge.core.world.damagesource.DamageSourceBridge;
+import io.izzel.arclight.common.bridge.core.world.entity.monster.CreeperBridge;
 import io.izzel.arclight.common.bridge.core.world.level.WorldBridge;
 import io.izzel.arclight.common.mixin.core.world.entity.PathfinderMobMixin;
 import io.izzel.arclight.mixin.Decorate;
 import io.izzel.arclight.mixin.DecorationOps;
 import io.izzel.arclight.mixin.Local;
+import java.util.Collection;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -23,12 +24,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreeperPowerEvent;
-import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,77 +37,138 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Collection;
-
 @Mixin(Creeper.class)
 public abstract class CreeperMixin extends PathfinderMobMixin implements CreeperBridge {
 
-    // @formatter:off
-    @Shadow @Final private static EntityDataAccessor<Boolean> DATA_IS_POWERED;
-    @Shadow public int explosionRadius;
-    @Shadow protected abstract void spawnLingeringCloud();
-    @Shadow private int swell;
-    @Shadow public abstract boolean isPowered();
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private static EntityDataAccessor<Boolean> DATA_IS_POWERED;
+  @Shadow public int explosionRadius;
 
-    @Unique public Player entityIgniter; // CraftBukkit
-    @Unique private float eventRadius = 0f;
-    @Unique private boolean eventFire = false;
+  @Shadow
+  protected abstract void spawnLingeringCloud();
 
-    @Inject(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Creeper;ignite()V"))
-    private void arclight$catchIgniter(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> cir) {
-        this.entityIgniter = player;
+  @Shadow private int swell;
+
+  @Shadow
+  public abstract boolean isPowered();
+
+  // @formatter:on
+
+  @Unique public Player entityIgniter; // CraftBukkit
+  @Unique private float eventRadius = 0f;
+  @Unique private boolean eventFire = false;
+
+  @Inject(
+      method = "mobInteract",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Creeper;ignite()V"))
+  private void arclight$catchIgniter(
+      Player player,
+      InteractionHand interactionHand,
+      CallbackInfoReturnable<InteractionResult> cir) {
+    this.entityIgniter = player;
+  }
+
+  @Inject(
+      method = "thunderHit",
+      cancellable = true,
+      at =
+          @At(
+              value = "FIELD",
+              target =
+                  "Lnet/minecraft/world/entity/monster/Creeper;entityData:Lnet/minecraft/network/syncher/SynchedEntityData;"))
+  private void arclight$lightningBolt(
+      ServerLevel world, LightningBolt lightningBolt, CallbackInfo ci) {
+    if (CraftEventFactory.callCreeperPowerEvent(
+            (Creeper) (Object) this, lightningBolt, CreeperPowerEvent.PowerCause.LIGHTNING)
+        .isCancelled()) {
+      ci.cancel();
     }
+  }
 
-    @Inject(method = "thunderHit", cancellable = true, at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/monster/Creeper;entityData:Lnet/minecraft/network/syncher/SynchedEntityData;"))
-    private void arclight$lightningBolt(ServerLevel world, LightningBolt lightningBolt, CallbackInfo ci) {
-        if (CraftEventFactory.callCreeperPowerEvent((Creeper) (Object) this, lightningBolt, CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
-            ci.cancel();
-        }
+  /*
+   * @author IzzelAliz
+   * @reason
+   */
+  // Support Sophisticated Backpacks injecting into explode()
+  // @Overwrite
+  // public void explodeCreeper()
+
+  @Decorate(
+      method = "explodeCreeper",
+      at =
+          @At(
+              value = "FIELD",
+              opcode = Opcodes.PUTFIELD,
+              target = "Lnet/minecraft/world/entity/monster/Creeper;dead:Z"))
+  private void arclight$delaySetDead(Creeper instance, boolean value, @Local(ordinal = -1) float f)
+      throws Throwable {
+    final ExplosionPrimeEvent event =
+        new ExplosionPrimeEvent(this.getBukkitEntity(), this.explosionRadius * f, false);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      this.swell = 0;
+      DecorationOps.cancel().invoke();
+      return;
     }
+    this.eventRadius = event.getRadius();
+    this.eventFire = event.getFire();
+    DecorationOps.callsite().invoke(instance, value);
+  }
 
-    /*
-     * @author IzzelAliz
-     * @reason
-     */
-    //Support Sophisticated Backpacks injecting into explode()
-    //@Overwrite
-    //public void explodeCreeper()
+  // Use Redirect to preserve injection point
+  @Redirect(
+      method = "explodeCreeper",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;DDDFLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"))
+  private Explosion arclight$redirectExplode(
+      Level instance,
+      Entity arg,
+      double d,
+      double e,
+      double f,
+      float g,
+      Level.ExplosionInteraction arg2) {
+    return this.level()
+        .explode(
+            (Creeper) (Object) this,
+            ((DamageSourceBridge)
+                    Explosion.getDefaultDamageSource(level(), (Creeper) (Object) this))
+                .bridge$customCausingEntityDamager(entityIgniter),
+            null,
+            this.getX(),
+            this.getY(),
+            this.getZ(),
+            eventRadius,
+            eventFire,
+            Level.ExplosionInteraction.MOB);
+  }
 
-    @Decorate(method = "explodeCreeper", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/world/entity/monster/Creeper;dead:Z"))
-    private void arclight$delaySetDead(Creeper instance, boolean value, @Local(ordinal = -1) float f) throws Throwable {
-        final ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), this.explosionRadius * f, false);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            this.swell = 0;
-            DecorationOps.cancel().invoke();
-            return;
-        }
-        this.eventRadius = event.getRadius();
-        this.eventFire = event.getFire();
-        DecorationOps.callsite().invoke(instance, value);
-    }
+  @Inject(
+      method = "spawnLingeringCloud",
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private void arclight$creeperCloud(
+      CallbackInfo ci,
+      Collection<MobEffectInstance> collection,
+      AreaEffectCloud areaeffectcloudentity) {
+    areaeffectcloudentity.setOwner((Creeper) (Object) this);
+    ((WorldBridge) this.level())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.EXPLOSION);
+  }
 
-    // Use Redirect to preserve injection point
-    @Redirect(method = "explodeCreeper", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;DDDFLnet/minecraft/world/level/Level$ExplosionInteraction;)Lnet/minecraft/world/level/Explosion;"))
-    private Explosion arclight$redirectExplode(Level instance, Entity arg, double d, double e, double f, float g, Level.ExplosionInteraction arg2) {
-        return this.level().explode((Creeper) (Object) this,
-                ((DamageSourceBridge) Explosion.getDefaultDamageSource(level(), (Creeper) (Object) this)).bridge$customCausingEntityDamager(entityIgniter), null,
-                this.getX(), this.getY(), this.getZ(), eventRadius, eventFire, Level.ExplosionInteraction.MOB);
-    }
+  public void setPowered(boolean power) {
+    this.entityData.set(DATA_IS_POWERED, power);
+  }
 
-    @Inject(method = "spawnLingeringCloud", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$creeperCloud(CallbackInfo ci, Collection<MobEffectInstance> collection, AreaEffectCloud areaeffectcloudentity) {
-        areaeffectcloudentity.setOwner((Creeper) (Object) this);
-        ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.EXPLOSION);
-    }
-
-    public void setPowered(boolean power) {
-        this.entityData.set(DATA_IS_POWERED, power);
-    }
-
-    @Override
-    public void bridge$setPowered(boolean power) {
-        setPowered(power);
-    }
+  @Override
+  public void bridge$setPowered(boolean power) {
+    setPowered(power);
+  }
 }

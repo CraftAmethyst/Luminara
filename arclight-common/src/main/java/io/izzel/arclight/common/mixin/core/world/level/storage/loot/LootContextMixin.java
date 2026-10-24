@@ -5,5 +5,4 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(LootContext.class)
-public class LootContextMixin implements LootContextBridge {
-}
+public class LootContextMixin implements LootContextBridge {}

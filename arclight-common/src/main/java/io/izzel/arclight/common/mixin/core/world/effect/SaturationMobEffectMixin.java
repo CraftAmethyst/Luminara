@@ -16,15 +16,29 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(targets = "net.minecraft.world.effect.SaturationMobEffect")
 public class SaturationMobEffectMixin {
 
-    @Decorate(method = "applyEffectTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;eat(IF)V"))
-    private void arclight$foodLevelChange(FoodData foodStats, int foodLevelIn, float foodSaturationModifier, LivingEntity livingEntity, int amplifier) throws Throwable {
-        Player playerEntity = ((Player) livingEntity);
-        int oldFoodLevel = playerEntity.getFoodData().getFoodLevel();
-        FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(playerEntity, foodLevelIn + oldFoodLevel);
-        if (!event.isCancelled()) {
-            DecorationOps.callsite().invoke(foodStats, event.getFoodLevel() - oldFoodLevel, foodSaturationModifier);
-        }
-        ((ServerPlayer) playerEntity).connection.send(new ClientboundSetHealthPacket(((ServerPlayerBridge) playerEntity).bridge$getBukkitEntity().getScaledHealth(),
-            playerEntity.getFoodData().getFoodLevel(), playerEntity.getFoodData().getSaturationLevel()));
+  @Decorate(
+      method = "applyEffectTick",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;eat(IF)V"))
+  private void arclight$foodLevelChange(
+      FoodData foodStats,
+      int foodLevelIn,
+      float foodSaturationModifier,
+      LivingEntity livingEntity,
+      int amplifier)
+      throws Throwable {
+    Player playerEntity = ((Player) livingEntity);
+    int oldFoodLevel = playerEntity.getFoodData().getFoodLevel();
+    FoodLevelChangeEvent event =
+        CraftEventFactory.callFoodLevelChangeEvent(playerEntity, foodLevelIn + oldFoodLevel);
+    if (!event.isCancelled()) {
+      DecorationOps.callsite()
+          .invoke(foodStats, event.getFoodLevel() - oldFoodLevel, foodSaturationModifier);
     }
+    ((ServerPlayer) playerEntity)
+        .connection.send(
+            new ClientboundSetHealthPacket(
+                ((ServerPlayerBridge) playerEntity).bridge$getBukkitEntity().getScaledHealth(),
+                playerEntity.getFoodData().getFoodLevel(),
+                playerEntity.getFoodData().getSaturationLevel()));
+  }
 }

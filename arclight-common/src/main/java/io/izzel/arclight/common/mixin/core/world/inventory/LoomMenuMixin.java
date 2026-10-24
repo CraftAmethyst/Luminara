@@ -18,42 +18,52 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LoomMenu.class)
-public abstract class LoomMenuMixin extends AbstractContainerMenuMixin implements PosContainerBridge {
+public abstract class LoomMenuMixin extends AbstractContainerMenuMixin
+    implements PosContainerBridge {
 
-    // @formatter:off
-    @Shadow @Final private Container inputContainer;
-    @Shadow @Final private Container outputContainer;
-    @Shadow @Final private ContainerLevelAccess access;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private Container inputContainer;
+  @Shadow @Final private Container outputContainer;
+  @Shadow @Final private ContainerLevelAccess access;
+  // @formatter:on
 
-    private CraftLoomView bukkitEntity;
-    private Inventory playerInventory;
+  private CraftLoomView bukkitEntity;
+  private Inventory playerInventory;
 
-    @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
-    public void arclight$init(int id, Inventory playerInventory, ContainerLevelAccess worldCallable, CallbackInfo ci) {
-        this.playerInventory = playerInventory;
+  @Inject(
+      method =
+          "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
+      at = @At("RETURN"))
+  public void arclight$init(
+      int id, Inventory playerInventory, ContainerLevelAccess worldCallable, CallbackInfo ci) {
+    this.playerInventory = playerInventory;
+  }
+
+  @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
+  public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    if (!bridge$isCheckReachable()) {
+      cir.setReturnValue(true);
+    }
+  }
+
+  @Override
+  public CraftLoomView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
-        if (!bridge$isCheckReachable()) {
-            cir.setReturnValue(true);
-        }
-    }
+    CraftInventoryLoom inventory =
+        new CraftInventoryLoom(this.inputContainer, this.outputContainer);
+    bukkitEntity =
+        new CraftLoomView(
+            ((PlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            inventory,
+            (LoomMenu) (Object) this);
+    return bukkitEntity;
+  }
 
-    @Override
-    public CraftLoomView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventoryLoom inventory = new CraftInventoryLoom(this.inputContainer, this.outputContainer);
-        bukkitEntity = new CraftLoomView(((PlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(), inventory, (LoomMenu) (Object) this);
-        return bukkitEntity;
-    }
-
-    @Override
-    public ContainerLevelAccess bridge$getWorldPos() {
-        return this.access;
-    }
+  @Override
+  public ContainerLevelAccess bridge$getWorldPos() {
+    return this.access;
+  }
 }

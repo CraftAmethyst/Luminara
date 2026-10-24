@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Camel.class)
 public abstract class CamelMixin extends AbstractHorseMixin {
 
-    // @formatter:off
-    @Shadow public abstract void standUpInstantly();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract void standUpInstantly();
+  // @formatter:on
 }

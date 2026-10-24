@@ -18,21 +18,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(WanderingTrader.class)
 public abstract class WanderingTraderMixin extends AbstractVillagerMixin {
 
-    @Redirect(method = "updateTrades", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/trading/MerchantOffers;add(Ljava/lang/Object;)Z"))
-    private boolean arclight$gainOffer(MerchantOffers merchantOffers, Object e) {
-        MerchantOffer offer = (MerchantOffer) e;
-        VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent((AbstractVillager) getBukkitEntity(), ((MerchantOfferBridge) offer).bridge$asBukkit());
-        if (this.valid) {
-            Bukkit.getPluginManager().callEvent(event);
-        }
-        if (!event.isCancelled()) {
-            return merchantOffers.add(CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
-        }
-        return false;
+  @Redirect(
+      method = "updateTrades",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/item/trading/MerchantOffers;add(Ljava/lang/Object;)Z"))
+  private boolean arclight$gainOffer(MerchantOffers merchantOffers, Object e) {
+    MerchantOffer offer = (MerchantOffer) e;
+    VillagerAcquireTradeEvent event =
+        new VillagerAcquireTradeEvent(
+            (AbstractVillager) getBukkitEntity(), ((MerchantOfferBridge) offer).bridge$asBukkit());
+    if (this.valid) {
+      Bukkit.getPluginManager().callEvent(event);
     }
+    if (!event.isCancelled()) {
+      return merchantOffers.add(CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
+    }
+    return false;
+  }
 
-    @Inject(method = "maybeDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/WanderingTrader;discard()V"))
-    private void arclight$despawn(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method = "maybeDespawn",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/npc/WanderingTrader;discard()V"))
+  private void arclight$despawn(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 }

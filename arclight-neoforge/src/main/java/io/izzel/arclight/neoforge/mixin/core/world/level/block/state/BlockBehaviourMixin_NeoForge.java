@@ -12,13 +12,15 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(BlockBehaviour.class)
 public abstract class BlockBehaviourMixin_NeoForge implements BlockBehaviourBridge {
 
-    @Override
-    public boolean bridge$forge$canDropFromExplosion(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
-        return state.getBlock().canDropFromExplosion(state, level, pos, explosion);
-    }
+  @Override
+  public boolean bridge$forge$canDropFromExplosion(
+      BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+    return state.getBlock().canDropFromExplosion(state, level, pos, explosion);
+  }
 
-    @Override
-    public void bridge$forge$onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
-        state.getBlock().onBlockExploded(state, level, pos, explosion);
-    }
+  @Override
+  public void bridge$forge$onBlockExploded(
+      BlockState state, Level level, BlockPos pos, Explosion explosion) {
+    state.getBlock().onBlockExploded(state, level, pos, explosion);
+  }
 }

@@ -1,8 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.level;
 
 import io.izzel.arclight.common.bridge.core.world.entity.MobBridge;
-import io.izzel.arclight.common.bridge.core.world.level.WorldBridge;
 import io.izzel.arclight.common.bridge.core.world.level.BaseSpawnerBridge;
+import io.izzel.arclight.common.bridge.core.world.level.WorldBridge;
 import io.izzel.arclight.mixin.Decorate;
 import io.izzel.arclight.mixin.DecorationOps;
 import io.izzel.arclight.mixin.Local;
@@ -24,28 +24,42 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BaseSpawner.class)
 public abstract class BaseSpawnerMixin implements BaseSpawnerBridge {
 
-    // @formatter:off
-    @Shadow public SimpleWeightedRandomList<SpawnData> spawnPotentials;
-    // @formatter:on
+  // @formatter:off
+  @Shadow public SimpleWeightedRandomList<SpawnData> spawnPotentials;
 
-    @Inject(method = "setEntityId", at = @At("RETURN"))
-    public void arclight$clearMobs(CallbackInfo ci) {
-        this.spawnPotentials = SimpleWeightedRandomList.empty();
-    }
+  // @formatter:on
 
-    @Decorate(method = "serverTick", inject = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/SpawnData;getEquipment()Ljava/util/Optional;"))
-    private void arclight$nerf(@Local(ordinal = -1) Mob mob) {
-        if (((WorldBridge) mob.level()).bridge$spigotConfig().nerfSpawnerMobs) {
-            ((MobBridge) mob).bridge$setAware(false);
-        }
-    }
+  @Inject(method = "setEntityId", at = @At("RETURN"))
+  public void arclight$clearMobs(CallbackInfo ci) {
+    this.spawnPotentials = SimpleWeightedRandomList.empty();
+  }
 
-    @Decorate(method = "serverTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tryAddFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean arclight$spawnerSpawn(ServerLevel instance, Entity entity, ServerLevel level, BlockPos pos) throws Throwable {
-        if (CraftEventFactory.callSpawnerSpawnEvent(entity, pos).isCancelled()) {
-            throw DecorationOps.jumpToLoopStart();
-        }
-        ((WorldBridge) instance).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.SPAWNER);
-        return (boolean) DecorationOps.callsite().invoke(instance, entity);
+  @Decorate(
+      method = "serverTick",
+      inject = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/level/SpawnData;getEquipment()Ljava/util/Optional;"))
+  private void arclight$nerf(@Local(ordinal = -1) Mob mob) {
+    if (((WorldBridge) mob.level()).bridge$spigotConfig().nerfSpawnerMobs) {
+      ((MobBridge) mob).bridge$setAware(false);
     }
+  }
+
+  @Decorate(
+      method = "serverTick",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;tryAddFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)Z"))
+  private boolean arclight$spawnerSpawn(
+      ServerLevel instance, Entity entity, ServerLevel level, BlockPos pos) throws Throwable {
+    if (CraftEventFactory.callSpawnerSpawnEvent(entity, pos).isCancelled()) {
+      throw DecorationOps.jumpToLoopStart();
+    }
+    ((WorldBridge) instance).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.SPAWNER);
+    return (boolean) DecorationOps.callsite().invoke(instance, entity);
+  }
 }

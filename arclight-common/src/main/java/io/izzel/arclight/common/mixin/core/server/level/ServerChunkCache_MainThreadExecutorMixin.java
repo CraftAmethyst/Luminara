@@ -12,34 +12,40 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(targets = "net.minecraft.server.level.ServerChunkCache$MainThreadExecutor")
-public abstract class ServerChunkCache_MainThreadExecutorMixin extends BlockableEventLoop<Runnable> {
+public abstract class ServerChunkCache_MainThreadExecutorMixin
+    extends BlockableEventLoop<Runnable> {
 
-    // @formatter:off
-    @Shadow(aliases = {"this$0", "f_8491_", "field_18810"}, remap = false) @Final private ServerChunkCache outer;
-    // @formatter:on
+  // @formatter:off
+  @Shadow(
+      aliases = {"this$0", "f_8491_", "field_18810"},
+      remap = false)
+  @Final
+  private ServerChunkCache outer;
 
-    protected ServerChunkCache_MainThreadExecutorMixin(String nameIn) {
-        super(nameIn);
+  // @formatter:on
+
+  protected ServerChunkCache_MainThreadExecutorMixin(String nameIn) {
+    super(nameIn);
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public boolean pollTask() {
+    try {
+      if (((ServerChunkCacheBridge) outer).bridge$tickDistanceManager()) {
+        return true;
+      } else {
+        ((ServerChunkCacheBridge) outer).bridge$getLightManager().tryScheduleUpdate();
+        return super.pollTask();
+      }
+    } finally {
+      ((ChunkMapBridge) outer.chunkMap).bridge$getCallbackExecutor().run();
+      // InitAuther97: drain queued tasks when the server thread is waiting for chunks
+      // This carries the AsyncCatcher to ensure no timeout unexpectedly.
+      ((MinecraftServerBridge) ArclightServer.getMinecraftServer()).bridge$drainQueuedTasks();
     }
-
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public boolean pollTask() {
-        try {
-            if (((ServerChunkCacheBridge) outer).bridge$tickDistanceManager()) {
-                return true;
-            } else {
-                ((ServerChunkCacheBridge) outer).bridge$getLightManager().tryScheduleUpdate();
-                return super.pollTask();
-            }
-        } finally {
-            ((ChunkMapBridge) outer.chunkMap).bridge$getCallbackExecutor().run();
-            // InitAuther97: drain queued tasks when the server thread is waiting for chunks
-            // This carries the AsyncCatcher to ensure no timeout unexpectedly.
-            ((MinecraftServerBridge) ArclightServer.getMinecraftServer()).bridge$drainQueuedTasks();
-        }
-    }
+  }
 }

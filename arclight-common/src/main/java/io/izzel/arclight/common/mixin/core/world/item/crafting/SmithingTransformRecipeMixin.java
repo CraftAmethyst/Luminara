@@ -17,20 +17,26 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(SmithingTransformRecipe.class)
 public class SmithingTransformRecipeMixin implements RecipeBridge {
 
-    // @formatter:off
-    @Shadow @Final ItemStack result;
-    @Shadow @Final Ingredient template;
-    @Shadow @Final Ingredient base;
-    @Shadow @Final Ingredient addition;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final ItemStack result;
+  @Shadow @Final Ingredient template;
+  @Shadow @Final Ingredient base;
+  @Shadow @Final Ingredient addition;
 
-    @Override
-    public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
-        if (this.result.isEmpty()) {
-            return new ArclightSpecialRecipe(id, (SmithingTransformRecipe) (Object) this);
-        }
-        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
+  // @formatter:on
 
-        return new CraftSmithingTransformRecipe(id, result, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
+  @Override
+  public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
+    if (this.result.isEmpty()) {
+      return new ArclightSpecialRecipe(id, (SmithingTransformRecipe) (Object) this);
     }
+    CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
+
+    return new CraftSmithingTransformRecipe(
+        id,
+        result,
+        CraftRecipe.toBukkit(this.template),
+        CraftRecipe.toBukkit(this.base),
+        CraftRecipe.toBukkit(this.addition));
+  }
 }

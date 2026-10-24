@@ -17,14 +17,24 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(Pig.class)
 public abstract class PigMixin extends AnimalMixin {
 
-    @Inject(method = "thunderHit", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$pigZap(ServerLevel world, LightningBolt lightningBolt, CallbackInfo ci, ZombifiedPiglin piglin) {
-        if (CraftEventFactory.callPigZapEvent((Pig) (Object) this, lightningBolt, piglin).isCancelled()) {
-            ci.cancel();
-        } else {
-            ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.LIGHTNING);
-            this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.TRANSFORMATION);
-        }
+  @Inject(
+      method = "thunderHit",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private void arclight$pigZap(
+      ServerLevel world, LightningBolt lightningBolt, CallbackInfo ci, ZombifiedPiglin piglin) {
+    if (CraftEventFactory.callPigZapEvent((Pig) (Object) this, lightningBolt, piglin)
+        .isCancelled()) {
+      ci.cancel();
+    } else {
+      ((WorldBridge) this.level())
+          .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.LIGHTNING);
+      this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.TRANSFORMATION);
     }
+  }
 }

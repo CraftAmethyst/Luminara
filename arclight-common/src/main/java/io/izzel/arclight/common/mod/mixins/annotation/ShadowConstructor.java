@@ -9,8 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface ShadowConstructor {
 
-    @Retention(RetentionPolicy.CLASS)
-    @Target(ElementType.METHOD)
-    @interface Super {
-    }
+  @Retention(RetentionPolicy.CLASS)
+  @Target(ElementType.METHOD)
+  @interface Super {}
 }

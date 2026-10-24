@@ -16,19 +16,25 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(DragonEggBlock.class)
 public class DragonEggBlockMixin {
 
-    @Decorate(method = "teleport", inject = true, at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z"))
-    private void arclight$blockFromTo(BlockState blockState, Level world, BlockPos blockPos,
-                                     @Local(ordinal = -1) BlockPos pos) throws Throwable {
-        org.bukkit.block.Block from = CraftBlock.at(world, blockPos);
-        org.bukkit.block.Block to = CraftBlock.at(world, pos);
-        BlockFromToEvent event = new BlockFromToEvent(from, to);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            DecorationOps.cancel().invoke();
-            return;
-        } else {
-            pos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
-        }
-        DecorationOps.blackhole().invoke(pos);
+  @Decorate(
+      method = "teleport",
+      inject = true,
+      at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z"))
+  private void arclight$blockFromTo(
+      BlockState blockState, Level world, BlockPos blockPos, @Local(ordinal = -1) BlockPos pos)
+      throws Throwable {
+    org.bukkit.block.Block from = CraftBlock.at(world, blockPos);
+    org.bukkit.block.Block to = CraftBlock.at(world, pos);
+    BlockFromToEvent event = new BlockFromToEvent(from, to);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      DecorationOps.cancel().invoke();
+      return;
+    } else {
+      pos =
+          new BlockPos(
+              event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
     }
+    DecorationOps.blackhole().invoke(pos);
+  }
 }

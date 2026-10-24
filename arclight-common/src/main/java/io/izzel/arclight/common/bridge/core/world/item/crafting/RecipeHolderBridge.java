@@ -4,5 +4,5 @@ import org.bukkit.inventory.Recipe;
 
 public interface RecipeHolderBridge {
 
-    Recipe bridge$toBukkitRecipe();
+  Recipe bridge$toBukkitRecipe();
 }

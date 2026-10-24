@@ -17,23 +17,47 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ThrownEnderpearl.class)
 public abstract class ThrownEnderpearlMixin extends ThrowableProjectileMixin {
 
-    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/ThrownEnderpearl;discard()V"))
-    private void arclight$hit(HitResult hitResult, CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
-    }
+  @Inject(
+      method = "onHit",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/projectile/ThrownEnderpearl;discard()V"))
+  private void arclight$hit(HitResult hitResult, CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.HIT);
+  }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/ThrownEnderpearl;discard()V"))
-    private void arclight$despawn(CallbackInfo ci) {
-        this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
-    }
+  @Inject(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/projectile/ThrownEnderpearl;discard()V"))
+  private void arclight$despawn(CallbackInfo ci) {
+    this.bridge$pushEntityRemoveCause(EntityRemoveEvent.Cause.DESPAWN);
+  }
 
-    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$spawnEndermite(HitResult result, CallbackInfo ci) {
-        ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
-    }
+  @Inject(
+      method = "onHit",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private void arclight$spawnEndermite(HitResult result, CallbackInfo ci) {
+    ((WorldBridge) this.level())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
+  }
 
-    @Redirect(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSources;fall()Lnet/minecraft/world/damagesource/DamageSource;"))
-    private DamageSource arclight$entityDamage(DamageSources instance) {
-        return ((DamageSourceBridge) instance.fall()).bridge$customCausingEntity((ThrownEnderpearl) (Object) this);
-    }
+  @Redirect(
+      method = "onHit",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/damagesource/DamageSources;fall()Lnet/minecraft/world/damagesource/DamageSource;"))
+  private DamageSource arclight$entityDamage(DamageSources instance) {
+    return ((DamageSourceBridge) instance.fall())
+        .bridge$customCausingEntity((ThrownEnderpearl) (Object) this);
+  }
 }

@@ -19,29 +19,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CropBlock.class)
 public abstract class CropBlockMixin_NeoForge {
 
-    @Redirect(method = "entityInside", at = @At(value = "INVOKE", remap = false, target = "Lnet/neoforged/neoforge/event/EventHooks;canEntityGrief(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"))
-    public boolean arclight$entityChangeBlock(Level world, Entity entity, BlockState state, Level worldIn, BlockPos pos) {
-        boolean result = EventHooks.canEntityGrief(world, entity);
-        return !CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state, result);
-    }
+  @Redirect(
+      method = "entityInside",
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target =
+                  "Lnet/neoforged/neoforge/event/EventHooks;canEntityGrief(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;)Z"))
+  public boolean arclight$entityChangeBlock(
+      Level world, Entity entity, BlockState state, Level worldIn, BlockPos pos) {
+    boolean result = EventHooks.canEntityGrief(world, entity);
+    return !CraftEventFactory.callEntityChangeBlockEvent(entity, pos, state, result);
+  }
 
-    @Inject(method = "getGrowthSpeed", cancellable = true, at = @At("RETURN"))
-    private static void arclight$spigotModifier(BlockState state, BlockGetter blockGetter, BlockPos pos, CallbackInfoReturnable<Float> cir) {
-        var block = state.getBlock();
-        if (blockGetter instanceof WorldBridge bridge) {
-            int modifier;
-            if (block == Blocks.BEETROOTS) {
-                modifier = bridge.bridge$spigotConfig().beetrootModifier;
-            } else if (block == Blocks.CARROTS) {
-                modifier = bridge.bridge$spigotConfig().carrotModifier;
-            } else if (block == Blocks.POTATOES) {
-                modifier = bridge.bridge$spigotConfig().potatoModifier;
-            } else {
-                modifier = bridge.bridge$spigotConfig().wheatModifier;
-            }
-            var f = cir.getReturnValueF();
-            f /= (100F / modifier);
-            cir.setReturnValue(f);
-        }
+  @Inject(method = "getGrowthSpeed", cancellable = true, at = @At("RETURN"))
+  private static void arclight$spigotModifier(
+      BlockState state, BlockGetter blockGetter, BlockPos pos, CallbackInfoReturnable<Float> cir) {
+    var block = state.getBlock();
+    if (blockGetter instanceof WorldBridge bridge) {
+      int modifier;
+      if (block == Blocks.BEETROOTS) {
+        modifier = bridge.bridge$spigotConfig().beetrootModifier;
+      } else if (block == Blocks.CARROTS) {
+        modifier = bridge.bridge$spigotConfig().carrotModifier;
+      } else if (block == Blocks.POTATOES) {
+        modifier = bridge.bridge$spigotConfig().potatoModifier;
+      } else {
+        modifier = bridge.bridge$spigotConfig().wheatModifier;
+      }
+      var f = cir.getReturnValueF();
+      f /= (100F / modifier);
+      cir.setReturnValue(f);
     }
+  }
 }

@@ -25,50 +25,79 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ConcretePowderBlock.class)
 public abstract class ConcretePowderBlockMixin extends FallingBlockMixin {
 
-    // @formatter:off
-    @Shadow @Final private Block concrete;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private Block concrete;
 
-    @Decorate(method = "onLand", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public boolean arclight$blockForm(Level world, BlockPos pos, BlockState newState, int flags) throws Throwable {
-        if (LevelAccessorBridge.from(world) instanceof LevelAccessorBridge bridge) {
-            final var event = ArclightEventFactory.callBlockFormEvent(bridge.bridge$getMinecraftWorld(), pos, newState, flags, null);
-            if (event != null) {
-                if (event.isCancelled()) {
-                    return false;
-                }
-                newState = ((CraftBlockState) event.getNewState()).getHandle();
-            }
-        }
-        return (boolean) DecorationOps.callsite().invoke(world, pos, newState, flags);
-    }
+  // @formatter:on
 
-    @Redirect(method = "getStateForPlacement", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
-    public BlockState arclight$blockForm(Block instance, BlockPlaceContext context) {
-        Level world = context.getLevel();
-        BlockPos blockPos = context.getClickedPos();
-        CraftBlockState blockState = CraftBlockStates.getBlockState(world, blockPos);
-        blockState.setData(this.concrete.defaultBlockState());
-        BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            return blockState.getHandle();
+  @Decorate(
+      method = "onLand",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  public boolean arclight$blockForm(Level world, BlockPos pos, BlockState newState, int flags)
+      throws Throwable {
+    if (LevelAccessorBridge.from(world) instanceof LevelAccessorBridge bridge) {
+      final var event =
+          ArclightEventFactory.callBlockFormEvent(
+              bridge.bridge$getMinecraftWorld(), pos, newState, flags, null);
+      if (event != null) {
+        if (event.isCancelled()) {
+          return false;
         }
-        return super.getStateForPlacement(context);
+        newState = ((CraftBlockState) event.getNewState()).getHandle();
+      }
     }
+    return (boolean) DecorationOps.callsite().invoke(world, pos, newState, flags);
+  }
 
-    @Redirect(method = "updateShape", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
-    public BlockState arclight$blockForm(Block instance, BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
-        if (!(worldIn instanceof Level)) {
-            return this.concrete.defaultBlockState();
-        }
-        CraftBlockState blockState = CraftBlockStates.getBlockState(worldIn, currentPos);
-        blockState.setData(this.concrete.defaultBlockState());
-        BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            return blockState.getHandle();
-        }
-        return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+  @Redirect(
+      method = "getStateForPlacement",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
+  public BlockState arclight$blockForm(Block instance, BlockPlaceContext context) {
+    Level world = context.getLevel();
+    BlockPos blockPos = context.getClickedPos();
+    CraftBlockState blockState = CraftBlockStates.getBlockState(world, blockPos);
+    blockState.setData(this.concrete.defaultBlockState());
+    BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
+    Bukkit.getPluginManager().callEvent(event);
+    if (!event.isCancelled()) {
+      return blockState.getHandle();
     }
+    return super.getStateForPlacement(context);
+  }
+
+  @Redirect(
+      method = "updateShape",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
+  public BlockState arclight$blockForm(
+      Block instance,
+      BlockState stateIn,
+      Direction facing,
+      BlockState facingState,
+      LevelAccessor worldIn,
+      BlockPos currentPos,
+      BlockPos facingPos) {
+    if (!(worldIn instanceof Level)) {
+      return this.concrete.defaultBlockState();
+    }
+    CraftBlockState blockState = CraftBlockStates.getBlockState(worldIn, currentPos);
+    blockState.setData(this.concrete.defaultBlockState());
+    BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
+    Bukkit.getPluginManager().callEvent(event);
+    if (!event.isCancelled()) {
+      return blockState.getHandle();
+    }
+    return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+  }
 }

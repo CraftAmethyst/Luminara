@@ -11,23 +11,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(LevelStorageSource.LevelStorageAccess.class)
-public class LevelStorageSource_LevelStorageAccessMixin implements LevelStorageSourceBridge.LevelStorageAccessBridge {
+public class LevelStorageSource_LevelStorageAccessMixin
+    implements LevelStorageSourceBridge.LevelStorageAccessBridge {
 
-    public ResourceKey<LevelStem> dimensionType;
+  public ResourceKey<LevelStem> dimensionType;
 
-    @Override
-    public void bridge$setDimType(ResourceKey<LevelStem> typeKey) {
-        this.dimensionType = typeKey;
-    }
+  @Override
+  public void bridge$setDimType(ResourceKey<LevelStem> typeKey) {
+    this.dimensionType = typeKey;
+  }
 
-    @Override
-    public ResourceKey<LevelStem> bridge$getTypeKey() {
-        return this.dimensionType;
-    }
+  @Override
+  public ResourceKey<LevelStem> bridge$getTypeKey() {
+    return this.dimensionType;
+  }
 
-    @ModifyVariable(method = "getDimensionPath", argsOnly = true, ordinal = 0, at = @At("HEAD"))
-    private ResourceKey<Level> arclight$useActualType(ResourceKey<Level> value) {
-        final var type = dimensionType;
-        return type == null ? value : ResourceKey.create(Registries.DIMENSION, type.location());
-    }
+  @ModifyVariable(method = "getDimensionPath", argsOnly = true, ordinal = 0, at = @At("HEAD"))
+  private ResourceKey<Level> arclight$useActualType(ResourceKey<Level> value) {
+    final var type = dimensionType;
+    return type == null ? value : ResourceKey.create(Registries.DIMENSION, type.location());
+  }
 }

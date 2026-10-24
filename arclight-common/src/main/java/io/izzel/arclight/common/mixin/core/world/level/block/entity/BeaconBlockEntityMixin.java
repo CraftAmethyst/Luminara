@@ -19,52 +19,63 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BeaconBlockEntity.class)
 public abstract class BeaconBlockEntityMixin implements BeaconBlockEntityBridge {
 
-    // @formatter:off
-    @Shadow public int levels;
-    @Shadow @Nullable public Holder<MobEffect> primaryPower;
-    @Shadow @Nullable public Holder<MobEffect> secondaryPower;
-    // @formatter:on
+  // @formatter:off
+  @Shadow public int levels;
+  @Shadow @Nullable public Holder<MobEffect> primaryPower;
+  @Shadow @Nullable public Holder<MobEffect> secondaryPower;
 
-    @Inject(method = "loadAdditional", at = @At("RETURN"))
-    public void arclight$level(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
-        this.levels = compoundTag.getInt("Levels");
-    }
+  // @formatter:on
 
-    public PotionEffect getPrimaryEffect() {
-        return (this.primaryPower != null) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.primaryPower, this.getLevel(), this.getAmplification(), true, true)) : null;
-    }
+  @Inject(method = "loadAdditional", at = @At("RETURN"))
+  public void arclight$level(
+      CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
+    this.levels = compoundTag.getInt("Levels");
+  }
 
-    public PotionEffect getSecondaryEffect() {
-        return (this.hasSecondaryEffect()) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.secondaryPower, getLevel(), getAmplification(), true, true)) : null;
-    }
+  public PotionEffect getPrimaryEffect() {
+    return (this.primaryPower != null)
+        ? CraftPotionUtil.toBukkit(
+            new MobEffectInstance(
+                this.primaryPower, this.getLevel(), this.getAmplification(), true, true))
+        : null;
+  }
 
-    private byte getAmplification() {
-        byte b0 = 0;
-        if (this.levels >= 4 && this.primaryPower == this.secondaryPower) {
-            b0 = 1;
-        }
-        return b0;
-    }
+  public PotionEffect getSecondaryEffect() {
+    return (this.hasSecondaryEffect())
+        ? CraftPotionUtil.toBukkit(
+            new MobEffectInstance(this.secondaryPower, getLevel(), getAmplification(), true, true))
+        : null;
+  }
 
-    private int getLevel() {
-        int i = (9 + this.levels * 2) * 20;
-        return i;
+  private byte getAmplification() {
+    byte b0 = 0;
+    if (this.levels >= 4 && this.primaryPower == this.secondaryPower) {
+      b0 = 1;
     }
+    return b0;
+  }
 
-    private boolean hasSecondaryEffect() {
-        if (this.levels >= 4 && this.primaryPower != this.secondaryPower && this.secondaryPower != null) {
-            return true;
-        }
-        return false;
-    }
+  private int getLevel() {
+    int i = (9 + this.levels * 2) * 20;
+    return i;
+  }
 
-    @Override
-    public PotionEffect bridge$getPrimaryEffect() {
-        return getPrimaryEffect();
+  private boolean hasSecondaryEffect() {
+    if (this.levels >= 4
+        && this.primaryPower != this.secondaryPower
+        && this.secondaryPower != null) {
+      return true;
     }
+    return false;
+  }
 
-    @Override
-    public PotionEffect bridge$getSecondaryEffect() {
-        return getSecondaryEffect();
-    }
+  @Override
+  public PotionEffect bridge$getPrimaryEffect() {
+    return getPrimaryEffect();
+  }
+
+  @Override
+  public PotionEffect bridge$getSecondaryEffect() {
+    return getSecondaryEffect();
+  }
 }

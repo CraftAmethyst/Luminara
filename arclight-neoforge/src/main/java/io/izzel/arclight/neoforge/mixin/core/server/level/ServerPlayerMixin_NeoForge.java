@@ -17,20 +17,39 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin_NeoForge extends io.izzel.arclight.neoforge.mixin.core.world.entity.player.PlayerMixin_NeoForge implements ServerPlayerBridge {
+public abstract class ServerPlayerMixin_NeoForge
+    extends io.izzel.arclight.neoforge.mixin.core.world.entity.player.PlayerMixin_NeoForge
+    implements ServerPlayerBridge {
 
-    // @formatter:off
-    @Shadow @Final public MinecraftServer server;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final public MinecraftServer server;
 
-    @Inject(method = "lambda$startSleepInBed$13", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setRespawnPosition(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/BlockPos;FZZ)V"))
-    private void arclight$bedCause(BlockPos pos, CallbackInfoReturnable<Either<Player.BedSleepingProblem, Unit>> cir) {
-        this.bridge$pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause.BED);
-    }
+  // @formatter:on
 
-    @Redirect(method = "lambda$startSleepInBed$13", require = 0, at = @At(value = "INVOKE", remap = false, target = "Lcom/mojang/datafixers/util/Either;left(Ljava/lang/Object;)Lcom/mojang/datafixers/util/Either;"))
-    private <L, R> Either<L, R> arclight$failSleep(L value, BlockPos pos) {
-        Either<L, R> either = Either.left(value);
-        return bridge$fireBedEvent(either, pos);
-    }
+  @Inject(
+      method = "lambda$startSleepInBed$13",
+      require = 0,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerPlayer;setRespawnPosition(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/BlockPos;FZZ)V"))
+  private void arclight$bedCause(
+      BlockPos pos, CallbackInfoReturnable<Either<Player.BedSleepingProblem, Unit>> cir) {
+    this.bridge$pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause.BED);
+  }
+
+  @Redirect(
+      method = "lambda$startSleepInBed$13",
+      require = 0,
+      at =
+          @At(
+              value = "INVOKE",
+              remap = false,
+              target =
+                  "Lcom/mojang/datafixers/util/Either;left(Ljava/lang/Object;)Lcom/mojang/datafixers/util/Either;"))
+  private <L, R> Either<L, R> arclight$failSleep(L value, BlockPos pos) {
+    Either<L, R> either = Either.left(value);
+    return bridge$fireBedEvent(either, pos);
+  }
 }

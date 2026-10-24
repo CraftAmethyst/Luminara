@@ -1,8 +1,8 @@
 package io.izzel.arclight.common.mixin.core.server.rcon;
 
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
-import io.izzel.arclight.common.bridge.core.server.rcon.RconConsoleSourceBridge;
 import io.izzel.arclight.common.bridge.core.server.MinecraftServerBridge;
+import io.izzel.arclight.common.bridge.core.server.rcon.RconConsoleSourceBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.rcon.RconConsoleSource;
@@ -14,26 +14,27 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(RconConsoleSource.class)
 public class RconConsoleSourceMixin implements CommandSourceBridge, RconConsoleSourceBridge {
 
-    // @formatter:off
-    @Shadow @Final private StringBuffer buffer;
-    @Shadow @Final private MinecraftServer server;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private StringBuffer buffer;
+  @Shadow @Final private MinecraftServer server;
 
-    public CommandSender getBukkitSender() {
-        return ((MinecraftServerBridge) this.server).bridge$getRemoteConsole();
-    }
+  // @formatter:on
 
-    public void sendMessage(String message) {
-        this.buffer.append(message);
-    }
+  public CommandSender getBukkitSender() {
+    return ((MinecraftServerBridge) this.server).bridge$getRemoteConsole();
+  }
 
-    @Override
-    public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
-        return getBukkitSender();
-    }
+  public void sendMessage(String message) {
+    this.buffer.append(message);
+  }
 
-    @Override
-    public void bridge$sendMessage(String message) {
-        sendMessage(message);
-    }
+  @Override
+  public CommandSender bridge$getBukkitSender(CommandSourceStack wrapper) {
+    return getBukkitSender();
+  }
+
+  @Override
+  public void bridge$sendMessage(String message) {
+    sendMessage(message);
+  }
 }

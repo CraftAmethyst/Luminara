@@ -4,7 +4,6 @@ import io.izzel.arclight.common.bridge.core.server.level.ServerPlayerBridge;
 import io.izzel.arclight.common.bridge.core.world.level.LevelAccessorBridge;
 import io.izzel.arclight.common.mod.util.DistValidate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.PlaceOnWaterBlockItem;
@@ -28,48 +27,92 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin {
 
-    // @formatter:off
-    @Shadow protected abstract boolean mustSurvive();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  protected abstract boolean mustSurvive();
 
-    private transient org.bukkit.block.BlockState arclight$state;
+  // @formatter:on
 
-    @Inject(method = "place", locals = LocalCapture.CAPTURE_FAILHARD,
-        at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/item/BlockItem;getPlacementState(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;"))
-    private void arclight$prePlaceLilypad(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir, BlockPlaceContext context1) {
-        if ((Object) this instanceof PlaceOnWaterBlockItem || (Object) this instanceof SolidBucketItem) {
-            this.arclight$state = CraftBlockStates.getBlockState(context1.getLevel(), context1.getClickedPos());
+  private transient org.bukkit.block.BlockState arclight$state;
+
+  @Inject(
+      method = "place",
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/item/BlockItem;getPlacementState(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/level/block/state/BlockState;"))
+  private void arclight$prePlaceLilypad(
+      BlockPlaceContext context,
+      CallbackInfoReturnable<InteractionResult> cir,
+      BlockPlaceContext context1) {
+    if ((Object) this instanceof PlaceOnWaterBlockItem
+        || (Object) this instanceof SolidBucketItem) {
+      this.arclight$state =
+          CraftBlockStates.getBlockState(context1.getLevel(), context1.getClickedPos());
+    }
+  }
+
+  @Inject(
+      method = "place",
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/level/block/Block;setPlacedBy(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V"))
+  private void arclight$postPlaceLilypad(
+      BlockPlaceContext context,
+      CallbackInfoReturnable<InteractionResult> cir,
+      BlockPlaceContext context1) {
+    org.bukkit.block.BlockState state = arclight$state;
+    arclight$state = null;
+    BlockPos pos = context1.getClickedPos();
+    if (LevelAccessorBridge.from(context1.getLevel()) instanceof LevelAccessorBridge bridge
+        && state != null) {
+      org.bukkit.event.block.BlockPlaceEvent placeEvent =
+          CraftEventFactory.callBlockPlaceEvent(
+              bridge.bridge$getMinecraftWorld(),
+              context1.getPlayer(),
+              context1.getHand(),
+              state,
+              pos.getX(),
+              pos.getY(),
+              pos.getZ());
+      if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
+        state.update(true, false);
+        if ((Object) this instanceof SolidBucketItem) {
+          ((ServerPlayerBridge) context1.getPlayer()).bridge$getBukkitEntity().updateInventory();
         }
+        cir.setReturnValue(InteractionResult.FAIL);
+      }
     }
+  }
 
-    @Inject(method = "place", locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true,
-        at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/block/Block;setPlacedBy(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V"))
-    private void arclight$postPlaceLilypad(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir, BlockPlaceContext context1) {
-        org.bukkit.block.BlockState state = arclight$state;
-        arclight$state = null;
-        BlockPos pos = context1.getClickedPos();
-        if (LevelAccessorBridge.from(context1.getLevel()) instanceof LevelAccessorBridge bridge && state != null) {
-            org.bukkit.event.block.BlockPlaceEvent placeEvent = CraftEventFactory.callBlockPlaceEvent(bridge.bridge$getMinecraftWorld(), context1.getPlayer(), context1.getHand(), state, pos.getX(), pos.getY(), pos.getZ());
-            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
-                state.update(true, false);
-                if ((Object) this instanceof SolidBucketItem) {
-                    ((ServerPlayerBridge) context1.getPlayer()).bridge$getBukkitEntity().updateInventory();
-                }
-                cir.setReturnValue(InteractionResult.FAIL);
-            }
-        }
-    }
+  @Inject(method = "place", at = @At("RETURN"))
+  private void arclight$cleanup(
+      BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir) {
+    this.arclight$state = null;
+  }
 
-    @Inject(method = "place", at = @At("RETURN"))
-    private void arclight$cleanup(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir) {
-        this.arclight$state = null;
-    }
-
-    @Inject(method = "canPlace", cancellable = true, at = @At("RETURN"))
-    private void arclight$blockCanBuild(BlockPlaceContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        Player player = (context.getPlayer() instanceof ServerPlayerBridge) ? ((ServerPlayerBridge) context.getPlayer()).bridge$getBukkitEntity() : null;
-        BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(context.getLevel(), context.getClickedPos()), player, CraftBlockData.fromData(state), cir.getReturnValue());
-        if (DistValidate.isValid(context)) Bukkit.getPluginManager().callEvent(event);
-        cir.setReturnValue(event.isBuildable());
-    }
+  @Inject(method = "canPlace", cancellable = true, at = @At("RETURN"))
+  private void arclight$blockCanBuild(
+      BlockPlaceContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
+    Player player =
+        (context.getPlayer() instanceof ServerPlayerBridge)
+            ? ((ServerPlayerBridge) context.getPlayer()).bridge$getBukkitEntity()
+            : null;
+    BlockCanBuildEvent event =
+        new BlockCanBuildEvent(
+            CraftBlock.at(context.getLevel(), context.getClickedPos()),
+            player,
+            CraftBlockData.fromData(state),
+            cir.getReturnValue());
+    if (DistValidate.isValid(context)) Bukkit.getPluginManager().callEvent(event);
+    cir.setReturnValue(event.isBuildable());
+  }
 }

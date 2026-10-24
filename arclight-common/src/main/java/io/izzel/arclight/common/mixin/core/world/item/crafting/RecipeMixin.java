@@ -9,12 +9,12 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(net.minecraft.world.item.crafting.Recipe.class)
 public interface RecipeMixin extends RecipeBridge {
 
-    default Recipe toBukkitRecipe(NamespacedKey id) {
-        return bridge$toBukkitRecipe(id);
-    }
+  default Recipe toBukkitRecipe(NamespacedKey id) {
+    return bridge$toBukkitRecipe(id);
+  }
 
-    @Override
-    default Recipe bridge$toBukkitRecipe(NamespacedKey id) {
-        return new ArclightSpecialRecipe(id, (net.minecraft.world.item.crafting.Recipe<?>) this);
-    }
+  @Override
+  default Recipe bridge$toBukkitRecipe(NamespacedKey id) {
+    return new ArclightSpecialRecipe(id, (net.minecraft.world.item.crafting.Recipe<?>) this);
+  }
 }

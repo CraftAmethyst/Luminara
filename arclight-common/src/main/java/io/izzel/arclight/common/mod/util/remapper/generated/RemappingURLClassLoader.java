@@ -3,7 +3,6 @@ package io.izzel.arclight.common.mod.util.remapper.generated;
 import com.google.common.io.ByteStreams;
 import io.izzel.arclight.common.mod.util.remapper.*;
 import io.izzel.tools.product.Product2;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -17,94 +16,98 @@ import java.util.jar.Manifest;
 
 public class RemappingURLClassLoader extends URLClassLoader implements RemappingClassLoader {
 
-    static {
-        ClassLoader.registerAsParallelCapable();
-    }
+  static {
+    ClassLoader.registerAsParallelCapable();
+  }
 
-    // Sample using remap config
-    public ArclightRemapConfig config = new ArclightRemapConfig(ClassLoaderRemapping.canRemap(this));
+  // Sample using remap config
+  public ArclightRemapConfig config = new ArclightRemapConfig(ClassLoaderRemapping.canRemap(this));
 
-    public RemappingURLClassLoader(URL[] urls, ClassLoader parent) {
-        super(urls, ClassLoaderRemapping.tryRedirect(parent));
-    }
+  public RemappingURLClassLoader(URL[] urls, ClassLoader parent) {
+    super(urls, ClassLoaderRemapping.tryRedirect(parent));
+  }
 
-    public RemappingURLClassLoader(URL[] urls) {
-        super(urls, ClassLoaderRemapping.tryRedirect(null));
-    }
+  public RemappingURLClassLoader(URL[] urls) {
+    super(urls, ClassLoaderRemapping.tryRedirect(null));
+  }
 
-    public RemappingURLClassLoader(URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
-        super(urls, ClassLoaderRemapping.tryRedirect(parent), factory);
-    }
+  public RemappingURLClassLoader(URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
+    super(urls, ClassLoaderRemapping.tryRedirect(parent), factory);
+  }
 
-    public RemappingURLClassLoader(String name, URL[] urls, ClassLoader parent) {
-        super(name, urls, ClassLoaderRemapping.tryRedirect(parent));
-    }
+  public RemappingURLClassLoader(String name, URL[] urls, ClassLoader parent) {
+    super(name, urls, ClassLoaderRemapping.tryRedirect(parent));
+  }
 
-    public RemappingURLClassLoader(String name, URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
-        super(name, urls, ClassLoaderRemapping.tryRedirect(parent), factory);
-    }
+  public RemappingURLClassLoader(
+      String name, URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
+    super(name, urls, ClassLoaderRemapping.tryRedirect(parent), factory);
+  }
 
-    @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        Class<?> result = null;
-        String path = name.replace('.', '/').concat(".class");
-        URL resource = this.getResource(path);
-        if (resource != null) {
-            URLConnection connection;
-            Callable<byte[]> byteSource;
-            Manifest manifest;
-            try {
-                connection = resource.openConnection();
-                connection.connect();
-                if (connection instanceof JarURLConnection && ((JarURLConnection) connection).getManifest() != null) {
-                    manifest = ((JarURLConnection) connection).getManifest();
-                } else {
-                    manifest = null;
-                }
-                byteSource = () -> {
-                    try (InputStream is = connection.getInputStream()) {
-                        byte[] classBytes = ByteStreams.toByteArray(is);
-                        classBytes = ArclightRemapper.SWITCH_TABLE_FIXER.apply(classBytes);
-                        return classBytes;
-                    }
-                };
-            } catch (IOException e) {
-                throw new ClassNotFoundException(name, e);
-            }
-
-            Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection, config);
-
-            int i = name.lastIndexOf('.');
-            if (i != -1) {
-                String pkgName = name.substring(0, i);
-                if (getPackage(pkgName) == null) {
-                    if (manifest != null) {
-                        this.definePackage(pkgName, manifest, ((JarURLConnection) connection).getJarFileURL());
-                    } else {
-                        this.definePackage(pkgName, null, null, null, null, null, null, null);
-                    }
-                }
-            }
-            result = this.defineClass(name, classBytes._1, 0, classBytes._1.length, classBytes._2);
+  @Override
+  protected Class<?> findClass(String name) throws ClassNotFoundException {
+    Class<?> result = null;
+    String path = name.replace('.', '/').concat(".class");
+    URL resource = this.getResource(path);
+    if (resource != null) {
+      URLConnection connection;
+      Callable<byte[]> byteSource;
+      Manifest manifest;
+      try {
+        connection = resource.openConnection();
+        connection.connect();
+        if (connection instanceof JarURLConnection
+            && ((JarURLConnection) connection).getManifest() != null) {
+          manifest = ((JarURLConnection) connection).getManifest();
+        } else {
+          manifest = null;
         }
-        if (result == null) {
-            throw new ClassNotFoundException(name);
+        byteSource =
+            () -> {
+              try (InputStream is = connection.getInputStream()) {
+                byte[] classBytes = ByteStreams.toByteArray(is);
+                classBytes = ArclightRemapper.SWITCH_TABLE_FIXER.apply(classBytes);
+                return classBytes;
+              }
+            };
+      } catch (IOException e) {
+        throw new ClassNotFoundException(name, e);
+      }
+
+      Product2<byte[], CodeSource> classBytes =
+          this.getRemapper().remapClass(name, byteSource, connection, config);
+
+      int i = name.lastIndexOf('.');
+      if (i != -1) {
+        String pkgName = name.substring(0, i);
+        if (getPackage(pkgName) == null) {
+          if (manifest != null) {
+            this.definePackage(pkgName, manifest, ((JarURLConnection) connection).getJarFileURL());
+          } else {
+            this.definePackage(pkgName, null, null, null, null, null, null, null);
+          }
         }
-        return result;
+      }
+      result = this.defineClass(name, classBytes._1, 0, classBytes._1.length, classBytes._2);
     }
-
-    private ClassLoaderRemapper remapper;
-
-    @Override
-    public ClassLoaderRemapper getRemapper() {
-        if (remapper == null) {
-            remapper = ArclightRemapper.createClassLoaderRemapper(this);
-        }
-        return remapper;
+    if (result == null) {
+      throw new ClassNotFoundException(name);
     }
+    return result;
+  }
 
-    @Override
-    public ArclightRemapConfig getRemapConfig() {
-        return config;
+  private ClassLoaderRemapper remapper;
+
+  @Override
+  public ClassLoaderRemapper getRemapper() {
+    if (remapper == null) {
+      remapper = ArclightRemapper.createClassLoaderRemapper(this);
     }
+    return remapper;
+  }
+
+  @Override
+  public ArclightRemapConfig getRemapConfig() {
+    return config;
+  }
 }

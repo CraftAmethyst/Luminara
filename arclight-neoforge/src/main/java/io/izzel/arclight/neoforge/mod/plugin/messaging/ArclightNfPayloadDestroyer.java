@@ -5,7 +5,8 @@ import io.izzel.arclight.common.mod.plugin.messaging.ArclightRawPayload;
 import io.izzel.arclight.common.mod.plugin.messaging.PayloadDestroyer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record ArclightNfPayloadDestroyer(ArclightPluginChannel<ArclightNfPayloadDestroyer> channel) implements NeoforgePayloadHandler, PayloadDestroyer {
-    @Override
-    public void handle(ArclightRawPayload arg, IPayloadContext iPayloadContext) {}
+public record ArclightNfPayloadDestroyer(ArclightPluginChannel<ArclightNfPayloadDestroyer> channel)
+    implements NeoforgePayloadHandler, PayloadDestroyer {
+  @Override
+  public void handle(ArclightRawPayload arg, IPayloadContext iPayloadContext) {}
 }

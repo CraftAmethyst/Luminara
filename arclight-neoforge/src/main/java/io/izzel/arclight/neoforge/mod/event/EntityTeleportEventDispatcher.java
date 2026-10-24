@@ -13,24 +13,36 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 // TODO common impl
 public class EntityTeleportEventDispatcher {
 
-    @SubscribeEvent(receiveCanceled = true)
-    public void onTeleport(net.neoforged.neoforge.event.entity.EntityTeleportEvent.EnderEntity event) {
-        if (event.getEntity() instanceof ServerPlayer) {
-            CraftPlayer player = ((ServerPlayerBridge) event.getEntity()).bridge$getBukkitEntity();
-            PlayerTeleportEvent bukkitEvent = new PlayerTeleportEvent(player, player.getLocation(), new Location(player.getWorld(), event.getTargetX(), event.getTargetY(), event.getTargetZ()), PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
-            Bukkit.getPluginManager().callEvent(bukkitEvent);
-            event.setCanceled(bukkitEvent.isCancelled());
-            event.setTargetX(bukkitEvent.getTo().getX());
-            event.setTargetY(bukkitEvent.getTo().getY());
-            event.setTargetZ(bukkitEvent.getTo().getZ());
-        } else {
-            CraftEntity entity = event.getEntity().bridge$getBukkitEntity();
-            EntityTeleportEvent bukkitEvent = new EntityTeleportEvent(entity, entity.getLocation(), new Location(entity.getWorld(), event.getTargetX(), event.getTargetY(), event.getTargetZ()));
-            Bukkit.getPluginManager().callEvent(bukkitEvent);
-            event.setCanceled(bukkitEvent.isCancelled());
-            event.setTargetX(bukkitEvent.getTo().getX());
-            event.setTargetY(bukkitEvent.getTo().getY());
-            event.setTargetZ(bukkitEvent.getTo().getZ());
-        }
+  @SubscribeEvent(receiveCanceled = true)
+  public void onTeleport(
+      net.neoforged.neoforge.event.entity.EntityTeleportEvent.EnderEntity event) {
+    if (event.getEntity() instanceof ServerPlayer) {
+      CraftPlayer player = ((ServerPlayerBridge) event.getEntity()).bridge$getBukkitEntity();
+      PlayerTeleportEvent bukkitEvent =
+          new PlayerTeleportEvent(
+              player,
+              player.getLocation(),
+              new Location(
+                  player.getWorld(), event.getTargetX(), event.getTargetY(), event.getTargetZ()),
+              PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
+      Bukkit.getPluginManager().callEvent(bukkitEvent);
+      event.setCanceled(bukkitEvent.isCancelled());
+      event.setTargetX(bukkitEvent.getTo().getX());
+      event.setTargetY(bukkitEvent.getTo().getY());
+      event.setTargetZ(bukkitEvent.getTo().getZ());
+    } else {
+      CraftEntity entity = event.getEntity().bridge$getBukkitEntity();
+      EntityTeleportEvent bukkitEvent =
+          new EntityTeleportEvent(
+              entity,
+              entity.getLocation(),
+              new Location(
+                  entity.getWorld(), event.getTargetX(), event.getTargetY(), event.getTargetZ()));
+      Bukkit.getPluginManager().callEvent(bukkitEvent);
+      event.setCanceled(bukkitEvent.isCancelled());
+      event.setTargetX(bukkitEvent.getTo().getX());
+      event.setTargetY(bukkitEvent.getTo().getY());
+      event.setTargetZ(bukkitEvent.getTo().getZ());
     }
+  }
 }

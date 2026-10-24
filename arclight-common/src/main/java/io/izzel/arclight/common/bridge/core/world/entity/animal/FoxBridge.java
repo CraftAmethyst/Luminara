@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface FoxBridge extends AnimalBridge {
 
-    void bridge$addTrustedUUID(UUID uuidIn);
+  void bridge$addTrustedUUID(UUID uuidIn);
 }

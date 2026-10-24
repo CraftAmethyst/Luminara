@@ -4,4 +4,5 @@ import io.izzel.arclight.common.mod.plugin.messaging.ArclightRawPayload;
 import io.izzel.arclight.common.mod.plugin.messaging.PluginChannelHandler;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 
-public interface NeoforgePayloadHandler extends PluginChannelHandler, IPayloadHandler<ArclightRawPayload> {}
+public interface NeoforgePayloadHandler
+    extends PluginChannelHandler, IPayloadHandler<ArclightRawPayload> {}

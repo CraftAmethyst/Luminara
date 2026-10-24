@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(value = CraftBlockEntityState.class, remap = false)
 public interface CraftBlockEntityStateAccessor {
-    @Accessor("tileEntity")
-    BlockEntity arclight$getBlockEntity();
+  @Accessor("tileEntity")
+  BlockEntity arclight$getBlockEntity();
 }

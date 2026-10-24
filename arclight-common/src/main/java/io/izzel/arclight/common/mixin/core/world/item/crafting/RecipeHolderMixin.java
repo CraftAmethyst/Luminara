@@ -11,17 +11,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(RecipeHolder.class)
-public class RecipeHolderMixin<T extends net.minecraft.world.item.crafting.Recipe<?>> implements RecipeHolderBridge {
+public class RecipeHolderMixin<T extends net.minecraft.world.item.crafting.Recipe<?>>
+    implements RecipeHolderBridge {
 
-    @Shadow @Final private T value;
-    @Shadow @Final private ResourceLocation id;
+  @Shadow @Final private T value;
+  @Shadow @Final private ResourceLocation id;
 
-    @Override
-    public Recipe bridge$toBukkitRecipe() {
-        return toBukkitRecipe();
-    }
+  @Override
+  public Recipe bridge$toBukkitRecipe() {
+    return toBukkitRecipe();
+  }
 
-    public Recipe toBukkitRecipe() {
-        return ((RecipeBridge) this.value).bridge$toBukkitRecipe(CraftNamespacedKey.fromMinecraft(this.id));
-    }
+  public Recipe toBukkitRecipe() {
+    return ((RecipeBridge) this.value)
+        .bridge$toBukkitRecipe(CraftNamespacedKey.fromMinecraft(this.id));
+  }
 }

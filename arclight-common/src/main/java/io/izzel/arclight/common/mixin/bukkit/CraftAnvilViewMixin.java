@@ -12,23 +12,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = CraftAnvilView.class, remap = false)
 public abstract class CraftAnvilViewMixin extends CraftInventoryViewMixin {
 
-    @Decorate(method = "setRepairCost", at = @At("HEAD"), inject = true)
-    private void arclight$handleZeroCost(int cost) throws Throwable {
-        if (cost == 0) {
-            ((AnvilMenuBridge) this.container).arclight$allowZeroCost();
-        } else if (cost == -1) {
-            cost = 0;
-        }
-        DecorationOps.blackhole().invoke(cost);
+  @Decorate(method = "setRepairCost", at = @At("HEAD"), inject = true)
+  private void arclight$handleZeroCost(int cost) throws Throwable {
+    if (cost == 0) {
+      ((AnvilMenuBridge) this.container).arclight$allowZeroCost();
+    } else if (cost == -1) {
+      cost = 0;
     }
+    DecorationOps.blackhole().invoke(cost);
+  }
 
-    @Inject(method = "getRepairCost", at = @At("RETURN"), cancellable = true)
-    private void arclight$translateToNegativeCost(CallbackInfoReturnable<Integer> cir) {
-        if (cir.getReturnValueI() == 0) {
-            final boolean allowed = ((AnvilMenuBridge) this.container).arclight$isZeroCostAllowed();
-            if (!allowed) {
-                cir.setReturnValue(-1);
-            }
-        }
+  @Inject(method = "getRepairCost", at = @At("RETURN"), cancellable = true)
+  private void arclight$translateToNegativeCost(CallbackInfoReturnable<Integer> cir) {
+    if (cir.getReturnValueI() == 0) {
+      final boolean allowed = ((AnvilMenuBridge) this.container).arclight$isZeroCostAllowed();
+      if (!allowed) {
+        cir.setReturnValue(-1);
+      }
     }
+  }
 }

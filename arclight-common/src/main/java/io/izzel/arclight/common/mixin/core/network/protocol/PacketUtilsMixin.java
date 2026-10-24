@@ -17,39 +17,49 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(PacketUtils.class)
 public abstract class PacketUtilsMixin {
 
-    // @formatter:off
-    @Shadow @Final private static Logger LOGGER;
-    @Shadow public static <T extends PacketListener> ReportedException makeReportedException(Exception exception, Packet<T> packet, T packetListener) { throw new RuntimeException(); }
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private static Logger LOGGER;
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> packetIn, T processor, BlockableEventLoop<?> executor) throws RunningOnDifferentThreadException {
-        if (!executor.isSameThread()) {
-            executor.executeIfPossible(() -> {
-                if (processor instanceof ServerCommonPacketListenerImpl && ((ServerCommonPacketListenerImplBridge) processor).bridge$processedDisconnect()) {
-                    return;
-                }
-                if (processor.isAcceptingMessages()) {
-                    try {
-                        packetIn.handle(processor);
-                    } catch (Exception exception) {
-                        if (exception instanceof ReportedException reportedexception) {
-                            if (reportedexception.getCause() instanceof OutOfMemoryError) {
-                                throw makeReportedException(exception, packetIn, processor);
-                            }
-                        }
-                        processor.onPacketError(packetIn, exception);
-                    }
-                } else {
-                    LOGGER.debug("Ignoring packet due to disconnection: {}", packetIn);
-                }
+  @Shadow
+  public static <T extends PacketListener> ReportedException makeReportedException(
+      Exception exception, Packet<T> packet, T packetListener) {
+    throw new RuntimeException();
+  }
 
-            });
-            throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
-        }
+  // @formatter:on
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static <T extends PacketListener> void ensureRunningOnSameThread(
+      Packet<T> packetIn, T processor, BlockableEventLoop<?> executor)
+      throws RunningOnDifferentThreadException {
+    if (!executor.isSameThread()) {
+      executor.executeIfPossible(
+          () -> {
+            if (processor instanceof ServerCommonPacketListenerImpl
+                && ((ServerCommonPacketListenerImplBridge) processor)
+                    .bridge$processedDisconnect()) {
+              return;
+            }
+            if (processor.isAcceptingMessages()) {
+              try {
+                packetIn.handle(processor);
+              } catch (Exception exception) {
+                if (exception instanceof ReportedException reportedexception) {
+                  if (reportedexception.getCause() instanceof OutOfMemoryError) {
+                    throw makeReportedException(exception, packetIn, processor);
+                  }
+                }
+                processor.onPacketError(packetIn, exception);
+              }
+            } else {
+              LOGGER.debug("Ignoring packet due to disconnection: {}", packetIn);
+            }
+          });
+      throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
     }
+  }
 }

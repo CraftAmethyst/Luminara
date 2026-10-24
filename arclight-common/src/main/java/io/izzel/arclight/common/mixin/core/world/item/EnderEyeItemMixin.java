@@ -15,12 +15,24 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(EnderEyeItem.class)
 public class EnderEyeItemMixin {
 
-    @Decorate(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private boolean arclight$returnIfFail(Level world, Entity entityIn, Level worldIn, Player playerIn, InteractionHand handIn) throws Throwable {
-        if (!(boolean) DecorationOps.callsite().invoke(world, entityIn)) {
-            return (boolean) DecorationOps.cancel().invoke(new InteractionResultHolder<>(InteractionResult.FAIL, playerIn.getItemInHand(handIn)));
-        } else {
-            return true;
-        }
+  @Decorate(
+      method = "use",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private boolean arclight$returnIfFail(
+      Level world, Entity entityIn, Level worldIn, Player playerIn, InteractionHand handIn)
+      throws Throwable {
+    if (!(boolean) DecorationOps.callsite().invoke(world, entityIn)) {
+      return (boolean)
+          DecorationOps.cancel()
+              .invoke(
+                  new InteractionResultHolder<>(
+                      InteractionResult.FAIL, playerIn.getItemInHand(handIn)));
+    } else {
+      return true;
     }
+  }
 }

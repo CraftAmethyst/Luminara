@@ -2,6 +2,7 @@ package io.izzel.arclight.common.bridge.core.server.level;
 
 import com.mojang.datafixers.util.Either;
 import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Location;
@@ -11,57 +12,56 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSpawnChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.Optional;
-
 public interface ServerPlayerBridge extends PlayerBridge {
 
-    <L, R> Either<L, R> bridge$fireBedEvent(Either<L, R> e, BlockPos pos);
+  <L, R> Either<L, R> bridge$fireBedEvent(Either<L, R> e, BlockPos pos);
 
-    @Override
-    CraftPlayer bridge$getBukkitEntity();
+  @Override
+  CraftPlayer bridge$getBukkitEntity();
 
-    void bridge$pushChangeDimensionCause(PlayerTeleportEvent.TeleportCause cause);
+  void bridge$pushChangeDimensionCause(PlayerTeleportEvent.TeleportCause cause);
 
-    void bridge$pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause cause);
+  void bridge$pushChangeSpawnCause(PlayerSpawnChangeEvent.Cause cause);
 
-    Optional<PlayerTeleportEvent.TeleportCause> bridge$getTeleportCause();
+  Optional<PlayerTeleportEvent.TeleportCause> bridge$getTeleportCause();
 
-    void bridge$pushRespawnReason(PlayerRespawnEvent.RespawnReason respawnReason);
+  void bridge$pushRespawnReason(PlayerRespawnEvent.RespawnReason respawnReason);
 
-    void bridge$setTransferCookieConnection(CraftPlayer.TransferCookieConnection transferCookieConnection);
+  void bridge$setTransferCookieConnection(
+      CraftPlayer.TransferCookieConnection transferCookieConnection);
 
-    CraftPlayer.TransferCookieConnection bridge$getTransferCookieConnection();
+  CraftPlayer.TransferCookieConnection bridge$getTransferCookieConnection();
 
-    void bridge$resendItemInHands();
+  void bridge$resendItemInHands();
 
-    BlockPos bridge$getSpawnPoint(ServerLevel world);
+  BlockPos bridge$getSpawnPoint(ServerLevel world);
 
-    boolean bridge$isMovementBlocked();
+  boolean bridge$isMovementBlocked();
 
-    void bridge$setCompassTarget(Location location);
+  void bridge$setCompassTarget(Location location);
 
-    boolean bridge$isJoining();
+  boolean bridge$isJoining();
 
-    void bridge$reset();
+  void bridge$reset();
 
-    boolean bridge$initialized();
+  boolean bridge$initialized();
 
-    boolean bridge$isTrackerDirty();
+  boolean bridge$isTrackerDirty();
 
-    void bridge$setTrackerDirty(boolean flag);
+  void bridge$setTrackerDirty(boolean flag);
 
-    boolean arclight$isKeepLevel();
+  boolean arclight$isKeepLevel();
 
-    void arclight$readDeathEvent(PlayerDeathEvent event);
+  void arclight$readDeathEvent(PlayerDeathEvent event);
 
-    interface RespawnPosAngleBridge {
+  interface RespawnPosAngleBridge {
 
-        boolean bridge$isBedSpawn();
+    boolean bridge$isBedSpawn();
 
-        boolean bridge$isAnchorSpawn();
+    boolean bridge$isAnchorSpawn();
 
-        void bridge$setBedSpawn(boolean b);
+    void bridge$setBedSpawn(boolean b);
 
-        void bridge$setAnchorSpawn(boolean b);
-    }
+    void bridge$setAnchorSpawn(boolean b);
+  }
 }

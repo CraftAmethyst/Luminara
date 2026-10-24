@@ -20,28 +20,45 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(SmithingMenu.class)
 public abstract class SmithingMenuMixin extends ItemCombinerMenuMixin {
 
-    private CraftInventoryView<SmithingMenu, ?> bukkitEntity;
+  private CraftInventoryView<SmithingMenu, ?> bukkitEntity;
 
-    @Decorate(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
-    private void arclight$prepareSmithing(ResultContainer craftResultInventory, int index, ItemStack stack) throws Throwable {
-        final CraftInventoryView<SmithingMenu, ?> craft = getBukkitView();
-        if (craft instanceof ArclightSmithingView) {
-            // Call preparing event; preserve injection logic
-            PrepareSmithingEvent event = new PrepareSmithingEvent(craft, CraftItemStack.asCraftMirror(stack).clone());
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            DecorationOps.callsite().invoke(craftResultInventory, index, CraftItemStack.asNMSCopy(event.getResult()));
-        } else {
-            // Run plugin custom logic
-            CraftEventFactory.callPrepareSmithingEvent(craft, stack);
-        }
+  @Decorate(
+      method = "createResult",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
+  private void arclight$prepareSmithing(
+      ResultContainer craftResultInventory, int index, ItemStack stack) throws Throwable {
+    final CraftInventoryView<SmithingMenu, ?> craft = getBukkitView();
+    if (craft instanceof ArclightSmithingView) {
+      // Call preparing event; preserve injection logic
+      PrepareSmithingEvent event =
+          new PrepareSmithingEvent(craft, CraftItemStack.asCraftMirror(stack).clone());
+      Bukkit.getServer().getPluginManager().callEvent(event);
+      DecorationOps.callsite()
+          .invoke(craftResultInventory, index, CraftItemStack.asNMSCopy(event.getResult()));
+    } else {
+      // Run plugin custom logic
+      CraftEventFactory.callPrepareSmithingEvent(craft, stack);
     }
+  }
 
-    @Override
-    public CraftInventoryView<SmithingMenu, ?> getBukkitView() {
-        if (this.bukkitEntity != null) {
-            return this.bukkitEntity;
-        }
-        CraftInventorySmithing inventory = new CraftInventorySmithing(((ContainerLevelAccessBridge) this.access).bridge$getLocation(), this.inputSlots, this.resultSlots);
-        return this.bukkitEntity = new ArclightSmithingView(((PlayerBridge) this.player).bridge$getBukkitEntity(), inventory, (SmithingMenu) (Object) this);
+  @Override
+  public CraftInventoryView<SmithingMenu, ?> getBukkitView() {
+    if (this.bukkitEntity != null) {
+      return this.bukkitEntity;
     }
+    CraftInventorySmithing inventory =
+        new CraftInventorySmithing(
+            ((ContainerLevelAccessBridge) this.access).bridge$getLocation(),
+            this.inputSlots,
+            this.resultSlots);
+    return this.bukkitEntity =
+        new ArclightSmithingView(
+            ((PlayerBridge) this.player).bridge$getBukkitEntity(),
+            inventory,
+            (SmithingMenu) (Object) this);
+  }
 }

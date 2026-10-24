@@ -18,21 +18,30 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(SmeltingRecipe.class)
 public abstract class SmeltingRecipeMixin extends AbstractCookingRecipe implements RecipeBridge {
 
-    public SmeltingRecipeMixin(RecipeType<?> p_250197_, String p_249518_, CookingBookCategory p_250891_, Ingredient p_251354_, ItemStack p_252185_, float p_252165_, int p_250256_) {
-        super(p_250197_, p_249518_, p_250891_, p_251354_, p_252185_, p_252165_, p_250256_);
+  public SmeltingRecipeMixin(
+      RecipeType<?> p_250197_,
+      String p_249518_,
+      CookingBookCategory p_250891_,
+      Ingredient p_251354_,
+      ItemStack p_252185_,
+      float p_252165_,
+      int p_250256_) {
+    super(p_250197_, p_249518_, p_250891_, p_251354_, p_252185_, p_252165_, p_250256_);
+  }
+
+  @Override
+  public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
+    if (this.result.isEmpty()) {
+      return new ArclightSpecialRecipe(id, this);
     }
+    CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 
-    @Override
-    public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
-        if (this.result.isEmpty()) {
-            return new ArclightSpecialRecipe(id, this);
-        }
-        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
+    CraftFurnaceRecipe recipe =
+        new CraftFurnaceRecipe(
+            id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
+    recipe.setGroup(this.group == null ? "" : this.group);
+    recipe.setCategory(CraftRecipe.getCategory(this.category()));
 
-        CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
-        recipe.setGroup(this.group == null ? "" : this.group);
-        recipe.setCategory(CraftRecipe.getCategory(this.category()));
-
-        return recipe;
-    }
+    return recipe;
+  }
 }

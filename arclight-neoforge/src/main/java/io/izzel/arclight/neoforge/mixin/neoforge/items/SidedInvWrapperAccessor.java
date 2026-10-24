@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(SidedInvWrapper.class)
 public interface SidedInvWrapperAccessor {
-    @Accessor("inv")
-    WorldlyContainer arclight$unwrap();
+  @Accessor("inv")
+  WorldlyContainer arclight$unwrap();
 }

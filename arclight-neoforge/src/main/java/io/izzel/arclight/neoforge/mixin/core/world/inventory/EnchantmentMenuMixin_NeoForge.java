@@ -13,13 +13,21 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(EnchantmentMenu.class)
 public abstract class EnchantmentMenuMixin_NeoForge implements EnchantmentMenuBridge {
 
-    @Override
-    public float bridge$forge$getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
-        return state.getBlock().getEnchantPowerBonus(state, level, pos);
-    }
+  @Override
+  public float bridge$forge$getEnchantPowerBonus(
+      BlockState state, LevelReader level, BlockPos pos) {
+    return state.getBlock().getEnchantPowerBonus(state, level, pos);
+  }
 
-    @Override
-    public int bridge$forge$onEnchantmentLevelSet(Level level, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int enchantmentLevel) {
-        return EventHooks.onEnchantmentLevelSet(level, pos, enchantRow, power, itemStack, enchantmentLevel);
-    }
+  @Override
+  public int bridge$forge$onEnchantmentLevelSet(
+      Level level,
+      BlockPos pos,
+      int enchantRow,
+      int power,
+      ItemStack itemStack,
+      int enchantmentLevel) {
+    return EventHooks.onEnchantmentLevelSet(
+        level, pos, enchantRow, power, itemStack, enchantmentLevel);
+  }
 }

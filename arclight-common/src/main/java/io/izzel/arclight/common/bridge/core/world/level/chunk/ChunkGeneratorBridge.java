@@ -4,5 +4,5 @@ import net.minecraft.world.level.biome.BiomeSource;
 
 public interface ChunkGeneratorBridge {
 
-    void bridge$setBiomeSource(BiomeSource biomeSource);
+  void bridge$setBiomeSource(BiomeSource biomeSource);
 }

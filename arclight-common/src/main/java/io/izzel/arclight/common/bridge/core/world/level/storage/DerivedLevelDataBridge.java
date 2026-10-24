@@ -6,7 +6,7 @@ import net.minecraft.world.level.storage.ServerLevelData;
 
 public interface DerivedLevelDataBridge {
 
-    ServerLevelData bridge$getDelegate();
+  ServerLevelData bridge$getDelegate();
 
-    void bridge$setDimType(ResourceKey<LevelStem> typeKey);
+  void bridge$setDimType(ResourceKey<LevelStem> typeKey);
 }

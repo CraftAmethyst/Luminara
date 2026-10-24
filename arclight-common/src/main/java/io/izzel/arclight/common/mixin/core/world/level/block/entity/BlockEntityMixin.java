@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
 import io.izzel.arclight.common.bridge.core.world.level.block.entity.BlockEntityBridge;
+import java.util.Set;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
@@ -25,72 +27,90 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import javax.annotation.Nullable;
-import java.util.Set;
-
 @Mixin(BlockEntity.class)
 public abstract class BlockEntityMixin implements BlockEntityBridge {
 
-    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
-    public CraftPersistentDataContainer persistentDataContainer;
+  private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY =
+      new CraftPersistentDataTypeRegistry();
+  public CraftPersistentDataContainer persistentDataContainer;
 
-    // @formatter:off
-    @Shadow @Nullable public Level level;
-    @Shadow @Final protected BlockPos worldPosition;
-    @Shadow public abstract BlockState getBlockState();
-    @Shadow public BlockPos getBlockPos() { return null; }
-    @Shadow protected static void setChanged(Level p_155233_, BlockPos p_155234_, BlockState p_155235_) { }
-    @Shadow public abstract BlockEntityType<?> getType();
-    @Shadow public void setLevel(Level p_155231_) {}
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Nullable public Level level;
+  @Shadow @Final protected BlockPos worldPosition;
 
-    @Shadow
-    public abstract void applyComponents(DataComponentMap dataComponentMap, DataComponentPatch dataComponentPatch);
+  @Shadow
+  public abstract BlockState getBlockState();
 
-    @Inject(method = "loadAdditional", at = @At("RETURN"))
-    public void arclight$loadPersistent(CompoundTag compound, HolderLookup.Provider provider, CallbackInfo ci) {
-        this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
+  @Shadow
+  public BlockPos getBlockPos() {
+    return null;
+  }
 
-        CompoundTag persistentDataTag = compound.getCompound("PublicBukkitValues");
-        if (persistentDataTag != null) {
-            this.persistentDataContainer.putAll(persistentDataTag);
-        }
+  @Shadow
+  protected static void setChanged(Level p_155233_, BlockPos p_155234_, BlockState p_155235_) {}
+
+  @Shadow
+  public abstract BlockEntityType<?> getType();
+
+  @Shadow
+  public void setLevel(Level p_155231_) {}
+
+  // @formatter:on
+
+  @Shadow
+  public abstract void applyComponents(
+      DataComponentMap dataComponentMap, DataComponentPatch dataComponentPatch);
+
+  @Inject(method = "loadAdditional", at = @At("RETURN"))
+  public void arclight$loadPersistent(
+      CompoundTag compound, HolderLookup.Provider provider, CallbackInfo ci) {
+    this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
+
+    CompoundTag persistentDataTag = compound.getCompound("PublicBukkitValues");
+    if (persistentDataTag != null) {
+      this.persistentDataContainer.putAll(persistentDataTag);
     }
+  }
 
-    @Inject(method = "saveWithoutMetadata", at = @At("RETURN"))
-    private void arclight$savePersistent(CallbackInfoReturnable<CompoundTag> cir) {
-        if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
-            cir.getReturnValue().put("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
-        }
+  @Inject(method = "saveWithoutMetadata", at = @At("RETURN"))
+  private void arclight$savePersistent(CallbackInfoReturnable<CompoundTag> cir) {
+    if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
+      cir.getReturnValue().put("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
     }
+  }
 
-    private transient Set<DataComponentType<?>> arclight$appliedSet;
+  private transient Set<DataComponentType<?>> arclight$appliedSet;
 
-    public final Set<DataComponentType<?>> applyComponentsSet(DataComponentMap datacomponentmap, DataComponentPatch datacomponentpatch) {
-        try {
-            this.applyComponents(datacomponentmap, datacomponentpatch);
-            return arclight$appliedSet;
-        } finally {
-            arclight$appliedSet = null;
-        }
+  public final Set<DataComponentType<?>> applyComponentsSet(
+      DataComponentMap datacomponentmap, DataComponentPatch datacomponentpatch) {
+    try {
+      this.applyComponents(datacomponentmap, datacomponentpatch);
+      return arclight$appliedSet;
+    } finally {
+      arclight$appliedSet = null;
     }
+  }
 
-    @Inject(method = "applyComponents", locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
-    private void arclight$captureSet(DataComponentMap dataComponentMap, DataComponentPatch dataComponentPatch, CallbackInfo ci, Set<DataComponentType<?>> set) {
-        set.remove(DataComponents.ENTITY_DATA);
-        arclight$appliedSet = set;
-    }
+  @Inject(method = "applyComponents", locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
+  private void arclight$captureSet(
+      DataComponentMap dataComponentMap,
+      DataComponentPatch dataComponentPatch,
+      CallbackInfo ci,
+      Set<DataComponentType<?>> set) {
+    set.remove(DataComponents.ENTITY_DATA);
+    arclight$appliedSet = set;
+  }
 
-    public InventoryHolder getOwner() {
-        if (this.level == null) return null;
-        org.bukkit.block.Block block = CraftBlock.at(this.level, this.worldPosition);
-        org.bukkit.block.BlockState state = block.getState();
-        if (state instanceof InventoryHolder) return (InventoryHolder) state;
-        return null;
-    }
+  public InventoryHolder getOwner() {
+    if (this.level == null) return null;
+    org.bukkit.block.Block block = CraftBlock.at(this.level, this.worldPosition);
+    org.bukkit.block.BlockState state = block.getState();
+    if (state instanceof InventoryHolder) return (InventoryHolder) state;
+    return null;
+  }
 
-    @Override
-    public InventoryHolder bridge$getOwner() {
-        return getOwner();
-    }
+  @Override
+  public InventoryHolder bridge$getOwner() {
+    return getOwner();
+  }
 }

@@ -25,48 +25,85 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(FireBlock.class)
 public abstract class FireBlockMixin extends BaseFireBlockMixin implements FireBlockBridge {
 
-    // @formatter:off
-    @Shadow protected abstract BlockState getStateForPlacement(BlockGetter blockReader, BlockPos pos);
-    @Shadow @Final private Object2IntMap<net.minecraft.world.level.block.Block> burnOdds;
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  protected abstract BlockState getStateForPlacement(BlockGetter blockReader, BlockPos pos);
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public boolean arclight$fireSpread(ServerLevel world, BlockPos mutablePos, BlockState newState, int flags,
-                                       BlockState state, ServerLevel worldIn, BlockPos pos) {
-        if (world.getBlockState(mutablePos).getBlock() != Blocks.FIRE) {
-            if (!CraftEventFactory.callBlockIgniteEvent(world, mutablePos, pos).isCancelled()) {
-                return CraftEventFactory.handleBlockSpreadEvent(world, pos, mutablePos, newState, flags);
-            }
-        }
-        return false;
-    }
+  @Shadow @Final private Object2IntMap<net.minecraft.world.level.block.Block> burnOdds;
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
-    public boolean arclight$extinguish1(ServerLevel world, BlockPos pos, boolean isMoving) {
-        if (!CraftEventFactory.callBlockFadeEvent(world, pos, Blocks.AIR.defaultBlockState()).isCancelled()) {
-            world.removeBlock(pos, isMoving);
-        }
-        return false;
-    }
+  // @formatter:on
 
-    @Redirect(method = "updateShape", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
-    public BlockState arclight$blockFade(net.minecraft.world.level.block.Block block, BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
-        if (!(worldIn instanceof Level)) {
-            return Blocks.AIR.defaultBlockState();
-        }
-        CraftBlockState blockState = CraftBlockStates.getBlockState(worldIn, currentPos);
-        blockState.setData(Blocks.AIR.defaultBlockState());
-        BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return this.getStateForPlacement(worldIn, currentPos).setValue(FireBlock.AGE, stateIn.getValue(FireBlock.AGE));
-        } else {
-            return blockState.getHandle();
-        }
+  @Redirect(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 1,
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  public boolean arclight$fireSpread(
+      ServerLevel world,
+      BlockPos mutablePos,
+      BlockState newState,
+      int flags,
+      BlockState state,
+      ServerLevel worldIn,
+      BlockPos pos) {
+    if (world.getBlockState(mutablePos).getBlock() != Blocks.FIRE) {
+      if (!CraftEventFactory.callBlockIgniteEvent(world, mutablePos, pos).isCancelled()) {
+        return CraftEventFactory.handleBlockSpreadEvent(world, pos, mutablePos, newState, flags);
+      }
     }
+    return false;
+  }
 
-    @Override
-    public boolean bridge$canBurn(net.minecraft.world.level.block.Block block) {
-        return this.burnOdds.containsKey(block);
+  @Redirect(
+      method = "tick",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"))
+  public boolean arclight$extinguish1(ServerLevel world, BlockPos pos, boolean isMoving) {
+    if (!CraftEventFactory.callBlockFadeEvent(world, pos, Blocks.AIR.defaultBlockState())
+        .isCancelled()) {
+      world.removeBlock(pos, isMoving);
     }
+    return false;
+  }
+
+  @Redirect(
+      method = "updateShape",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/Block;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;"))
+  public BlockState arclight$blockFade(
+      net.minecraft.world.level.block.Block block,
+      BlockState stateIn,
+      Direction facing,
+      BlockState facingState,
+      LevelAccessor worldIn,
+      BlockPos currentPos,
+      BlockPos facingPos) {
+    if (!(worldIn instanceof Level)) {
+      return Blocks.AIR.defaultBlockState();
+    }
+    CraftBlockState blockState = CraftBlockStates.getBlockState(worldIn, currentPos);
+    blockState.setData(Blocks.AIR.defaultBlockState());
+    BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      return this.getStateForPlacement(worldIn, currentPos)
+          .setValue(FireBlock.AGE, stateIn.getValue(FireBlock.AGE));
+    } else {
+      return blockState.getHandle();
+    }
+  }
+
+  @Override
+  public boolean bridge$canBurn(net.minecraft.world.level.block.Block block) {
+    return this.burnOdds.containsKey(block);
+  }
 }

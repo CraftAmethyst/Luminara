@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerGamePacketListenerImpl.class)
 public class ServerGamePacketListenerImplMixin_Fabric {
 
-    @Inject(method = "handleCustomPayload", at = @At("TAIL"))
-    private void arclight$recordUnknown(ServerboundCustomPayloadPacket packet, CallbackInfo ci) {
-        PacketRecorder.recordUnknown(packet.payload().type().id());
-    }
+  @Inject(method = "handleCustomPayload", at = @At("TAIL"))
+  private void arclight$recordUnknown(ServerboundCustomPayloadPacket packet, CallbackInfo ci) {
+    PacketRecorder.recordUnknown(packet.payload().type().id());
+  }
 }

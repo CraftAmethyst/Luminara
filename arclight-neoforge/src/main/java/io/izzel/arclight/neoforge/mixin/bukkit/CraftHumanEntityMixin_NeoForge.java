@@ -12,12 +12,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = CraftHumanEntity.class, remap = false)
 public abstract class CraftHumanEntityMixin_NeoForge {
 
-    @Redirect(method = "<init>", at = @At(value = "NEW", target = "(Lorg/bukkit/permissions/ServerOperator;)Lorg/bukkit/permissions/PermissibleBase;"))
-    private PermissibleBase arclight$forge$forwardPerm(ServerOperator opable) {
-        if (ArclightConfig.spec().getCompat().isForwardPermissionReverse()) {
-            return new ArclightNeoForgePermissible(opable);
-        } else {
-            return new PermissibleBase(opable);
-        }
+  @Redirect(
+      method = "<init>",
+      at =
+          @At(
+              value = "NEW",
+              target =
+                  "(Lorg/bukkit/permissions/ServerOperator;)Lorg/bukkit/permissions/PermissibleBase;"))
+  private PermissibleBase arclight$forge$forwardPerm(ServerOperator opable) {
+    if (ArclightConfig.spec().getCompat().isForwardPermissionReverse()) {
+      return new ArclightNeoForgePermissible(opable);
+    } else {
+      return new PermissibleBase(opable);
     }
+  }
 }

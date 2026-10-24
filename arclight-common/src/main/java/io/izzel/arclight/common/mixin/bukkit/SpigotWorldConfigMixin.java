@@ -12,15 +12,15 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(value = SpigotWorldConfig.class, remap = false)
 public class SpigotWorldConfigMixin {
 
-    @Shadow @Final private String worldName;
+  @Shadow @Final private String worldName;
 
-    @SuppressWarnings("StringEquality")
-    @Decorate(method = "log", inject = true, at = @At("HEAD"))
-    private void arclight$skipLog(String content) throws Throwable {
-        if (worldName == ArclightWorldConfig.DEFAULT_MARKER) {
-            DecorationOps.cancel().invoke();
-            return;
-        }
-        DecorationOps.blackhole().invoke();
+  @SuppressWarnings("StringEquality")
+  @Decorate(method = "log", inject = true, at = @At("HEAD"))
+  private void arclight$skipLog(String content) throws Throwable {
+    if (worldName == ArclightWorldConfig.DEFAULT_MARKER) {
+      DecorationOps.cancel().invoke();
+      return;
     }
+    DecorationOps.blackhole().invoke();
+  }
 }

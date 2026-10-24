@@ -11,27 +11,27 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(MultifaceSpreader.SpreadPos.class)
 public abstract class MultifaceSpreader_SpreadPosMixin implements MultifaceSpreaderSpreadPosBridge {
-    @Unique private BlockPos source;
+  @Unique private BlockPos source;
 
-    @ShadowConstructor
-    abstract void arclight$constructor$this(BlockPos pos, Direction face);
+  @ShadowConstructor
+  abstract void arclight$constructor$this(BlockPos pos, Direction face);
 
-    @SuppressWarnings("unused")
-    @Unique
-    @CreateConstructor
-    public void arclight$constructor$new(BlockPos pos, Direction face, BlockPos source) {
-        arclight$constructor$this(pos, face);
-        arclight$setSource(source);
-    }
+  @SuppressWarnings("unused")
+  @Unique
+  @CreateConstructor
+  public void arclight$constructor$new(BlockPos pos, Direction face, BlockPos source) {
+    arclight$constructor$this(pos, face);
+    arclight$setSource(source);
+  }
 
-    @Override
-    public void arclight$setSource(BlockPos source) {
-        this.source = source;
-    }
+  @Override
+  public void arclight$setSource(BlockPos source) {
+    this.source = source;
+  }
 
-    @Unique
-    @Override
-    public BlockPos source() {
-        return source;
-    }
+  @Unique
+  @Override
+  public BlockPos source() {
+    return source;
+  }
 }

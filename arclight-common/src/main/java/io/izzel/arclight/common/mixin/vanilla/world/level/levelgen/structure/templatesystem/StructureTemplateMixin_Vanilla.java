@@ -5,6 +5,4 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = StructureTemplate.class)
-public abstract class StructureTemplateMixin_Vanilla implements StructureTemplateBridge {
-
-}
+public abstract class StructureTemplateMixin_Vanilla implements StructureTemplateBridge {}

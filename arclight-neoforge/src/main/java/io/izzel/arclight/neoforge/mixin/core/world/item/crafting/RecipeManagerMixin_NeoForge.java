@@ -7,9 +7,10 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(RecipeManager.class)
-public abstract class RecipeManagerMixin_NeoForge extends SimpleJsonResourceReloadListener implements RecipeManagerBridge {
+public abstract class RecipeManagerMixin_NeoForge extends SimpleJsonResourceReloadListener
+    implements RecipeManagerBridge {
 
-    public RecipeManagerMixin_NeoForge(Gson gson, String string) {
-        super(gson, string);
-    }
+  public RecipeManagerMixin_NeoForge(Gson gson, String string) {
+    super(gson, string);
+  }
 }

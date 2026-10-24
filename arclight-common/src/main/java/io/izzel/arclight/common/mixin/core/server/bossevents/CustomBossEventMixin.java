@@ -9,17 +9,17 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(CustomBossEvent.class)
 public class CustomBossEventMixin implements CustomBossEventBridge {
 
-    private KeyedBossBar bossBar;
+  private KeyedBossBar bossBar;
 
-    public KeyedBossBar getBukkitEntity() {
-        if (bossBar == null) {
-            bossBar = new CraftKeyedBossbar((CustomBossEvent) (Object) this);
-        }
-        return bossBar;
+  public KeyedBossBar getBukkitEntity() {
+    if (bossBar == null) {
+      bossBar = new CraftKeyedBossbar((CustomBossEvent) (Object) this);
     }
+    return bossBar;
+  }
 
-    @Override
-    public KeyedBossBar bridge$getBukkitEntity() {
-        return getBukkitEntity();
-    }
+  @Override
+  public KeyedBossBar bridge$getBukkitEntity() {
+    return getBukkitEntity();
+  }
 }

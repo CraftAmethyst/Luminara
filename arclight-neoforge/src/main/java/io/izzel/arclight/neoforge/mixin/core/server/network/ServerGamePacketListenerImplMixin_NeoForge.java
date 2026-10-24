@@ -16,18 +16,23 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ServerGamePacketListenerImpl.class)
-public abstract class ServerGamePacketListenerImplMixin_NeoForge extends ServerCommonPacketListenerImplMixin_NeoForge implements ServerGamePacketListenerImplBridge {
+public abstract class ServerGamePacketListenerImplMixin_NeoForge
+    extends ServerCommonPacketListenerImplMixin_NeoForge
+    implements ServerGamePacketListenerImplBridge {
 
-    @Shadow public ServerPlayer player;
+  @Shadow public ServerPlayer player;
 
-    @Override
-    public Product3<Boolean, ItemStack, ItemStack> bridge$platform$canSwapHandItems(LivingEntity entity) {
-        var event = CommonHooks.onLivingSwapHandItems(this.player);
-        return Product.of(event.isCanceled(), event.getItemSwappedToMainHand(), event.getItemSwappedToOffHand());
-    }
+  @Override
+  public Product3<Boolean, ItemStack, ItemStack> bridge$platform$canSwapHandItems(
+      LivingEntity entity) {
+    var event = CommonHooks.onLivingSwapHandItems(this.player);
+    return Product.of(
+        event.isCanceled(), event.getItemSwappedToMainHand(), event.getItemSwappedToOffHand());
+  }
 
-    @Override
-    public InteractionResult bridge$platform$onInteractEntityAt(ServerPlayer player, Entity entity, Vec3 vec, InteractionHand interactionHand) {
-        return CommonHooks.onInteractEntityAt(player, entity, vec, interactionHand);
-    }
+  @Override
+  public InteractionResult bridge$platform$onInteractEntityAt(
+      ServerPlayer player, Entity entity, Vec3 vec, InteractionHand interactionHand) {
+    return CommonHooks.onInteractEntityAt(player, entity, vec, interactionHand);
+  }
 }

@@ -10,8 +10,16 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(targets = "net.minecraft.world.effect.PoisonMobEffect")
 public class PoisonMobEffectMixin_Vanilla {
 
-    @Redirect(method = "applyEffectTick", require = 0, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"))
-    private DamageSource arclight$redirectPoison(DamageSources instance) {
-        return ((DamageSourcesBridge) instance).bridge$poison();
-    }
+  @Redirect(
+      method = "applyEffectTick",
+      require = 0,
+      at =
+          @At(
+              value = "INVOKE",
+              ordinal = 0,
+              target =
+                  "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"))
+  private DamageSource arclight$redirectPoison(DamageSources instance) {
+    return ((DamageSourcesBridge) instance).bridge$poison();
+  }
 }

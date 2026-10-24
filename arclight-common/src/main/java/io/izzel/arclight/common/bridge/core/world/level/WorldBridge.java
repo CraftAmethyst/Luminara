@@ -2,6 +2,7 @@ package io.izzel.arclight.common.bridge.core.world.level;
 
 import io.izzel.arclight.common.bridge.inject.InjectLevelBridge;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -22,61 +23,61 @@ import org.bukkit.entity.SpawnCategory;
 import org.bukkit.generator.ChunkGenerator;
 import org.spigotmc.SpigotWorldConfig;
 
-import java.util.Map;
-
 public interface WorldBridge extends IWorldWriterBridge, LevelAccessorBridge, InjectLevelBridge {
 
-    CraftServer bridge$getServer();
+  CraftServer bridge$getServer();
 
-    CraftWorld bridge$getWorld();
+  CraftWorld bridge$getWorld();
 
-    boolean bridge$isPvpMode();
+  boolean bridge$isPvpMode();
 
-    boolean bridge$isPopulating();
+  boolean bridge$isPopulating();
 
-    void bridge$setPopulating(boolean populating);
+  void bridge$setPopulating(boolean populating);
 
-    ChunkGenerator bridge$getGenerator();
+  ChunkGenerator bridge$getGenerator();
 
-    BlockEntity bridge$getTileEntity(BlockPos pos, boolean validate);
+  BlockEntity bridge$getTileEntity(BlockPos pos, boolean validate);
 
-    SpigotWorldConfig bridge$spigotConfig();
+  SpigotWorldConfig bridge$spigotConfig();
 
-    Object2LongOpenHashMap<SpawnCategory> bridge$ticksPerSpawnCategory();
+  Object2LongOpenHashMap<SpawnCategory> bridge$ticksPerSpawnCategory();
 
-    ResourceKey<LevelStem> bridge$getTypeKey();
+  ResourceKey<LevelStem> bridge$getTypeKey();
 
-    void bridge$setLastPhysicsProblem(BlockPos pos);
+  void bridge$setLastPhysicsProblem(BlockPos pos);
 
-    boolean bridge$preventPoiUpdated();
+  boolean bridge$preventPoiUpdated();
 
-    void bridge$preventPoiUpdated(boolean b);
+  void bridge$preventPoiUpdated(boolean b);
 
-    void bridge$forge$notifyAndUpdatePhysics(BlockPos pos, LevelChunk chunk, BlockState oldBlock, BlockState newBlock, int i, int j);
+  void bridge$forge$notifyAndUpdatePhysics(
+      BlockPos pos, LevelChunk chunk, BlockState oldBlock, BlockState newBlock, int i, int j);
 
-    default boolean bridge$forge$onBlockPlace(BlockPos pos, LivingEntity livingEntity, Direction direction) {
-        return false;
-    }
+  default boolean bridge$forge$onBlockPlace(
+      BlockPos pos, LivingEntity livingEntity, Direction direction) {
+    return false;
+  }
 
-    default boolean bridge$forge$mobGriefing(Entity entity) {
-        return ((Level) this).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-    }
+  default boolean bridge$forge$mobGriefing(Entity entity) {
+    return ((Level) this).getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+  }
 
-    default void bridge$forge$onPotionBrewed(NonNullList<ItemStack> stacks) {}
+  default void bridge$forge$onPotionBrewed(NonNullList<ItemStack> stacks) {}
 
-    default boolean bridge$forge$restoringBlockSnapshots() {
-        return false;
-    }
+  default boolean bridge$forge$restoringBlockSnapshots() {
+    return false;
+  }
 
-    Map<BlockPos, CapturedBlockState> bridge$getCapturedBlockState();
+  Map<BlockPos, CapturedBlockState> bridge$getCapturedBlockState();
 
-    Map<BlockPos, BlockEntity> bridge$getCapturedBlockEntity();
+  Map<BlockPos, BlockEntity> bridge$getCapturedBlockEntity();
 
-    default void bridge$platform$startCaptureBlockBreak() {}
+  default void bridge$platform$startCaptureBlockBreak() {}
 
-    default boolean bridge$isCapturingBlockBreak() {
-        return false;
-    }
+  default boolean bridge$isCapturingBlockBreak() {
+    return false;
+  }
 
-    default void bridge$platform$endCaptureBlockBreak() {}
+  default void bridge$platform$endCaptureBlockBreak() {}
 }

@@ -20,75 +20,88 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ShapedRecipe.class)
 public abstract class ShapedRecipeMixin implements RecipeBridge {
 
-    // @formatter:off
-    @Shadow @Final ItemStack result;
-    @Shadow @Final String group;
-    @Shadow public abstract int getHeight();
-    @Shadow public abstract int getWidth();
-    @Shadow public abstract CraftingBookCategory category();
-    @Shadow public abstract NonNullList<Ingredient> getIngredients();
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final ItemStack result;
+  @Shadow @Final String group;
 
-    @Override
-    public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
-        if (this.getWidth() < 1 || this.getWidth() > 3 || this.getHeight() < 1 || this.getHeight() > 3 || this.result.isEmpty()) {
-            return new ArclightSpecialRecipe(id, (net.minecraft.world.item.crafting.Recipe<?>) this);
-        }
-        CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-        CraftShapedRecipe recipe = new CraftShapedRecipe(id, result, (ShapedRecipe) (Object) this);
-        recipe.setGroup(this.group == null ? "" : this.group);
-        recipe.setCategory(CraftRecipe.getCategory(this.category()));
+  @Shadow
+  public abstract int getHeight();
 
-        switch (this.getHeight()) {
-            case 1:
-                switch (this.getWidth()) {
-                    case 1:
-                        recipe.shape("a");
-                        break;
-                    case 2:
-                        recipe.shape("ab");
-                        break;
-                    case 3:
-                        recipe.shape("abc");
-                        break;
-                }
-                break;
-            case 2:
-                switch (this.getWidth()) {
-                    case 1:
-                        recipe.shape("a", "b");
-                        break;
-                    case 2:
-                        recipe.shape("ab", "cd");
-                        break;
-                    case 3:
-                        recipe.shape("abc", "def");
-                        break;
-                }
-                break;
-            case 3:
-                switch (this.getWidth()) {
-                    case 1:
-                        recipe.shape("a", "b", "c");
-                        break;
-                    case 2:
-                        recipe.shape("ab", "cd", "ef");
-                        break;
-                    case 3:
-                        recipe.shape("abc", "def", "ghi");
-                        break;
-                }
-                break;
-        }
-        char c = 'a';
-        for (Ingredient list : this.getIngredients()) {
-            RecipeChoice choice = CraftRecipe.toBukkit(list);
-            if (choice != null) {
-                recipe.setIngredient(c, choice);
-            }
+  @Shadow
+  public abstract int getWidth();
 
-            c++;
-        }
-        return recipe;
+  @Shadow
+  public abstract CraftingBookCategory category();
+
+  @Shadow
+  public abstract NonNullList<Ingredient> getIngredients();
+
+  // @formatter:on
+
+  @Override
+  public Recipe bridge$toBukkitRecipe(NamespacedKey id) {
+    if (this.getWidth() < 1
+        || this.getWidth() > 3
+        || this.getHeight() < 1
+        || this.getHeight() > 3
+        || this.result.isEmpty()) {
+      return new ArclightSpecialRecipe(id, (net.minecraft.world.item.crafting.Recipe<?>) this);
     }
+    CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
+    CraftShapedRecipe recipe = new CraftShapedRecipe(id, result, (ShapedRecipe) (Object) this);
+    recipe.setGroup(this.group == null ? "" : this.group);
+    recipe.setCategory(CraftRecipe.getCategory(this.category()));
+
+    switch (this.getHeight()) {
+      case 1:
+        switch (this.getWidth()) {
+          case 1:
+            recipe.shape("a");
+            break;
+          case 2:
+            recipe.shape("ab");
+            break;
+          case 3:
+            recipe.shape("abc");
+            break;
+        }
+        break;
+      case 2:
+        switch (this.getWidth()) {
+          case 1:
+            recipe.shape("a", "b");
+            break;
+          case 2:
+            recipe.shape("ab", "cd");
+            break;
+          case 3:
+            recipe.shape("abc", "def");
+            break;
+        }
+        break;
+      case 3:
+        switch (this.getWidth()) {
+          case 1:
+            recipe.shape("a", "b", "c");
+            break;
+          case 2:
+            recipe.shape("ab", "cd", "ef");
+            break;
+          case 3:
+            recipe.shape("abc", "def", "ghi");
+            break;
+        }
+        break;
+    }
+    char c = 'a';
+    for (Ingredient list : this.getIngredients()) {
+      RecipeChoice choice = CraftRecipe.toBukkit(list);
+      if (choice != null) {
+        recipe.setIngredient(c, choice);
+      }
+
+      c++;
+    }
+    return recipe;
+  }
 }

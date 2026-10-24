@@ -11,15 +11,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(Ocelot.class)
 public abstract class OcelotMixin extends AnimalMixin {
 
-    // @formatter:off
-    @Shadow abstract boolean isTrusting();
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  abstract boolean isTrusting();
 
-    public boolean spawnBonus = true;
+  // @formatter:on
 
-    @Redirect(method = "mobInteract", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"))
-    private int arclight$tame(RandomSource instance, int i, Player player) {
-        var ret = instance.nextInt(i);
-        return ret == 0 && this.bridge$common$animalTameEvent(player) ? ret : 1;
-    }
+  public boolean spawnBonus = true;
+
+  @Redirect(
+      method = "mobInteract",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"))
+  private int arclight$tame(RandomSource instance, int i, Player player) {
+    var ret = instance.nextInt(i);
+    return ret == 0 && this.bridge$common$animalTameEvent(player) ? ret : 1;
+  }
 }

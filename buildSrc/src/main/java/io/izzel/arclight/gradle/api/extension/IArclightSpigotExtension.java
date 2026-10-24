@@ -1,15 +1,19 @@
 package io.izzel.arclight.gradle.api.extension;
 
 public interface IArclightSpigotExtension {
-    String getBukkitRef();
-    void setBukkitRef(String ref);
+  String getBukkitRef();
 
-    String getCraftBukkitRef();
-    void setCraftBukkitRef(String ref);
+  void setBukkitRef(String ref);
 
-    String getSpigotRef();
-    void setSpigotRef(String ref);
+  String getCraftBukkitRef();
 
-    String getBuildDataRef();
-    void setBuildDataRef(String ref);
+  void setCraftBukkitRef(String ref);
+
+  String getSpigotRef();
+
+  void setSpigotRef(String ref);
+
+  String getBuildDataRef();
+
+  void setBuildDataRef(String ref);
 }

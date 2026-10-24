@@ -8,10 +8,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(CraftBlockState.class)
 public class CraftBlockStateMixin {
 
-    @Shadow(remap = false) protected BlockState data;
+  @Shadow(remap = false)
+  protected BlockState data;
 
-    @Override
-    public String toString() {
-        return this.data.toString();
-    }
+  @Override
+  public String toString() {
+    return this.data.toString();
+  }
 }

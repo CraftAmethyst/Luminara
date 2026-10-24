@@ -5,5 +5,5 @@ import org.bukkit.inventory.Recipe;
 
 public interface RecipeBridge {
 
-    Recipe bridge$toBukkitRecipe(NamespacedKey id);
+  Recipe bridge$toBukkitRecipe(NamespacedKey id);
 }

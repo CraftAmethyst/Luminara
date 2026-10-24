@@ -5,8 +5,8 @@ import io.izzel.arclight.common.mod.ArclightMixinPlugin;
 
 public class NeoForgeMixinPlugin extends ArclightMixinPlugin {
 
-    @Override
-    public void onLoad(String mixinPackage) {
-        ArclightCommon.setInstance(new NeoForgeCommonImpl());
-    }
+  @Override
+  public void onLoad(String mixinPackage) {
+    ArclightCommon.setInstance(new NeoForgeCommonImpl());
+  }
 }

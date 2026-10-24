@@ -8,6 +8,8 @@ import io.izzel.arclight.mixin.Decorate;
 import io.izzel.arclight.mixin.DecorationOps;
 import io.izzel.arclight.mixin.Local;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -38,182 +40,286 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-import java.util.function.BiConsumer;
-
 @Mixin(Explosion.class)
 public abstract class ExplosionMixin implements ExplosionBridge {
 
-    // @formatter:off
-    @Shadow @Final private Level level;
-    @Shadow @Final private Explosion.BlockInteraction blockInteraction;
-    @Shadow @Mutable @Final private float radius;
-    @Shadow @Final private ObjectArrayList<BlockPos> toBlow;
-    @Shadow @Final private double x;
-    @Shadow @Final private double y;
-    @Shadow @Final private double z;
-    @Shadow @Final public Entity source;
-    @Accessor("source") public abstract Entity bridge$getExploder();
-    @Accessor("radius") public abstract float bridge$getSize();
-    @Accessor("radius") public abstract void bridge$setSize(float size);
-    @Accessor("blockInteraction") public abstract Explosion.BlockInteraction bridge$getMode();
-    @Shadow @Final @Mutable private DamageSource damageSource;
-    @Shadow public abstract Explosion.BlockInteraction getBlockInteraction();
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private Level level;
+  @Shadow @Final private Explosion.BlockInteraction blockInteraction;
+  @Shadow @Mutable @Final private float radius;
+  @Shadow @Final private ObjectArrayList<BlockPos> toBlow;
+  @Shadow @Final private double x;
+  @Shadow @Final private double y;
+  @Shadow @Final private double z;
+  @Shadow @Final public Entity source;
 
-    public float yield;
-    public boolean wasCanceled = false;
+  @Accessor("source")
+  public abstract Entity bridge$getExploder();
 
-    @Override
-    public float bridge$getYield() {
-        return this.yield;
+  @Accessor("radius")
+  public abstract float bridge$getSize();
+
+  @Accessor("radius")
+  public abstract void bridge$setSize(float size);
+
+  @Accessor("blockInteraction")
+  public abstract Explosion.BlockInteraction bridge$getMode();
+
+  @Shadow @Final @Mutable private DamageSource damageSource;
+
+  @Shadow
+  public abstract Explosion.BlockInteraction getBlockInteraction();
+
+  // @formatter:on
+
+  public float yield;
+  public boolean wasCanceled = false;
+
+  @Override
+  public float bridge$getYield() {
+    return this.yield;
+  }
+
+  @Inject(
+      method =
+          "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Explosion$BlockInteraction;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/Holder;)V",
+      at = @At("RETURN"))
+  public void arclight$adjustSize(
+      Level level,
+      Entity entity,
+      DamageSource damageSource,
+      ExplosionDamageCalculator explosionDamageCalculator,
+      double x,
+      double y,
+      double z,
+      float radius,
+      boolean fire,
+      Explosion.BlockInteraction blockInteraction,
+      ParticleOptions particleOptions,
+      ParticleOptions particleOptions2,
+      Holder<SoundEvent> holder,
+      CallbackInfo ci) {
+    this.radius = Math.max(radius, 0F);
+    this.yield =
+        this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY
+            ? 1.0F / this.radius
+            : 1.0F;
+    this.damageSource =
+        ((DamageSourceBridge)
+                (this.damageSource == null
+                    ? level.damageSources().explosion((Explosion) (Object) this)
+                    : this.damageSource))
+            .bridge$customCausingEntity(entity);
+  }
+
+  @Inject(method = "explode", cancellable = true, at = @At("HEAD"))
+  private void arclight$returnRadius(CallbackInfo ci) {
+    if (this.radius < 0.1F) {
+      ci.cancel();
+    }
+  }
+
+  @Decorate(
+      method = "explode",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+  private boolean arclight$handleMultiPart(
+      Entity entity, DamageSource damageSource, float f, @Local(ordinal = -1) List<Entity> list)
+      throws Throwable {
+    // Special case ender dragon only give knockback if no damage is cancelled
+    // Thinks to note:
+    // - Setting a velocity to a ComplexEntityPart is ignored (and therefore not needed)
+    // - Damaging ComplexEntityPart while forward the damage to EntityEnderDragon
+    // - Damaging EntityEnderDragon does nothing
+    // - EntityEnderDragon hitbock always covers the other parts and is therefore always present
+    if (((EntityBridge) entity).bridge$forge$isPartEntity()) {
+      throw DecorationOps.jumpToLoopStart();
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Explosion$BlockInteraction;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/Holder;)V", at = @At("RETURN"))
-    public void arclight$adjustSize(Level level, Entity entity, DamageSource damageSource,
-                                    ExplosionDamageCalculator explosionDamageCalculator,
-                                    double x, double y, double z, float radius, boolean fire,
-                                    Explosion.BlockInteraction blockInteraction,
-                                    ParticleOptions particleOptions, ParticleOptions particleOptions2,
-                                    Holder<SoundEvent> holder, CallbackInfo ci) {
-        this.radius = Math.max(radius, 0F);
-        this.yield = this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY ? 1.0F / this.radius : 1.0F;
-        this.damageSource = ((DamageSourceBridge) (this.damageSource == null ? level.damageSources().explosion((Explosion) (Object) this) : this.damageSource)).bridge$customCausingEntity(entity);
+    ((EntityBridge) entity).bridge$setLastDamageCancelled(false);
+
+    var result = false;
+    var parts = ((EntityBridge) entity).bridge$forge$getParts();
+    if (parts != null) {
+      for (var part : parts) {
+        // Calculate damage separately for each part
+        if (list.contains(part)) {
+          result |= part.hurt(damageSource, f);
+        }
+      }
+    } else {
+      result = (boolean) DecorationOps.callsite().invoke(entity, damageSource, f);
     }
 
-    @Inject(method = "explode", cancellable = true, at = @At("HEAD"))
-    private void arclight$returnRadius(CallbackInfo ci) {
-        if (this.radius < 0.1F) {
-            ci.cancel();
-        }
+    if (((EntityBridge) entity).bridge$isLastDamageCancelled()) {
+      throw DecorationOps.jumpToLoopStart();
+    }
+    return result;
+  }
+
+  @Decorate(
+      method = "explode",
+      at = @At(value = "NEW", ordinal = 0, target = "(DDD)Lnet/minecraft/world/phys/Vec3;"),
+      slice =
+          @Slice(
+              from =
+                  @At(
+                      value = "INVOKE",
+                      target =
+                          "Lnet/minecraft/world/level/ExplosionDamageCalculator;getKnockbackMultiplier(Lnet/minecraft/world/entity/Entity;)F")))
+  private Vec3 arclight$knockBack(double d, double e, double f, @Local(ordinal = -1) Entity entity)
+      throws Throwable {
+    var vec3 = (Vec3) DecorationOps.callsite().invoke(d, e, f);
+    double dx = entity.getX() - this.x;
+    double dy = entity.getEyeY() - this.y;
+    double dz = entity.getZ() - this.z;
+    var force = dx * dx + dy * dy + dz * dz;
+    if (entity instanceof LivingEntity) {
+      var result = entity.getDeltaMovement().add(vec3);
+      var event =
+          CraftEventFactory.callEntityKnockbackEvent(
+              (CraftLivingEntity) entity.bridge$getBukkitEntity(),
+              source,
+              EntityKnockbackEvent.KnockbackCause.EXPLOSION,
+              force,
+              vec3,
+              result.x,
+              result.y,
+              result.z);
+      vec3 =
+          (event.isCancelled())
+              ? Vec3.ZERO
+              : new Vec3(
+                      event.getFinalKnockback().getX(),
+                      event.getFinalKnockback().getY(),
+                      event.getFinalKnockback().getZ())
+                  .subtract(entity.getDeltaMovement());
+    }
+    return vec3;
+  }
+
+  @Override
+  public boolean bridge$wasCancelled() {
+    return wasCanceled;
+  }
+
+  @Inject(
+      method = "finalizeExplosion",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/Util;shuffle(Ljava/util/List;Lnet/minecraft/util/RandomSource;)V"))
+  private void arclight$blockExplode(boolean bl, CallbackInfo ci) {
+    if (this.arclight$callBlockExplodeEvent()) {
+      this.wasCanceled = true;
+      ci.cancel();
+    }
+  }
+
+  @Decorate(
+      method = "finalizeExplosion",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"))
+  private void arclight$tntPrime(
+      BlockState instance,
+      Level level,
+      BlockPos pos,
+      Explosion explosion,
+      BiConsumer<?, ?> biConsumer)
+      throws Throwable {
+    if (instance.getBlock() instanceof TntBlock) {
+      var sourceEntity = source == null ? null : source;
+      var sourceBlock = sourceEntity == null ? BlockPos.containing(this.x, this.y, this.z) : null;
+      if (!CraftEventFactory.callTNTPrimeEvent(
+          this.level, pos, TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
+        this.level.sendBlockUpdated(
+            pos, Blocks.AIR.defaultBlockState(), instance, 3); // Update the block on the client
+        return;
+      }
+    }
+    DecorationOps.callsite().invoke(instance, level, pos, explosion, biConsumer);
+  }
+
+  @Decorate(
+      method = "finalizeExplosion",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+  private boolean arclight$blockIgnite(Level instance, BlockPos blockPos, BlockState blockState)
+      throws Throwable {
+    BlockIgniteEvent event =
+        CraftEventFactory.callBlockIgniteEvent(this.level, blockPos, (Explosion) (Object) this);
+    if (event.isCancelled()) {
+      return false;
+    }
+    return (boolean) DecorationOps.callsite().invoke(instance, blockPos, blockState);
+  }
+
+  @Inject(method = "addOrAppendStack", cancellable = true, at = @At("HEAD"))
+  private static void arclight$fix(
+      List<Pair<ItemStack, BlockPos>> p_311090_,
+      ItemStack stack,
+      BlockPos p_309821_,
+      CallbackInfo ci) {
+    if (stack.isEmpty()) ci.cancel();
+  }
+
+  @Unique
+  private boolean arclight$callBlockExplodeEvent() {
+    boolean wasCancelled;
+
+    org.bukkit.World world = this.level.bridge$getWorld();
+    Location location = new Location(world, this.x, this.y, this.z);
+    List<org.bukkit.block.Block> blockList = new ObjectArrayList<>();
+    for (int i = this.toBlow.size() - 1; i >= 0; i--) {
+      BlockPos blockPos = this.toBlow.get(i);
+      org.bukkit.block.Block block =
+          world.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+      if (!block.getType().isAir()) {
+        blockList.add(block);
+      }
     }
 
-    @Decorate(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    private boolean arclight$handleMultiPart(Entity entity, DamageSource damageSource, float f, @Local(ordinal = -1) List<Entity> list) throws Throwable {
-        // Special case ender dragon only give knockback if no damage is cancelled
-        // Thinks to note:
-        // - Setting a velocity to a ComplexEntityPart is ignored (and therefore not needed)
-        // - Damaging ComplexEntityPart while forward the damage to EntityEnderDragon
-        // - Damaging EntityEnderDragon does nothing
-        // - EntityEnderDragon hitbock always covers the other parts and is therefore always present
-        if (((EntityBridge) entity).bridge$forge$isPartEntity()) {
-            throw DecorationOps.jumpToLoopStart();
-        }
+    List<org.bukkit.block.Block> bukkitBlocks;
 
-        ((EntityBridge) entity).bridge$setLastDamageCancelled(false);
-
-        var result = false;
-        var parts = ((EntityBridge) entity).bridge$forge$getParts();
-        if (parts != null) {
-            for (var part : parts) {
-                // Calculate damage separately for each part
-                if (list.contains(part)) {
-                    result |= part.hurt(damageSource, f);
-                }
-            }
-        } else {
-            result = (boolean) DecorationOps.callsite().invoke(entity, damageSource, f);
-        }
-
-        if (((EntityBridge) entity).bridge$isLastDamageCancelled()) {
-            throw DecorationOps.jumpToLoopStart();
-        }
-        return result;
+    if (this.source != null) {
+      EntityExplodeEvent event =
+          CraftEventFactory.callEntityExplodeEvent(
+              this.source, blockList, this.yield, this.getBlockInteraction());
+      wasCancelled = event.isCancelled();
+      bukkitBlocks = event.blockList();
+      this.yield = event.getYield();
+    } else {
+      org.bukkit.block.Block block = location.getBlock();
+      org.bukkit.block.BlockState blockState =
+          (((DamageSourceBridge) damageSource).bridge$directBlockState() != null)
+              ? ((DamageSourceBridge) damageSource).bridge$directBlockState()
+              : block.getState();
+      BlockExplodeEvent event =
+          CraftEventFactory.callBlockExplodeEvent(
+              block, blockState, blockList, this.yield, this.getBlockInteraction());
+      wasCancelled = event.isCancelled();
+      bukkitBlocks = event.blockList();
+      this.yield = event.getYield();
     }
 
-    @Decorate(method = "explode", at = @At(value = "NEW", ordinal = 0, target = "(DDD)Lnet/minecraft/world/phys/Vec3;"),
-        slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ExplosionDamageCalculator;getKnockbackMultiplier(Lnet/minecraft/world/entity/Entity;)F")))
-    private Vec3 arclight$knockBack(double d, double e, double f, @Local(ordinal = -1) Entity entity) throws Throwable {
-        var vec3 = (Vec3) DecorationOps.callsite().invoke(d, e, f);
-        double dx = entity.getX() - this.x;
-        double dy = entity.getEyeY() - this.y;
-        double dz = entity.getZ() - this.z;
-        var force = dx * dx + dy * dy + dz * dz;
-        if (entity instanceof LivingEntity) {
-            var result = entity.getDeltaMovement().add(vec3);
-            var event = CraftEventFactory.callEntityKnockbackEvent((CraftLivingEntity) entity.bridge$getBukkitEntity(), source, EntityKnockbackEvent.KnockbackCause.EXPLOSION, force, vec3, result.x, result.y, result.z);
-            vec3 = (event.isCancelled()) ? Vec3.ZERO : new Vec3(event.getFinalKnockback().getX(), event.getFinalKnockback().getY(), event.getFinalKnockback().getZ()).subtract(entity.getDeltaMovement());
-        }
-        return vec3;
+    this.toBlow.clear();
+
+    for (org.bukkit.block.Block block : bukkitBlocks) {
+      BlockPos blockPos = new BlockPos(block.getX(), block.getY(), block.getZ());
+      this.toBlow.add(blockPos);
     }
-
-    @Override
-    public boolean bridge$wasCancelled() {
-        return wasCanceled;
-    }
-
-    @Inject(method = "finalizeExplosion", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/Util;shuffle(Ljava/util/List;Lnet/minecraft/util/RandomSource;)V"))
-    private void arclight$blockExplode(boolean bl, CallbackInfo ci) {
-        if (this.arclight$callBlockExplodeEvent()) {
-            this.wasCanceled = true;
-            ci.cancel();
-        }
-    }
-
-    @Decorate(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"))
-    private void arclight$tntPrime(BlockState instance, Level level, BlockPos pos, Explosion explosion, BiConsumer<?, ?> biConsumer) throws Throwable {
-        if (instance.getBlock() instanceof TntBlock) {
-            var sourceEntity = source == null ? null : source;
-            var sourceBlock = sourceEntity == null ? BlockPos.containing(this.x, this.y, this.z) : null;
-            if (!CraftEventFactory.callTNTPrimeEvent(this.level, pos, TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
-                this.level.sendBlockUpdated(pos, Blocks.AIR.defaultBlockState(), instance, 3); // Update the block on the client
-                return;
-            }
-        }
-        DecorationOps.callsite().invoke(instance, level, pos, explosion, biConsumer);
-    }
-
-    @Decorate(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"))
-    private boolean arclight$blockIgnite(Level instance, BlockPos blockPos, BlockState blockState) throws Throwable {
-        BlockIgniteEvent event = CraftEventFactory.callBlockIgniteEvent(this.level, blockPos, (Explosion) (Object) this);
-        if (event.isCancelled()) {
-            return false;
-        }
-        return (boolean) DecorationOps.callsite().invoke(instance, blockPos, blockState);
-    }
-
-    @Inject(method = "addOrAppendStack", cancellable = true, at = @At("HEAD"))
-    private static void arclight$fix(List<Pair<ItemStack, BlockPos>> p_311090_, ItemStack stack, BlockPos p_309821_, CallbackInfo ci) {
-        if (stack.isEmpty()) ci.cancel();
-    }
-
-    @Unique
-    private boolean arclight$callBlockExplodeEvent() {
-        boolean wasCancelled;
-
-        org.bukkit.World world = this.level.bridge$getWorld();
-        Location location = new Location(world, this.x, this.y, this.z);
-        List<org.bukkit.block.Block> blockList = new ObjectArrayList<>();
-        for (int i = this.toBlow.size() - 1; i >= 0; i--) {
-            BlockPos blockPos = this.toBlow.get(i);
-            org.bukkit.block.Block block = world.getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-            if (!block.getType().isAir()) {
-                blockList.add(block);
-            }
-        }
-
-        List<org.bukkit.block.Block> bukkitBlocks;
-
-        if (this.source != null) {
-            EntityExplodeEvent event = CraftEventFactory.callEntityExplodeEvent(this.source, blockList, this.yield, this.getBlockInteraction());
-            wasCancelled = event.isCancelled();
-            bukkitBlocks = event.blockList();
-            this.yield = event.getYield();
-        } else {
-            org.bukkit.block.Block block = location.getBlock();
-            org.bukkit.block.BlockState blockState = (((DamageSourceBridge) damageSource).bridge$directBlockState() != null) ? ((DamageSourceBridge) damageSource).bridge$directBlockState() : block.getState();
-            BlockExplodeEvent event = CraftEventFactory.callBlockExplodeEvent(block, blockState, blockList, this.yield, this.getBlockInteraction());
-            wasCancelled = event.isCancelled();
-            bukkitBlocks = event.blockList();
-            this.yield = event.getYield();
-        }
-
-        this.toBlow.clear();
-
-        for (org.bukkit.block.Block block : bukkitBlocks) {
-            BlockPos blockPos = new BlockPos(block.getX(), block.getY(), block.getZ());
-            this.toBlow.add(blockPos);
-        }
-        return wasCancelled;
-    }
+    return wasCancelled;
+  }
 }

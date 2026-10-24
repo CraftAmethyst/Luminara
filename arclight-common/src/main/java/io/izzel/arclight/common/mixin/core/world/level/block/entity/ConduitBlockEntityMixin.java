@@ -1,8 +1,9 @@
 package io.izzel.arclight.common.mixin.core.world.level.block.entity;
 
-import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
 import io.izzel.arclight.common.bridge.core.world.damagesource.DamageSourceBridge;
+import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
 import io.izzel.arclight.common.mod.mixins.annotation.TransformAccess;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
@@ -21,46 +22,83 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
 @Mixin(ConduitBlockEntity.class)
 public abstract class ConduitBlockEntityMixin extends BlockEntityMixin {
 
-    // @formatter:off
-    @Shadow private static void updateDestroyTarget(Level level, BlockPos blockPos, BlockState blockState, List<BlockPos> list, ConduitBlockEntity conduitBlockEntity) {}
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  private static void updateDestroyTarget(
+      Level level,
+      BlockPos blockPos,
+      BlockState blockState,
+      List<BlockPos> list,
+      ConduitBlockEntity conduitBlockEntity) {}
 
-    @Redirect(method = "applyEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
-    private static boolean arclight$addEntity(Player player, MobEffectInstance eff) {
-        ((PlayerBridge) player).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.CONDUIT);
-        return player.addEffect(eff);
+  // @formatter:on
+
+  @Redirect(
+      method = "applyEffects",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/player/Player;addEffect(Lnet/minecraft/world/effect/MobEffectInstance;)Z"))
+  private static boolean arclight$addEntity(Player player, MobEffectInstance eff) {
+    ((PlayerBridge) player).bridge$pushEffectCause(EntityPotionEffectEvent.Cause.CONDUIT);
+    return player.addEffect(eff);
+  }
+
+  @Redirect(
+      method = "updateDestroyTarget",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"))
+  private static DamageSource arclight$attackReason(
+      DamageSources instance, Level level, BlockPos pos) {
+    return ((DamageSourceBridge) instance.magic()).bridge$directBlock(CraftBlock.at(level, pos));
+  }
+
+  @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
+  private static int getRange(List<BlockPos> list) {
+    int i = list.size();
+    return i / 7 * 16;
+  }
+
+  private static boolean arclight$damageTarget = true;
+
+  @Inject(
+      method = "updateDestroyTarget",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
+  private static void arclight$returnIfNot(
+      Level level,
+      BlockPos blockPos,
+      BlockState blockState,
+      List<BlockPos> list,
+      ConduitBlockEntity conduitBlockEntity,
+      CallbackInfo ci) {
+    if (!arclight$damageTarget) {
+      ci.cancel();
+      level.sendBlockUpdated(blockPos, blockState, blockState, 2);
     }
+  }
 
-    @Redirect(method = "updateDestroyTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSources;magic()Lnet/minecraft/world/damagesource/DamageSource;"))
-    private static DamageSource arclight$attackReason(DamageSources instance, Level level, BlockPos pos) {
-        return ((DamageSourceBridge) instance.magic()).bridge$directBlock(CraftBlock.at(level, pos));
-    }
-
-    @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
-    private static int getRange(List<BlockPos> list) {
-        int i = list.size();
-        return i / 7 * 16;
-    }
-
-    private static boolean arclight$damageTarget = true;
-
-    @Inject(method = "updateDestroyTarget", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
-    private static void arclight$returnIfNot(Level level, BlockPos blockPos, BlockState blockState, List<BlockPos> list, ConduitBlockEntity conduitBlockEntity, CallbackInfo ci) {
-        if (!arclight$damageTarget) {
-            ci.cancel();
-            level.sendBlockUpdated(blockPos, blockState, blockState, 2);
-        }
-    }
-
-    @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
-    private static void updateDestroyTarget(Level level, BlockPos blockPos, BlockState blockState, List<BlockPos> list, ConduitBlockEntity conduitBlockEntity, boolean damageTarget) {
-        arclight$damageTarget = damageTarget;
-        updateDestroyTarget(level, blockPos, blockState, list, conduitBlockEntity);
-        arclight$damageTarget = true;
-    }
+  @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
+  private static void updateDestroyTarget(
+      Level level,
+      BlockPos blockPos,
+      BlockState blockState,
+      List<BlockPos> list,
+      ConduitBlockEntity conduitBlockEntity,
+      boolean damageTarget) {
+    arclight$damageTarget = damageTarget;
+    updateDestroyTarget(level, blockPos, blockState, list, conduitBlockEntity);
+    arclight$damageTarget = true;
+  }
 }

@@ -32,64 +32,95 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ChunkGenerator.class)
 public abstract class ChunkGeneratorMixin implements ChunkGeneratorBridge {
 
-    // @formatter:off
-    @Shadow public abstract void applyBiomeDecoration(WorldGenLevel p_187712_, ChunkAccess p_187713_, StructureManager p_187714_);
-    @Shadow @Final @Mutable protected BiomeSource biomeSource;
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract void applyBiomeDecoration(
+      WorldGenLevel p_187712_, ChunkAccess p_187713_, StructureManager p_187714_);
 
-    @Inject(method = "applyBiomeDecoration", at = @At("RETURN"))
-    private void arclight$addBukkitDecoration(WorldGenLevel level, ChunkAccess chunkAccess, StructureManager manager, CallbackInfo ci) {
-        this.addDecorations(level, chunkAccess, manager);
+  @Shadow @Final @Mutable protected BiomeSource biomeSource;
+
+  // @formatter:on
+
+  @Inject(method = "applyBiomeDecoration", at = @At("RETURN"))
+  private void arclight$addBukkitDecoration(
+      WorldGenLevel level, ChunkAccess chunkAccess, StructureManager manager, CallbackInfo ci) {
+    this.addDecorations(level, chunkAccess, manager);
+  }
+
+  @Decorate(
+      method = "tryGenerateStructure",
+      inject = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/StructureManager;setStartForStructure(Lnet/minecraft/core/SectionPos;Lnet/minecraft/world/level/levelgen/structure/Structure;Lnet/minecraft/world/level/levelgen/structure/StructureStart;Lnet/minecraft/world/level/chunk/StructureAccess;)V"))
+  private void arclight$structureSpawn(
+      @Local(ordinal = -1) StructureManager manager,
+      @Local(ordinal = -1) ChunkPos chunkPos,
+      @Local(ordinal = -1) Structure structure,
+      @Local(ordinal = -1) StructureStart structurestart)
+      throws Throwable {
+    if (LevelAccessorBridge.from(manager.level) instanceof LevelAccessorBridge bridge) {
+      var box = structurestart.getBoundingBox();
+      var event =
+          new org.bukkit.event.world.AsyncStructureSpawnEvent(
+              bridge.bridge$getMinecraftWorld().bridge$getWorld(),
+              CraftStructure.minecraftToBukkit(structure),
+              new org.bukkit.util.BoundingBox(
+                  box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()),
+              chunkPos.x,
+              chunkPos.z);
+      Bukkit.getPluginManager().callEvent(event);
+      if (event.isCancelled()) {
+        DecorationOps.cancel().invoke(true);
+        return;
+      }
     }
+    DecorationOps.blackhole().invoke();
+  }
 
-    @Decorate(method = "tryGenerateStructure", inject = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/StructureManager;setStartForStructure(Lnet/minecraft/core/SectionPos;Lnet/minecraft/world/level/levelgen/structure/Structure;Lnet/minecraft/world/level/levelgen/structure/StructureStart;Lnet/minecraft/world/level/chunk/StructureAccess;)V"))
-    private void arclight$structureSpawn(@Local(ordinal = -1) StructureManager manager, @Local(ordinal = -1) ChunkPos chunkPos, @Local(ordinal = -1) Structure structure, @Local(ordinal = -1) StructureStart structurestart) throws Throwable {
-        if (LevelAccessorBridge.from(manager.level) instanceof LevelAccessorBridge bridge) {
-            var box = structurestart.getBoundingBox();
-            var event = new org.bukkit.event.world.AsyncStructureSpawnEvent(bridge.bridge$getMinecraftWorld().bridge$getWorld(), CraftStructure.minecraftToBukkit(structure), new org.bukkit.util.BoundingBox(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()), chunkPos.x, chunkPos.z);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                DecorationOps.cancel().invoke(true);
-                return;
-            }
-        }
-        DecorationOps.blackhole().invoke();
+  @InvokeSpecial
+  private void arclight$this$applyBiomeDecoration(
+      WorldGenLevel p_187712_, ChunkAccess p_187713_, StructureManager p_187714_) {
+    applyBiomeDecoration(p_187712_, p_187713_, p_187714_);
+  }
+
+  // TODO SpigotWorldConfig support to provide different seed according to the structure kind
+
+  public void applyBiomeDecoration(
+      WorldGenLevel level,
+      ChunkAccess chunkAccess,
+      StructureManager structureFeatureManager,
+      boolean vanilla) {
+    if (vanilla) {
+      arclight$this$applyBiomeDecoration(level, chunkAccess, structureFeatureManager);
+    } else {
+      this.addDecorations(level, chunkAccess, structureFeatureManager);
     }
+  }
 
-    @InvokeSpecial
-    private void arclight$this$applyBiomeDecoration(WorldGenLevel p_187712_, ChunkAccess p_187713_, StructureManager p_187714_) {
-        applyBiomeDecoration(p_187712_, p_187713_, p_187714_);
+  private void addDecorations(
+      WorldGenLevel region, ChunkAccess chunk, StructureManager structureManager) {
+    org.bukkit.World world = region.getLevel().bridge$getWorld();
+    // only call when a populator is present (prevents unnecessary entity conversion)
+    if (!world.getPopulators().isEmpty()) {
+      CraftLimitedRegion limitedRegion = new CraftLimitedRegion(region, chunk.getPos());
+      int x = chunk.getPos().x;
+      int z = chunk.getPos().z;
+      for (BlockPopulator populator : world.getPopulators()) {
+        WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(region.getSeed()));
+        random.setDecorationSeed(region.getSeed(), x, z);
+        populator.populate(
+            world, new RandomSourceWrapper.RandomWrapper(random), x, z, limitedRegion);
+      }
+      limitedRegion.saveEntities();
+      limitedRegion.breakLink();
     }
+  }
 
-    // TODO SpigotWorldConfig support to provide different seed according to the structure kind
-
-    public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunkAccess, StructureManager structureFeatureManager, boolean vanilla) {
-        if (vanilla) {
-            arclight$this$applyBiomeDecoration(level, chunkAccess, structureFeatureManager);
-        } else {
-            this.addDecorations(level, chunkAccess, structureFeatureManager);
-        }
-    }
-
-    private void addDecorations(WorldGenLevel region, ChunkAccess chunk, StructureManager structureManager) {
-        org.bukkit.World world = region.getLevel().bridge$getWorld();
-        // only call when a populator is present (prevents unnecessary entity conversion)
-        if (!world.getPopulators().isEmpty()) {
-            CraftLimitedRegion limitedRegion = new CraftLimitedRegion(region, chunk.getPos());
-            int x = chunk.getPos().x;
-            int z = chunk.getPos().z;
-            for (BlockPopulator populator : world.getPopulators()) {
-                WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(region.getSeed()));
-                random.setDecorationSeed(region.getSeed(), x, z);
-                populator.populate(world, new RandomSourceWrapper.RandomWrapper(random), x, z, limitedRegion);
-            }
-            limitedRegion.saveEntities();
-            limitedRegion.breakLink();
-        }
-    }
-
-    @Override
-    public void bridge$setBiomeSource(BiomeSource biomeSource) {
-        this.biomeSource = biomeSource;
-    }
+  @Override
+  public void bridge$setBiomeSource(BiomeSource biomeSource) {
+    this.biomeSource = biomeSource;
+  }
 }

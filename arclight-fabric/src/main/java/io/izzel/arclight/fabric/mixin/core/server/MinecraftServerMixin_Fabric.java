@@ -9,13 +9,13 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin_Fabric implements MinecraftServerBridge {
 
-    @Override
-    public void arclight$onServerLoad(ServerLevel level) {
-        ServerWorldEvents.LOAD.invoker().onWorldLoad((MinecraftServer)(Object)this, level);
-    }
+  @Override
+  public void arclight$onServerLoad(ServerLevel level) {
+    ServerWorldEvents.LOAD.invoker().onWorldLoad((MinecraftServer) (Object) this, level);
+  }
 
-    @Override
-    public void arclight$onServerUnload(ServerLevel level) {
-        ServerWorldEvents.UNLOAD.invoker().onWorldUnload((MinecraftServer)(Object)this, level);
-    }
+  @Override
+  public void arclight$onServerUnload(ServerLevel level) {
+    ServerWorldEvents.UNLOAD.invoker().onWorldUnload((MinecraftServer) (Object) this, level);
+  }
 }

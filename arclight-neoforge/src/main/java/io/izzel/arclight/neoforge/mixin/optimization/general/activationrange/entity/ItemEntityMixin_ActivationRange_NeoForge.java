@@ -16,34 +16,46 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemEntity.class)
-public abstract class ItemEntityMixin_ActivationRange_NeoForge extends EntityMixin_NeoForge implements ItemEntityBridge {
+public abstract class ItemEntityMixin_ActivationRange_NeoForge extends EntityMixin_NeoForge
+    implements ItemEntityBridge {
 
-    // @formatter:off
-    @Shadow(remap = false) public int lifespan;
-    @Shadow public int age;
-    @Shadow public abstract ItemStack getItem();
-    // @formatter:on
+  // @formatter:off
+  @Shadow(remap = false)
+  public int lifespan;
 
-    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V", at = @At("RETURN"))
-    private void activationRange$init(EntityType<? extends ItemEntity> entityType, Level world, CallbackInfo ci) {
-        if (DistValidate.isValid(this.level())) {
-            this.lifespan = ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
-        }
+  @Shadow public int age;
+
+  @Shadow
+  public abstract ItemStack getItem();
+
+  // @formatter:on
+
+  @Inject(
+      method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V",
+      at = @At("RETURN"))
+  private void activationRange$init(
+      EntityType<? extends ItemEntity> entityType, Level world, CallbackInfo ci) {
+    if (DistValidate.isValid(this.level())) {
+      this.lifespan = ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
     }
+  }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V", at = @At("RETURN"))
-    private void activationRange$init(Level worldIn, double x, double y, double z, ItemStack stack, CallbackInfo ci) {
-        if (DistValidate.isValid(this.level()) && this.lifespan == 6000) {
-            this.lifespan = ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
-        }
+  @Inject(
+      method = "<init>(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V",
+      at = @At("RETURN"))
+  private void activationRange$init(
+      Level worldIn, double x, double y, double z, ItemStack stack, CallbackInfo ci) {
+    if (DistValidate.isValid(this.level()) && this.lifespan == 6000) {
+      this.lifespan = ((WorldBridge) this.level()).bridge$spigotConfig().itemDespawnRate;
     }
+  }
 
-    @Override
-    public void bridge$forge$optimization$discardItemEntity() {
-        if (!this.level().isClientSide && this.age >= this.lifespan) {
-            int hook = EventHooks.onItemExpire((ItemEntity) (Object) this);
-            if (hook < 0) this.discard();
-            else this.lifespan += hook;
-        }
+  @Override
+  public void bridge$forge$optimization$discardItemEntity() {
+    if (!this.level().isClientSide && this.age >= this.lifespan) {
+      int hook = EventHooks.onItemExpire((ItemEntity) (Object) this);
+      if (hook < 0) this.discard();
+      else this.lifespan += hook;
     }
+  }
 }

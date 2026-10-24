@@ -11,9 +11,11 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(Cat.class)
 public abstract class CatMixin extends AnimalMixin {
 
-    @Decorate(method = "tryToTame", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"))
-    private int arclight$tame(RandomSource instance, int i, Player player) throws Throwable {
-        var ret = (int) DecorationOps.callsite().invoke(instance, i);
-        return ret == 0 && this.bridge$common$animalTameEvent(player) ? ret : 1;
-    }
+  @Decorate(
+      method = "tryToTame",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"))
+  private int arclight$tame(RandomSource instance, int i, Player player) throws Throwable {
+    var ret = (int) DecorationOps.callsite().invoke(instance, i);
+    return ret == 0 && this.bridge$common$animalTameEvent(player) ? ret : 1;
+  }
 }

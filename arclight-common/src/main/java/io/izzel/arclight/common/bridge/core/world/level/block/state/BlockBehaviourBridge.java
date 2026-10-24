@@ -9,12 +9,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface BlockBehaviourBridge {
 
-    default boolean bridge$forge$canDropFromExplosion(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
-        return state.getBlock().dropFromExplosion(explosion);
-    }
+  default boolean bridge$forge$canDropFromExplosion(
+      BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+    return state.getBlock().dropFromExplosion(explosion);
+  }
 
-    default void bridge$forge$onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-        state.getBlock().wasExploded(level, pos, explosion);
-    }
+  default void bridge$forge$onBlockExploded(
+      BlockState state, Level level, BlockPos pos, Explosion explosion) {
+    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+    state.getBlock().wasExploded(level, pos, explosion);
+  }
 }

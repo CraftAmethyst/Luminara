@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(value = CraftAbstractVillager.class, remap = false)
 public abstract class CraftAbstractVillagerMixin extends CraftEntityMixin {
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public AbstractVillager getHandle() {
-        return (AbstractVillager) this.entity;
-    }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public AbstractVillager getHandle() {
+    return (AbstractVillager) this.entity;
+  }
 }

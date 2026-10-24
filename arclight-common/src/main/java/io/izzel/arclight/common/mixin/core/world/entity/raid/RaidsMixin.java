@@ -1,5 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.entity.raid;
 
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
@@ -16,23 +18,37 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.List;
-import java.util.Map;
-
 @Mixin(Raids.class)
 public class RaidsMixin {
 
-    // @formatter:off
-    @Shadow @Final public Map<Integer, Raid> raidMap;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final public Map<Integer, Raid> raidMap;
 
-    @Inject(method = "createOrExtendRaid", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/raid/Raid;absorbRaidOmen(Lnet/minecraft/server/level/ServerPlayer;)Z"))
-    public void arclight$raidTrigger(ServerPlayer playerEntity, BlockPos pos, CallbackInfoReturnable<Raid> cir,
-                                     DimensionType dimensionType, List<?> list, int i, Vec3 vec, BlockPos pos1, Raid raid) {
-        if (!CraftEventFactory.callRaidTriggerEvent(raid, playerEntity)) {
-            playerEntity.removeEffect(MobEffects.BAD_OMEN);
-            this.raidMap.remove(raid.getId(), raid);
-            cir.setReturnValue(null);
-        }
+  // @formatter:on
+
+  @Inject(
+      method = "createOrExtendRaid",
+      cancellable = true,
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/raid/Raid;absorbRaidOmen(Lnet/minecraft/server/level/ServerPlayer;)Z"))
+  public void arclight$raidTrigger(
+      ServerPlayer playerEntity,
+      BlockPos pos,
+      CallbackInfoReturnable<Raid> cir,
+      DimensionType dimensionType,
+      List<?> list,
+      int i,
+      Vec3 vec,
+      BlockPos pos1,
+      Raid raid) {
+    if (!CraftEventFactory.callRaidTriggerEvent(raid, playerEntity)) {
+      playerEntity.removeEffect(MobEffects.BAD_OMEN);
+      this.raidMap.remove(raid.getId(), raid);
+      cir.setReturnValue(null);
     }
+  }
 }

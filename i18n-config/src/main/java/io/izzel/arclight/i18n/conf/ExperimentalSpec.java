@@ -6,10 +6,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class ExperimentalSpec {
 
-    @Setting("replaceable-base-world-generator")
-    private boolean canOverrideWorldgen = true;
+  @Setting("replaceable-base-world-generator")
+  private boolean canOverrideWorldgen = true;
 
-    public boolean canOverrideWorldgen() {
-        return this.canOverrideWorldgen;
-    }
+  public boolean canOverrideWorldgen() {
+    return this.canOverrideWorldgen;
+  }
 }

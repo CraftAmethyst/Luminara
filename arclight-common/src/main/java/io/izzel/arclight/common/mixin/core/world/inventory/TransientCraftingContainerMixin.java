@@ -1,11 +1,13 @@
 package io.izzel.arclight.common.mixin.core.world.inventory;
 
-import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
-import io.izzel.arclight.common.bridge.core.world.inventory.TransientCraftingContainerBridge;
 import io.izzel.arclight.common.bridge.core.world.IInventoryBridge;
+import io.izzel.arclight.common.bridge.core.world.entity.player.PlayerBridge;
 import io.izzel.arclight.common.bridge.core.world.inventory.PosContainerBridge;
+import io.izzel.arclight.common.bridge.core.world.inventory.TransientCraftingContainerBridge;
 import io.izzel.arclight.common.mod.mixins.annotation.CreateConstructor;
 import io.izzel.arclight.common.mod.mixins.annotation.ShadowConstructor;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -22,108 +24,107 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(TransientCraftingContainer.class)
-public abstract class TransientCraftingContainerMixin implements TransientCraftingContainerBridge, Container {
+public abstract class TransientCraftingContainerMixin
+    implements TransientCraftingContainerBridge, Container {
 
-    // @formatter:off
-    @Shadow @Final private NonNullList<ItemStack> items;
-    @Shadow @Final public AbstractContainerMenu menu;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private NonNullList<ItemStack> items;
+  @Shadow @Final public AbstractContainerMenu menu;
+  // @formatter:on
 
-    public List<HumanEntity> transaction = new ArrayList<>();
-    private RecipeHolder<?> currentRecipe;
-    public Container resultInventory;
-    private Player owner;
-    private InventoryHolder bukkitOwner;
-    private int maxStack = MAX_STACK;
+  public List<HumanEntity> transaction = new ArrayList<>();
+  private RecipeHolder<?> currentRecipe;
+  public Container resultInventory;
+  private Player owner;
+  private InventoryHolder bukkitOwner;
+  private int maxStack = MAX_STACK;
 
-    @ShadowConstructor
-    public void arclight$constructor(AbstractContainerMenu eventHandlerIn, int width, int height) {
-        throw new RuntimeException();
+  @ShadowConstructor
+  public void arclight$constructor(AbstractContainerMenu eventHandlerIn, int width, int height) {
+    throw new RuntimeException();
+  }
+
+  @CreateConstructor
+  public void arclight$constructor(
+      AbstractContainerMenu eventHandlerIn, int width, int height, Player owner) {
+    arclight$constructor(eventHandlerIn, width, height);
+    this.owner = owner;
+  }
+
+  public InventoryType getInvType() {
+    return this.items.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
+  }
+
+  @Override
+  public void bridge$setResultInventory(Container resultInventory) {
+    this.resultInventory = resultInventory;
+  }
+
+  @Override
+  public void bridge$setOwner(Player owner) {
+    this.owner = owner;
+  }
+
+  @Override
+  public List<ItemStack> getContents() {
+    return this.items;
+  }
+
+  @Override
+  public void onOpen(CraftHumanEntity who) {
+    this.transaction.add(who);
+  }
+
+  @Override
+  public void onClose(CraftHumanEntity who) {
+    this.transaction.remove(who);
+  }
+
+  @Override
+  public List<HumanEntity> getViewers() {
+    return transaction;
+  }
+
+  @Override
+  public InventoryHolder getOwner() {
+    if (bukkitOwner == null) {
+      bukkitOwner = owner == null ? null : ((PlayerBridge) owner).bridge$getBukkitEntity();
     }
+    return bukkitOwner;
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(AbstractContainerMenu eventHandlerIn, int width, int height, Player owner) {
-        arclight$constructor(eventHandlerIn, width, height);
-        this.owner = owner;
-    }
+  @Override
+  public void setOwner(InventoryHolder owner) {
+    this.bukkitOwner = owner;
+  }
 
-    public InventoryType getInvType() {
-        return this.items.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
-    }
+  @Override
+  public int getMaxStackSize() {
+    if (maxStack == 0) maxStack = MAX_STACK;
+    return this.maxStack;
+  }
 
-    @Override
-    public void bridge$setResultInventory(Container resultInventory) {
-        this.resultInventory = resultInventory;
-    }
+  @Override
+  public void setMaxStackSize(int size) {
+    this.maxStack = size;
+    ((IInventoryBridge) this.resultInventory).setMaxStackSize(size);
+  }
 
-    @Override
-    public void bridge$setOwner(Player owner) {
-        this.owner = owner;
-    }
+  @Override
+  public Location getLocation() {
+    return this.menu instanceof PosContainerBridge
+        ? ((PosContainerBridge) menu).bridge$getWorldLocation()
+        : ((PlayerBridge) owner).bridge$getBukkitEntity().getLocation();
+  }
 
-    @Override
-    public List<ItemStack> getContents() {
-        return this.items;
-    }
+  @Override
+  public RecipeHolder<?> getCurrentRecipe() {
+    return this.currentRecipe;
+  }
 
-    @Override
-    public void onOpen(CraftHumanEntity who) {
-        this.transaction.add(who);
-    }
-
-    @Override
-    public void onClose(CraftHumanEntity who) {
-        this.transaction.remove(who);
-    }
-
-    @Override
-    public List<HumanEntity> getViewers() {
-        return transaction;
-    }
-
-    @Override
-    public InventoryHolder getOwner() {
-        if (bukkitOwner == null) {
-            bukkitOwner = owner == null ? null : ((PlayerBridge) owner).bridge$getBukkitEntity();
-        }
-        return bukkitOwner;
-    }
-
-    @Override
-    public void setOwner(InventoryHolder owner) {
-        this.bukkitOwner = owner;
-    }
-
-    @Override
-    public int getMaxStackSize() {
-        if (maxStack == 0) maxStack = MAX_STACK;
-        return this.maxStack;
-    }
-
-    @Override
-    public void setMaxStackSize(int size) {
-        this.maxStack = size;
-        ((IInventoryBridge) this.resultInventory).setMaxStackSize(size);
-    }
-
-    @Override
-    public Location getLocation() {
-        return this.menu instanceof PosContainerBridge
-            ? ((PosContainerBridge) menu).bridge$getWorldLocation()
-            : ((PlayerBridge) owner).bridge$getBukkitEntity().getLocation();
-    }
-
-    @Override
-    public RecipeHolder<?> getCurrentRecipe() {
-        return this.currentRecipe;
-    }
-
-    @Override
-    public void setCurrentRecipe(RecipeHolder<?> recipe) {
-        this.currentRecipe = recipe;
-    }
+  @Override
+  public void setCurrentRecipe(RecipeHolder<?> recipe) {
+    this.currentRecipe = recipe;
+  }
 }

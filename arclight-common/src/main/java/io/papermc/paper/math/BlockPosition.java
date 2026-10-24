@@ -4,12 +4,12 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public interface BlockPosition extends Position {
-    @Override
-    int blockX();
+  @Override
+  int blockX();
 
-    @Override
-    int blockY();
+  @Override
+  int blockY();
 
-    @Override
-    int blockZ();
+  @Override
+  int blockZ();
 }

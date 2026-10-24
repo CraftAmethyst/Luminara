@@ -2,53 +2,59 @@ package io.izzel.arclight.common.mod.util.remapper.patcher.integrated;
 
 import io.izzel.arclight.api.PluginPatcher;
 import io.izzel.arclight.i18n.LuminaraVersion;
-import org.objectweb.asm.tree.ClassNode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import org.objectweb.asm.tree.ClassNode;
 
 /*
  * This can be useful, so look at what I've found!
  */
 public class IntegratedPatcher implements PluginPatcher {
 
-    private static final Map<String, BiConsumer<ClassNode, ClassRepo>> SPECIFIC = new HashMap<>() {};
-    private static final List<BiConsumer<ClassNode, ClassRepo>> GENERAL = new ArrayList<>();
+  private static final Map<String, BiConsumer<ClassNode, ClassRepo>> SPECIFIC = new HashMap<>() {};
+  private static final List<BiConsumer<ClassNode, ClassRepo>> GENERAL = new ArrayList<>();
 
-    static {
-        // Handle WorldEdit reflective using NMS
-        // Their naming mapping is behind the version, syncing manually
-        SPECIFIC.put("com/sk89q/worldedit/bukkit/adapter/impl/v1_21/StaticRefraction", WorldEdit::handleStaticRefraction);
-        SPECIFIC.put("com/sk89q/worldedit/bukkit/adapter/impl/v1_21/PaperweightAdapter", WorldEdit::handleBukkitAdapter);
-        SPECIFIC.put("com/Zrips/CMI/utils/CMIThread", CMI::handleThreadExecutor);
-        SPECIFIC.put("com/sk89q/bukkit/util/CommandRegistration", WorldEdit::handleFaweCommandRegistration);
-        SPECIFIC.put("me/lucko/luckperms/bukkit/inject/permissible/PermissibleInjector", LuckPerms::handlePermissibleInjector);
-    }
+  static {
+    // Handle WorldEdit reflective using NMS
+    // Their naming mapping is behind the version, syncing manually
+    SPECIFIC.put(
+        "com/sk89q/worldedit/bukkit/adapter/impl/v1_21/StaticRefraction",
+        WorldEdit::handleStaticRefraction);
+    SPECIFIC.put(
+        "com/sk89q/worldedit/bukkit/adapter/impl/v1_21/PaperweightAdapter",
+        WorldEdit::handleBukkitAdapter);
+    SPECIFIC.put("com/Zrips/CMI/utils/CMIThread", CMI::handleThreadExecutor);
+    SPECIFIC.put(
+        "com/sk89q/bukkit/util/CommandRegistration", WorldEdit::handleFaweCommandRegistration);
+    SPECIFIC.put(
+        "me/lucko/luckperms/bukkit/inject/permissible/PermissibleInjector",
+        LuckPerms::handlePermissibleInjector);
+  }
 
-    @Override
-    public String version() {
-        StringBuilder sb = new StringBuilder();
-        // Package#getImplementationVersion is null once Luminara ships as a plain mod, which
-        // would keep cached plugin classes alive across updates.
-        sb.append("version=").append(LuminaraVersion.version());
-        sb.append(" patchers=[");
-        sb.append("WorldEdit 1.21.1 4, FAWE CommandRegistration, CMI, LuckPerms");
-        sb.append("]");
-        return sb.toString();
-    }
+  @Override
+  public String version() {
+    StringBuilder sb = new StringBuilder();
+    // Package#getImplementationVersion is null once Luminara ships as a plain mod, which
+    // would keep cached plugin classes alive across updates.
+    sb.append("version=").append(LuminaraVersion.version());
+    sb.append(" patchers=[");
+    sb.append("WorldEdit 1.21.1 4, FAWE CommandRegistration, CMI, LuckPerms");
+    sb.append("]");
+    return sb.toString();
+  }
 
-    @Override
-    public void handleClass(ClassNode node, ClassRepo classRepo) {
-        BiConsumer<ClassNode, ClassRepo> consumer = SPECIFIC.get(node.name);
-        if (consumer != null) {
-            consumer.accept(node, classRepo);
-        } else {
-            for (BiConsumer<ClassNode, ClassRepo> general : GENERAL) {
-                general.accept(node, classRepo);
-            }
-        }
+  @Override
+  public void handleClass(ClassNode node, ClassRepo classRepo) {
+    BiConsumer<ClassNode, ClassRepo> consumer = SPECIFIC.get(node.name);
+    if (consumer != null) {
+      consumer.accept(node, classRepo);
+    } else {
+      for (BiConsumer<ClassNode, ClassRepo> general : GENERAL) {
+        general.accept(node, classRepo);
+      }
     }
+  }
 }

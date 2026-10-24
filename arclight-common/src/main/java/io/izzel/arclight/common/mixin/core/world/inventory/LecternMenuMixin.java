@@ -21,63 +21,79 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LecternMenu.class)
-public abstract class LecternMenuMixin extends AbstractContainerMenuMixin implements LecternMenuBridge {
+public abstract class LecternMenuMixin extends AbstractContainerMenuMixin
+    implements LecternMenuBridge {
 
-    // @formatter:off
-    @Shadow @Final private Container lectern;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private Container lectern;
+  // @formatter:on
 
-    private CraftLecternView bukkitEntity;
-    private Inventory playerInventory;
+  private CraftLecternView bukkitEntity;
+  private Inventory playerInventory;
 
-    @ShadowConstructor
-    public void arclight$constructor(int i) {
-        throw new RuntimeException();
+  @ShadowConstructor
+  public void arclight$constructor(int i) {
+    throw new RuntimeException();
+  }
+
+  @ShadowConstructor
+  public void arclight$constructor(int i, Container inventory, ContainerData intArray) {
+    throw new RuntimeException();
+  }
+
+  @CreateConstructor
+  public void arclight$constructor(int i, Inventory playerInventory) {
+    arclight$constructor(i);
+    this.playerInventory = playerInventory;
+  }
+
+  @CreateConstructor
+  public void arclight$constructor(
+      int i, Container inventory, ContainerData intArray, Inventory playerInventory) {
+    arclight$constructor(i, inventory, intArray);
+    this.playerInventory = playerInventory;
+  }
+
+  @Inject(
+      method = "clickMenuButton",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/Container;removeItemNoUpdate(I)Lnet/minecraft/world/item/ItemStack;"))
+  public void arclight$takeBook(Player playerIn, int id, CallbackInfoReturnable<Boolean> cir) {
+    PlayerTakeLecternBookEvent event =
+        new PlayerTakeLecternBookEvent(
+            ((ServerPlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
+    Bukkit.getServer().getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      cir.setReturnValue(false);
     }
+  }
 
-    @ShadowConstructor
-    public void arclight$constructor(int i, Container inventory, ContainerData intArray) {
-        throw new RuntimeException();
-    }
+  @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
+  public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    if (!bridge$isCheckReachable()) cir.setReturnValue(true);
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(int i, Inventory playerInventory) {
-        arclight$constructor(i);
-        this.playerInventory = playerInventory;
+  @Override
+  public CraftLecternView getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
+    CraftInventoryLectern inventory = new CraftInventoryLectern(this.lectern);
+    bukkitEntity =
+        new CraftLecternView(
+            ((ServerPlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(),
+            inventory,
+            (LecternMenu) (Object) this);
+    return bukkitEntity;
+  }
 
-    @CreateConstructor
-    public void arclight$constructor(int i, Container inventory, ContainerData intArray, Inventory playerInventory) {
-        arclight$constructor(i, inventory, intArray);
-        this.playerInventory = playerInventory;
-    }
-
-    @Inject(method = "clickMenuButton", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;removeItemNoUpdate(I)Lnet/minecraft/world/item/ItemStack;"))
-    public void arclight$takeBook(Player playerIn, int id, CallbackInfoReturnable<Boolean> cir) {
-        PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(((ServerPlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(), ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            cir.setReturnValue(false);
-        }
-    }
-
-    @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(Player playerIn, CallbackInfoReturnable<Boolean> cir) {
-        if (!bridge$isCheckReachable()) cir.setReturnValue(true);
-    }
-
-    @Override
-    public CraftLecternView getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-        CraftInventoryLectern inventory = new CraftInventoryLectern(this.lectern);
-        bukkitEntity = new CraftLecternView(((ServerPlayerBridge) this.playerInventory.player).bridge$getBukkitEntity(), inventory, (LecternMenu) (Object) this);
-        return bukkitEntity;
-    }
-
-    @Override
-    public void bridge$setPlayerInventory(Inventory playerInventory) {
-        this.playerInventory = playerInventory;
-    }
+  @Override
+  public void bridge$setPlayerInventory(Inventory playerInventory) {
+    this.playerInventory = playerInventory;
+  }
 }

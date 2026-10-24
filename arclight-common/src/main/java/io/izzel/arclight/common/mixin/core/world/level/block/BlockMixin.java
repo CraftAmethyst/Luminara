@@ -5,6 +5,8 @@ import io.izzel.arclight.common.bridge.core.world.level.block.BlockBridge;
 import io.izzel.arclight.common.mixin.core.world.level.block.state.BlockBehaviourMixin;
 import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.common.mod.util.DistValidate;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,68 +34,119 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 @Mixin(Block.class)
 public abstract class BlockMixin extends BlockBehaviourMixin implements BlockBridge {
 
-    // @formatter:off
-    @Shadow public abstract BlockState defaultBlockState();
-    @Shadow @Nullable public BlockState getStateForPlacement(BlockPlaceContext context) { return null; }
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract BlockState defaultBlockState();
 
-    @Redirect(method = "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private static boolean arclight$captureDrops(Level level, Entity entity) {
-        List<ItemEntity> blockDrops = ArclightCaptures.getBlockDrops();
-        if (blockDrops == null) {
-            return level.addFreshEntity(entity);
-        } else {
-            return blockDrops.add((ItemEntity) entity);
-        }
+  @Shadow
+  @Nullable
+  public BlockState getStateForPlacement(BlockPlaceContext context) {
+    return null;
+  }
+
+  // @formatter:on
+
+  @Redirect(
+      method =
+          "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private static boolean arclight$captureDrops(Level level, Entity entity) {
+    List<ItemEntity> blockDrops = ArclightCaptures.getBlockDrops();
+    if (blockDrops == null) {
+      return level.addFreshEntity(entity);
+    } else {
+      return blockDrops.add((ItemEntity) entity);
     }
+  }
 
-    public int getExpDrop(BlockState blockState, ServerLevel world, BlockPos blockPos, ItemStack itemStack, boolean flag) {
-        return this.bridge$getExpDrop(blockState, world, blockPos, itemStack);
+  public int getExpDrop(
+      BlockState blockState,
+      ServerLevel world,
+      BlockPos blockPos,
+      ItemStack itemStack,
+      boolean flag) {
+    return this.bridge$getExpDrop(blockState, world, blockPos, itemStack);
+  }
+
+  protected int tryDropExperience(
+      ServerLevel worldserver,
+      BlockPos blockposition,
+      ItemStack itemstack,
+      IntProvider intprovider) {
+    int i =
+        EnchantmentHelper.processBlockExperience(
+            worldserver, itemstack, intprovider.sample(worldserver.getRandom()));
+    if (i > 0) {
+      return i;
     }
+    return 0;
+  }
 
-    protected int tryDropExperience(ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, IntProvider intprovider) {
-        int i = EnchantmentHelper.processBlockExperience(worldserver, itemstack, intprovider.sample(worldserver.getRandom()));
-        if (i > 0) {
-            return i;
-        }
-        return 0;
+  @Override
+  public int bridge$tryDropExperience(
+      ServerLevel worldserver,
+      BlockPos blockposition,
+      ItemStack itemstack,
+      IntProvider intprovider) {
+    return tryDropExperience(worldserver, blockposition, itemstack, intprovider);
+  }
+
+  @Override
+  public int bridge$getExpDrop(
+      BlockState blockState, ServerLevel world, BlockPos blockPos, ItemStack itemStack) {
+    return this.bridge$tryDropExperience(world, blockPos, itemStack, UniformInt.of(1, 5));
+  }
+
+  @Inject(
+      method = "playerDestroy",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
+  private void arclight$reason(
+      Level p_49827_,
+      Player player,
+      BlockPos p_49829_,
+      BlockState p_49830_,
+      BlockEntity p_49831_,
+      ItemStack p_49832_,
+      CallbackInfo ci) {
+    ((PlayerBridge) player)
+        .bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED);
+  }
+
+  @Inject(method = "playerDestroy", at = @At("RETURN"))
+  private void arclight$handleBlockDrops(
+      Level worldIn,
+      Player player,
+      BlockPos pos,
+      BlockState blockState,
+      BlockEntity te,
+      ItemStack stack,
+      CallbackInfo ci) {
+    ArclightCaptures.BlockBreakEventContext breakEventContext =
+        ArclightCaptures.popPrimaryBlockBreakEvent();
+
+    if (breakEventContext != null) {
+      BlockBreakEvent breakEvent = breakEventContext.getEvent();
+      List<ItemEntity> blockDrops = breakEventContext.getBlockDrops();
+      org.bukkit.block.BlockState state = breakEventContext.getBlockBreakPlayerState();
+
+      if (player instanceof ServerPlayer
+          && blockDrops != null
+          && (breakEvent == null || breakEvent.isDropItems())
+          && DistValidate.isValid(worldIn)) {
+        CraftBlock craftBlock = CraftBlock.at(((CraftWorld) state.getWorld()).getHandle(), pos);
+        CraftEventFactory.handleBlockDropItemEvent(
+            craftBlock, state, ((ServerPlayer) player), blockDrops);
+      }
     }
-
-    @Override
-    public int bridge$tryDropExperience(ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, IntProvider intprovider) {
-        return tryDropExperience(worldserver, blockposition, itemstack, intprovider);
-    }
-
-    @Override
-    public int bridge$getExpDrop(BlockState blockState, ServerLevel world, BlockPos blockPos, ItemStack itemStack) {
-        return this.bridge$tryDropExperience(world, blockPos, itemStack, UniformInt.of(1, 5));
-    }
-
-    @Inject(method = "playerDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
-    private void arclight$reason(Level p_49827_, Player player, BlockPos p_49829_, BlockState p_49830_, BlockEntity p_49831_, ItemStack p_49832_, CallbackInfo ci) {
-        ((PlayerBridge) player).bridge$pushExhaustReason(EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED);
-    }
-
-    @Inject(method = "playerDestroy", at = @At("RETURN"))
-    private void arclight$handleBlockDrops(Level worldIn, Player player, BlockPos pos, BlockState blockState, BlockEntity te, ItemStack stack, CallbackInfo ci) {
-        ArclightCaptures.BlockBreakEventContext breakEventContext = ArclightCaptures.popPrimaryBlockBreakEvent();
-
-        if (breakEventContext != null) {
-            BlockBreakEvent breakEvent = breakEventContext.getEvent();
-            List<ItemEntity> blockDrops = breakEventContext.getBlockDrops();
-            org.bukkit.block.BlockState state = breakEventContext.getBlockBreakPlayerState();
-
-            if (player instanceof ServerPlayer && blockDrops != null && (breakEvent == null || breakEvent.isDropItems())
-                && DistValidate.isValid(worldIn)) {
-                CraftBlock craftBlock = CraftBlock.at(((CraftWorld) state.getWorld()).getHandle(), pos);
-                CraftEventFactory.handleBlockDropItemEvent(craftBlock, state, ((ServerPlayer) player), blockDrops);
-            }
-        }
-    }
+  }
 }

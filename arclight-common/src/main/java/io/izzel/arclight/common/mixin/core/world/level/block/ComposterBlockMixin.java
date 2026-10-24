@@ -29,33 +29,68 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ComposterBlock.class)
 public abstract class ComposterBlockMixin {
 
-    // @formatter:off
-    @Shadow @Final public static IntegerProperty LEVEL;
-    @Shadow @Final public static Object2FloatMap<ItemLike> COMPOSTABLES;
-    @Shadow static BlockState empty(@Nullable Entity p_270236_, BlockState p_270873_, LevelAccessor p_270963_, BlockPos p_270211_) { return null; }
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final public static IntegerProperty LEVEL;
+  @Shadow @Final public static Object2FloatMap<ItemLike> COMPOSTABLES;
 
-    @Redirect(method = "getContainer", at = @At(value = "NEW", target = "()Lnet/minecraft/world/level/block/ComposterBlock$EmptyContainer;"))
-    public ComposterBlock.EmptyContainer arclight$newEmpty(BlockState blockState, LevelAccessor world, BlockPos blockPos) {
-        ComposterBlock.EmptyContainer inventory = new ComposterBlock.EmptyContainer();
-        ((IInventoryBridge) inventory).setOwner(new CraftBlockInventoryHolder(world, blockPos, inventory));
-        return inventory;
-    }
+  @Shadow
+  static BlockState empty(
+      @Nullable Entity p_270236_,
+      BlockState p_270873_,
+      LevelAccessor p_270963_,
+      BlockPos p_270211_) {
+    return null;
+  }
 
-    @Inject(method = "insertItem", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/level/block/ComposterBlock;addItem(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/level/block/state/BlockState;"))
-    private static void arclight$changeBlockEvent(Entity entity, BlockState blockState, ServerLevel serverLevel, ItemStack itemStack, BlockPos blockPos, CallbackInfoReturnable<BlockState> cir) {
-        if (!ArclightCaptures.getLastEntityChangeBlockResult()) {
-            cir.setReturnValue(blockState);
-        }
-    }
+  // @formatter:on
 
-    @Inject(method = "extractProduce", cancellable = true, at = @At("HEAD"))
-    private static void arclight$emptyComposter(Entity entity, BlockState state, Level world, BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
-        if (entity != null && !(entity instanceof Player)) {
-            BlockState blockState = empty(entity, state, DummyGeneratorAccess.INSTANCE, pos);
-            if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pos, blockState)) {
-                cir.setReturnValue(state);
-            }
-        }
+  @Redirect(
+      method = "getContainer",
+      at =
+          @At(
+              value = "NEW",
+              target = "()Lnet/minecraft/world/level/block/ComposterBlock$EmptyContainer;"))
+  public ComposterBlock.EmptyContainer arclight$newEmpty(
+      BlockState blockState, LevelAccessor world, BlockPos blockPos) {
+    ComposterBlock.EmptyContainer inventory = new ComposterBlock.EmptyContainer();
+    ((IInventoryBridge) inventory)
+        .setOwner(new CraftBlockInventoryHolder(world, blockPos, inventory));
+    return inventory;
+  }
+
+  @Inject(
+      method = "insertItem",
+      cancellable = true,
+      at =
+          @At(
+              value = "INVOKE",
+              shift = At.Shift.AFTER,
+              target =
+                  "Lnet/minecraft/world/level/block/ComposterBlock;addItem(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/level/block/state/BlockState;"))
+  private static void arclight$changeBlockEvent(
+      Entity entity,
+      BlockState blockState,
+      ServerLevel serverLevel,
+      ItemStack itemStack,
+      BlockPos blockPos,
+      CallbackInfoReturnable<BlockState> cir) {
+    if (!ArclightCaptures.getLastEntityChangeBlockResult()) {
+      cir.setReturnValue(blockState);
     }
+  }
+
+  @Inject(method = "extractProduce", cancellable = true, at = @At("HEAD"))
+  private static void arclight$emptyComposter(
+      Entity entity,
+      BlockState state,
+      Level world,
+      BlockPos pos,
+      CallbackInfoReturnable<BlockState> cir) {
+    if (entity != null && !(entity instanceof Player)) {
+      BlockState blockState = empty(entity, state, DummyGeneratorAccess.INSTANCE, pos);
+      if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pos, blockState)) {
+        cir.setReturnValue(state);
+      }
+    }
+  }
 }

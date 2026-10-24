@@ -19,40 +19,48 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CartographyTableMenu.class)
-public abstract class CartographyTableMenuMixin extends AbstractContainerMenuMixin implements PosContainerBridge {
+public abstract class CartographyTableMenuMixin extends AbstractContainerMenuMixin
+    implements PosContainerBridge {
 
-    // @formatter:off
-    @Shadow @Final private ContainerLevelAccess access;
-    @Shadow @Final public Container container;
-    @Shadow @Final private ResultContainer resultContainer;
-    // @formatter:on
+  // @formatter:off
+  @Shadow @Final private ContainerLevelAccess access;
+  @Shadow @Final public Container container;
+  @Shadow @Final private ResultContainer resultContainer;
+  // @formatter:on
 
-    private CraftInventoryView<CartographyTableMenu, ?> bukkitEntity = null;
-    private Player player;
+  private CraftInventoryView<CartographyTableMenu, ?> bukkitEntity = null;
+  private Player player;
 
-    @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
-    public void arclight$init(int id, Inventory playerInventory, ContainerLevelAccess worldPosCallable, CallbackInfo ci) {
-        this.player = ((ServerPlayerBridge) playerInventory.player).bridge$getBukkitEntity();
+  @Inject(
+      method =
+          "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V",
+      at = @At("RETURN"))
+  public void arclight$init(
+      int id, Inventory playerInventory, ContainerLevelAccess worldPosCallable, CallbackInfo ci) {
+    this.player = ((ServerPlayerBridge) playerInventory.player).bridge$getBukkitEntity();
+  }
+
+  @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
+  public void arclight$unreachable(
+      net.minecraft.world.entity.player.Player playerIn, CallbackInfoReturnable<Boolean> cir) {
+    if (!bridge$isCheckReachable()) cir.setReturnValue(true);
+  }
+
+  @Override
+  public CraftInventoryView<CartographyTableMenu, ?> getBukkitView() {
+    if (bukkitEntity != null) {
+      return bukkitEntity;
     }
 
-    @Inject(method = "stillValid", cancellable = true, at = @At("HEAD"))
-    public void arclight$unreachable(net.minecraft.world.entity.player.Player playerIn, CallbackInfoReturnable<Boolean> cir) {
-        if (!bridge$isCheckReachable()) cir.setReturnValue(true);
-    }
+    CraftInventoryCartography inventory =
+        new CraftInventoryCartography(this.container, this.resultContainer);
+    bukkitEntity =
+        new CraftInventoryView<>(this.player, inventory, (CartographyTableMenu) (Object) this);
+    return bukkitEntity;
+  }
 
-    @Override
-    public CraftInventoryView<CartographyTableMenu, ?> getBukkitView() {
-        if (bukkitEntity != null) {
-            return bukkitEntity;
-        }
-
-        CraftInventoryCartography inventory = new CraftInventoryCartography(this.container, this.resultContainer);
-        bukkitEntity = new CraftInventoryView<>(this.player, inventory, (CartographyTableMenu) (Object) this);
-        return bukkitEntity;
-    }
-
-    @Override
-    public ContainerLevelAccess bridge$getWorldPos() {
-        return this.access;
-    }
+  @Override
+  public ContainerLevelAccess bridge$getWorldPos() {
+    return this.access;
+  }
 }

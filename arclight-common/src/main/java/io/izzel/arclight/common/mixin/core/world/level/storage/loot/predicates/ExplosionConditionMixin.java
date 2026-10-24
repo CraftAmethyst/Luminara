@@ -10,19 +10,19 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(ExplosionCondition.class)
 public class ExplosionConditionMixin {
 
-    /**
-     * @author IzzelAliz
-     * @reason
-     */
-    @Overwrite
-    public boolean test(LootContext context) {
-        Float f = context.getParamOrNull(LootContextParams.EXPLOSION_RADIUS);
-        if (f != null) {
-            RandomSource random = context.getRandom();
-            float f1 = 1.0F / f;
-            return random.nextFloat() < f1;
-        } else {
-            return true;
-        }
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public boolean test(LootContext context) {
+    Float f = context.getParamOrNull(LootContextParams.EXPLOSION_RADIUS);
+    if (f != null) {
+      RandomSource random = context.getRandom();
+      float f1 = 1.0F / f;
+      return random.nextFloat() < f1;
+    } else {
+      return true;
     }
+  }
 }

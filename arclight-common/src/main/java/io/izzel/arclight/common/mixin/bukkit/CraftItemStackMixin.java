@@ -13,55 +13,62 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(value = CraftItemStack.class, remap = false)
-public abstract class CraftItemStackMixin extends org.bukkit.inventory.ItemStack implements CraftItemStackBridge {
+public abstract class CraftItemStackMixin extends org.bukkit.inventory.ItemStack
+    implements CraftItemStackBridge {
 
-    // @formatter:off
-    @Shadow ItemStack handle;
-    @Shadow public abstract Material getType();
-    @Shadow public abstract short getDurability();
-    @Shadow public abstract boolean hasItemMeta();
-    // @formatter:on
+  // @formatter:off
+  @Shadow ItemStack handle;
 
-    /**
-     * @author InitAuther97
-     * @reason reduce CraftItemType#bukkitToMinecraft call usage.
-     */
-    @Overwrite
-    public void setType(Material type) {
-        if (this.getType() != type) {
-            if (type == Material.AIR) {
-                this.handle = null;
-            } else {
-                final var craftType = CraftItemType.bukkitToMinecraft(type);
-                if (craftType == null) {
-                    this.handle = null;
-                } else if (this.handle == null) {
-                    this.handle = new net.minecraft.world.item.ItemStack(craftType, 1);
-                } else {
-                    ((ItemStackBridge)(Object) this.handle).arclight$setItem(craftType);
-                    if (this.hasItemMeta()) {
-                        CraftItemStack.setItemMeta(this.handle, CraftItemStack.getItemMeta(this.handle));
-                    }
-                }
-            }
+  @Shadow
+  public abstract Material getType();
 
-            this.setData(null);
+  @Shadow
+  public abstract short getDurability();
+
+  @Shadow
+  public abstract boolean hasItemMeta();
+
+  // @formatter:on
+
+  /**
+   * @author InitAuther97
+   * @reason reduce CraftItemType#bukkitToMinecraft call usage.
+   */
+  @Overwrite
+  public void setType(Material type) {
+    if (this.getType() != type) {
+      if (type == Material.AIR) {
+        this.handle = null;
+      } else {
+        final var craftType = CraftItemType.bukkitToMinecraft(type);
+        if (craftType == null) {
+          this.handle = null;
+        } else if (this.handle == null) {
+          this.handle = new net.minecraft.world.item.ItemStack(craftType, 1);
+        } else {
+          ((ItemStackBridge) (Object) this.handle).arclight$setItem(craftType);
+          if (this.hasItemMeta()) {
+            CraftItemStack.setItemMeta(this.handle, CraftItemStack.getItemMeta(this.handle));
+          }
         }
-    }
+      }
 
-    @Unique
-    private ItemEntity arclight$itemEntity;
-
-    @Override
-    public void arclight$setItemEntity(ItemEntity entity) {
-        arclight$itemEntity = entity;
+      this.setData(null);
     }
+  }
 
-    @Override
-    public ItemEntity arclight$getItemEntity() {
-        if (arclight$itemEntity != null && this.handle != null && !this.handle.isEmpty()) {
-            arclight$itemEntity.setItem(this.handle);
-        }
-        return arclight$itemEntity;
+  @Unique private ItemEntity arclight$itemEntity;
+
+  @Override
+  public void arclight$setItemEntity(ItemEntity entity) {
+    arclight$itemEntity = entity;
+  }
+
+  @Override
+  public ItemEntity arclight$getItemEntity() {
+    if (arclight$itemEntity != null && this.handle != null && !this.handle.isEmpty()) {
+      arclight$itemEntity.setItem(this.handle);
     }
+    return arclight$itemEntity;
+  }
 }

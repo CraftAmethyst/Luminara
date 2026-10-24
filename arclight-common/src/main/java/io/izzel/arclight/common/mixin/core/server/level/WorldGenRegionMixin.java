@@ -13,31 +13,33 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(WorldGenRegion.class)
 public abstract class WorldGenRegionMixin implements WorldBridge {
 
-    // @formatter:off
-    @Shadow public abstract boolean addFreshEntity(Entity entityIn);
-    @Shadow @Final private ServerLevel level;
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract boolean addFreshEntity(Entity entityIn);
 
-    public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        return this.addFreshEntity(entity);
-    }
+  @Shadow @Final private ServerLevel level;
 
-    @Override
-    public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        return addFreshEntity(entity, reason);
-    }
+  // @formatter:on
 
-    @Override
-    public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
-    }
+  public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    return this.addFreshEntity(entity);
+  }
 
-    @Override
-    public CraftWorld bridge$getWorld() {
-        return ((WorldBridge) this.level).bridge$getWorld();
-    }
+  @Override
+  public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    return addFreshEntity(entity, reason);
+  }
 
-    @Override
-    public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
-        return CreatureSpawnEvent.SpawnReason.DEFAULT;
-    }
+  @Override
+  public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {}
+
+  @Override
+  public CraftWorld bridge$getWorld() {
+    return ((WorldBridge) this.level).bridge$getWorld();
+  }
+
+  @Override
+  public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
+    return CreatureSpawnEvent.SpawnReason.DEFAULT;
+  }
 }

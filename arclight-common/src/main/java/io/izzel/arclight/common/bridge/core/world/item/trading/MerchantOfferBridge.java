@@ -4,5 +4,5 @@ import org.bukkit.craftbukkit.v.inventory.CraftMerchantRecipe;
 
 public interface MerchantOfferBridge {
 
-    CraftMerchantRecipe bridge$asBukkit();
+  CraftMerchantRecipe bridge$asBukkit();
 }

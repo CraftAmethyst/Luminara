@@ -24,35 +24,48 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FarmBlock.class)
 public abstract class FarmBlockMixin extends BlockMixin {
 
-    @Inject(method = "turnToDirt", cancellable = true, at = @At("HEAD"))
-    private static void arclight$blockFade(Entity entity, BlockState state, Level worldIn, BlockPos pos, CallbackInfo ci) {
-        if (!DistValidate.isValid(worldIn)) return;
-        if (entity != null) {
-            Cancellable cancellable;
-            if (entity instanceof Player) {
-                cancellable = CraftEventFactory.callPlayerInteractEvent((Player) entity, Action.PHYSICAL, pos, null, null, null);
-            } else {
-                cancellable = new EntityInteractEvent(entity.bridge$getBukkitEntity(), CraftBlock.at(worldIn, pos));
-                Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
-            }
+  @Inject(method = "turnToDirt", cancellable = true, at = @At("HEAD"))
+  private static void arclight$blockFade(
+      Entity entity, BlockState state, Level worldIn, BlockPos pos, CallbackInfo ci) {
+    if (!DistValidate.isValid(worldIn)) return;
+    if (entity != null) {
+      Cancellable cancellable;
+      if (entity instanceof Player) {
+        cancellable =
+            CraftEventFactory.callPlayerInteractEvent(
+                (Player) entity, Action.PHYSICAL, pos, null, null, null);
+      } else {
+        cancellable =
+            new EntityInteractEvent(entity.bridge$getBukkitEntity(), CraftBlock.at(worldIn, pos));
+        Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
+      }
 
-            if (cancellable.isCancelled()) {
-                ci.cancel();
-                return;
-            }
+      if (cancellable.isCancelled()) {
+        ci.cancel();
+        return;
+      }
 
-            if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.DIRT.defaultBlockState())) {
-                ci.cancel();
-                return;
-            }
-        }
-        if (CraftEventFactory.callBlockFadeEvent(worldIn, pos, Blocks.DIRT.defaultBlockState()).isCancelled()) {
-            ci.cancel();
-        }
+      if (!CraftEventFactory.callEntityChangeBlockEvent(
+          entity, pos, Blocks.DIRT.defaultBlockState())) {
+        ci.cancel();
+        return;
+      }
     }
-
-    @Redirect(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
-    public boolean arclight$moistureChange(ServerLevel world, BlockPos pos, BlockState newState, int flags) {
-        return CraftEventFactory.handleMoistureChangeEvent(world, pos, newState, flags);
+    if (CraftEventFactory.callBlockFadeEvent(worldIn, pos, Blocks.DIRT.defaultBlockState())
+        .isCancelled()) {
+      ci.cancel();
     }
+  }
+
+  @Redirect(
+      method = "randomTick",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/server/level/ServerLevel;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
+  public boolean arclight$moistureChange(
+      ServerLevel world, BlockPos pos, BlockState newState, int flags) {
+    return CraftEventFactory.handleMoistureChangeEvent(world, pos, newState, flags);
+  }
 }

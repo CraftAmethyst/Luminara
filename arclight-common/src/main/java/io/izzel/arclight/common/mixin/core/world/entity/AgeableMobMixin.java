@@ -1,6 +1,7 @@
 package io.izzel.arclight.common.mixin.core.world.entity;
 
 import io.izzel.arclight.common.bridge.core.world.entity.AgeableMobBridge;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
@@ -12,36 +13,43 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
-
 @Mixin(AgeableMob.class)
 public abstract class AgeableMobMixin extends PathfinderMobMixin implements AgeableMobBridge {
 
-    // @formatter:off
-    @Shadow public abstract boolean isBaby();
-    @Shadow @Nullable public abstract AgeableMob getBreedOffspring(ServerLevel world, AgeableMob mate);
-    @Shadow public abstract void setAge(int age);
-    // @formatter:on
+  // @formatter:off
+  @Shadow
+  public abstract boolean isBaby();
 
-    public boolean ageLocked;
+  @Shadow
+  @Nullable
+  public abstract AgeableMob getBreedOffspring(ServerLevel world, AgeableMob mate);
 
-    @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
-    private void arclight$writeAgeLocked(CompoundTag compound, CallbackInfo ci) {
-        compound.putBoolean("AgeLocked", ageLocked);
-    }
+  @Shadow
+  public abstract void setAge(int age);
 
-    @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
-    private void arclight$readAgeLocked(CompoundTag compound, CallbackInfo ci) {
-        ageLocked = compound.getBoolean("AgeLocked");
-    }
+  // @formatter:on
 
-    @Redirect(method = "aiStep", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z"))
-    private boolean arclight$tickIfNotLocked(Level world) {
-        return world.isClientSide || ageLocked;
-    }
+  public boolean ageLocked;
 
-    @Override
-    public boolean bridge$isAgeLocked() {
-        return this.ageLocked;
-    }
+  @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
+  private void arclight$writeAgeLocked(CompoundTag compound, CallbackInfo ci) {
+    compound.putBoolean("AgeLocked", ageLocked);
+  }
+
+  @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
+  private void arclight$readAgeLocked(CompoundTag compound, CallbackInfo ci) {
+    ageLocked = compound.getBoolean("AgeLocked");
+  }
+
+  @Redirect(
+      method = "aiStep",
+      at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z"))
+  private boolean arclight$tickIfNotLocked(Level world) {
+    return world.isClientSide || ageLocked;
+  }
+
+  @Override
+  public boolean bridge$isAgeLocked() {
+    return this.ageLocked;
+  }
 }

@@ -8,18 +8,18 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(DummyGeneratorAccess.class)
 public class DummyGeneratorAccessMixin implements IWorldWriterBridge {
-    @Override
-    public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  @Override
+  public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    @Override
-    public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  @Override
+  public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    @Override
-    public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  @Override
+  public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

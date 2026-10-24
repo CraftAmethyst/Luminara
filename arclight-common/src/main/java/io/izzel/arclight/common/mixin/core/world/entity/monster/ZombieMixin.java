@@ -37,70 +37,126 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(net.minecraft.world.entity.monster.Zombie.class)
 public abstract class ZombieMixin extends PathfinderMobMixin {
 
-    @Inject(method = "convertToZombieType", at = @At("HEAD"))
-    private void arclight$transformReason(EntityType<? extends net.minecraft.world.entity.monster.Zombie> entityType, CallbackInfo ci) {
-        this.bridge$pushTransformReason(EntityTransformEvent.TransformReason.DROWNED);
-        ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.DROWNED);
-    }
+  @Inject(method = "convertToZombieType", at = @At("HEAD"))
+  private void arclight$transformReason(
+      EntityType<? extends net.minecraft.world.entity.monster.Zombie> entityType, CallbackInfo ci) {
+    this.bridge$pushTransformReason(EntityTransformEvent.TransformReason.DROWNED);
+    ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.DROWNED);
+  }
 
-    @Inject(method = "convertToZombieType", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Zombie;handleAttributes(F)V"))
-    private void arclight$stopConversion(EntityType<? extends net.minecraft.world.entity.monster.Zombie> entityType, CallbackInfo ci, net.minecraft.world.entity.monster.Zombie zombieEntity) {
-        if (zombieEntity == null) {
-            ((Zombie) this.bridge$getBukkitEntity()).setConversionTime(-1);
-        }
+  @Inject(
+      method = "convertToZombieType",
+      locals = LocalCapture.CAPTURE_FAILHARD,
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/world/entity/monster/Zombie;handleAttributes(F)V"))
+  private void arclight$stopConversion(
+      EntityType<? extends net.minecraft.world.entity.monster.Zombie> entityType,
+      CallbackInfo ci,
+      net.minecraft.world.entity.monster.Zombie zombieEntity) {
+    if (zombieEntity == null) {
+      ((Zombie) this.bridge$getBukkitEntity()).setConversionTime(-1);
     }
+  }
 
-    @Decorate(method = "doHurtTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"))
-    private void arclight$entityCombust(Entity entity, float seconds) throws Throwable {
-        EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.bridge$getBukkitEntity(), seconds);
-        Bukkit.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            DecorationOps.callsite().invoke(entity, (float) event.getDuration());
-        }
+  @Decorate(
+      method = "doHurtTarget",
+      at =
+          @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;igniteForSeconds(F)V"))
+  private void arclight$entityCombust(Entity entity, float seconds) throws Throwable {
+    EntityCombustByEntityEvent event =
+        new EntityCombustByEntityEvent(
+            this.getBukkitEntity(), entity.bridge$getBukkitEntity(), seconds);
+    Bukkit.getPluginManager().callEvent(event);
+    if (!event.isCancelled()) {
+      DecorationOps.callsite().invoke(entity, (float) event.getDuration());
     }
+  }
 
-    @SuppressWarnings("unchecked")
-    @Decorate(method = "killedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/Villager;convertTo(Lnet/minecraft/world/entity/EntityType;Z)Lnet/minecraft/world/entity/Mob;"))
-    private <T extends Mob> T arclight$transform(Villager villagerEntity, EntityType<T> entityType, boolean flag) throws Throwable {
-        ((WorldBridge) villagerEntity.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.INFECTION);
-        ((MobBridge) villagerEntity).bridge$pushTransformReason(EntityTransformEvent.TransformReason.INFECTION);
-        T t = (T) DecorationOps.callsite().invoke(villagerEntity, entityType, flag);
-        if (t == null) {
-            return (T) DecorationOps.cancel().invoke(false);
-        }
-        return t;
+  @SuppressWarnings("unchecked")
+  @Decorate(
+      method = "killedEntity",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/npc/Villager;convertTo(Lnet/minecraft/world/entity/EntityType;Z)Lnet/minecraft/world/entity/Mob;"))
+  private <T extends Mob> T arclight$transform(
+      Villager villagerEntity, EntityType<T> entityType, boolean flag) throws Throwable {
+    ((WorldBridge) villagerEntity.level())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.INFECTION);
+    ((MobBridge) villagerEntity)
+        .bridge$pushTransformReason(EntityTransformEvent.TransformReason.INFECTION);
+    T t = (T) DecorationOps.callsite().invoke(villagerEntity, entityType, flag);
+    if (t == null) {
+      return (T) DecorationOps.cancel().invoke(false);
     }
+    return t;
+  }
 
-    @Inject(method = "finalizeSpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ServerLevelAccessor;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
-    private void arclight$mount(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, SpawnGroupData spawnDataIn, CallbackInfoReturnable<SpawnGroupData> cir) {
-        ((WorldBridge) worldIn.getLevel()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.MOUNT);
-    }
+  @Inject(
+      method = "finalizeSpawn",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/level/ServerLevelAccessor;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+  private void arclight$mount(
+      ServerLevelAccessor worldIn,
+      DifficultyInstance difficultyIn,
+      MobSpawnType reason,
+      SpawnGroupData spawnDataIn,
+      CallbackInfoReturnable<SpawnGroupData> cir) {
+    ((WorldBridge) worldIn.getLevel())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.MOUNT);
+  }
 
-    @Decorate(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/monster/Zombie;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"))
-    private void arclight$spawnWithReasonForge(net.minecraft.world.entity.monster.Zombie zombie, LivingEntity livingEntity) throws Throwable {
-        ((WorldBridge) this.level()).bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
-        if (livingEntity != null) {
-            ((MobBridge) zombie).bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true);
-        }
-        DecorationOps.callsite().invoke(zombie, livingEntity);
+  @Decorate(
+      method = "hurt",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/world/entity/monster/Zombie;setTarget(Lnet/minecraft/world/entity/LivingEntity;)V"))
+  private void arclight$spawnWithReasonForge(
+      net.minecraft.world.entity.monster.Zombie zombie, LivingEntity livingEntity)
+      throws Throwable {
+    ((WorldBridge) this.level())
+        .bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
+    if (livingEntity != null) {
+      ((MobBridge) zombie)
+          .bridge$pushGoalTargetReason(EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true);
     }
+    DecorationOps.callsite().invoke(zombie, livingEntity);
+  }
 
-    @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
-    private static ZombieVillager zombifyVillager(ServerLevel level, Villager villager, BlockPos blockPosition, boolean silent, CreatureSpawnEvent.SpawnReason spawnReason) {
-        ((WorldBridge) villager.level()).bridge$pushAddEntityReason(spawnReason);
-        ((MobBridge) villager).bridge$pushTransformReason(EntityTransformEvent.TransformReason.INFECTION);
-        ZombieVillager zombieVillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
-        if (zombieVillager != null) {
-            zombieVillager.finalizeSpawn(level, level.getCurrentDifficultyAt(zombieVillager.blockPosition()), MobSpawnType.CONVERSION, new net.minecraft.world.entity.monster.Zombie.ZombieGroupData(false, true));
-            zombieVillager.setVillagerData(villager.getVillagerData());
-            zombieVillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
-            zombieVillager.setTradeOffers(villager.getOffers().copy());
-            zombieVillager.setVillagerXp(villager.getVillagerXp());
-            ((LivingEntityBridge) villager).bridge$forge$onLivingConvert(villager, zombieVillager);
-            if (!silent) {
-                level.levelEvent(null, 1026, blockPosition, 0);
-            }
-        }
-        return zombieVillager;
+  @TransformAccess(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC)
+  private static ZombieVillager zombifyVillager(
+      ServerLevel level,
+      Villager villager,
+      BlockPos blockPosition,
+      boolean silent,
+      CreatureSpawnEvent.SpawnReason spawnReason) {
+    ((WorldBridge) villager.level()).bridge$pushAddEntityReason(spawnReason);
+    ((MobBridge) villager)
+        .bridge$pushTransformReason(EntityTransformEvent.TransformReason.INFECTION);
+    ZombieVillager zombieVillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
+    if (zombieVillager != null) {
+      zombieVillager.finalizeSpawn(
+          level,
+          level.getCurrentDifficultyAt(zombieVillager.blockPosition()),
+          MobSpawnType.CONVERSION,
+          new net.minecraft.world.entity.monster.Zombie.ZombieGroupData(false, true));
+      zombieVillager.setVillagerData(villager.getVillagerData());
+      zombieVillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
+      zombieVillager.setTradeOffers(villager.getOffers().copy());
+      zombieVillager.setVillagerXp(villager.getVillagerXp());
+      ((LivingEntityBridge) villager).bridge$forge$onLivingConvert(villager, zombieVillager);
+      if (!silent) {
+        level.levelEvent(null, 1026, blockPosition, 0);
+      }
     }
+    return zombieVillager;
+  }
 }

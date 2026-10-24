@@ -6,7 +6,8 @@ import org.bukkit.craftbukkit.v.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 
 public class ArclightSmithingView extends CraftInventoryView<SmithingMenu, CraftInventorySmithing> {
-    public ArclightSmithingView(HumanEntity player, CraftInventorySmithing viewing, SmithingMenu container) {
-        super(player, viewing, container);
-    }
+  public ArclightSmithingView(
+      HumanEntity player, CraftInventorySmithing viewing, SmithingMenu container) {
+    super(player, viewing, container);
+  }
 }

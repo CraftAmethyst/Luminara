@@ -11,20 +11,20 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(BlockStateListPopulator.class)
 public class BlockStateListPopulatorMixin implements IWorldWriterBridge {
-    @Shadow @Final private LevelAccessor world;
+  @Shadow @Final private LevelAccessor world;
 
-    @Override
-    public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
-        return ((IWorldWriterBridge) world).bridge$addEntity(entity, reason);
-    }
+  @Override
+  public boolean bridge$addEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
+    return ((IWorldWriterBridge) world).bridge$addEntity(entity, reason);
+  }
 
-    @Override
-    public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
-        ((IWorldWriterBridge) world).bridge$pushAddEntityReason(reason);
-    }
+  @Override
+  public void bridge$pushAddEntityReason(CreatureSpawnEvent.SpawnReason reason) {
+    ((IWorldWriterBridge) world).bridge$pushAddEntityReason(reason);
+  }
 
-    @Override
-    public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
-        return ((IWorldWriterBridge) world).bridge$getAddEntityReason();
-    }
+  @Override
+  public CreatureSpawnEvent.SpawnReason bridge$getAddEntityReason() {
+    return ((IWorldWriterBridge) world).bridge$getAddEntityReason();
+  }
 }
