@@ -95,7 +95,39 @@ public class ArclightReflectionHandler extends ClassLoader {
 
     // srg -> bukkit
     public static String redirectFieldGetName(Field field) {
+        String entityTypeName = bukkitEntityTypeName(field);
+        if (entityTypeName != null) {
+            return entityTypeName;
+        }
         return remapper.tryMapFieldToBukkit(field.getDeclaringClass(), field.getName(), field);
+    }
+
+    /**
+     * Plugins built against Paper enumerate {@code EntityType} constants and feed
+     * {@code Field#getName()} to {@code EntityType#valueOf}. The runtime field names
+     * are mapped names (SRG/intermediary), so resolve the Bukkit constant from the
+     * field value instead of exposing the mapped name.
+     */
+    private static String bukkitEntityTypeName(Field field) {
+        try {
+            if (
+                field.getDeclaringClass() !=
+                    net.minecraft.world.entity.EntityType.class ||
+                !java.lang.reflect.Modifier.isStatic(field.getModifiers())
+            ) {
+                return null;
+            }
+            Object value = field.get(null);
+            if (value instanceof net.minecraft.world.entity.EntityType<?> type) {
+                org.bukkit.entity.EntityType bukkit =
+                    org.bukkit.craftbukkit.v.entity.CraftEntityType.minecraftToBukkit(
+                        type
+                    );
+                return bukkit == null ? null : bukkit.name();
+            }
+        } catch (Throwable ignored) {
+        }
+        return null;
     }
 
     // srg -> bukkit
@@ -286,10 +318,19 @@ public class ArclightReflectionHandler extends ClassLoader {
         if (!shouldMapTypeName(binaryName)) {
             return binaryName;
         }
-        String mapped = remapper.mapType(binaryName.replace('.', '/')).replace('/', '.');
+        String internalName = binaryName.replace('.', '/');
+        String mapped = remapper.mapType(internalName);
+        if (mapped.equals(internalName)) {
+            // Paper-built plugins reference NMS classes by Mojang name. The mappings
+            // use the Spigot names, so translate first (EntityType -> EntityTypes).
+            String bukkitName = ArclightRemapper.getMojMapper().map(internalName);
+            if (!bukkitName.equals(internalName)) {
+                mapped = remapper.mapType(bukkitName);
+            }
+        }
         // Plugin classes reference CraftBukkit through the version-agnostic package,
         // but the class loader only knows the versioned one.
-        return CraftBukkitVersionRemapper.toVersionedBinaryName(mapped);
+        return CraftBukkitVersionRemapper.toVersionedBinaryName(mapped.replace('/', '.'));
     }
 
     // bukkit -> srg

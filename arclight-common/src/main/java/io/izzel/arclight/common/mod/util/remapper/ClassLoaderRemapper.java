@@ -237,8 +237,44 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     public Method tryMapMethodToSrg(Class<?> cl, String bukkitName, Class<?>[] pTypes) {
         String internalName = Type.getInternalName(cl);
         if (shouldRemap(internalName)) {
-            return getMethods(cl, internalName).getValue().get(new WrappedMethod(bukkitName, pTypes));
-        } else return null;
+            Map<WrappedMethod, Method> methods = getMethods(cl, internalName).getValue();
+            Method method = methods.get(new WrappedMethod(bukkitName, pTypes));
+            if (method != null) {
+                return method;
+            }
+            // Paper-built plugins ask for members by their Mojang names; translate those
+            // through the Spigot names the other mappings are keyed by.
+            String mojangMapped = mojangToBukkitMethodName(
+                cl, bukkitName, pTypes.length
+            );
+            if (mojangMapped != null && !mojangMapped.equals(bukkitName)) {
+                return methods.get(new WrappedMethod(mojangMapped, pTypes));
+            }
+        }
+        return null;
+    }
+
+    private String mojangToBukkitMethodName(
+        Class<?> cl,
+        String mojangName,
+        int paramCount
+    ) {
+        String runtimeOwner = Type.getInternalName(cl);
+        String bukkitOwner = toBukkitRemapper.map(runtimeOwner);
+        if (bukkitOwner.equals(runtimeOwner)) {
+            return null;
+        }
+        String mojangOwner = ArclightRemapper.bukkitToMojangClassName(
+            bukkitOwner
+        );
+        if (mojangOwner.equals(bukkitOwner)) {
+            return null;
+        }
+        return ArclightRemapper.matchMojangMethodName(
+            mojangOwner,
+            mojangName,
+            paramCount
+        );
     }
 
     public String tryMapMethodToBukkit(Class<?> cl, Method method) {
