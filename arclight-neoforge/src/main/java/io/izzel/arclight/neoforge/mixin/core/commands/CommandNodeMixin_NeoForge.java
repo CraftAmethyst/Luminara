@@ -17,8 +17,11 @@ import org.spongepowered.asm.mixin.Unique;
 /*
  * Standalone-mod variant of the CommandNode patch. The legacy launcher used an ASM
  * redefinition (dirtyHacks) which only works when the boot class loader is the one
- * that loads brigadier. As a mod the class must be patched through Mixin; when
- * Sinytra Connector is present the compat.connector.CommandNodeMixin covers it.
+ * that loads brigadier. On NeoForge Brigadier comes from the MC-BOOTSTRAP module
+ * layer, which Mixin does not transform, so this mixin normally stays inactive.
+ * CommandNodeHooks therefore treats the CURRENT_COMMAND field as optional and the
+ * command source carries the node under test instead. When Sinytra Connector moves
+ * Brigadier into the game layer, the compat.connector variant becomes applicable.
  */
 @LoadIfMod(modid = "connector", condition = LoadIfMod.ModCondition.ABSENT)
 @Mixin(value = CommandNode.class, remap = false)

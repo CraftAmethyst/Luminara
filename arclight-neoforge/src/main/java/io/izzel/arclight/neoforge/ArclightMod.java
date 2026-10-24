@@ -29,8 +29,10 @@ public class ArclightMod implements AbstractBootstrap {
     try {
       // On the standalone mod path the CommandNode hack must not redefine the class:
       // the mod class loader differs from the one that loads brigadier, which would
-      // create a duplicate CommandNode and break type identity. The CURRENT_COMMAND
-      // field is provided by a Mixin (CommandNodeMixin_NeoForge) instead.
+      // create a duplicate CommandNode and break type identity. NeoForge keeps
+      // Brigadier in the MC-BOOTSTRAP layer, so CommandNodeHooks treats the
+      // mixin-provided CURRENT_COMMAND field as optional and tracks the node under
+      // test on the command source instead.
       this.installGsonEnumFactory();
     } catch (Throwable t) {
       ArclightServer.LOGGER.warn("Failed to apply the Gson enum bootstrap", t);

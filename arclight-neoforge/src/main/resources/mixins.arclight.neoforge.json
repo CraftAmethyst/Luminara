@@ -80,6 +80,7 @@
     "neoforge.NetworkRegistryMixin",
     "neoforge.PacketDistributorMixin",
     "neoforge.PermissionAPIMixin",
+    "neoforge.server.command.CommandHelperMixin",
     "neoforge.items.CombinedInvWrapperAccessor",
     "neoforge.items.RangedWrapperAccessor",
     "neoforge.items.SidedInvWrapperAccessor",
