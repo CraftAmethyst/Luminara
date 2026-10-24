@@ -17,27 +17,59 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.ParsedLine;
 import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 // see net.minecraftforge.server.console.TerminalHandler
 public class ArclightTerminalReader {
 
+    private static final Logger LOGGER = LogManager.getLogger("Luminara");
+
     public static boolean handleCommands(DedicatedServer server) {
         var terminal = TerminalConsoleAppender.getTerminal();
-        if (terminal == null)
-            return false;
+        // The terminal appender owns the terminal whenever Log4j could load it. On
+        // the standalone Fabric mod Log4j cannot see the bundled appender, so the
+        // console has no terminal yet; create one here so the server console still
+        // gets a line reader and command completion.
+        boolean managed = terminal != null;
+        if (!managed) {
+            terminal = createTerminal();
+            if (terminal == null) {
+                LOGGER.debug(
+                    "No console terminal available, falling back to the default server console reader"
+                );
+                return false;
+            }
+        }
 
-        var reader = LineReaderBuilder.builder()
-            .appName("Arclight")
-            .terminal(terminal)
-            .completer(new ConsoleCommandCompleter(server))
-            .build();
+        LineReader reader;
+        try {
+            reader = LineReaderBuilder.builder()
+                .appName("Arclight")
+                .terminal(terminal)
+                .completer(new ConsoleCommandCompleter(server))
+                .build();
+        } catch (Throwable t) {
+            LOGGER.debug("Failed to create the console reader", t);
+            if (!managed) {
+                closeQuietly(terminal);
+            }
+            return false;
+        }
         reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
 
-        TerminalConsoleAppender.setReader(reader);
+        if (managed) {
+            TerminalConsoleAppender.setReader(reader);
+        }
+        LOGGER.debug(
+            "Console reader started on {}",
+            terminal.getClass().getName()
+        );
 
         try {
             String line;
@@ -47,6 +79,10 @@ public class ArclightTerminalReader {
                 } catch (EndOfFileException ignored) {
                     // Continue reading after EOT
                     continue;
+                } catch (UserInterruptException e) {
+                    // DONT USE CLOSE, YOU AREN'T GOING TO SHUT IT DOWN IN ANOTHER THREAD!
+                    server.halt(true);
+                    break;
                 }
 
                 if (line == null)
@@ -57,13 +93,35 @@ public class ArclightTerminalReader {
                     server.handleConsoleInput(line, server.createCommandSourceStack());
                 }
             }
-        } catch (UserInterruptException e) {
-            // DONT USE CLOSE, YOU AREN'T GOING TO SHUT IT DOWN IN ANOTHER THREAD!
-            server.halt(true);
         } finally {
-            TerminalConsoleAppender.setReader(null);
+            if (managed) {
+                TerminalConsoleAppender.setReader(null);
+            } else {
+                closeQuietly(terminal);
+            }
         }
         return true;
+    }
+
+    private static Terminal createTerminal() {
+        try {
+            var builder = TerminalBuilder.builder().name("Arclight").system(true);
+            String encoding = System.getProperty("luminara.console.charset");
+            if (encoding != null && !encoding.isBlank()) {
+                builder.encoding(encoding);
+            }
+            return builder.build();
+        } catch (Throwable t) {
+            LOGGER.debug("Failed to create the console terminal", t);
+            return null;
+        }
+    }
+
+    private static void closeQuietly(Terminal terminal) {
+        try {
+            terminal.close();
+        } catch (IOException ignored) {
+        }
     }
 
     static final class ConsoleCommandCompleter implements Completer {
