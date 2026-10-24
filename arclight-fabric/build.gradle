@@ -28,6 +28,10 @@ dependencies {
         exclude group: 'org.yaml'
     }
     shadowBundle('org.yaml:snakeyaml:2.2') { transitive = false }
+    // jline 2 (used by CraftBukkit's console classes) shades jansi 1.x, which lacks
+    // the long-handle Kernel32 methods jline 3 calls. Keep the standalone jansi first
+    // so the shadow merge keeps those classes and drops the shaded copy.
+    shadowBundle('org.fusesource.jansi:jansi:2.3.2') { transitive = false }
     shadowBundle(libs.jline) { transitive = false }
     shadowBundle(libs.specialsource) { transitive = false }
     shadowBundle(libs.mysql.connectorj) { transitive = false }
@@ -38,7 +42,6 @@ dependencies {
     shadowBundle('org.jline:jline-reader:3.20.0') { transitive = false }
     shadowBundle('org.jline:jline-terminal:3.20.0') { transitive = false }
     shadowBundle('org.jline:jline-terminal-jansi:3.20.0') { transitive = false }
-    shadowBundle('org.fusesource.jansi:jansi:2.3.2') { transitive = false }
     shadowBundle('net.minecrell:terminalconsoleappender:1.3.0') { transitive = false }
 
     // Maven Resolver (Aether) is required by CraftBukkit's JavaPluginLoader to resolve
@@ -125,7 +128,8 @@ processResources {
     filesMatching('META-INF/luminara-version.properties') {
         expand minecraftVersion: libs.versions.minecraft.get(), loader: 'Fabric',
             loaderVersion: libs.versions.fabric.loader.get(), javaVersion: '21',
-            bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash
+            bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash,
+            buildTime: gitTimestamp
     }
 }
 

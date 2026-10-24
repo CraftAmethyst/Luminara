@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fallback for environments where the TerminalConsole appender is not visible to
+     Log4j; see arclight-log4j2-detailed-console.xml. -->
+<Configuration name="LuminaraLogging" status="warn" shutdownHook="disable">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout charset="${sys:luminara.console.charset:-UTF-8}"
+                           pattern="%highlight{[%d{HH:mm:ss} %level]: %replace{%msg{nolookups}}{§.}{}%n%xEx}{INFO=normal}"/>
+        </Console>
+        <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %replace{%msg{nolookups}}{§.}{}%n%xEx"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="99" fileIndex="min"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Root level="all">
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="File" level="info"/>
+        </Root>
+    </Loggers>
+</Configuration>

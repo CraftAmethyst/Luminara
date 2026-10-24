@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="LuminaraLogging" status="warn" shutdownHook="disable">
+    <Appenders>
+        <TerminalConsole name="Console">
+            <PatternLayout charset="${sys:luminara.console.charset:-UTF-8}"
+                           pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal}"/>
+        </TerminalConsole>
+        <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}{strip}%n%xEx"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="99" fileIndex="min"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Root level="all">
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="File" level="info"/>
+        </Root>
+    </Loggers>
+</Configuration>
