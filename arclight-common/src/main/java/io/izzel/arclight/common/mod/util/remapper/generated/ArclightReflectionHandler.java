@@ -286,7 +286,10 @@ public class ArclightReflectionHandler extends ClassLoader {
         if (!shouldMapTypeName(binaryName)) {
             return binaryName;
         }
-        return remapper.mapType(binaryName.replace('.', '/')).replace('/', '.');
+        String mapped = remapper.mapType(binaryName.replace('.', '/')).replace('/', '.');
+        // Plugin classes reference CraftBukkit through the version-agnostic package,
+        // but the class loader only knows the versioned one.
+        return CraftBukkitVersionRemapper.toVersionedBinaryName(mapped);
     }
 
     // bukkit -> srg

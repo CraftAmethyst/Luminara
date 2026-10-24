@@ -36,17 +36,17 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
 
         if (slashIndex == -1) {
             // No slash after prefix, entire string is version
-            if (VERSION_PATTERN.matcher(afterPrefix).matches()) {
-                return CRAFTBUKKIT_PREFIX + GENERIC_VERSION;
+            if (isVersionPackage(afterPrefix)) {
+                return CRAFTBUKKIT_PREFIX + currentVersion();
             }
             return internalName;
         }
 
         String versionPart = afterPrefix.substring(0, slashIndex);
-        if (VERSION_PATTERN.matcher(versionPart).matches()) {
+        if (isVersionPackage(versionPart)) {
             return (
                 CRAFTBUKKIT_PREFIX +
-                    GENERIC_VERSION +
+                    currentVersion() +
                     afterPrefix.substring(slashIndex)
             );
         }
@@ -73,17 +73,17 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
         int dotIndex = afterPrefix.indexOf('.');
 
         if (dotIndex == -1) {
-            if (VERSION_PATTERN.matcher(afterPrefix).matches()) {
-                return CRAFTBUKKIT_DOT_PREFIX + GENERIC_VERSION;
+            if (isVersionPackage(afterPrefix)) {
+                return CRAFTBUKKIT_DOT_PREFIX + currentVersion();
             }
             return binaryName;
         }
 
         String versionPart = afterPrefix.substring(0, dotIndex);
-        if (VERSION_PATTERN.matcher(versionPart).matches()) {
+        if (isVersionPackage(versionPart)) {
             return (
                 CRAFTBUKKIT_DOT_PREFIX +
-                    GENERIC_VERSION +
+                    currentVersion() +
                     afterPrefix.substring(dotIndex)
             );
         }
@@ -144,6 +144,11 @@ public class CraftBukkitVersionRemapper implements PluginTransformer {
         return (
             CRAFTBUKKIT_DOT_PREFIX + version + afterPrefix.substring(dotIndex)
         );
+    }
+
+    private static boolean isVersionPackage(String packageName) {
+        return GENERIC_VERSION.equals(packageName) ||
+            VERSION_PATTERN.matcher(packageName).matches();
     }
 
     private static String currentVersion() {
