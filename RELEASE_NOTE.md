@@ -1,91 +1,88 @@
-# Luminara 1.0.15-beta.1 - Feudal Kings
+# Luminara 1.0.15
 
-> Minecraft 1.21.1 | NeoForge 21.1.248 | Fabric 0.19.3
->
-> 34f79558 ~ c3d56f9a
-
-# BREAKING CHANGES
-
-- The primary distribution is now a standard server mod loaded from `mods/` by Fabric or NeoForge. The legacy launcher JARs remain available only as a deprecated fallback.
-- Install the matching dedicated server first. Bukkit plugins remain in `plugins/`, while Fabric additionally requires Fabric API and `fabric-permissions-api`.
-
-# Added
-
-- Standard Fabric and NeoForge mod distributions with loader-specific entrypoints, metadata, Mixin configurations, and version information.
-- Distribution assembly and verification for loader metadata, Mixin configurations, duplicate classes, forbidden launcher remnants, and NeoForge jar-in-jar libraries.
-- NeoForge jar-in-jar packaging for SnakeYAML, including open-ended dependency metadata and distribution contract tests.
-- Native server fixtures and regression coverage for plugin loading, commands, scheduling, events, shutdown, locale resources, and JUL logging.
-- Fabric and NeoForge compatibility support for C2ME's rewritten chunk system, VanillaBackport's thrown eggs, and LuckPerms Bukkit permission injection.
-
-# Fixed
-
-- Bukkit and Spigot logs written through `java.util.logging` now use the server Log4j format instead of JUL's default `SimpleFormatter` output on Fabric and NeoForge.
-- UTF-8 localized output now uses the runtime console charset consistently; Chinese and other i18n messages no longer become garbled.
-- Fabric Mixin conflicts involving anvils, beehives, thrown eggs, and C2ME chunk ticket tracking.
-- Fabric player-join crashes caused by the unavailable `net.minecraft.text.Text.iterator()` method.
-- Fabric Jansi classpath conflicts and duplicate Fabric bootstrap classes in published artifacts.
-- Fabric's exposed Minecraft version being rewritten incorrectly by Fabric Loader.
-- Embedded runtime JARs not being refreshed after their contents changed.
-- Server shutdown hanging when third-party threads prevent a clean exit; the server now force-exits after the grace period.
-- NeoForge startup failures caused by SnakeYAML package collisions and stale installer artifacts.
-- `Arclight version null` in startup output and `/version` on the standalone mod path.
-- Remapped plugin classes being reused across Luminara versions through stale cache entries.
-- Release-name rendering and missing Feudal Kings translations in localized startup output.
-- Spigot mapping generation requiring a local Forge or SRG provider cache.
-
-# Changed
-
-- Distribution artifacts and release metadata now use the Luminara name and include reproducible Git revision information.
-- Console logging now provides consistent simple and detailed formats, with improved logger filtering and release-name display.
-- Shared bootstrap, runtime support, and compatibility code moved into `arclight-common`; Fabric and NeoForge provide dedicated mod entrypoints.
-- Fabric and NeoForge build workflows were reorganized, with optimized loader builds, distribution validation, and Linux checksums.
-- Mapping generation now derives Fabric/NeoForge mappings directly and skips identity-remap inheritance where appropriate.
-- The mapping and installer pipelines no longer depend on the previous Forge cache or SRG provider layout.
+> Minecraft 1.21.1 | Fabric 0.19.3 | NeoForge 21.1.248 | Java 21 | Dedicated Server
 
 <details>
+<summary>中文发布说明</summary>
 
-# Luminara 1.0.15-beta.1 - Feudal Kings
+## 中文发布说明
 
-> Minecraft 1.21.1 | NeoForge 21.1.248 | Fabric 0.19.3
->
-> 34f79558 ~ c3d56f9a
+### BREAKING CHANGES
 
-# 破坏性变更
+- 发行物改为标准 Fabric/NeoForge 服务端模组，从 `mods/` 加载；旧版启动器仅作为已弃用的回退方案保留。
+- Bukkit 插件仍位于 `plugins/`；Fabric 额外需要 Fabric API 和 `fabric-permissions-api`。
 
-- 主要发行版现在是一个标准服务器模组，由 Fabric 或 NeoForge 从 `mods/` 加载。旧版启动器 JAR 仅作为已弃用的回退方案提供。
-- 请先安装匹配的专用服务器。Bukkit 插件仍位于 `plugins/`，而 Fabric 额外需要 Fabric API 和 `fabric-permissions-api`。
+### Added
 
-# 新增
+- 新增标准 Fabric/NeoForge 模组分发，包含加载器入口点、元数据、Mixin 配置和版本信息。
+- 新增分发装配与校验：加载器元数据、Mixin 配置、重复类、启动器残留和 NeoForge jar-in-jar 库。
+- 新增 NeoForge 对 SnakeYAML 的 jar-in-jar 打包，以及开放式依赖元数据和分发契约测试。
+- 新增原生服务器回归夹具，覆盖插件加载、命令、调度、事件、关闭、语言资源和 JUL 日志。
+- 新增 C2ME 区块系统、VanillaBackport 投掷鸡蛋和 LuckPerms 权限注入兼容。
+- 新增 Paper 风格的未加版本号 `CraftSpawnCategory` 门面，供 Multiverse-Core 等插件调用。
 
-- 带有加载器特定入口点、元数据、Mixin 配置和版本信息的标准 Fabric 和 NeoForge 模组分发版本。
-- 针对加载器元数据、Mixin 配置、重复类、禁止的启动器残留及 NeoForge jar-in-jar 库的分发装配与验证。
-- NeoForge 对 SnakeYAML 的 jar-in-jar 打包，包括开放式依赖元数据和分发契约测试。
-- 原生服务器夹具及针对插件加载、命令、调度、事件、关闭、区域设置资源和 JUL 日志的回归覆盖。
-- 对 C2ME 重写的区块系统、VanillaBackport 的投掷鸡蛋以及 LuckPerms Bukkit 权限注入的 Fabric 和 NeoForge 兼容性支持。
+### Fixed
 
-# 修复
+- 统一 Bukkit/JUL 日志到 Log4j 格式，替换 JUL 默认的 `SimpleFormatter` 输出。
+- 修复内置详细/简单 Log4j 配置未生效的问题，恢复 ANSI 颜色和原生控制台字符集，并修正异常格式化器多余的 `Ex`。
+- 修复 Fabric 控制台输入与命令补全，解决 Jansi 类路径冲突。
+- 修复启动横幅重复输出以及错误的版本、构建时间，并修复发布名称渲染、ASCII 高亮和 UTF-8 语言输出。
+- 修复 `org.bukkit.craftbukkit.v.*` 重映射（CMILib `CraftLegacy`、CMI `SkullMeta`）。
+- 修复 Paper 插件的 Mojang 名称反射，恢复 Multiverse-Core 的生成类别映射。
+- 修复 Fabric Mixin 冲突（铁砧、蜂巢、投掷鸡蛋、C2ME ticket）、`Text.iterator()` 加入崩溃和被改写的 Minecraft 版本。
+- 修复关闭挂起、嵌入式 JAR 不刷新、Fabric 引导类重复和插件类缓存跨版本复用。
+- 修复 NeoForge 的 SnakeYAML 包冲突和过期安装程序制品；映射生成不再依赖 Forge 或 SRG provider 缓存。
 
-- 在 Fabric 和 NeoForge 上，通过 `java.util.logging` 写入的 Bukkit 和 Spigot 日志现在使用服务器 Log4j 格式，而不是 JUL 默认的 `SimpleFormatter` 输出。
-- UTF-8 本地化输出现在始终使用运行时控制台字符集；中文及其他 i18n 消息不再乱码。
-- 涉及铁砧、蜂巢、投掷鸡蛋和 C2ME 区块 ticket 跟踪的 Fabric Mixin 冲突。
-- 由不可用的 `net.minecraft.text.Text.iterator()` 方法导致的 Fabric 玩家加入崩溃。
-- Fabric Jansi 类路径冲突以及已发布制品中重复的 Fabric 引导类。
-- Fabric Loader 错误重写了 Fabric 暴露的 Minecraft 版本。
-- 嵌入式运行时 JAR 在内容更改后未刷新。
-- 当第三方线程阻止干净退出时服务器关闭挂起；现在服务器在宽限期后强制退出。
-- 由 SnakeYAML 包冲突和过期的安装程序制品导致的 NeoForge 启动失败。
-- 独立模组路径中启动输出和 `/version` 里的 `Arclight version null`。
-- 重映射插件类因过期缓存条目而在 Luminara 各版本间被复用。
-- 本地化启动输出中的发布名称渲染和缺失的 Feudal Kings 翻译。
-- Spigot 映射生成需要本地 Forge 或 SRG provider 缓存。
+### Changed
 
-# 变更
+- 版本号更新为 `1.0.15`。
+- 分发制品和元数据统一使用 Luminara 名称，并包含可重现的 Git 修订信息。
+- 共享引导与运行时代码移入 `arclight-common`，Fabric 和 NeoForge 提供各自的入口点。
+- 构建流程重新组织，包含优化的加载器构建、分发校验和 Linux 校验和；映射按加载器直接生成。
 
-- 分发制品和发布元数据现在使用 Luminara 名称，并包含可重现的 Git 修订信息。
-- 控制台日志现在提供一致的简单和详细格式，并改进了记录器过滤和发布名称显示。
-- 共享引导、运行时支持和兼容性代码已移入 `arclight-common`；Fabric 和 NeoForge 提供专用的模组入口点。
-- Fabric 和 NeoForge 构建流程已重新组织，包含优化的加载器构建、分发验证和 Linux 校验和。
-- 映射生成现在直接派生 Fabric/NeoForge 映射，并在适当情况下跳过恒等重映射继承。
-- 映射和安装程序管道不再依赖先前的 Forge 缓存或 SRG provider 布局。
+### 兼容性
+
+- Minecraft：1.21.1
+- Fabric：0.19.3
+- NeoForge：21.1.248
+- Java：21
+- 仅支持服务端
 
 </details>
+
+## English Release Notes
+
+### BREAKING CHANGES
+
+- Project artifacts are now standard Fabric/NeoForge server mods loaded from `mods/`; the legacy launchers remain only as a deprecated fallback.
+- Bukkit plugins stay in `plugins/`. Fabric additionally requires Fabric API and `fabric-permissions-api`.
+
+### Added
+
+- Standard Fabric and NeoForge mod distributions with loader entrypoints, metadata, Mixin configurations, and version information.
+- Distribution assembly and verification for loader metadata, Mixin configurations, duplicate classes, launcher remnants, and NeoForge jar-in-jar libraries.
+- NeoForge jar-in-jar packaging for SnakeYAML, including open-ended dependency metadata and distribution contract tests.
+- Native server fixtures and regression coverage for plugin loading, commands, scheduling, events, shutdown, locale resources, and JUL logging.
+- Compatibility support for C2ME's chunk system, VanillaBackport's thrown eggs, and LuckPerms permission injection.
+- A Paper-style unversioned `CraftSpawnCategory` facade for plugins such as Multiverse-Core.
+
+### Fixed
+
+- Routed Bukkit/JUL logs through Log4j with the server format instead of JUL's default `SimpleFormatter`.
+- Fixed the bundled detailed/simple Log4j configurations not being applied, restored ANSI colours and the native console charset, and removed the stray `Ex` from the mistyped throwable converter.
+- Restored Fabric console input and command completion, and fixed Jansi classpath conflicts.
+- Fixed the duplicated startup banner, wrong version and build time, release-name rendering, ASCII highlighting, and UTF-8 locale output.
+- Fixed `org.bukkit.craftbukkit.v.*` remapping (CMILib `CraftLegacy`, CMI `SkullMeta`).
+- Fixed Mojang-named reflection for Paper plugins, restoring Multiverse-Core's spawn-category mapping.
+- Fixed Fabric Mixin conflicts (anvils, beehives, thrown eggs, C2ME tickets), the `Text.iterator()` join crash, and the rewritten Minecraft version.
+- Fixed shutdown hangs, stale embedded JARs, duplicate Fabric bootstrap classes, and plugin class cache reuse across versions.
+- Fixed NeoForge SnakeYAML collisions and stale installer artifacts; mapping generation no longer needs a Forge or SRG provider cache.
+
+### Changed
+
+- Updated the project version to `1.0.15`.
+- Distribution artifacts and metadata now use the Luminara name and include reproducible Git revision information.
+- Shared bootstrap and runtime code moved into `arclight-common`; Fabric and NeoForge provide dedicated entrypoints.
+- Build workflows were reorganized with optimized loader builds, distribution validation, and Linux checksums; mappings are derived directly per loader.
+
+**Full Changelog**: https://github.com/CraftAmethyst/Luminara/compare/FK/a1.0.15...FeudalKings/1.0.15

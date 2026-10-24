@@ -21,7 +21,7 @@ Versions list and support status: [Discussions thread](https://github.com/IzzelA
 | NeoForge            | `21.1.248`                           |
 | CraftBukkit package | `v1_21_R1`                           |
 | Java                | `21` (64-bit)                        |
-| Luminara            | `1.0.15-beta.1`                      |
+| Luminara            | `1.0.15`                             |
 
 On Fabric, Fabric API `0.116.15+1.21.1` and `fabric-permissions-api` `0.3.1` are required.
 
