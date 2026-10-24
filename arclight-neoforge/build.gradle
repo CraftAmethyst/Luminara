@@ -125,7 +125,8 @@ processResources {
     filesMatching('META-INF/luminara-version.properties') {
         expand minecraftVersion: libs.versions.minecraft.get(), loader: 'NeoForge',
             loaderVersion: libs.versions.neoforge.get(), javaVersion: '21',
-            bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash
+            bukkitPackage: libs.versions.bukkit.api.get(), version: ver, gitCommit: gitHash,
+            buildTime: gitTimestamp
     }
 }
 

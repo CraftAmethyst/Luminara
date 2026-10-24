@@ -21,11 +21,9 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Runtime bootstrap utilities shared by the standalone mod entry points.
@@ -36,6 +34,12 @@ import java.util.jar.Manifest;
  * (CommandNode / Gson enum / ASM implementers) is a later-phase verification item.
  */
 public interface AbstractBootstrap {
+
+    /**
+     * Fabric runs {@code setupMod} from both the mixin plugin and the server
+     * entrypoint; the banner belongs to the first boot phase only.
+     */
+    AtomicBoolean LOGO_LOGGED = new AtomicBoolean();
 
     /**
      * This runs the CommandNode hook hack and Gson enum hack.
@@ -120,17 +124,12 @@ public interface AbstractBootstrap {
         setVersionIfAbsent(ArclightVersion.FEUDAL_KINGS);
         setPlatformIfAbsent(platform);
         setVersionPropertyIfAbsent();
-        try (InputStream stream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
-            if (stream == null) {
-                return;
-            }
-            Manifest manifest = new Manifest(stream);
-            Attributes attributes = manifest.getMainAttributes();
-            String version = attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
-            String buildTime = attributes.getValue("Implementation-Timestamp");
-            LogManager.getLogger("Luminara").info(ArclightLocale.getInstance().get("logo"),
-                ArclightLocale.getInstance().get("release-name." + ArclightVersion.current().getReleaseName()), version, buildTime);
+        if (!LOGO_LOGGED.compareAndSet(false, true)) {
+            return;
         }
+        LogManager.getLogger("Luminara").info(ArclightLocale.getInstance().get("logo"),
+            ArclightLocale.getInstance().get("release-name." + ArclightVersion.current().getReleaseName()),
+            LuminaraVersion.version(), LuminaraVersion.buildTime());
     }
 
     static void setVersionIfAbsent(ArclightVersion version) {

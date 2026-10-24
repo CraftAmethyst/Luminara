@@ -14,6 +14,7 @@ class LuminaraVersionTest {
         assertEquals("v1_21_R1", LuminaraVersion.bukkitPackage());
         assertEquals("test-version", LuminaraVersion.version());
         assertEquals("0123456", LuminaraVersion.gitCommit());
+        assertEquals("2026-01-01T00:00:00Z", LuminaraVersion.buildTime());
         assertEquals("1.21.1 / TestLoader 1.0 / Java 21", LuminaraVersion.compatibilityLine());
     }
 }

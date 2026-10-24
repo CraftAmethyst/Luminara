@@ -21,6 +21,19 @@ public final class LuminaraVersion {
     public static String version() { return required("version"); }
     public static String gitCommit() { return required("gitCommit"); }
 
+    /**
+     * Time of the commit this build was produced from. Older metadata files do not
+     * carry the key, so a missing value degrades to "unknown" instead of failing the
+     * whole bootstrap.
+     */
+    public static String buildTime() {
+        String value = PROPERTIES.getProperty("buildTime");
+        if (value == null || value.isBlank() || value.contains("${")) {
+            return "unknown";
+        }
+        return value;
+    }
+
     public static String compatibilityLine() {
         return minecraftVersion() + " / " + loader() + " " + loaderVersion() + " / Java " + javaVersion();
     }
