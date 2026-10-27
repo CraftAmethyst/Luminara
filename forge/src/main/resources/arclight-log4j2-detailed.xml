@@ -29,32 +29,32 @@
             <PatternLayout>
                 <!-- use white for info output -->
                 <LoggerNamePatternSelector
-                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [%style{%c{1.}%notEmpty{/%markerSimpleName}}{magenta}] %highlight{%luminaraFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}">
+                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [%style{%c{1.}%notEmpty{/%markerSimpleName}}{magenta}] %highlight{%msg{nolookup}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
                     <PatternMatch key="net.minecraft."
-                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%luminaraFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%msg{nolookup}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
                     <PatternMatch key="com.mojang."
-                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%luminaraFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%msg{nolookup}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
                     <PatternMatch key="net.minecraftforge."
-                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%luminaraFormatting{%msg{nolookup}}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%msg{nolookup}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
             <PatternLayout>
                 <LoggerNamePatternSelector
-                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [%style{%c{2.}/%markerSimpleName}{magenta}]: %highlight{%luminaraFormatting{%msg{nolookup}}{strip}%n}{INFO=normal, WARN=normal, ERROR=red}">
+                        defaultPattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [%style{%c{2.}/%markerSimpleName}{magenta}]: %highlight{%msg{nolookup}%n}{INFO=normal, WARN=normal, ERROR=red}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
                     <PatternMatch key="net.minecraft."
-                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [minecraft/%logger{1}]: %highlight{%luminaraFormatting{%msg{nolookup}}{strip}%n}{INFO=normal, WARN=normal, ERROR=red}"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [minecraft/%logger{1}]: %highlight{%msg{nolookup}%n}{INFO=normal, WARN=normal, ERROR=red}"/>
                     <PatternMatch key="com.mojang."
-                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [mojang/%logger{1}]: %highlight{%luminaraFormatting{%msg{nolookup}}{strip}%n}{INFO=normal, WARN=normal, ERROR=red}"/>
+                                  pattern="[%style{%d{HH:mm:ss}}{cyan}] [%style{%t}{bright_magenta}/%highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [mojang/%logger{1}]: %highlight{%msg{nolookup}%n}{INFO=normal, WARN=normal, ERROR=red}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout
-                    pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName] %luminaraFormatting{%msg{nolookup}}{strip}%n%tEx"/>
+                    pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName] %msg{nolookup}%n%tEx"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
                 <OnStartupTriggeringPolicy/>
@@ -63,7 +63,7 @@
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.gz">
             <PatternLayout
-                    pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName] %luminaraFormatting{%msg{nolookup}}{strip}%n%tEx"/>
+                    pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName] %msg{nolookup}%n%tEx"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="200MB"/>
