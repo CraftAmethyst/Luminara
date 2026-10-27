@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.core.network.rcon;
 
-import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.network.rcon.RConConsoleSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.rcon.RconConsoleSource;
 import org.bukkit.command.CommandSender;
+import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.network.rcon.RConConsoleSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.decoration;
 
-import org.craftamethyst.luminara.common.mixin.core.world.entity.item.HangingEntityMixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -12,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.item.HangingEntityMixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

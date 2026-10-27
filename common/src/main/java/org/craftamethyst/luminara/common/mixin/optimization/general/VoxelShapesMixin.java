@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general;
 
-import org.craftamethyst.luminara.common.mod.util.optimization.OptimizedIndirectMerger;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import net.minecraft.world.phys.shapes.IndexMerger;
 import net.minecraft.world.phys.shapes.Shapes;
+import org.craftamethyst.luminara.common.mod.util.optimization.OptimizedIndirectMerger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

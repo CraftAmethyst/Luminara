@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
@@ -16,6 +14,8 @@ import org.bukkit.craftbukkit.v.entity.CraftAbstractVillager;
 import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

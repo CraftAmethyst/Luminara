@@ -1,13 +1,9 @@
 package org.craftamethyst.luminara.common.mod.util.remapper;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import io.izzel.arclight.api.PluginPatcher;
-import org.craftamethyst.luminara.i18n.LuminaraVersion;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product3;
 import io.izzel.tools.product.Product5;
@@ -27,6 +23,9 @@ import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.LuminaraVersion;
 
 public abstract class ArclightClassCache implements AutoCloseable {
 

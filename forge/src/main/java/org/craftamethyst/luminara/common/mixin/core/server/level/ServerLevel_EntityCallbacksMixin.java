@@ -1,9 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.server.level;
 
 import com.google.common.collect.Lists;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.storage.MapDataBridge;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -12,8 +9,10 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.storage.MapDataBridge;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

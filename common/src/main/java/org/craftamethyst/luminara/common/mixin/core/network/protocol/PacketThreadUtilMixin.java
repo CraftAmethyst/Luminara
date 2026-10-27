@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.network.protocol;
 
-import org.craftamethyst.luminara.common.bridge.core.network.play.ServerPlayNetHandlerBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketUtils;
@@ -10,6 +8,8 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.thread.BlockableEventLoop;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftServer;
+import org.craftamethyst.luminara.common.bridge.core.network.play.ServerPlayNetHandlerBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.Shadow;
 public class PacketThreadUtilMixin {
 
   private static final org.apache.logging.log4j.Logger ARCLIGHT_LOGGER =
-      org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger.getLogger("PacketThreadUtil");
+      org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger.getLogger(
+          "PacketThreadUtil");
 
   @Shadow @Final private static Logger LOGGER;
 

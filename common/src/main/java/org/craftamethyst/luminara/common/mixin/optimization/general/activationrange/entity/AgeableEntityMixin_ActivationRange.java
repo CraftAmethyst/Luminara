@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general.activationrange.entity;
 
+import net.minecraft.world.entity.AgeableMob;
 import org.craftamethyst.luminara.common.bridge.core.entity.AgeableEntityBridge;
 import org.craftamethyst.luminara.common.mixin.optimization.general.activationrange.EntityMixin_ActivationRange;
-import net.minecraft.world.entity.AgeableMob;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

@@ -1,10 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.bridge.core.block.BlockBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.level.block.state.BlockBehaviourMixin;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -28,6 +23,11 @@ import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExhaustionEvent;
+import org.craftamethyst.luminara.common.bridge.core.block.BlockBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.level.block.state.BlockBehaviourMixin;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

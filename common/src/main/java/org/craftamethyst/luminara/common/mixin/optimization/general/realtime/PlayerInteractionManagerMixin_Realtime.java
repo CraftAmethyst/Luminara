@@ -1,7 +1,7 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general.realtime;
 
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

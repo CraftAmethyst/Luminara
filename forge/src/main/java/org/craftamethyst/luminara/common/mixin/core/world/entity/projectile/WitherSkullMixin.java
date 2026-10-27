@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.projectile;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.level.Explosion;
@@ -10,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

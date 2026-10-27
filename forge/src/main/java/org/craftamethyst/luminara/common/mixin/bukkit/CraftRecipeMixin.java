@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.bridge.core.item.crafting.IngredientBridge;
-import org.craftamethyst.luminara.common.mod.inventory.ArclightSpecialIngredient;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -10,6 +8,8 @@ import org.bukkit.craftbukkit.v.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.v.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
+import org.craftamethyst.luminara.common.bridge.core.item.crafting.IngredientBridge;
+import org.craftamethyst.luminara.common.mod.inventory.ArclightSpecialIngredient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

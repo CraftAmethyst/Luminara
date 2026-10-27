@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.util.IWorldPosCallableBridge;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +7,8 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v.inventory.CraftInventorySmithing;
 import org.bukkit.craftbukkit.v.inventory.CraftInventoryView;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.util.IWorldPosCallableBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

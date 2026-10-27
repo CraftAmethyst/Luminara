@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mod.util;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.level.ServerLevel;
@@ -12,6 +9,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
 
 public class DistValidate {
 

@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Pufferfish;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

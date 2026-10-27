@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
 import com.google.common.collect.ImmutableMap;
-import org.craftamethyst.luminara.common.bridge.bukkit.SimpleRegistryBridge;
 import java.util.Map;
 import java.util.function.Predicate;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.craftamethyst.luminara.common.bridge.bukkit.SimpleRegistryBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

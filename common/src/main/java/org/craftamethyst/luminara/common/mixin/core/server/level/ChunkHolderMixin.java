@@ -1,11 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.server.level;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.mojang.datafixers.util.Either;
-import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.server.ChunkHolderBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.server.ChunkMapBridge;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -18,6 +13,10 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.server.ChunkHolderBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.server.ChunkMapBridge;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -129,6 +128,4 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
       ((ChunkMapBridge) chunkManager).bridge$getCallbackExecutor().run();
     }
   }
-
-
 }

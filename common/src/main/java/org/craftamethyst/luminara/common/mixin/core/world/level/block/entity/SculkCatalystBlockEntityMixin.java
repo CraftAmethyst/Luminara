@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.tileentity.SculkCatalystListenerBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.SculkCatalystBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.SculkCatalystListenerBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

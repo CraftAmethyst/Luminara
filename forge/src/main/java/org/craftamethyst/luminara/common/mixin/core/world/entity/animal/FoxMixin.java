@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.passive.FoxEntityBridge;
 import java.util.UUID;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.bridge.core.entity.passive.FoxEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;

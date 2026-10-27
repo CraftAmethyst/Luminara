@@ -1,7 +1,6 @@
 package org.craftamethyst.luminara.i18n;
 
 import com.google.common.reflect.TypeToken;
-import org.craftamethyst.luminara.i18n.conf.ConfigSpec;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
@@ -10,6 +9,7 @@ import java.nio.file.*;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.craftamethyst.luminara.i18n.conf.ConfigSpec;
 import org.yaml.snakeyaml.DumperOptions;
 
 public class ArclightConfig {

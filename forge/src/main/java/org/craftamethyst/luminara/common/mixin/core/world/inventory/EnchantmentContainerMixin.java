@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
-import org.craftamethyst.luminara.common.bridge.core.util.IWorldPosCallableBridge;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -40,6 +36,10 @@ import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
+import org.craftamethyst.luminara.common.bridge.core.util.IWorldPosCallableBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.LecternContainerBridge;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.inventory.CraftInventoryLectern;
 import org.bukkit.craftbukkit.v.inventory.CraftInventoryView;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.LecternContainerBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

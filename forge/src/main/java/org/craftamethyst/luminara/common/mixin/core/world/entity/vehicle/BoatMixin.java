@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.vehicle;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -10,6 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.vehicle.*;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

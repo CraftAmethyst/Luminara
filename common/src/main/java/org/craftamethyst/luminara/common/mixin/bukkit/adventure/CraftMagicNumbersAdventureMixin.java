@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit.adventure;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import java.io.IOException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
@@ -12,6 +11,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

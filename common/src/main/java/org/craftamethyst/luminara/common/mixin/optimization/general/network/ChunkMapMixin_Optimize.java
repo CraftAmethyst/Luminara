@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general.network;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.server.ChunkMap_TrackedEntityBridge;
-import org.craftamethyst.luminara.common.mod.compat.ModIds;
-import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
@@ -16,6 +12,10 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.server.ChunkMap_TrackedEntityBridge;
+import org.craftamethyst.luminara.common.mod.compat.ModIds;
+import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

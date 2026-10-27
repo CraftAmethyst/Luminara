@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.storage;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.storage.PlayerDataBridge;
 import java.io.File;
 import java.io.FileInputStream;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +8,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.storage.PlayerDataBridge;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.server.management;
 
-import org.craftamethyst.luminara.common.bridge.core.server.management.UserListBridge;
 import java.util.Collection;
 import java.util.Map;
 import net.minecraft.server.players.StoredUserEntry;
 import net.minecraft.server.players.StoredUserList;
+import org.craftamethyst.luminara.common.bridge.core.server.management.UserListBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

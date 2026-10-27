@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.monster.piglin;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.monster.piglin.PiglinBridge;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.world.InteractionHand;
@@ -15,6 +13,8 @@ import net.minecraft.world.item.Items;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.event.entity.PiglinBarterEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.monster.piglin.PiglinBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

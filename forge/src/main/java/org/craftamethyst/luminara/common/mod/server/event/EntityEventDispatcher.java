@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mod.server.event;
 
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import io.izzel.tools.collection.XmapList;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 
 public class EntityEventDispatcher {
 

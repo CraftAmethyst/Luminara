@@ -1,13 +1,12 @@
 package org.craftamethyst.luminara.common.mod.util.remapper;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.google.common.collect.Maps;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.md_5.specialsource.provider.InheritanceProvider;
 import net.md_5.specialsource.repo.ClassRepo;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;

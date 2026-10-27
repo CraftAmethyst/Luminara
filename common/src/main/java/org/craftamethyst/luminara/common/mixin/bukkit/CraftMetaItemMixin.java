@@ -2,7 +2,6 @@ package org.craftamethyst.luminara.common.mixin.bukkit;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.craftamethyst.luminara.common.bridge.bukkit.ItemMetaBridge;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.craftbukkit.v.inventory.CraftMetaItem;
+import org.craftamethyst.luminara.common.bridge.bukkit.ItemMetaBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

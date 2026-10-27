@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.chunk;
 
-import org.craftamethyst.luminara.common.bridge.core.world.chunk.LevelChunkSectionBridge;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.chunk.PalettedContainerRO;
+import org.craftamethyst.luminara.common.bridge.core.world.chunk.LevelChunkSectionBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

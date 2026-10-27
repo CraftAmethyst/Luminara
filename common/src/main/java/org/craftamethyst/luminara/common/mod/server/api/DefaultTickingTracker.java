@@ -1,13 +1,13 @@
 package org.craftamethyst.luminara.common.mod.server.api;
 
 import io.izzel.arclight.api.TickingTracker;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.entity.Entity;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.jetbrains.annotations.Nullable;
 
 public class DefaultTickingTracker implements TickingTracker {

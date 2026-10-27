@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.npc;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.merchant.IMerchantBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
-import org.craftamethyst.luminara.common.bridge.core.item.MerchantOfferBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.PathfinderMobMixin;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -15,6 +11,10 @@ import org.bukkit.craftbukkit.v.inventory.CraftMerchantRecipe;
 import org.bukkit.entity.AbstractVillager;
 import org.bukkit.event.entity.VillagerAcquireTradeEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.entity.merchant.IMerchantBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
+import org.craftamethyst.luminara.common.bridge.core.item.MerchantOfferBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.PathfinderMobMixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

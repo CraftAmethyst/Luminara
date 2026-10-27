@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.monster;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import io.izzel.arclight.mixin.Eject;
 import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +9,7 @@ import org.bukkit.entity.ZombieVillager;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

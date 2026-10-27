@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.util.remapper.generated.RemappingURLClassLoader;
 import java.net.URL;
 import java.net.URLClassLoader;
+import org.craftamethyst.luminara.common.mod.util.remapper.generated.RemappingURLClassLoader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

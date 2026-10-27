@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.ai.brain;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -9,6 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Item;
 import org.bukkit.event.entity.EntityDropItemEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

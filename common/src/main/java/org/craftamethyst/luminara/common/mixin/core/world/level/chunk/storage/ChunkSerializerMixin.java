@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.chunk.storage;
 
-import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkAccessBridge;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
@@ -8,6 +7,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import org.bukkit.craftbukkit.v.persistence.CraftPersistentDataContainer;
+import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkAccessBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

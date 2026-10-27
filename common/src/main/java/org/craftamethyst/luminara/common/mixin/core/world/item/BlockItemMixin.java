@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.item;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +20,8 @@ import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCanBuildEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

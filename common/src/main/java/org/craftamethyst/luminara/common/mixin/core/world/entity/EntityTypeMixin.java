@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityTypeBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityTypeCategoryBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.IWorldWriterBridge;
-import org.craftamethyst.luminara.common.mod.server.event.PreCreatureSpawnEventDispatcher;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -16,6 +12,10 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityTypeBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityTypeCategoryBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.IWorldWriterBridge;
+import org.craftamethyst.luminara.common.mod.server.event.PreCreatureSpawnEventDispatcher;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

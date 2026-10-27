@@ -12,8 +12,7 @@ public final class LuminaraFabricPreLaunch implements PreLaunchEntrypoint {
     if (ArclightCommon.instance() == null) {
       ArclightCommon.install(new FabricCommonApi());
     }
-    if (FabricLoader.getInstance().getEnvironmentType()
-        != net.fabricmc.api.EnvType.SERVER) {
+    if (FabricLoader.getInstance().getEnvironmentType() != net.fabricmc.api.EnvType.SERVER) {
       throw new IllegalStateException("Luminara only runs on a dedicated Fabric server");
     }
   }

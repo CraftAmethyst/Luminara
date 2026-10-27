@@ -1,10 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
-import org.craftamethyst.luminara.common.mod.ArclightCommon;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
-import org.craftamethyst.luminara.i18n.conf.PermissionForwarding;
 import java.lang.reflect.Field;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +16,11 @@ import org.bukkit.craftbukkit.v.inventory.CraftInventoryPlayer;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.ServerOperator;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
+import org.craftamethyst.luminara.common.mod.ArclightCommon;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.conf.PermissionForwarding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

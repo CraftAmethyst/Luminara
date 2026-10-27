@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal.axolotl;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.animal.AnimalMixin;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.animal.AnimalMixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

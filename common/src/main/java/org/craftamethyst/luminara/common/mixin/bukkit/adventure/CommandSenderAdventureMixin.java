@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.bukkit.adventure;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -16,7 +16,8 @@ public interface CommandSenderAdventureMixin extends Audience {
     // Enhanced message handling for better format preservation
     try {
       // If this is an ArclightDummyCommandSender, it has its own Adventure implementation
-      if (sender instanceof org.craftamethyst.luminara.common.mod.command.ArclightDummyCommandSender) {
+      if (sender
+          instanceof org.craftamethyst.luminara.common.mod.command.ArclightDummyCommandSender) {
         ((org.craftamethyst.luminara.common.mod.command.ArclightDummyCommandSender) sender)
             .sendMessage(message);
         return;

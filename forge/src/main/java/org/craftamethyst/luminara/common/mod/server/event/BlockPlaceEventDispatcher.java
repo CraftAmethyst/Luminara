@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mod.server.event;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightBlockSnapshot;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Direction;
@@ -20,6 +16,10 @@ import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightBlockSnapshot;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 
 public class BlockPlaceEventDispatcher {
 

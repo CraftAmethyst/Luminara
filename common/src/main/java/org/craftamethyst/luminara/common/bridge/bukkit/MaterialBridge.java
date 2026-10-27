@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.bridge.bukkit;
 
-import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +9,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.inventory.CraftMetaItem;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 
 public interface MaterialBridge {
   void bridge$setupBlock(ResourceLocation key, Block block, MaterialPropertySpec spec);

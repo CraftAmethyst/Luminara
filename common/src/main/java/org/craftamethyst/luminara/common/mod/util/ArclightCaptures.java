@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mod.util;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +19,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v.event.CraftPortalEvent;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
 
 public class ArclightCaptures {
 

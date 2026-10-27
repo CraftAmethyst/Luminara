@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.item;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
@@ -8,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.event.block.BlockCanBuildEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

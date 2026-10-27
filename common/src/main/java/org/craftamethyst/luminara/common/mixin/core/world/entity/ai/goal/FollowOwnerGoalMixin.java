@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.ai.goal;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
 import org.bukkit.event.entity.EntityTeleportEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

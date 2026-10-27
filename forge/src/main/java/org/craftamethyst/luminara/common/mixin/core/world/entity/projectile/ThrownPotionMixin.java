@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.projectile;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +24,8 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;

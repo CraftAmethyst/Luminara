@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.block.SculkSpreaderBridge;
-import org.craftamethyst.luminara.common.bridge.core.tileentity.SculkCatalystListenerBridge;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SculkSpreader;
 import net.minecraft.world.level.block.entity.SculkCatalystBlockEntity;
+import org.craftamethyst.luminara.common.bridge.core.block.SculkSpreaderBridge;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.SculkCatalystListenerBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

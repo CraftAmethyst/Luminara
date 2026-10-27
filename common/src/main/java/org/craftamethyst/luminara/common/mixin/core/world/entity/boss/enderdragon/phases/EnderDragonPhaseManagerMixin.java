@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.boss.enderdragon.phases;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
@@ -8,6 +7,7 @@ import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManage
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.entity.CraftEnderDragon;
 import org.bukkit.event.entity.EnderDragonChangePhaseEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

@@ -4,10 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.izzel.arclight.api.PluginPatcher;
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.mod.boot.LuminaraBootstrap;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import org.craftamethyst.luminara.common.mod.util.remapper.patcher.ArclightPluginPatcher;
-import org.craftamethyst.luminara.common.mod.util.remapper.resource.RemapSourceHandler;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -18,6 +14,10 @@ import net.md_5.specialsource.JarRemapper;
 import net.md_5.specialsource.provider.ClassLoaderProvider;
 import net.md_5.specialsource.provider.JointProvider;
 import org.apache.commons.io.FileUtils;
+import org.craftamethyst.luminara.common.mod.boot.LuminaraBootstrap;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
+import org.craftamethyst.luminara.common.mod.util.remapper.patcher.ArclightPluginPatcher;
+import org.craftamethyst.luminara.common.mod.util.remapper.resource.RemapSourceHandler;
 
 @SuppressWarnings("unchecked")
 public class ArclightRemapper {

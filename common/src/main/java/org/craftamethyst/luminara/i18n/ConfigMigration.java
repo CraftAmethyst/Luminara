@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.i18n;
 
-import org.craftamethyst.luminara.i18n.conf.PermissionForwarding;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import ninja.leaping.configurate.ConfigurationNode;
+import org.craftamethyst.luminara.i18n.conf.PermissionForwarding;
 
 final class ConfigMigration {
 

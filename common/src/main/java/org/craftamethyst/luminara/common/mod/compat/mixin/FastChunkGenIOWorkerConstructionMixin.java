@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mod.compat.mixin;
 
-import org.craftamethyst.luminara.common.mod.compat.ModIds;
-import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 import net.minecraft.world.level.chunk.storage.RegionFileStorage;
+import org.craftamethyst.luminara.common.mod.compat.ModIds;
+import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;

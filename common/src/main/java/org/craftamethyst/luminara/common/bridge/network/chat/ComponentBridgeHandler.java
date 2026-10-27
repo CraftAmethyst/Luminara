@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.bridge.network.chat;
 
-import org.craftamethyst.luminara.common.bridge.core.util.text.ITextComponentBridge;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -13,6 +11,8 @@ import java.util.stream.Stream;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.craftamethyst.luminara.common.bridge.core.util.text.ITextComponentBridge;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 
 public class ComponentBridgeHandler {
 

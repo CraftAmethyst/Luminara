@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mod.compat.mixin;
 
+import net.minecraft.world.inventory.AnvilMenu;
 import org.craftamethyst.luminara.common.mod.compat.ModIds;
 import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
-import net.minecraft.world.inventory.AnvilMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;

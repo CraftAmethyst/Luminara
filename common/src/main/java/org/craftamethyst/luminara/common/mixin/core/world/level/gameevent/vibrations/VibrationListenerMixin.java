@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.gameevent.vibrations;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -13,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftGameEvent;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.block.BlockReceiveGameEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.LecternContainerBridge;
 import javax.annotation.Nullable;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -22,6 +19,9 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v.command.CraftBlockCommandSender;
+import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.LecternContainerBridge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

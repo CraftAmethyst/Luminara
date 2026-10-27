@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -10,6 +9,7 @@ import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

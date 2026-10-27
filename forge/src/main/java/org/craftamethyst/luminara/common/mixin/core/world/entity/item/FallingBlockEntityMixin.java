@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.item;
 
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -10,6 +8,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

@@ -1,13 +1,13 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general.activationrange;
 
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.bridge.optimization.EntityBridge_ActivationRange;
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.bridge.optimization.EntityBridge_ActivationRange;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spigotmc.ActivationRange;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

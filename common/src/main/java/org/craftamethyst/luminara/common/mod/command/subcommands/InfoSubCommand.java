@@ -2,13 +2,13 @@ package org.craftamethyst.luminara.common.mod.command.subcommands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import org.craftamethyst.luminara.common.bridge.core.command.CommandSourceBridge;
-import org.craftamethyst.luminara.i18n.LuminaraVersion;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.craftamethyst.luminara.common.bridge.core.command.CommandSourceBridge;
+import org.craftamethyst.luminara.i18n.LuminaraVersion;
 
 // Server information subcommand
 public class InfoSubCommand implements LuminaraSubCommand {

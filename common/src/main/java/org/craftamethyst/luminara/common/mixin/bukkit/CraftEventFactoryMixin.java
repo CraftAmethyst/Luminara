@@ -1,13 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.google.common.base.Function;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -38,6 +31,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerSignOpenEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

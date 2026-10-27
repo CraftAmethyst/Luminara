@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mod.util.remapper;
 
 import io.izzel.arclight.api.PluginPatcher;
-import org.craftamethyst.luminara.common.mod.util.remapper.patcher.ArclightPluginPatcher;
-import org.craftamethyst.luminara.common.mod.util.remapper.patcher.PluginLoggerTransformer;
 import java.util.ArrayList;
 import java.util.List;
+import org.craftamethyst.luminara.common.mod.util.remapper.patcher.ArclightPluginPatcher;
+import org.craftamethyst.luminara.common.mod.util.remapper.patcher.PluginLoggerTransformer;
 
 final class RemapperPipeline {
 

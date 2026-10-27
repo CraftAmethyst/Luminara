@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.ai.goal;
 
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.server.ServerWorldBridge;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
@@ -9,6 +7,8 @@ import net.minecraft.world.entity.animal.horse.SkeletonHorse;
 import net.minecraft.world.entity.animal.horse.SkeletonTrapGoal;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.server.ServerWorldBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit.adventure;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import java.io.IOException;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -17,6 +16,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.Merchant;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

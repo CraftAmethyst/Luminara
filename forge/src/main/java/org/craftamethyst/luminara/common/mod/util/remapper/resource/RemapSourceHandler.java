@@ -4,8 +4,6 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.modlauncher.ClassTransformer;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.mod.util.remapper.ArclightRemapper;
-import org.craftamethyst.luminara.common.mod.util.remapper.GlobalClassRepo;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,6 +15,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.Hashtable;
+import org.craftamethyst.luminara.common.mod.util.remapper.ArclightRemapper;
+import org.craftamethyst.luminara.common.mod.util.remapper.GlobalClassRepo;
 import org.objectweb.asm.ClassReader;
 
 public class RemapSourceHandler extends URLStreamHandler {

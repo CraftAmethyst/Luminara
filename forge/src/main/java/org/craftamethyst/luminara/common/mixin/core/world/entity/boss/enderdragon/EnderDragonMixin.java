@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.boss.enderdragon;
 
-import org.craftamethyst.luminara.common.mixin.core.world.entity.MobMixin;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -26,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.MobMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

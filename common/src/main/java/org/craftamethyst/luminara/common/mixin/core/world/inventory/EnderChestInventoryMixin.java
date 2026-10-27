@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.SimpleContainerMixin;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
@@ -12,6 +9,9 @@ import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.SimpleContainerMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

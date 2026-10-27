@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
-import org.craftamethyst.luminara.common.mod.inventory.SideViewingTracker;
 import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
@@ -9,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
+import org.craftamethyst.luminara.common.mod.inventory.SideViewingTracker;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Container.class)

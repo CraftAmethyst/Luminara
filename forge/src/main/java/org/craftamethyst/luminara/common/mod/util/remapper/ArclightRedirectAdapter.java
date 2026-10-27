@@ -1,13 +1,9 @@
 package org.craftamethyst.luminara.common.mod.util.remapper;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.mod.util.remapper.generated.ArclightReflectionHandler;
-import org.craftamethyst.luminara.common.util.ArrayUtil;
 import io.izzel.tools.func.Func4;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
@@ -25,6 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.common.mod.util.remapper.generated.ArclightReflectionHandler;
+import org.craftamethyst.luminara.common.util.ArrayUtil;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;

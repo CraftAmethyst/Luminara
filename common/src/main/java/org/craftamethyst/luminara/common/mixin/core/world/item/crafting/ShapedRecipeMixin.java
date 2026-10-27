@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.item.crafting;
 
-import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightSpecialRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -12,6 +10,8 @@ import org.bukkit.craftbukkit.v.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.v.inventory.CraftShapedRecipe;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
+import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightSpecialRecipe;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

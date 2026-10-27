@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mod.server;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.Container;
@@ -21,6 +17,10 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.jetbrains.annotations.NotNull;
 
 public class ArclightContainer {

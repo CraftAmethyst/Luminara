@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.npc;
 
-import org.craftamethyst.luminara.common.bridge.core.item.MerchantOfferBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.monster.Witch;
@@ -13,6 +11,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.VillagerReplenishTradeEvent;
+import org.craftamethyst.luminara.common.bridge.core.item.MerchantOfferBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

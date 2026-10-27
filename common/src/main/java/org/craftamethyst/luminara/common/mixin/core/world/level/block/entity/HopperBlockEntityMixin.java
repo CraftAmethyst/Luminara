@@ -1,10 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
-import org.craftamethyst.luminara.common.bridge.core.tileentity.TileEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import io.izzel.arclight.mixin.Eject;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +28,11 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.TileEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

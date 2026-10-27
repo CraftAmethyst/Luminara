@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mod.server.entity;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import io.izzel.arclight.api.Unsafe;
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodType;
@@ -45,6 +43,7 @@ import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.entity.vehicle.*;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 
 public class EntityClassLookup {
 

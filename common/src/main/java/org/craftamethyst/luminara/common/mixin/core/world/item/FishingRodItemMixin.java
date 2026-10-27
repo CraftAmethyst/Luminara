@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.item;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -21,6 +18,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftEquipmentSlot;
 import org.bukkit.entity.FishHook;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

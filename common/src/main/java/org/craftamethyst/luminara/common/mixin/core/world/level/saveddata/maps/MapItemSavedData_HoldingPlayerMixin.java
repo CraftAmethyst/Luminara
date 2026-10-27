@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.saveddata.maps;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.storage.MapDataBridge;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.annotation.Nullable;
@@ -13,6 +11,8 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.craftbukkit.v.map.RenderData;
 import org.bukkit.craftbukkit.v.util.CraftChatMessage;
 import org.bukkit.map.MapCursor;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.storage.MapDataBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

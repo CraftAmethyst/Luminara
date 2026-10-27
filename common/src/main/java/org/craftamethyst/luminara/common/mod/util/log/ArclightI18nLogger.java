@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mod.util.log;
 
-import org.craftamethyst.luminara.i18n.ArclightLocale;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +8,7 @@ import org.apache.logging.log4j.spi.ExtendedLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.apache.logging.log4j.util.MessageSupplier;
 import org.apache.logging.log4j.util.Supplier;
+import org.craftamethyst.luminara.i18n.ArclightLocale;
 
 /**
  * Log4j wrapper that resolves every message through the locale bundle, so call sites pass

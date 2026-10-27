@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mod.util;
 
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
-import org.craftamethyst.luminara.i18n.conf.ErrorHandlingSpec;
 import java.io.File;
 import net.minecraft.CrashReport;
 import net.minecraft.Util;
 import org.apache.logging.log4j.Logger;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.conf.ErrorHandlingSpec;
 
 /** Simplified crash handler for continue-on-crash functionality */
 public class ArclightCrashHandler {

@@ -1,7 +1,7 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general.network;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import net.minecraft.server.level.ServerPlayer;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 

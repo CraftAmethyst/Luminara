@@ -1,11 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.command.CommandSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.tileentity.SignTileEntityBridge;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +26,12 @@ import org.bukkit.craftbukkit.v.block.CraftSign;
 import org.bukkit.craftbukkit.v.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v.util.CraftChatMessage;
 import org.bukkit.event.block.SignChangeEvent;
+import org.craftamethyst.luminara.common.bridge.core.command.CommandSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.SignTileEntityBridge;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;

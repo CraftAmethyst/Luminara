@@ -1,7 +1,6 @@
 package org.craftamethyst.luminara.common.mod.server.event;
 
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.jetbrains.annotations.Nullable;
 
 public final class PreCreatureSpawnEventDispatcher {

@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.bukkit.adventure;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.item;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.item.ItemStackBridge;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import java.util.Objects;
 import java.util.function.Consumer;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +16,10 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v.util.CraftMagicNumbers;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.item.ItemStackBridge;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,8 +75,7 @@ public abstract class ItemStackMixin implements ItemStackBridge {
 
   static {
     try {
-      SERIALIZE_CAPS =
-          CapabilityProvider.class.getDeclaredMethod("serializeCaps");
+      SERIALIZE_CAPS = CapabilityProvider.class.getDeclaredMethod("serializeCaps");
       SERIALIZE_CAPS.setAccessible(true);
       DESERIALIZE_CAPS =
           CapabilityProvider.class.getDeclaredMethod("deserializeCaps", CompoundTag.class);

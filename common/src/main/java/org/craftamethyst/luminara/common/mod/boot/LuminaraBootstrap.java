@@ -5,12 +5,12 @@ import com.google.gson.reflect.TypeToken;
 import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraMinecraftFormattingConverter;
-import org.craftamethyst.luminara.i18n.ArclightLocale;
-import org.craftamethyst.luminara.i18n.LuminaraVersion;
 import java.lang.reflect.Field;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.plugins.util.PluginRegistry;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraMinecraftFormattingConverter;
+import org.craftamethyst.luminara.i18n.ArclightLocale;
+import org.craftamethyst.luminara.i18n.LuminaraVersion;
 
 public final class LuminaraBootstrap {
 

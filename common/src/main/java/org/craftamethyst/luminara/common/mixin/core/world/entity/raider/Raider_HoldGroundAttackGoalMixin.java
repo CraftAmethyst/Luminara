@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.raider;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.raid.Raider;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

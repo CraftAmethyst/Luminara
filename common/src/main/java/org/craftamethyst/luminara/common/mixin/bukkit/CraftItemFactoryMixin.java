@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
-import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftMetaItem;
 import org.bukkit.craftbukkit.v.util.CraftLegacy;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
+import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

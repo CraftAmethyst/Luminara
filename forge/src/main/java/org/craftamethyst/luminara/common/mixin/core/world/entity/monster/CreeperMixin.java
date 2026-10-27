@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.monster;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.monster.CreeperEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.PathfinderMobMixin;
 import java.util.Collection;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +13,9 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreeperPowerEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.monster.CreeperEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.PathfinderMobMixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

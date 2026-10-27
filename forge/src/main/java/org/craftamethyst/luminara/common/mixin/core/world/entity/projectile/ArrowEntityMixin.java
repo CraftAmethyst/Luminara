@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.projectile;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.projectile.ArrowEntityBridge;
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -13,6 +11,8 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.projectile.ArrowEntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

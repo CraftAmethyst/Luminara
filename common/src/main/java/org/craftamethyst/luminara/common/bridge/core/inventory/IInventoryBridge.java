@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.bridge.core.inventory;
 
-import org.craftamethyst.luminara.common.mod.util.WrappedContents;
 import java.util.List;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -11,6 +10,7 @@ import org.bukkit.craftbukkit.v.inventory.CraftInventory;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.mod.util.WrappedContents;
 
 public interface IInventoryBridge {
   int MAX_STACK = 64;

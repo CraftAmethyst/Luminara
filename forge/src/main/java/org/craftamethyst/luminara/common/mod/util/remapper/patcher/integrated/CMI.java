@@ -7,7 +7,8 @@ import org.objectweb.asm.tree.*;
 
 public class CMI {
 
-  private static final String COMPAT_OWNER = "org/craftamethyst/luminara/common/mod/compat/CMICompat";
+  private static final String COMPAT_OWNER =
+      "org/craftamethyst/luminara/common/mod/compat/CMICompat";
   private static final String COMPAT_NAME = "getExecutor";
   private static final String COMPAT_DESC =
       "(Ljava/lang/Class;Ljava/util/concurrent/ExecutorService;)Ljava/util/concurrent/ExecutorService;";

@@ -8,8 +8,8 @@ import org.bukkit.permissions.ServerOperator;
 /**
  * Loader-neutral access point for services that differ between Forge and Fabric.
  *
- * <p>The loader entry point installs the platform implementation before any common mixin or
- * service is used. Common code must call this class instead of touching loader APIs directly.
+ * <p>The loader entry point installs the platform implementation before any common mixin or service
+ * is used. Common code must call this class instead of touching loader APIs directly.
  */
 public final class ArclightCommon {
 
@@ -43,7 +43,8 @@ public final class ArclightCommon {
       } catch (ClassNotFoundException ignored) {
         // Try the next loader.
       } catch (ReflectiveOperationException e) {
-        throw new IllegalStateException("Cannot install Luminara platform services from " + candidate, e);
+        throw new IllegalStateException(
+            "Cannot install Luminara platform services from " + candidate, e);
       }
     }
     throw new IllegalStateException("Luminara platform services have not been installed");

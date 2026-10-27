@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.storage.loot.functions;
 
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -8,6 +7,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootingEnchantFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

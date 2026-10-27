@@ -2,8 +2,6 @@ package org.craftamethyst.luminara.common.mod.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import org.craftamethyst.luminara.common.mod.command.subcommands.InfoSubCommand;
-import org.craftamethyst.luminara.common.mod.command.subcommands.LuminaraSubCommand;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
@@ -11,6 +9,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.craftamethyst.luminara.common.mod.command.subcommands.InfoSubCommand;
+import org.craftamethyst.luminara.common.mod.command.subcommands.LuminaraSubCommand;
 
 // Main Luminara command system
 public class LuminaraCommand {

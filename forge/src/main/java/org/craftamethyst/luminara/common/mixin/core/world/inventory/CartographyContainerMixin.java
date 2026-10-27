@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -11,6 +9,8 @@ import net.minecraft.world.inventory.ResultContainer;
 import org.bukkit.craftbukkit.v.inventory.CraftInventoryCartography;
 import org.bukkit.craftbukkit.v.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

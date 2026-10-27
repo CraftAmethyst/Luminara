@@ -1,9 +1,7 @@
 package org.craftamethyst.luminara.common.mod.server.event;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
-import org.craftamethyst.luminara.common.mod.ArclightMod;
 import net.minecraftforge.common.MinecraftForge;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 
 public abstract class ArclightEventDispatcherRegistry {
 

@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.ai.goal;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
@@ -8,6 +7,7 @@ import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.entity.EntityInteractEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

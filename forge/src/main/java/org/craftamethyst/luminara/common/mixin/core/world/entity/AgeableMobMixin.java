@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.AgeableEntityBridge;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.level.Level;
+import org.craftamethyst.luminara.common.bridge.core.entity.AgeableEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

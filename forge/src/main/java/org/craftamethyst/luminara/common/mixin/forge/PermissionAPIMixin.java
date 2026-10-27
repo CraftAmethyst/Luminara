@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.forge;
 
+import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftforge.server.permission.handler.IPermissionHandler;
 import org.craftamethyst.luminara.common.mod.ArclightMod;
 import org.craftamethyst.luminara.common.mod.server.ArclightPermissionHandler;
 import org.craftamethyst.luminara.i18n.ArclightConfig;
 import org.craftamethyst.luminara.i18n.conf.PermissionForwarding;
-import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.handler.IPermissionHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

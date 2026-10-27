@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.util.DamageSourcesBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.PathfinderMobMixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -10,6 +8,8 @@ import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.bridge.core.util.DamageSourcesBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.PathfinderMobMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

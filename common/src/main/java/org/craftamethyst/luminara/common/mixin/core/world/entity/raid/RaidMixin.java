@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.raid;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.raid.RaidBridge;
 import java.util.*;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.core.BlockPos;
@@ -14,6 +11,9 @@ import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.raid.RaidStopEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.raid.RaidBridge;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

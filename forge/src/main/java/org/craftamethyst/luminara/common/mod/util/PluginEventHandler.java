@@ -1,11 +1,8 @@
 package org.craftamethyst.luminara.common.mod.util;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import static org.objectweb.asm.Opcodes.*;
 
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.mod.ArclightMod;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
@@ -17,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraftforge.eventbus.EventBus;
 import net.minecraftforge.eventbus.api.*;
 import org.bukkit.plugin.Plugin;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -81,7 +79,7 @@ public class PluginEventHandler implements IEventListener {
         if (filter
             instanceof
             ParameterizedType // Unlikely that nested generics will ever be relevant for event
-                              // filtering, so discard them
+        // filtering, so discard them
         ) {
           filter = ((ParameterizedType) filter).getRawType();
         } else if (filter instanceof WildcardType wfilter) {

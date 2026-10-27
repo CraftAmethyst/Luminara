@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.tileentity.AbstractFurnaceTileEntityBridge;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.FurnaceResultSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.AbstractFurnaceTileEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

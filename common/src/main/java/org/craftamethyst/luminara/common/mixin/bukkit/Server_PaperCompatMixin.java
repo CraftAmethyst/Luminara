@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = Server.class, remap = false)

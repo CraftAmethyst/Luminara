@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.npc;
 
-import org.craftamethyst.luminara.common.bridge.core.item.MerchantOfferBridge;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
@@ -8,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.inventory.CraftMerchantRecipe;
 import org.bukkit.entity.AbstractVillager;
 import org.bukkit.event.entity.VillagerAcquireTradeEvent;
+import org.craftamethyst.luminara.common.bridge.core.item.MerchantOfferBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

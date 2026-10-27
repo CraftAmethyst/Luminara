@@ -1,14 +1,13 @@
 package org.craftamethyst.luminara.common.mixin.core.network.protocol.game;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.mojang.brigadier.arguments.ArgumentType;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import io.netty.buffer.Unpooled;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
 import org.spigotmc.SpigotConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

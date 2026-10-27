@@ -2,20 +2,6 @@ package org.craftamethyst.luminara.common.mixin.core.network;
 
 import com.mojang.brigadier.ParseResults;
 import com.mojang.datafixers.util.Pair;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
-import org.craftamethyst.luminara.common.bridge.core.network.datasync.SynchedEntityDataBridge;
-import org.craftamethyst.luminara.common.bridge.core.network.play.ServerPlayNetHandlerBridge;
-import org.craftamethyst.luminara.common.bridge.core.network.play.TimestampedPacket;
-import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerInteractionManagerBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerListBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
-import org.craftamethyst.luminara.common.mod.server.ArclightServer;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -97,6 +83,20 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.SmithingInventory;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
+import org.craftamethyst.luminara.common.bridge.core.network.datasync.SynchedEntityDataBridge;
+import org.craftamethyst.luminara.common.bridge.core.network.play.ServerPlayNetHandlerBridge;
+import org.craftamethyst.luminara.common.bridge.core.network.play.TimestampedPacket;
+import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerInteractionManagerBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerListBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
+import org.craftamethyst.luminara.common.mod.server.ArclightServer;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import org.slf4j.Logger;
 import org.spigotmc.SpigotConfig;
 import org.spongepowered.asm.mixin.*;
@@ -1558,8 +1558,8 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                     f1,
                     Collections
                         .emptySet()); // CraftBukkit - SPIGOT-1807: Don't call teleport event, when
-                                      // the client thinks the player is falling, because the chunks
-                                      // are not loaded on the client yet.
+                // the client thinks the player is falling, because the chunks
+                // are not loaded on the client yet.
                 this.player.doCheckFallDamage(
                     this.player.getX() - d3,
                     this.player.getY() - d4,
@@ -1791,7 +1791,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
               }
             }
             break;
-            // TODO check on updates
+          // TODO check on updates
           case QUICK_MOVE:
             if (packet.getButtonNum() == 0) {
               click = ClickType.SHIFT_LEFT;
@@ -1992,7 +1992,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                   }
               }*/
               switch (action) {
-                  // Modified other slots
+                // Modified other slots
                 case PICKUP_ALL:
                 case MOVE_TO_OTHER_INVENTORY:
                 case HOTBAR_MOVE_AND_READD:
@@ -2001,7 +2001,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                 case UNKNOWN:
                   this.player.containerMenu.sendAllDataToRemote();
                   break;
-                  // Modified cursor and clicked
+                // Modified cursor and clicked
                 case PICKUP_SOME:
                 case PICKUP_HALF:
                 case PICKUP_ONE:
@@ -2022,7 +2022,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                           packet.getSlotNum(),
                           this.player.containerMenu.getSlot(packet.getSlotNum()).getItem()));
                   break;
-                  // Modified clicked only
+                // Modified clicked only
                 case DROP_ALL_SLOT:
                 case DROP_ONE_SLOT:
                   this.player.connection.send(
@@ -2032,7 +2032,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                           packet.getSlotNum(),
                           this.player.containerMenu.getSlot(packet.getSlotNum()).getItem()));
                   break;
-                  // Modified cursor only
+                // Modified cursor only
                 case DROP_ALL_CURSOR:
                 case DROP_ONE_CURSOR:
                 case CLONE_STACK:
@@ -2043,7 +2043,7 @@ public abstract class ServerPlayNetHandlerMixin implements ServerPlayNetHandlerB
                           this.player.inventoryMenu.incrementStateId(),
                           this.player.containerMenu.getCarried()));
                   break;
-                  // Nothing
+                // Nothing
                 case NOTHING:
                   break;
               }

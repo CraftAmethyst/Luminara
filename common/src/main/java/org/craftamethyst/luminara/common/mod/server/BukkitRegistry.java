@@ -1,22 +1,8 @@
 package org.craftamethyst.luminara.common.mod.server;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.google.common.collect.*;
-import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.bridge.bukkit.EntityTypeBridge;
-import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
-import org.craftamethyst.luminara.common.bridge.bukkit.SimpleRegistryBridge;
-import org.craftamethyst.luminara.common.mod.ArclightCommon;
-import org.craftamethyst.luminara.common.mod.server.entity.EntityClassLookup;
-import org.craftamethyst.luminara.common.mod.util.ResourceLocationUtil;
-import org.craftamethyst.luminara.common.mod.util.types.ArclightEnchantment;
-import org.craftamethyst.luminara.common.mod.util.types.ArclightPotionEffect;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
-import org.craftamethyst.luminara.i18n.conf.EntityPropertySpec;
-import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -43,7 +29,6 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
-import org.bukkit.craftbukkit.v.CraftCrashReport;
 import org.bukkit.craftbukkit.v.CraftStatistic;
 import org.bukkit.craftbukkit.v.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.v.potion.CraftPotionUtil;
@@ -54,6 +39,18 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.craftamethyst.luminara.common.bridge.bukkit.EntityTypeBridge;
+import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
+import org.craftamethyst.luminara.common.bridge.bukkit.SimpleRegistryBridge;
+import org.craftamethyst.luminara.common.mod.ArclightCommon;
+import org.craftamethyst.luminara.common.mod.server.entity.EntityClassLookup;
+import org.craftamethyst.luminara.common.mod.util.ResourceLocationUtil;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.common.mod.util.types.ArclightEnchantment;
+import org.craftamethyst.luminara.common.mod.util.types.ArclightPotionEffect;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.conf.EntityPropertySpec;
+import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 
 @SuppressWarnings({"ConstantConditions", "deprecation"})
 public class BukkitRegistry {

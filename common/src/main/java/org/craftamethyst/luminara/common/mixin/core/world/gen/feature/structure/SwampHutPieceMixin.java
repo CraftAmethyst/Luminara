@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.gen.feature.structure;
 
-import org.craftamethyst.luminara.common.bridge.core.world.IWorldWriterBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
@@ -11,6 +10,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.structures.SwampHutPiece;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.IWorldWriterBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

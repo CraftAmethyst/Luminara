@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSourceImpl;
 import net.minecraft.core.Direction;
@@ -18,6 +17,7 @@ import org.bukkit.craftbukkit.v.inventory.CraftInventoryDoubleChest;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mod.server;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -11,6 +10,7 @@ import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
 import org.bukkit.Bukkit;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 
 public final class ArclightPermissionHandler implements IPermissionHandler {
 

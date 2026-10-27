@@ -1,11 +1,10 @@
 package org.craftamethyst.luminara.common.mod.util;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 
 /** Guarantees that the process exits after the server has completed its shutdown. */
 public final class ServerShutdownWatchdog {

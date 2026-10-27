@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.server.level;
 
-import org.craftamethyst.luminara.common.bridge.core.world.server.TicketTypeBridge;
 import java.util.Comparator;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.util.Unit;
 import org.bukkit.plugin.Plugin;
+import org.craftamethyst.luminara.common.bridge.core.world.server.TicketTypeBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 

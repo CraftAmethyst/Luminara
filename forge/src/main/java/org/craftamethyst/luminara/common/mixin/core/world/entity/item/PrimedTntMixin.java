@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.item;
 
-import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,6 +9,7 @@ import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Explosive;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

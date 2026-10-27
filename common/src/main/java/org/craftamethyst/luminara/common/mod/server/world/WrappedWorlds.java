@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mod.server.world;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 
 public class WrappedWorlds {
 

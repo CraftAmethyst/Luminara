@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.monster;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import net.minecraft.world.entity.monster.Illusioner;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

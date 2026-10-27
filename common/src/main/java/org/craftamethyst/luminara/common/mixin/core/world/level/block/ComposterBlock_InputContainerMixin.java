@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.mixin.core.world.SimpleContainerMixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.craftbukkit.v.inventory.CraftBlockInventoryHolder;
+import org.craftamethyst.luminara.common.mixin.core.world.SimpleContainerMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

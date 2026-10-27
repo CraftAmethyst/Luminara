@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mod.command;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
-import org.craftamethyst.luminara.common.mod.permission.ArclightDummyPermissible;
 import java.util.UUID;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
@@ -14,6 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v.util.CraftChatMessage;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
+import org.craftamethyst.luminara.common.mod.permission.ArclightDummyPermissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

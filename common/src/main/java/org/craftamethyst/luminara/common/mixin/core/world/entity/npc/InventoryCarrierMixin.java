@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.npc;
 
-import org.craftamethyst.luminara.common.mod.server.ArclightContainer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.mod.server.ArclightContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.CraftingInventoryBridge;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.item.DyeColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.entity.SheepRegrowWoolEvent;
+import org.craftamethyst.luminara.common.bridge.core.inventory.CraftingInventoryBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

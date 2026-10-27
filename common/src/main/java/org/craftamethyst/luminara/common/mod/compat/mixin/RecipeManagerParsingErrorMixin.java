@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mod.compat.mixin;
 
+import net.minecraft.world.item.crafting.RecipeManager;
+import org.apache.logging.log4j.Logger;
 import org.craftamethyst.luminara.common.mod.compat.ModIds;
 import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import net.minecraft.world.item.crafting.RecipeManager;
-import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

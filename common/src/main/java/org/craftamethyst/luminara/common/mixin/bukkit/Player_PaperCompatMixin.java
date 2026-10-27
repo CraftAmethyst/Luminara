@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.bridge.core.network.play.ServerPlayNetHandlerBridge;
-import org.craftamethyst.luminara.common.mod.util.PaperCompatSupport;
 import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.math.Position;
@@ -16,6 +14,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.craftamethyst.luminara.common.bridge.core.network.play.ServerPlayNetHandlerBridge;
+import org.craftamethyst.luminara.common.mod.util.PaperCompatSupport;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 

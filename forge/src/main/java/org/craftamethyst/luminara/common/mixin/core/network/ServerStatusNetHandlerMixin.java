@@ -1,7 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.network;
 
 import com.mojang.authlib.GameProfile;
-import org.craftamethyst.luminara.common.mod.util.ArclightPingEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +16,7 @@ import net.minecraft.server.network.ServerStatusPacketListenerImpl;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.util.CraftChatMessage;
+import org.craftamethyst.luminara.common.mod.util.ArclightPingEvent;
 import org.spigotmc.SpigotConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

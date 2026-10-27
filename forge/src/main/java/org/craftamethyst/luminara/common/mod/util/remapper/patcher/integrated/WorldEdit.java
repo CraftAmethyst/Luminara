@@ -10,7 +10,8 @@ import org.objectweb.asm.tree.*;
 
 public class WorldEdit {
 
-  private static final String FAWE_COMPAT_OWNER = "org/craftamethyst/luminara/common/mod/compat/FaweCompat";
+  private static final String FAWE_COMPAT_OWNER =
+      "org/craftamethyst/luminara/common/mod/compat/FaweCompat";
 
   public static void handleBukkitAdapter(ClassNode node, PluginPatcher.ClassRepo repo) {
     MethodNode standardize =

@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v.command.CraftBlockCommandSender;
+import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

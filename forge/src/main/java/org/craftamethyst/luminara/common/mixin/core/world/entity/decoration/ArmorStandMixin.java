@@ -1,9 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.decoration;
 
 import com.google.common.collect.Lists;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.LivingEntityMixin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +21,9 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.LivingEntityMixin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -252,10 +252,12 @@ public abstract class ArmorStandMixin extends LivingEntityMixin {
   public void setItemSlot(
       net.minecraft.world.entity.EquipmentSlot slotIn, ItemStack stack, boolean silent) {
     switch (slotIn.getType()) {
-      case HAND -> this.bridge$playEquipSound(
-          slotIn, this.handItems.set(slotIn.getIndex(), stack), stack, silent);
-      case ARMOR -> this.bridge$playEquipSound(
-          slotIn, this.armorItems.set(slotIn.getIndex(), stack), stack, silent);
+      case HAND ->
+          this.bridge$playEquipSound(
+              slotIn, this.handItems.set(slotIn.getIndex(), stack), stack, silent);
+      case ARMOR ->
+          this.bridge$playEquipSound(
+              slotIn, this.armorItems.set(slotIn.getIndex(), stack), stack, silent);
     }
   }
 }

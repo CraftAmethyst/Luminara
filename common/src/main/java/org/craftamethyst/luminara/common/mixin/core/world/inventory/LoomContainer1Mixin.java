@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.SimpleContainerMixin;
 import net.minecraft.world.inventory.LoomMenu;
 import org.bukkit.Location;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.PosContainerBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.SimpleContainerMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

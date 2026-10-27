@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.forge;
 
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.common.ForgeHooks;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

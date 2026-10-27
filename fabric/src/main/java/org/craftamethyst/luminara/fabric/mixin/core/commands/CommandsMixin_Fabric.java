@@ -12,10 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Commands.class)
 public abstract class CommandsMixin_Fabric {
 
-  @Mutable
-  @Shadow
-  @Final
-  private CommandDispatcher<CommandSourceStack> dispatcher;
+  @Mutable @Shadow @Final private CommandDispatcher<CommandSourceStack> dispatcher;
 
   public void arclight$constructor() {
     this.dispatcher = new BukkitDispatcher((Commands) (Object) this);

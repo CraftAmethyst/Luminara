@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.util.ResourceLocationUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import org.bukkit.craftbukkit.v.entity.CraftVillager;
 import org.bukkit.entity.Villager;
+import org.craftamethyst.luminara.common.mod.util.ResourceLocationUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

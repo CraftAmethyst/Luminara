@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general;
 
-import org.craftamethyst.luminara.common.mod.util.optimization.NoopReadWriteLock;
 import java.util.concurrent.locks.ReadWriteLock;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
+import org.craftamethyst.luminara.common.mod.util.optimization.NoopReadWriteLock;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

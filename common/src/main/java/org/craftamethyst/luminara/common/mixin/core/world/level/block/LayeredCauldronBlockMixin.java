@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.mod.server.block.CauldronHooks;
 import io.izzel.arclight.mixin.Eject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -8,6 +7,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
+import org.craftamethyst.luminara.common.mod.server.block.CauldronHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

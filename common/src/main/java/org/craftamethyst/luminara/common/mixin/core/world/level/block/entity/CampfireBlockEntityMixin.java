@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -20,6 +19,7 @@ import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.block.CampfireStartEvent;
 import org.bukkit.inventory.CampfireRecipe;
+import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

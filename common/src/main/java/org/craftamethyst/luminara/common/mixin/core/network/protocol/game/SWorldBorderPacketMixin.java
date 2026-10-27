@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.core.network.protocol.game;
 
-import org.craftamethyst.luminara.common.bridge.core.world.border.WorldBorderBridge;
 import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket;
 import net.minecraft.world.level.border.WorldBorder;
+import org.craftamethyst.luminara.common.bridge.core.world.border.WorldBorderBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

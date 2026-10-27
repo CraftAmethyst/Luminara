@@ -254,7 +254,7 @@ public final class Delayed26WayDistancePropagator3D {
               currentLevel,
               (byte)
                   -currentLevel); // indicate to the increase code that the level's neighbours need
-                                  // checking
+          // checking
           continue;
         }
 

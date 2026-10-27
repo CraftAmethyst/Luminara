@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general;
 
-import org.craftamethyst.luminara.common.mod.compat.ModIds;
-import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import java.util.*;
 import net.minecraft.util.ClassInstanceMultiMap;
+import org.craftamethyst.luminara.common.mod.compat.ModIds;
+import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

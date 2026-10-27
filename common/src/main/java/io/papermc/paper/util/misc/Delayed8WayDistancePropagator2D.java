@@ -507,7 +507,7 @@ public final class Delayed8WayDistancePropagator2D {
               currentLevel,
               (byte)
                   -currentLevel); // indicate to the increase code that the level's neighbours need
-                                  // checking
+          // checking
           continue;
         }
 

@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mod.server.event;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 
 public class EntityPotionEffectEventDispatcher {
 

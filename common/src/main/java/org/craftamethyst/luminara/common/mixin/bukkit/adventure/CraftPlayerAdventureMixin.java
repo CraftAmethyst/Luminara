@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.bukkit.adventure;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 

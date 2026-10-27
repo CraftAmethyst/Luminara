@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(BaseContainerBlockEntity.class)

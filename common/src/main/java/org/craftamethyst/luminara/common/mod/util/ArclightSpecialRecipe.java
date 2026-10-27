@@ -1,13 +1,13 @@
 package org.craftamethyst.luminara.common.mod.util;
 
-import org.craftamethyst.luminara.common.bridge.core.item.crafting.RecipeManagerBridge;
-import org.craftamethyst.luminara.common.mod.server.ArclightServer;
 import net.minecraft.world.item.crafting.Recipe;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v.inventory.CraftComplexRecipe;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.craftamethyst.luminara.common.bridge.core.item.crafting.RecipeManagerBridge;
+import org.craftamethyst.luminara.common.mod.server.ArclightServer;
 import org.jetbrains.annotations.NotNull;
 
 public class ArclightSpecialRecipe extends CraftComplexRecipe {

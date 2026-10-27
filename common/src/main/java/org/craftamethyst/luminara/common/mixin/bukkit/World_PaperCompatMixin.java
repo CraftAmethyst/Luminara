@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.util.PaperCompatSupport;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.minecraft.server.level.ServerLevel;
@@ -11,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.CraftWorld;
+import org.craftamethyst.luminara.common.mod.util.PaperCompatSupport;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 

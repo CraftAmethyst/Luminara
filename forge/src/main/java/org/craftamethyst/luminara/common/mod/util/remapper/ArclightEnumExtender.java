@@ -2,11 +2,11 @@ package org.craftamethyst.luminara.common.mod.util.remapper;
 
 import static org.craftamethyst.luminara.common.mod.util.remapper.ArclightRedirectAdapter.loadInt;
 
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.NamespacedKey;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;

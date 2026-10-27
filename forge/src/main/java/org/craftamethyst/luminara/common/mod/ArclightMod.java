@@ -1,12 +1,5 @@
 package org.craftamethyst.luminara.common.mod;
 
-import org.craftamethyst.luminara.common.mod.boot.LuminaraBootstrap;
-import org.craftamethyst.luminara.common.mod.command.LuminaraCommand;
-import org.craftamethyst.luminara.common.mod.server.event.ArclightEventDispatcherRegistry;
-import org.craftamethyst.luminara.common.mod.util.BungeeComponentPreloader;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
-import org.craftamethyst.luminara.i18n.LuminaraVersion;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import net.minecraftforge.api.distmarker.Dist;
@@ -21,6 +14,13 @@ import net.minecraftforge.network.NetworkConstants;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.craftamethyst.luminara.common.mod.boot.LuminaraBootstrap;
+import org.craftamethyst.luminara.common.mod.command.LuminaraCommand;
+import org.craftamethyst.luminara.common.mod.server.event.ArclightEventDispatcherRegistry;
+import org.craftamethyst.luminara.common.mod.util.BungeeComponentPreloader;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.LuminaraVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

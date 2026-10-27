@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftBlockInventoryHolder;
 import org.bukkit.craftbukkit.v.util.DummyGeneratorAccess;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

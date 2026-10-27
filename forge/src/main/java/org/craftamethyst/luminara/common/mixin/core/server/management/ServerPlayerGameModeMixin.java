@@ -1,10 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.server.management;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerInteractionManagerBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -43,6 +38,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerInteractionManagerBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

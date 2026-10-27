@@ -1,14 +1,14 @@
 package org.craftamethyst.luminara.common.mixin.core.server;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
-import org.craftamethyst.luminara.common.bridge.core.advancement.AdvancementBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.craftamethyst.luminara.common.bridge.core.advancement.AdvancementBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

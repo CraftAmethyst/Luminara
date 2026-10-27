@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mod.server.block;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -10,6 +9,7 @@ import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.block.CraftBlockState;
 import org.bukkit.craftbukkit.v.block.CraftBlockStates;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 
 public class CauldronHooks {
 

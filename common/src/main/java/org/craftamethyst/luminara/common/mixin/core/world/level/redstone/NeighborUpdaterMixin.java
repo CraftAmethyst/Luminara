@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.redstone;
 
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import java.util.Locale;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -15,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

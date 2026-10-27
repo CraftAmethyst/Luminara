@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.saveddata.maps;
 
-import org.craftamethyst.luminara.common.bridge.core.world.storage.MapDataBridge;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.CraftWorld;
 import org.bukkit.craftbukkit.v.map.CraftMapView;
+import org.craftamethyst.luminara.common.bridge.core.world.storage.MapDataBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,14 +1,13 @@
 package org.craftamethyst.luminara.common.mod.util.remapper;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.google.common.collect.ImmutableMap;
-import org.craftamethyst.luminara.common.mod.util.remapper.generated.RemappingURLClassLoader;
 import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.Map;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.common.mod.util.remapper.generated.RemappingURLClassLoader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;

@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.storage.loot.predicates;
 
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithLootingCondition;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

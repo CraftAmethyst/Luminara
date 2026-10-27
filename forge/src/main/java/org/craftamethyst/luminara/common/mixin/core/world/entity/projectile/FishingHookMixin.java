@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.projectile;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -30,6 +28,8 @@ import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.FishHook;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

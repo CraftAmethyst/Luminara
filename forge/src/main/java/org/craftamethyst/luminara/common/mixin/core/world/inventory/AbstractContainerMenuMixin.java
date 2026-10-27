@@ -2,10 +2,6 @@ package org.craftamethyst.luminara.common.mixin.core.world.inventory;
 
 import static net.minecraft.world.inventory.AbstractContainerMenu.getQuickCraftPlaceCount;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.SlotBridge;
-import org.craftamethyst.luminara.common.mod.server.ArclightContainer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +25,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.SlotBridge;
+import org.craftamethyst.luminara.common.mod.server.ArclightContainer;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

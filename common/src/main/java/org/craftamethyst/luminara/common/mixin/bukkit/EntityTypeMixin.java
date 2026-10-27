@@ -1,10 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
-import org.craftamethyst.luminara.common.bridge.bukkit.EntityTypeBridge;
-import org.craftamethyst.luminara.i18n.LocalizedException;
-import org.craftamethyst.luminara.i18n.conf.EntityPropertySpec;
 import java.util.function.Function;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -14,6 +9,10 @@ import org.bukkit.craftbukkit.v.CraftWorld;
 import org.bukkit.craftbukkit.v.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.craftamethyst.luminara.common.bridge.bukkit.EntityTypeBridge;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.i18n.LocalizedException;
+import org.craftamethyst.luminara.i18n.conf.EntityPropertySpec;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

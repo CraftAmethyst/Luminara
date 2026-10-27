@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mod.util.async;
 
-import org.craftamethyst.luminara.common.mod.server.ArclightServer;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
-import org.craftamethyst.luminara.i18n.conf.AsyncCatcherSpec;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -14,6 +10,10 @@ import java.util.concurrent.TimeoutException;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.craftamethyst.luminara.common.mod.server.ArclightServer;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.conf.AsyncCatcherSpec;
 
 /**
  * Guards the world-state methods that must not be driven from a non-server thread. Strategy comes

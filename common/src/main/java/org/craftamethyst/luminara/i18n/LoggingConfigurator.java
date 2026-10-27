@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.i18n;
 
-import org.craftamethyst.luminara.i18n.conf.ConfigSpec;
 import java.net.URI;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.craftamethyst.luminara.i18n.conf.ConfigSpec;
 
 final class LoggingConfigurator {
 

@@ -4,11 +4,6 @@ import static net.minecraft.server.network.ServerLoginPacketListenerImpl.isValid
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import org.craftamethyst.luminara.common.bridge.core.network.NetworkManagerBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerListBridge;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import io.netty.buffer.Unpooled;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -46,6 +41,11 @@ import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.util.Waitable;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
+import org.craftamethyst.luminara.common.bridge.core.network.NetworkManagerBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.management.PlayerListBridge;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -200,7 +200,7 @@ public abstract class ServerLoginNetHandlerMixin {
       this.state =
           ServerLoginPacketListenerImpl.State
               .NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge
-                            // is ready
+      // is ready
     } else {
       this.gameProfile = new GameProfile(null, packetIn.name());
       if (this.server.usesAuthentication() && !this.connection.isMemoryConnection()) {

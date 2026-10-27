@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.bridge.core.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
 import java.util.List;
 import net.minecraft.core.PositionImpl;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
 import org.bukkit.projectiles.ProjectileSource;
+import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
 
 public interface EntityBridge extends ICommandSourceBridge {
   Entity bridge$teleportTo(ServerLevel world, PositionImpl blockPos);

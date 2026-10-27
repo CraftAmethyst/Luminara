@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.core.server.commands;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import java.util.Collection;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.commands.SetSpawnCommand;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.event.player.PlayerSpawnChangeEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.tileentity.BeaconTileEntityBridge;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffect;
@@ -8,6 +7,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import org.bukkit.craftbukkit.v.potion.CraftPotionUtil;
 import org.bukkit.potion.PotionEffect;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.BeaconTileEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

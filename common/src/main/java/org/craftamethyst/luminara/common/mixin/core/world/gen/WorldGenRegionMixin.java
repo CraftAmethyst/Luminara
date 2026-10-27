@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.gen;
 
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.craftbukkit.v.CraftWorld;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

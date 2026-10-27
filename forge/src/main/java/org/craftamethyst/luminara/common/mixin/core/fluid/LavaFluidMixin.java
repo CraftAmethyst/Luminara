@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.fluid;
 
-import org.craftamethyst.luminara.common.bridge.core.world.IWorldBridge;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import io.izzel.arclight.mixin.Eject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,6 +14,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.LavaFluid;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.bridge.core.world.IWorldBridge;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

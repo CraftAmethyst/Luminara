@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.portal;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.TeleporterBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mod.compat.PortalForcerSearchRadiusAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +15,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftWorld;
 import org.bukkit.craftbukkit.v.util.BlockStateListPopulator;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.TeleporterBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mod.compat.PortalForcerSearchRadiusAccess;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

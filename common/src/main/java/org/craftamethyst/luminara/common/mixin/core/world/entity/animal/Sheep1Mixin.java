@@ -1,7 +1,7 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
 import org.bukkit.inventory.InventoryView;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(targets = "net/minecraft/world/entity/animal/Sheep$1")

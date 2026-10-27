@@ -1,9 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
 import com.google.common.collect.Lists;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -21,6 +18,9 @@ import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityEnterBlockEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.MobEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

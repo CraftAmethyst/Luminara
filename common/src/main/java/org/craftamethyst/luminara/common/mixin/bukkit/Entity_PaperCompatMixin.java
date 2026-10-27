@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.util.PaperCompatSupport;
 import io.papermc.paper.entity.TeleportFlag;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +12,7 @@ import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.craftamethyst.luminara.common.mod.util.PaperCompatSupport;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

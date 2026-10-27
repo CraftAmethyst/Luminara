@@ -1,8 +1,7 @@
 package org.craftamethyst.luminara.common.mod.util;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import org.apache.logging.log4j.Logger;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 
 public class BungeeComponentPreloader {
 

@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.server.ArclightContainer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.bukkit.craftbukkit.v.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.v.inventory.CraftInventory;
@@ -8,6 +7,7 @@ import org.bukkit.craftbukkit.v.inventory.CraftInventoryView;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.craftamethyst.luminara.common.mod.server.ArclightContainer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

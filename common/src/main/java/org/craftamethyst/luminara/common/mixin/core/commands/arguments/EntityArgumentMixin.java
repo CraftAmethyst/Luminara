@@ -4,11 +4,11 @@ import static net.minecraft.commands.arguments.EntityArgument.*;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import org.craftamethyst.luminara.common.bridge.core.command.arguments.EntityArgumentBridge;
-import org.craftamethyst.luminara.common.bridge.core.command.arguments.EntitySelectorParserBridge;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import org.craftamethyst.luminara.common.bridge.core.command.arguments.EntityArgumentBridge;
+import org.craftamethyst.luminara.common.bridge.core.command.arguments.EntitySelectorParserBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

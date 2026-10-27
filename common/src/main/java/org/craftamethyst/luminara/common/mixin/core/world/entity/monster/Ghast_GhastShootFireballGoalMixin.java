@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.monster;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.projectile.DamagingProjectileEntityBridge;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.level.Level;
+import org.craftamethyst.luminara.common.bridge.core.entity.projectile.DamagingProjectileEntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

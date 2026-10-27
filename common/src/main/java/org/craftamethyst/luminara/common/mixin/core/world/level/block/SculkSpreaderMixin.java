@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.bridge.core.block.SculkSpreaderBridge;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SculkSpreader;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.block.SculkBloomEvent;
+import org.craftamethyst.luminara.common.bridge.core.block.SculkSpreaderBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

@@ -1,11 +1,10 @@
 package org.craftamethyst.luminara.common.mod.util.remapper;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import io.izzel.arclight.api.ArclightVersion;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 import org.objectweb.asm.tree.*;
 
 public class CraftBukkitVersionRemapper implements PluginTransformer {

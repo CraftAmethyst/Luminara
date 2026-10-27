@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.ai.behavior;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.mixin.Eject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.entity.EntityInteractEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;

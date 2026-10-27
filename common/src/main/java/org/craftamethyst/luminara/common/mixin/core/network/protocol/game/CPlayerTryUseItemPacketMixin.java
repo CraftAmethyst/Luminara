@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.core.network.protocol.game;
 
-import org.craftamethyst.luminara.common.bridge.core.network.play.TimestampedPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import org.craftamethyst.luminara.common.bridge.core.network.play.TimestampedPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

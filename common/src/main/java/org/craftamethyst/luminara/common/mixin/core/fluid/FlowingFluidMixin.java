@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.fluid;
 
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -17,6 +16,7 @@ import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.FluidLevelChangeEvent;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

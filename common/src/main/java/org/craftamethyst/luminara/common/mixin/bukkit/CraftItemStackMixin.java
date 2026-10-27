@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.bridge.bukkit.CraftItemStackBridge;
-import org.craftamethyst.luminara.common.bridge.bukkit.ItemMetaBridge;
-import org.craftamethyst.luminara.common.bridge.core.item.ItemStackBridge;
 import java.util.Objects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -11,6 +8,9 @@ import org.bukkit.craftbukkit.v.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v.legacy.CraftLegacy;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.craftamethyst.luminara.common.bridge.bukkit.CraftItemStackBridge;
+import org.craftamethyst.luminara.common.bridge.bukkit.ItemMetaBridge;
+import org.craftamethyst.luminara.common.bridge.core.item.ItemStackBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -125,9 +125,8 @@ public abstract class CraftItemStackMixin implements CraftItemStackBridge {
     }
     Material comparisonType =
         CraftLegacy.fromLegacy(
-            that
-                .getType()); // This may be called from legacy item stacks, try to get the right
-                             // material
+            that.getType()); // This may be called from legacy item stacks, try to get the right
+    // material
     if (!(comparisonType == this.getType() && getDurability() == that.getDurability())) {
       return false;
     }

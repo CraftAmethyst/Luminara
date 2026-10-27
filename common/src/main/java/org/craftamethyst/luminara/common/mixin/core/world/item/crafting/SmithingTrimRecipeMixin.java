@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.item.crafting;
 
-import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.SmithingTrimRecipe;
@@ -8,6 +7,7 @@ import org.bukkit.craftbukkit.v.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.v.inventory.CraftSmithingTrimRecipe;
 import org.bukkit.craftbukkit.v.util.CraftNamespacedKey;
 import org.bukkit.inventory.Recipe;
+import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

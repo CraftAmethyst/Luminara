@@ -1,10 +1,9 @@
 package org.craftamethyst.luminara.common.mod;
 
-import org.craftamethyst.luminara.common.mod.ArclightCommon;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
-import org.craftamethyst.luminara.forge.ForgeCommonApi;
 import io.izzel.arclight.mixin.injector.EjectorInfo;
 import org.apache.logging.log4j.Logger;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
+import org.craftamethyst.luminara.forge.ForgeCommonApi;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.connect.IMixinConnector;
 import org.spongepowered.asm.mixin.injection.struct.InjectionInfo;

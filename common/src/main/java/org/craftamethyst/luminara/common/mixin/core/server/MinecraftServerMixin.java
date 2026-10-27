@@ -2,18 +2,6 @@ package org.craftamethyst.luminara.common.mixin.core.server;
 
 import com.mojang.datafixers.DataFixer;
 import io.izzel.arclight.api.ArclightVersion;
-import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mod.ArclightConstants;
-import org.craftamethyst.luminara.common.mod.metrics.MetricsManager;
-import org.craftamethyst.luminara.common.mod.server.ArclightServer;
-import org.craftamethyst.luminara.common.mod.server.BukkitRegistry;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
-import org.craftamethyst.luminara.common.mod.util.PlatformHooks;
-import org.craftamethyst.luminara.common.mod.util.BukkitOptionParser;
-import org.craftamethyst.luminara.common.mod.util.ServerShutdownWatchdog;
-import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import java.io.File;
 import java.io.IOException;
@@ -71,6 +59,18 @@ import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mod.ArclightConstants;
+import org.craftamethyst.luminara.common.mod.metrics.MetricsManager;
+import org.craftamethyst.luminara.common.mod.server.ArclightServer;
+import org.craftamethyst.luminara.common.mod.server.BukkitRegistry;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.common.mod.util.BukkitOptionParser;
+import org.craftamethyst.luminara.common.mod.util.PlatformHooks;
+import org.craftamethyst.luminara.common.mod.util.ServerShutdownWatchdog;
+import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import org.slf4j.Logger;
 import org.spigotmc.WatchdogThread;
 import org.spongepowered.asm.mixin.*;
@@ -391,7 +391,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
       }
 
       PlatformHooks.expectServerStopped(); // Forge: Has to come before
-                                           // MinecraftServer#onServerCrash to avoid race conditions
+      // MinecraftServer#onServerCrash to avoid race conditions
       this.onServerCrash(crashreport);
     } finally {
       try {
@@ -690,7 +690,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
   private void arclight$syncCommand(CallbackInfo ci) {
     this.server.syncCommands();
   }
-
 
   @Override
   public void bridge$setAutosavePeriod(int autosavePeriod) {

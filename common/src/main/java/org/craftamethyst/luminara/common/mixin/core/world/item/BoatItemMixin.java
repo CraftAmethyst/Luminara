@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.item;
 
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.stats.Stats;
@@ -22,6 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

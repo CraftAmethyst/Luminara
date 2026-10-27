@@ -1,7 +1,7 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general;
 
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import net.minecraft.world.entity.ai.goal.Goal;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;

@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.bridge.core.util;
 
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.CraftWorld;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 
 public interface IWorldPosCallableBridge {
   default Level bridge$getWorld() {

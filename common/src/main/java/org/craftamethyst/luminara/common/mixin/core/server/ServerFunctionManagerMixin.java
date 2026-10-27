@@ -1,10 +1,10 @@
 package org.craftamethyst.luminara.common.mixin.core.server;
 
 import com.mojang.brigadier.CommandDispatcher;
-import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerFunctionManager;
+import org.craftamethyst.luminara.common.bridge.core.server.MinecraftServerBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

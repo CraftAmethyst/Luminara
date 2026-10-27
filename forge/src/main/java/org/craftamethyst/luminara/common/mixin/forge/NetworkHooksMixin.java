@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.forge;
 
-import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import java.util.Set;
 import java.util.function.Consumer;
 import net.minecraft.network.Connection;
@@ -14,6 +12,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkHooks;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.bridge.core.inventory.container.ContainerBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

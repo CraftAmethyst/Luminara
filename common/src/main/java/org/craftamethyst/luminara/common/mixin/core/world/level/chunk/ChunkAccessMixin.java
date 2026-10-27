@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.chunk;
 
-import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkAccessBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.chunk.LevelChunkSectionBridge;
 import java.util.Map;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -24,6 +22,8 @@ import net.minecraft.world.level.levelgen.blending.BlendingData;
 import org.bukkit.craftbukkit.v.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.v.persistence.DirtyCraftPersistentDataContainer;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkAccessBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.chunk.LevelChunkSectionBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.tileentity.TileEntityBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import io.izzel.arclight.mixin.Eject;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +22,8 @@ import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.BrewingStandFuelEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.TileEntityBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

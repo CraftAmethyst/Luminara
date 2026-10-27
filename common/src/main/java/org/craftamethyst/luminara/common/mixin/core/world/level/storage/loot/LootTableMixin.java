@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.storage.loot;
 
-import org.craftamethyst.luminara.common.bridge.core.world.storage.loot.LootDataManagerBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.storage.loot.LootTableBridge;
-import org.craftamethyst.luminara.common.mod.server.ArclightServer;
 import io.izzel.arclight.mixin.Eject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
@@ -18,6 +15,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.event.world.LootGenerateEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.storage.loot.LootDataManagerBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.storage.loot.LootTableBridge;
+import org.craftamethyst.luminara.common.mod.server.ArclightServer;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

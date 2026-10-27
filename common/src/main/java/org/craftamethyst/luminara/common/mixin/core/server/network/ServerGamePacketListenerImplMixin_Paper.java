@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.server.network;
 
-import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import java.util.Set;
@@ -12,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
+import org.craftamethyst.luminara.common.adventure.PaperAdventure;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,7 +30,8 @@ public abstract class ServerGamePacketListenerImplMixin_Paper {
     }
 
     CraftPlayer craftPlayer =
-        ((org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge) this.player)
+        ((org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge)
+                this.player)
             .bridge$getBukkitEntity();
     String content = message.signedContent();
 

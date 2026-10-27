@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.core.commands;
 
-import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
 import net.minecraft.commands.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v.command.ServerCommandSender;
+import org.craftamethyst.luminara.common.bridge.core.command.ICommandSourceBridge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 

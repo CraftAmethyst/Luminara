@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.forge.async;
 
-import org.craftamethyst.luminara.common.mod.util.async.AsyncCatcher;
 import java.util.function.Consumer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraftforge.network.NetworkHooks;
+import org.craftamethyst.luminara.common.mod.util.async.AsyncCatcher;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

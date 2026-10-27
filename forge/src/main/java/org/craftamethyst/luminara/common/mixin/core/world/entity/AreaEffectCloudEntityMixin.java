@@ -1,8 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity;
 
 import com.google.common.collect.Lists;
-import org.craftamethyst.luminara.common.bridge.core.entity.AreaEffectCloudEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -21,6 +19,8 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import org.bukkit.craftbukkit.v.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.AreaEffectCloudEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.LivingEntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

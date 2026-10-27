@@ -1,7 +1,7 @@
 package org.craftamethyst.luminara.common.mixin.core.server;
 
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import net.minecraft.server.WorldLoader;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;

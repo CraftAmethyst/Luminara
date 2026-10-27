@@ -1,10 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.bridge.core.block.PortalInfoBridge;
-import org.craftamethyst.luminara.common.bridge.core.block.PortalSizeBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.IWorldBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -29,6 +24,11 @@ import org.bukkit.craftbukkit.v.block.CraftBlockState;
 import org.bukkit.craftbukkit.v.block.CraftBlockStates;
 import org.bukkit.craftbukkit.v.event.CraftPortalEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.craftamethyst.luminara.common.bridge.core.block.PortalInfoBridge;
+import org.craftamethyst.luminara.common.bridge.core.block.PortalSizeBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.IWorldBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

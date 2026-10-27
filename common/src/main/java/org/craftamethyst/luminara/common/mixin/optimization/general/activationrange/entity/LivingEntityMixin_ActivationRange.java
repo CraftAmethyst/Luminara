@@ -1,7 +1,7 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general.activationrange.entity;
 
-import org.craftamethyst.luminara.common.mixin.optimization.general.activationrange.EntityMixin_ActivationRange;
 import net.minecraft.world.entity.LivingEntity;
+import org.craftamethyst.luminara.common.mixin.optimization.general.activationrange.EntityMixin_ActivationRange;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

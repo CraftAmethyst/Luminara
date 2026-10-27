@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.core.commands.arguments.selector;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import org.craftamethyst.luminara.common.bridge.core.command.arguments.EntitySelectorParserBridge;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import org.craftamethyst.luminara.common.bridge.core.command.arguments.EntitySelectorParserBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

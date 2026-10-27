@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mod.compat.mixin;
 
-import org.craftamethyst.luminara.common.mod.compat.ModIds;
-import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import java.util.Set;
 import java.util.function.Consumer;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.DistanceManager;
+import org.craftamethyst.luminara.common.mod.compat.ModIds;
+import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

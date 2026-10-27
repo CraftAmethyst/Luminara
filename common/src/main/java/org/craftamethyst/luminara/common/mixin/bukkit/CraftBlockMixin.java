@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
+import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

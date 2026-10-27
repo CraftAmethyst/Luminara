@@ -2,15 +2,6 @@ package org.craftamethyst.luminara.common.mixin.core.world.entity.player;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Either;
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
-import org.craftamethyst.luminara.common.bridge.core.util.DamageSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.util.FoodStatsBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.server.ServerWorldBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.LivingEntityMixin;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -63,6 +54,15 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.inventory.IInventoryBridge;
+import org.craftamethyst.luminara.common.bridge.core.util.DamageSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.util.FoodStatsBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.server.ServerWorldBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.LivingEntityMixin;
 import org.spigotmc.SpigotWorldConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -351,7 +351,7 @@ public abstract class PlayerMixin extends LivingEntityMixin
                 this.getAttributeValue(
                     Attributes
                         .ATTACK_KNOCKBACK); // Forge: Initialize this value to the attack knockback
-                                            // attribute of the player, which is by default 0
+        // attribute of the player, which is by default 0
         i +=
             EnchantmentHelper.getKnockbackBonus(
                 (net.minecraft.world.entity.player.Player) (Object) this);
@@ -452,11 +452,10 @@ public abstract class PlayerMixin extends LivingEntityMixin
                                 (net.minecraft.world.entity.player.Player) (Object) this, entity));
             double entityReachSq =
                 Mth.square(
-                    this
-                        .getEntityReach()); // Use entity reach instead of constant 9.0. Vanilla
-                                            // uses bottom center-to-center checks here, so don't
-                                            // update this to use canReach, since it uses
-                                            // closest-corner checks.
+                    this.getEntityReach()); // Use entity reach instead of constant 9.0. Vanilla
+            // uses bottom center-to-center checks here, so don't
+            // update this to use canReach, since it uses
+            // closest-corner checks.
             for (final LivingEntity entityliving : list) {
               if (entityliving != (Object) this
                   && entityliving != entity

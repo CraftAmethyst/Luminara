@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.forge;
 
-import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import java.util.List;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -1,9 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.chunk;
 
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkAccessBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkBridge;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +19,10 @@ import org.bukkit.craftbukkit.v.CraftChunk;
 import org.bukkit.craftbukkit.v.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v.persistence.DirtyCraftPersistentDataContainer;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkAccessBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.chunk.ChunkBridge;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

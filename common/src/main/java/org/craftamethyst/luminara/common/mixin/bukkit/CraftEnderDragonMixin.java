@@ -1,13 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import io.izzel.arclight.api.EnumHelper;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import org.bukkit.craftbukkit.v.entity.CraftEnderDragon;
 import org.bukkit.entity.EnderDragon;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

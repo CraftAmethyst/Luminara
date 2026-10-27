@@ -1,13 +1,6 @@
 package org.craftamethyst.luminara.common.mod.util.remapper.patcher;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import io.izzel.arclight.api.PluginPatcher;
-import org.craftamethyst.luminara.common.mod.util.remapper.ArclightRemapConfig;
-import org.craftamethyst.luminara.common.mod.util.remapper.ClassLoaderRemapper;
-import org.craftamethyst.luminara.common.mod.util.remapper.GlobalClassRepo;
-import org.craftamethyst.luminara.common.mod.util.remapper.PluginTransformer;
-import org.craftamethyst.luminara.common.mod.util.remapper.patcher.integrated.IntegratedPatcher;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,6 +13,12 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.common.mod.util.remapper.ArclightRemapConfig;
+import org.craftamethyst.luminara.common.mod.util.remapper.ClassLoaderRemapper;
+import org.craftamethyst.luminara.common.mod.util.remapper.GlobalClassRepo;
+import org.craftamethyst.luminara.common.mod.util.remapper.PluginTransformer;
+import org.craftamethyst.luminara.common.mod.util.remapper.patcher.integrated.IntegratedPatcher;
 import org.objectweb.asm.tree.ClassNode;
 
 public class ArclightPluginPatcher implements PluginTransformer {

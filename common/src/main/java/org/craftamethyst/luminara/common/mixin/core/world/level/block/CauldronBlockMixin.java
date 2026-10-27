@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.mod.server.block.CauldronHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
+import org.craftamethyst.luminara.common.mod.server.block.CauldronHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

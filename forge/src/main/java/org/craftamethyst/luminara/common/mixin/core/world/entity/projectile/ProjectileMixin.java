@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.projectile;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
-import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -10,6 +8,8 @@ import net.minecraft.world.phys.HitResult;
 import org.bukkit.craftbukkit.v.entity.CraftEntity;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.projectiles.ProjectileSource;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.EntityMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

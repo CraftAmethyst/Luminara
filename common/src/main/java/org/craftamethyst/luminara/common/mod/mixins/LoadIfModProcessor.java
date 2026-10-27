@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mod.mixins;
 
-import org.craftamethyst.luminara.common.mod.ArclightCommon;
-import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import java.util.List;
 import java.util.Objects;
+import org.craftamethyst.luminara.common.mod.ArclightCommon;
+import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;

@@ -1,11 +1,11 @@
 package org.craftamethyst.luminara.common.mixin.bukkit.adventure;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.entity.CraftPlayer;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.PlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -72,7 +72,8 @@ public abstract class CraftPlayerPaperPlayerMixin {
 
   public boolean isFakePlayer() {
     CraftPlayer player = (CraftPlayer) (Object) this;
-    return org.craftamethyst.luminara.common.mod.util.PlatformHooks.isFakePlayer(player.getHandle());
+    return org.craftamethyst.luminara.common.mod.util.PlatformHooks.isFakePlayer(
+        player.getHandle());
   }
 
   // Paper's playerListName methods

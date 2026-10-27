@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.optimization.general.trackingrange;
 
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.world.entity.Entity;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
 import org.spigotmc.TrackingRange;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

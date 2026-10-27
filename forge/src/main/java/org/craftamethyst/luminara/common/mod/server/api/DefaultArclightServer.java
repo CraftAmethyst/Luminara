@@ -3,10 +3,10 @@ package org.craftamethyst.luminara.common.mod.server.api;
 import io.izzel.arclight.api.ArclightServer;
 import io.izzel.arclight.api.TickingTracker;
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.mod.util.PluginEventHandler;
 import net.minecraftforge.eventbus.EventBus;
 import net.minecraftforge.eventbus.api.IEventBus;
 import org.bukkit.plugin.Plugin;
+import org.craftamethyst.luminara.common.mod.util.PluginEventHandler;
 
 public class DefaultArclightServer implements ArclightServer {
 

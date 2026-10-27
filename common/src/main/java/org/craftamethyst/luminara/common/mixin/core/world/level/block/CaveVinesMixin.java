@@ -50,8 +50,8 @@ public interface CaveVinesMixin {
           if (event.isCancelled()) {
             return InteractionResult
                 .SUCCESS; // We need to return a success either way, because making it PASS or FAIL
-                          // will result in a bug where cancelling while harvesting w/ block in hand
-                          // places block
+            // will result in a bug where cancelling while harvesting w/ block in hand
+            // places block
           }
           for (org.bukkit.inventory.ItemStack itemStack : event.getItemsHarvested()) {
             Block.popResource(level, pos, CraftItemStack.asNMSCopy(itemStack));

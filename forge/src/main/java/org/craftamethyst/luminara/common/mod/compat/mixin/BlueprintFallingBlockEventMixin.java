@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mod.compat.mixin;
 
-import org.craftamethyst.luminara.common.mod.compat.ModIds;
-import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
+import org.craftamethyst.luminara.common.mod.compat.ModIds;
+import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;

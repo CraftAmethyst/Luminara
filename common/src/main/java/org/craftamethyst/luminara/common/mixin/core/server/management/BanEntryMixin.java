@@ -1,8 +1,8 @@
 package org.craftamethyst.luminara.common.mixin.core.server.management;
 
-import org.craftamethyst.luminara.common.bridge.core.server.management.BanEntryBridge;
 import java.util.Date;
 import net.minecraft.server.players.BanListEntry;
+import org.craftamethyst.luminara.common.bridge.core.server.management.BanEntryBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

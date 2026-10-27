@@ -1,7 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
 import com.google.common.base.Joiner;
-import org.craftamethyst.luminara.common.bridge.core.command.CommandSourceBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -9,6 +8,7 @@ import net.minecraft.world.level.BaseCommandBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.craftamethyst.luminara.common.bridge.core.command.CommandSourceBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

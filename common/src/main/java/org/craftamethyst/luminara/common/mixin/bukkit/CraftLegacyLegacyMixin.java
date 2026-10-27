@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.bukkit;
 
-import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
-import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v.legacy.CraftLegacy;
+import org.craftamethyst.luminara.common.bridge.bukkit.MaterialBridge;
+import org.craftamethyst.luminara.i18n.conf.MaterialPropertySpec;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

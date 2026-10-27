@@ -1,9 +1,9 @@
 package org.craftamethyst.luminara.common.mixin.core.async;
 
-import org.craftamethyst.luminara.common.mod.util.async.AsyncCatcher;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
+import org.craftamethyst.luminara.common.mod.util.async.AsyncCatcher;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

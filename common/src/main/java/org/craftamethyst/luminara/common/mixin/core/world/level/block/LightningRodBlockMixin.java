@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block;
 
-import org.craftamethyst.luminara.common.bridge.core.world.server.ServerWorldBridge;
-import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
@@ -12,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v.block.CraftBlock;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
+import org.craftamethyst.luminara.common.bridge.core.world.server.ServerWorldBridge;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

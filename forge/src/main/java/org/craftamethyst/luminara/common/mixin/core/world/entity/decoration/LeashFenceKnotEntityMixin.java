@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.decoration;
 
-import org.craftamethyst.luminara.common.mixin.core.world.entity.item.HangingEntityMixin;
 import java.util.List;
 import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.craftamethyst.luminara.common.mixin.core.world.entity.item.HangingEntityMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

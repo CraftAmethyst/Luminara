@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import io.izzel.arclight.api.PluginPatcher;
+import java.util.List;
 import org.craftamethyst.luminara.common.mod.util.remapper.patcher.ArclightPluginPatcher;
 import org.craftamethyst.luminara.common.mod.util.remapper.patcher.PluginLoggerTransformer;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class RemapperPipelineTest {

@@ -1,15 +1,11 @@
 package org.craftamethyst.luminara.common.mod.util.remapper;
 
-import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import io.izzel.arclight.api.Unsafe;
-import org.craftamethyst.luminara.common.mod.util.remapper.generated.ArclightReflectionHandler;
-import org.craftamethyst.luminara.i18n.ArclightConfig;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
 import java.io.File;
@@ -33,6 +29,9 @@ import net.md_5.specialsource.RemappingClassAdapter;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+import org.craftamethyst.luminara.common.mod.util.remapper.generated.ArclightReflectionHandler;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;

@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.network.datasync.SynchedEntityDataBridge;
 import java.util.Optional;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.Level;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
 import org.bukkit.event.player.PlayerBucketEntityEvent;
+import org.craftamethyst.luminara.common.bridge.core.network.datasync.SynchedEntityDataBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
@@ -46,7 +46,7 @@ public interface BucketableMixin {
             .connection.send(
                 new ClientboundAddEntityPacket(
                     entity)); // We need to play out these packets as the client assumes the fish is
-                              // gone
+        // gone
         ((SynchedEntityDataBridge) livingEntity.getEntityData())
             .bridge$refresh(
                 (ServerPlayer) player); // Need to send data such as the display name to client

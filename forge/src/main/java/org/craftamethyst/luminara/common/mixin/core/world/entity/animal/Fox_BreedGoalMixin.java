@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.passive.AnimalEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.entity.passive.FoxEntityBridge;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,6 +13,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import org.bukkit.craftbukkit.v.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityBreedEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.passive.AnimalEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.passive.FoxEntityBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 

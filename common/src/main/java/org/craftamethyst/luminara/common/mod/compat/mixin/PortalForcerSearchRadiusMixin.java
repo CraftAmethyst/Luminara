@@ -1,13 +1,13 @@
 package org.craftamethyst.luminara.common.mod.compat.mixin;
 
-import org.craftamethyst.luminara.common.mod.compat.ModIds;
-import org.craftamethyst.luminara.common.mod.compat.PortalForcerSearchRadiusAccess;
-import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import java.util.Optional;
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.portal.PortalForcer;
+import org.craftamethyst.luminara.common.mod.compat.ModIds;
+import org.craftamethyst.luminara.common.mod.compat.PortalForcerSearchRadiusAccess;
+import org.craftamethyst.luminara.common.mod.mixins.annotation.LoadIfMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

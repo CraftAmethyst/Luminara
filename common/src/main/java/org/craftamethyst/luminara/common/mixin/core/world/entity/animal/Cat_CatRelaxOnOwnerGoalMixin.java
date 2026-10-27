@@ -1,12 +1,12 @@
 package org.craftamethyst.luminara.common.mixin.core.world.entity.animal;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Item;
 import org.bukkit.event.entity.EntityDropItemEvent;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

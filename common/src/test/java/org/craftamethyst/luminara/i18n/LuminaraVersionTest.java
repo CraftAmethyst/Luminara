@@ -15,13 +15,13 @@ class LuminaraVersionTest {
         LuminaraVersion.load(
             new ByteArrayInputStream(
                 """
-                    minecraftVersion=1.20.1
-                    forgeVersion=47.4.22
-                    javaVersion=17
-                    bukkitPackage=v1_20_R1
-                    version=1.0.14
-                    gitCommit=abc1234
-                    """
+                minecraftVersion=1.20.1
+                forgeVersion=47.4.22
+                javaVersion=17
+                bukkitPackage=v1_20_R1
+                version=1.0.14
+                gitCommit=abc1234
+                """
                     .getBytes(StandardCharsets.ISO_8859_1)));
 
     assertEquals("1.20.1", LuminaraVersion.required(properties, "minecraftVersion"));

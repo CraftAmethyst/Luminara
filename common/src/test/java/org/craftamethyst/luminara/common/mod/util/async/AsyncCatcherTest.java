@@ -2,10 +2,10 @@ package org.craftamethyst.luminara.common.mod.util.async;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.craftamethyst.luminara.i18n.conf.AsyncCatcherSpec;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.craftamethyst.luminara.i18n.conf.AsyncCatcherSpec;
 import org.junit.jupiter.api.Test;
 
 class AsyncCatcherTest {

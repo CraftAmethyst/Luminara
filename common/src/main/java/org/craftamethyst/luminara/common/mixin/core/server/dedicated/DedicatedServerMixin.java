@@ -1,7 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.server.dedicated;
 
-import org.craftamethyst.luminara.common.mixin.core.server.MinecraftServerMixin;
-import org.craftamethyst.luminara.common.mod.server.BukkitRegistry;
 import java.io.IOException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -15,6 +13,8 @@ import org.bukkit.craftbukkit.v.command.CraftRemoteConsoleCommandSender;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.craftamethyst.luminara.common.mixin.core.server.MinecraftServerMixin;
+import org.craftamethyst.luminara.common.mod.server.BukkitRegistry;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

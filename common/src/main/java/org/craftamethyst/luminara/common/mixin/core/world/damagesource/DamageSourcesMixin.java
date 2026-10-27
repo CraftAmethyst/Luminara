@@ -1,13 +1,13 @@
 package org.craftamethyst.luminara.common.mixin.core.world.damagesource;
 
-import org.craftamethyst.luminara.common.bridge.core.util.DamageSourceBridge;
-import org.craftamethyst.luminara.common.bridge.core.util.DamageSourcesBridge;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import org.craftamethyst.luminara.common.bridge.core.util.DamageSourceBridge;
+import org.craftamethyst.luminara.common.bridge.core.util.DamageSourcesBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

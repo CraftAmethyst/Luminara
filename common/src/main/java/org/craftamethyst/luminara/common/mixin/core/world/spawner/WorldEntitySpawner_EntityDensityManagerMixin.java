@@ -1,6 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.spawner;
 
-import org.craftamethyst.luminara.common.bridge.core.world.spawner.WorldEntitySpawnerBridge;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
@@ -10,6 +9,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LocalMobCapCalculator;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import org.craftamethyst.luminara.common.bridge.core.world.spawner.WorldEntitySpawnerBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

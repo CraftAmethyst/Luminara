@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.block.entity;
 
-import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
-import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
-import org.craftamethyst.luminara.common.bridge.core.tileentity.AbstractFurnaceTileEntityBridge;
 import io.izzel.arclight.mixin.Eject;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.ArrayList;
@@ -37,6 +34,9 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.FurnaceStartSmeltEvent;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.InventoryHolder;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.item.crafting.IRecipeBridge;
+import org.craftamethyst.luminara.common.bridge.core.tileentity.AbstractFurnaceTileEntityBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

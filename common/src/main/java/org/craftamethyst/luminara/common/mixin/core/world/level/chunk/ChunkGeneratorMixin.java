@@ -1,8 +1,5 @@
 package org.craftamethyst.luminara.common.mixin.core.world.level.chunk;
 
-import org.craftamethyst.luminara.common.bridge.core.world.IWorldBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
-import org.craftamethyst.luminara.common.bridge.core.world.level.levelgen.ChunkGeneratorBridge;
 import java.util.function.Predicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -26,6 +23,9 @@ import org.bukkit.craftbukkit.v.generator.CraftLimitedRegion;
 import org.bukkit.craftbukkit.v.generator.structure.CraftStructure;
 import org.bukkit.craftbukkit.v.util.RandomSourceWrapper;
 import org.bukkit.generator.BlockPopulator;
+import org.craftamethyst.luminara.common.bridge.core.world.IWorldBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.level.levelgen.ChunkGeneratorBridge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
