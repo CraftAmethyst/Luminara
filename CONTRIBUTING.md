@@ -19,7 +19,7 @@ Select a 64-bit JDK 17 through `JAVA_HOME`, then run from the repository root:
 ./gradlew build
 ```
 
-This builds `common`, `fabric`, and `forge` with the MultiLoader template conventions, including shared sources/resources, access wideners, sources, and javadoc JARs. The self-contained loader JARs are written to `fabric/build/libs` and `forge/build/libs`; CI builds them with `./gradlew build` and uploads them as the workflow artifact.
+This builds `common`, `fabric`, and `forge` with the MultiLoader template conventions, including shared sources/resources, access wideners, sources, and javadoc JARs. The self-contained loader JARs are written to `fabric/build/libs` and `forge/build/libs`; CI builds them with `./gradlew build`, writes `luminara-sha256.txt`, and uploads both as the workflow artifact.
 
 `common/libs/spigot-1.20.1-mapped-deobf.jar` is a checked-in build input: Spigot CraftBukkit classes remapped to Mojang names. Regenerate it from Spigot's BuildTools when the Spigot baseline changes.
 

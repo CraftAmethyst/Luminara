@@ -49,7 +49,7 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服�
 | `fabric` | `fabric/build/libs/luminara-fabric-1.20.1-*.jar` |
 | `forge` | `forge/build/libs/luminara-forge-1.20.1-*.jar` |
 
-两个 loader 产物均为自包含 JAR，可直接放入对应服务端的 `mods/` 目录启动。开发流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+两个 loader 产物均为自包含 JAR，可直接放入对应服务端的 `mods/` 目录启动。CI 同时发布 `luminara-sha256.txt`，可使用 `sha256sum -c luminara-sha256.txt` 校验下载文件。开发流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 支持版本
 

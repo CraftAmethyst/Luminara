@@ -31,7 +31,9 @@ jobs:
         uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
       - name: Build
         run: ./gradlew build
-      - name: Upload JARs
+      - name: Generate SHA-256 checksums
+        run: sha256sum fabric/build/libs/*.jar forge/build/libs/*.jar > luminara-sha256.txt
+      - name: Upload JARs and checksums
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: luminara-${{ github.sha }}
@@ -40,3 +42,4 @@ jobs:
           path: |
             fabric/build/libs/*.jar
             forge/build/libs/*.jar
+            luminara-sha256.txt
