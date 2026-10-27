@@ -21,7 +21,7 @@
 - 在 Mixin 应用前完成平台服务引导，避免早期类加载阶段访问未初始化的注册表。
 - Forge `runServer` 运行时自动加载打包的 loader 依赖。
 - 两个 loader 的构建均输出 sources 与 javadoc JAR。
-- CI 在 `./gradlew build` 后生成 `luminara-sha256.txt` 并随 JAR 一起上传。
+- CI 在 `./gradlew build` 后将两个 loader JAR 暂存到根目录 `build/libs`，并生成单个 `SHA256SUMS` 一同上传。
 
 ### Fixed
 
@@ -71,7 +71,7 @@
 - Bootstrapped platform services before Mixin application to avoid touching uninitialized registries during early class loading.
 - Bundled loader dependencies are now placed on the `runServer` classpath automatically.
 - Both loaders now produce sources and javadoc JARs.
-- CI generates `luminara-sha256.txt` after `./gradlew build` and uploads it with the JARs.
+- CI stages both loader JARs into the root `build/libs` after `./gradlew build` and generates a single `SHA256SUMS` for upload.
 
 ### Fixed
 

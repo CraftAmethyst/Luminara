@@ -49,7 +49,7 @@ The project follows the [MultiLoader-Template](https://github.com/jaredlll08/Mul
 | `fabric` | `fabric/build/libs/luminara-fabric-1.20.1-*.jar` |
 | `forge` | `forge/build/libs/luminara-forge-1.20.1-*.jar` |
 
-The loader JARs are self-contained and can be started by placing them in the respective `mods/` directory. CI also publishes `luminara-sha256.txt`; verify the downloaded files with `sha256sum -c luminara-sha256.txt`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
+The loader JARs are self-contained and can be started by placing them in the respective `mods/` directory. CI stages both loader JARs and `build/libs/SHA256SUMS` into `build/libs`; verify the downloaded files with `sha256sum -c build/libs/SHA256SUMS`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
 
 ## Supported Versions
 
