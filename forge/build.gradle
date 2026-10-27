@@ -140,10 +140,10 @@ dependencies {
 }
 
 jar {
+    dependsOn(extractBundledLibs)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(sourceSets.bundledLibs.output)
     finalizedBy('reobfJar')
-    manifest.attributes([
-            "MixinConfigs": "mixins.arclight.core.json,mixins.arclight.bukkit.json,mixins.arclight.compat.json,mixins.arclight.forge.json,mixins.arclight.impl.forge.optimization.json,mixins.arclight.forge.compat.json"
-    ])
 }
 
 tasks.named('compileJava', JavaCompile) {

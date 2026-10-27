@@ -163,10 +163,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
   }
 
   @Shadow
-  private static void setInitialSpawn(
-      ServerLevel p_177897_, ServerLevelData p_177898_, boolean p_177899_, boolean p_177900_) {}
-
-  @Shadow
   private static DataPackConfig getSelectedPacks(PackRepository p_129818_) {
     return null;
   }
@@ -604,7 +600,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
     if (!worldInfo.isInitialized()) {
       try {
-        setInitialSpawn(serverWorld, worldInfo, worldOptions.generateBonusChest(), flag);
         worldInfo.setInitialized(true);
         if (flag) {
           this.setupDebugLevel(this.worldData);
