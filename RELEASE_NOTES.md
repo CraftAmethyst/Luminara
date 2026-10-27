@@ -1,6 +1,6 @@
-# Luminara 1.0.16
+# Luminara 2.0.0-alpha.1
 
-> Minecraft 1.20.1 | Forge 47.4.23 | Java 17 | Dedicated Server
+> Minecraft 1.20.1 | Forge 47.4.0 | Fabric Loader 0.16.9 | Java 17 | Dedicated Server
 
 <details>
 <summary>中文发布说明</summary>
@@ -9,42 +9,49 @@
 
 ### BREAKING CHANGES
 
-- 本项目产物现在以标准 Forge Mod JAR 形式提供，不再使用旧的混合端/补丁式分发方式。
-- 同时使用 Radium、LostCities 和 FastChunkGen 时，必须保持 FastChunkGen 的 `[threadedWorldGen] enabled = false`。启用异步世界生成会破坏 `WorldGenRegion` 的区块顺序，并导致 `No chunk exists` 崩溃。
+- 项目构建结构迁移到 [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template) 的 `common` / `fabric` / `forge` 布局。
+- 不再提供单一 Forge 混合端 JAR。Forge 与 Fabric 分别产出 `luminara-forge-1.20.1-*.jar` 和 `luminara-fabric-1.20.1-*.jar`。
+- 两个 loader 产物均为自包含 JAR（约 21 MB），已打包运行所需依赖。
+- 本 alpha 版本尚未在产物中启用 Bukkit/Spigot/Paper 的 Mixin 注入，插件兼容能力仍在迁移中；详见“已知限制”。
 
 ### Added
 
-- 实现 `PotionEffectType#getEffectCategory()` 及效果分类颜色。
-- 实现 `PlayerAdvancementCriterionGrantEvent`，支持取消并撤销 criterion 进度。
-- 实现 `PreCreatureSpawnEvent`，覆盖自然生成、刷怪笼、`EntityType#spawn` 和 `SpawnUtil#trySpawnMob`。
-- 为 Multiverse-Core 暴露 `EntityType#getCategory()`、实体分类别名字段及无版本号 `CraftSpawnCategory#toBukkit()`。
-- 补充六种语言的 `dist.logic-world-check`。
-- 新增关服超时强制退出机制。
+- 新增 Fabric Loader 发行版，包含 `preLaunch` 与 `main` 入口点。
+- 新增共享 `common` 模块，Forge 与 Fabric 复用同一套核心代码和 access widener。
+- 在 Mixin 应用前完成平台服务引导，避免早期类加载阶段访问未初始化的注册表。
+- Forge `runServer` 运行时自动加载打包的 loader 依赖。
+- 两个 loader 的构建均输出 sources 与 javadoc JAR。
+- CI 在 `./gradlew build` 后生成 `luminara-sha256.txt` 并随 JAR 一起上传。
 
 ### Fixed
 
-- 统一 Bukkit/JUL 日志到 Log4j 输出格式。
-- 修复控制台对 `§x...` 和 `&x...` RGB 颜色的渲染。
-- 确保日志配置在启动 ASCII 横幅之前应用。
-- 修复 FastChunkGen 与 Hyperbox 之间的空 `IOWorker` 路径崩溃。
-- 修复 FastChunkGen 与 Luminara `DistanceManager` 的注入冲突。
-- 修复 Multiverse 分类映射中 `getCategory`、`CraftSpawnCategory` 和实体别名字段缺失的问题。
-- 修复实体别名引起的 `minecraft`/`luminara` 模块 split package 冲突，以及接口过早初始化造成的空字段。
-- 恢复异步访问保护，并修复服务器关闭后进程残留。
+- 修复 Forge 独立服务端日志被替换为 `uminaraFormatting` 的问题；日志布局不再依赖尚未注册的自定义 Log4j 转换器。
+- 修复 Forge 与 Fabric 构建产物在真实专用服务端上的启动问题。
+- 修复 Forge 开发环境 `runServer` 找不到打包依赖的问题。
+- 将 Gradle 脚本、`buildSrc` 约定和模块任务对齐 MultiLoader 模板；`./gradlew build` 可直接产出全部构建物。
 
 ### Changed
 
-- 版本号更新为 `1.0.16`。
-- Luminara 的 Forge 依赖顺序改为在 Forge 和 Minecraft 之前加载。
-- 验证运行目标更新为 Forge `47.4.23`。
-- 发行物继续使用标准 Forge Mod JAR，并执行依赖校验和发行物校验。
+- 版本号更新为 `2.0.0-alpha.1`。
+- Forge 目标更新为 `1.20.1-47.4.0`；Fabric Loader 固定为 `0.16.9`，Fabric API 为 `0.92.1+1.20.1`。
+- Forge 日志改用标准 `%msg{nolookup}` 输出，保留可读的控制台与服务端日志。
+- 移除自定义的 `assembleForgeMod`、`assembleFabricMod`、发行物校验和冒烟测试 Gradle 任务，构建入口统一为 `./gradlew build`。
+
+### 已知限制
+
+- Forge 产物当前没有声明 `MixinConfigs`，Fabric `fabric.mod.json` 的 `mixins` 为空；Bukkit/Spigot/Paper 兼容注入在这些 alpha 产物中尚未生效。
+- Forge Mixin 注解处理器与 refmap 仍待恢复；部分共享 Mixin 需要先拆分 Forge 专属实现。
+- 当前验证范围为专用服务端启动、世界创建与正常关闭；插件与模组兼容性回归尚未覆盖。
 
 ### 兼容性
 
 - Minecraft：1.20.1
-- Forge：47.4.x
+- Forge：1.20.1-47.4.0
+- Fabric Loader：0.16.9
+- Fabric API：0.92.1+1.20.1
+- CraftBukkit：`v1_20_R1`
 - Java：17
-- 环境：仅服务端
+- 环境：仅专用服务端
 
 </details>
 
@@ -52,32 +59,36 @@
 
 ### BREAKING CHANGES
 
-- Project artifacts are now distributed as a standard Forge Mod JAR instead of the legacy hybrid-server/patch-style distribution.
-- When Radium, LostCities, and FastChunkGen are used together, FastChunkGen's `[threadedWorldGen] enabled` must remain `false`. Asynchronous world generation breaks `WorldGenRegion` chunk ordering and can cause `No chunk exists` crashes.
+- The build now follows the [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template) `common` / `fabric` / `forge` layout.
+- The single Forge hybrid-server JAR is no longer produced. Forge and Fabric now ship as `luminara-forge-1.20.1-*.jar` and `luminara-fabric-1.20.1-*.jar` respectively.
+- Both loader artifacts are self-contained (about 21 MB) and bundle their runtime dependencies.
+- This alpha does not yet enable Bukkit/Spigot/Paper Mixin injection in the produced artifacts. Plugin compatibility is still being ported; see "Known limitations".
 
 ### Added
 
-- Implemented `PotionEffectType#getEffectCategory()` and effect category colors.
-- Implemented `PlayerAdvancementCriterionGrantEvent` with cancellation and criterion rollback.
-- Implemented `PreCreatureSpawnEvent` for natural spawning, spawners, `EntityType#spawn`, and `SpawnUtil#trySpawnMob`.
-- Exposed Multiverse-Core aliases for `EntityType#getCategory()`, entity category fields, and unversioned `CraftSpawnCategory#toBukkit()`.
-- Added `dist.logic-world-check` translations for all six locales.
-- Added a shutdown timeout that forcefully terminates a hung server process.
+- Added a Fabric Loader distribution with `preLaunch` and `main` entrypoints.
+- Added a shared `common` module so Forge and Fabric reuse the same core code and access widener.
+- Bootstrapped platform services before Mixin application to avoid touching uninitialized registries during early class loading.
+- Bundled loader dependencies are now placed on the `runServer` classpath automatically.
+- Both loaders now produce sources and javadoc JARs.
+- CI generates `luminara-sha256.txt` after `./gradlew build` and uploads it with the JARs.
 
 ### Fixed
 
-- Routed Bukkit/JUL logs through Log4j with a consistent format.
-- Fixed console rendering for `§x...` and `&x...` RGB colors.
-- Applied logging configuration before the startup ASCII banner.
-- Fixed the null `IOWorker` path crash between FastChunkGen and Hyperbox.
-- Fixed the `DistanceManager` injection conflict with FastChunkGen.
-- Fixed missing Multiverse `getCategory`, `CraftSpawnCategory`, and entity alias fields.
-- Removed the `minecraft`/`luminara` split-package conflict and fixed aliases being initialized as null.
-- Restored asynchronous access guards and fixed lingering server processes after shutdown.
+- Fixed Forge dedicated-server logs being replaced by `uminaraFormatting`; log layouts no longer depend on a custom Log4j converter that was not registered yet.
+- Fixed startup of the Forge and Fabric artifacts on real dedicated servers.
+- Fixed missing bundled dependencies during Forge `runServer` development launches.
+- Aligned Gradle scripts, `buildSrc` conventions, and module tasks with the MultiLoader template; `./gradlew build` now produces every build output directly.
 
 ### Changed
 
-- Updated the project version to `1.0.16`.
-- Changed Forge dependency ordering so Luminara loads before Forge and Minecraft.
-- Updated the validated runtime target to Forge `47.4.23`.
-- Continued shipping as a standard Forge Mod JAR with dependency and distribution verification.
+- Updated the project version to `2.0.0-alpha.1`.
+- Updated the Forge target to `1.20.1-47.4.0`; pinned Fabric Loader to `0.16.9` and Fabric API to `0.92.1+1.20.1`.
+- Switched Forge logging to standard `%msg{nolookup}` output for readable console and server logs.
+- Removed the custom `assembleForgeMod`, `assembleFabricMod`, distribution verification, and smoke test Gradle tasks. `./gradlew build` is the single build entrypoint.
+
+### Known limitations
+
+- The Forge artifact currently declares no `MixinConfigs`, and Fabric's `fabric.mod.json` has an empty `mixins` list. Bukkit/Spigot/Paper compatibility injection is not active in these alpha artifacts.
+- Forge Mixin annotation processing and refmap generation still need to be restored; some shared Mixins require Forge-specific splits first.
+- Verification currently covers dedicated-server startup, world creation, and clean shutdown. Plugin and mod compatibility regressions are not yet covered.
