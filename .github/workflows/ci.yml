@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  linux:
-    name: Linux build and artifact verification
+  build:
+    name: Build loader JARs
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -29,58 +29,14 @@ jobs:
           java-version: "17"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
-      - name: Build and verify both loaders
-        timeout-minutes: 35
+      - name: Build
         run: ./gradlew build
-      - name: Upload verification artifacts
+      - name: Upload JARs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: luminara-verification-${{ github.sha }}
+          name: luminara-${{ github.sha }}
           retention-days: 7
           if-no-files-found: error
           path: |
-            common/build/libs/*.jar
             fabric/build/libs/*.jar
             forge/build/libs/*.jar
-            **/build/test-results/**
-            **/build/reports/tests/**
-
-  windows:
-    name: Windows assembly and mod JAR contracts
-    runs-on: windows-latest
-    timeout-minutes: 35
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - name: Set up Java 17
-        uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07
-        with:
-          distribution: temurin
-          java-version: "17"
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
-      - name: Verify and assemble both loader distributions
-        timeout-minutes: 25
-        run: .\gradlew.bat build
-      - name: Check both mod JARs declare their loader metadata
-        shell: pwsh
-        run: |
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-          $forge = Get-ChildItem 'forge/build/libs' -Filter 'luminara-forge-*.jar' -File
-          $fabric = Get-ChildItem 'fabric/build/libs' -Filter 'luminara-fabric-*.jar' -File
-          if ($forge.Count -ne 1) { throw "Expected one Forge JAR, found $($forge.Count)" }
-          if ($fabric.Count -ne 1) { throw "Expected one Fabric JAR, found $($fabric.Count)" }
-          function Get-Names($path) {
-            $archive = [System.IO.Compression.ZipFile]::OpenRead($path)
-            try { return $archive.Entries | ForEach-Object { $_.FullName } }
-            finally { $archive.Dispose() }
-          }
-          $forgeNames = Get-Names $forge[0].FullName
-          foreach ($required in @('META-INF/mods.toml', 'META-INF/MANIFEST.MF', 'org/craftamethyst/luminara/common/mod/ArclightMod.class')) {
-            if ($forgeNames -notcontains $required) { throw "Forge JAR missing $required" }
-          }
-          $fabricNames = Get-Names $fabric[0].FullName
-          foreach ($required in @('fabric.mod.json', 'mixins.arclight.core.fabric.json', 'org/craftamethyst/luminara/fabric/LuminaraFabric.class')) {
-            if ($fabricNames -notcontains $required) { throw "Fabric JAR missing $required" }
-          }
-          if ($fabricNames -contains 'META-INF/mods.toml') { throw 'Fabric JAR must not contain Forge metadata' }

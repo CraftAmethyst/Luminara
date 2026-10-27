@@ -35,6 +35,22 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服�
 - 兼容 Adventure、MiniMessage、签名聊天（signed-chat）以及部分常用 Paper API
 - 具备更好的模组与插件兼容性
 
+## 从源码构建
+
+项目采用 [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template) 1.20.1 布局，一次 Java 17 构建即可生成共享、Fabric 和 Forge 产物：
+
+```bash
+./gradlew build
+```
+
+| 模块 | 产物 |
+| --- | --- |
+| `common` | `common/build/libs/luminara-common-1.20.1-*.jar` |
+| `fabric` | `fabric/build/libs/luminara-fabric-1.20.1-*.jar` |
+| `forge` | `forge/build/libs/luminara-forge-1.20.1-*.jar` |
+
+两个 loader 产物均为自包含 JAR，可直接放入对应服务端的 `mods/` 目录启动。开发流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
 ## 支持版本
 
 

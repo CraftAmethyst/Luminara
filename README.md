@@ -35,6 +35,22 @@ Luminara is a fork project developed based on the [Arclight](https://github.com/
 - Compatible with Adventure, MiniMessage, signed chat (signed-chat), and some commonly used Paper APIs
 - Better mod and plugin compatibility
 
+## Building from source
+
+The project follows the [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template) 1.20.1 layout. A single Java 17 build produces the shared, Fabric, and Forge artifacts:
+
+```bash
+./gradlew build
+```
+
+| Module | Output |
+| --- | --- |
+| `common` | `common/build/libs/luminara-common-1.20.1-*.jar` |
+| `fabric` | `fabric/build/libs/luminara-fabric-1.20.1-*.jar` |
+| `forge` | `forge/build/libs/luminara-forge-1.20.1-*.jar` |
+
+The loader JARs are self-contained and can be started by placing them in the respective `mods/` directory. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
+
 ## Supported Versions
 
 | Component | stable/Trials | stable/FeudalKings |

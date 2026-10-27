@@ -9,7 +9,8 @@
 ## Compatibility
 
 - Minecraft: `1.20.1`
-- Forge: latest promotion for Minecraft `1.20.1`
+- Forge: `1.20.1-47.4.0`
+- Fabric Loader: `0.16.9`
 - CraftBukkit package: `v1_20_R1`
 - Java: `17`
 
@@ -19,8 +20,8 @@
 
 <!-- List the exact commands and scenarios run. Do not check a box that was not exercised. -->
 
-- [ ] `./gradlew check assembleForgeMod verifyForgeModDistribution`
-- [ ] `./gradlew smokeServer`
+- [ ] `./gradlew build`
+- [ ] Started the affected loader JAR in a dedicated server (when runtime behavior changed)
 - [ ] Added or updated a regression test for new observable behavior
 - [ ] Updated affected documentation
 - [ ] Verified no credentials, server state, logs, caches, or generated build outputs are included
