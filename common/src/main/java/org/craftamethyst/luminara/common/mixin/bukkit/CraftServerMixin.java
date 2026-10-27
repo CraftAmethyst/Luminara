@@ -7,6 +7,7 @@ import org.craftamethyst.luminara.common.bridge.bukkit.CraftServerBridge;
 import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
 import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.craftamethyst.luminara.common.mod.server.ArclightServer;
+import org.craftamethyst.luminara.common.mod.util.PlatformHooks;
 import org.craftamethyst.luminara.common.mod.util.log.ArclightPluginLogger;
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +23,6 @@ import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.PlayerList;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CommandEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -189,15 +188,11 @@ public abstract class CraftServerMixin implements CraftServerBridge {
             .getCommands()
             .getDispatcher()
             .parse(stringreader, commandSource);
-    CommandEvent event = new CommandEvent(parse);
-    if (MinecraftForge.EVENT_BUS.post(event)) {
+    String result = PlatformHooks.processCommandEvent(parse);
+    if (result == null) {
       return null;
-    } else if (event.getException() != null) {
-      return null;
-    } else {
-      String s = event.getParseResults().getReader().getString();
-      return s.startsWith("/") ? s.substring(1) : s;
     }
+    return result.startsWith("/") ? result.substring(1) : result;
   }
 
   @Inject(

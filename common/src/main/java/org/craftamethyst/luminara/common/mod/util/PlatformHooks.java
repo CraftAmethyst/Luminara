@@ -57,6 +57,18 @@ public final class PlatformHooks {
         return FORGE_PRESENT;
     }
 
+    public static boolean isFakePlayer(Entity entity) {
+        if (entity == null) {
+            return false;
+        }
+        for (Class<?> type = entity.getClass(); type != null; type = type.getSuperclass()) {
+            if ("net.minecraftforge.common.util.FakePlayer".equals(type.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean handleServerLogin(ClientIntentionPacket packet, Connection connection) {
         Object ret = invokeStatic(
                 "net.minecraftforge.server.ServerLifecycleHooks",

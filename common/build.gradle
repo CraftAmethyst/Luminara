@@ -9,6 +9,7 @@ mixin {
 
 legacyForge {
     version = "${minecraft_version}-${forge_version}"
+    validateAccessTransformers = false
     if (file("src/main/resources/META-INF/accesstransformer.cfg").exists()) {
         accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
     }
@@ -38,6 +39,11 @@ configurations {
     spigotMapped {
         canBeConsumed = false
         canBeResolved = true
+    }
+    embed {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
     }
 }
 
@@ -80,6 +86,29 @@ dependencies {
     annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.processor.get()}:processor"
     annotationProcessor "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
     annotationProcessor "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
+    embed "io.izzel:tools:${libs.versions.tools.get()}"
+    embed "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
+    embed "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
+    embed "org.spongepowered:configurate-core:${libs.versions.configurate.get()}"
+    embed "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
+    embed 'org.yaml:snakeyaml:2.0'
+    embed 'net.md-5:SpecialSource:1.11.0'
+    embed 'jline:jline:2.12.1'
+    embed "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}"
+    embed "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
+    embed "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
+    embed 'net.md-5:bungeecord-chat:1.16-R0.4'
+    embed "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+    embed 'net.minecrell:terminalconsoleappender:1.2.0'
+    ['adventure-api', 'adventure-key', 'adventure-text-serializer-gson',
+     'adventure-text-serializer-json', 'adventure-text-serializer-legacy',
+     'adventure-text-serializer-plain', 'adventure-text-minimessage',
+     'adventure-text-logger-slf4j'].each { artifact ->
+        embed "net.kyori:${artifact}:${libs.versions.adventure.get()}"
+    }
+    embed 'net.kyori:examination-api:1.3.0'
+    embed 'net.kyori:examination-string:1.3.0'
+
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -116,13 +145,29 @@ tasks.withType(JavaCompile).configureEach {
 
 jar {
     manifest.attributes 'MixinConnector': 'org.craftamethyst.luminara.common.mod.ArclightConnector'
-    from({ zipTree(mappedSpigotJar.get().asFile) }) {
+    from({ zipTree(mappedSpigotJar.asFile) }) {
         exclude 'META-INF/MANIFEST.MF'
         exclude 'META-INF/*.SF'
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
         exclude 'module-info.class'
         exclude 'META-INF/versions/*/module-info.class'
+        exclude 'net/minecraft/**'
+    }
+    from({ configurations.embed.collect { it.isDirectory() ? it : zipTree(it) } }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/services/**'
+        exclude 'module-info.class'
+        exclude 'META-INF/versions/*/module-info.class'
+        exclude 'org/apache/logging/**'
+        exclude 'com/google/gson/**'
+        exclude 'com/google/common/**'
+        exclude 'org/objectweb/asm/**'
+        exclude 'org/slf4j/**'
+        exclude 'org/apache/commons/**'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

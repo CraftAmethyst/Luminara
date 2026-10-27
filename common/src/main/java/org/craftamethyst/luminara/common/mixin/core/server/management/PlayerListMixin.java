@@ -1,5 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.server.management;
 
+import org.craftamethyst.luminara.common.mod.util.PlatformHooks;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
@@ -55,7 +56,6 @@ import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ForgeEventFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v.CraftServer;
@@ -528,7 +528,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
       this.playersByUUID.put(playerIn.getUUID(), playerIn);
     }
     playerIn.setHealth(playerIn.getHealth());
-    ForgeEventFactory.firePlayerChangedDimensionEvent(
+    PlatformHooks.firePlayerChangedDimensionEvent(
         playerIn, ((CraftWorld) fromWorld).getHandle().dimension, serverWorld.dimension);
     if (flag3) {
       playerIn.connection.send(
@@ -750,7 +750,7 @@ public abstract class PlayerListMixin implements PlayerListBridge {
     }
     serverplayerentity.initInventoryMenu();
     serverplayerentity.setHealth(serverplayerentity.getHealth());
-    ForgeEventFactory.firePlayerRespawnEvent(serverplayerentity, conqueredEnd);
+    PlatformHooks.firePlayerRespawnEvent(serverplayerentity, conqueredEnd);
     if (flag2) {
       serverplayerentity.connection.send(
           new ClientboundSoundPacket(

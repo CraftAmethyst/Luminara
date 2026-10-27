@@ -15,9 +15,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockState;
@@ -245,7 +245,7 @@ public abstract class MaterialMixin implements MaterialBridge {
     if (arclight$spec != null && arclight$spec.craftingRemainingItem != null) {
       cir.setReturnValue(
           CraftMagicNumbers.getMaterial(
-              ForgeRegistries.ITEMS.getValue(
+              BuiltInRegistries.ITEM.get(
                   new ResourceLocation(arclight$spec.craftingRemainingItem))));
     }
   }
@@ -392,7 +392,7 @@ public abstract class MaterialMixin implements MaterialBridge {
       // noinspection deprecation
       arclight$spec.craftingRemainingItem =
           item != null && item.hasCraftingRemainingItem()
-              ? ForgeRegistries.ITEMS.getKey(item.getCraftingRemainingItem()).toString()
+              ? BuiltInRegistries.ITEM.getKey(item.getCraftingRemainingItem()).toString()
               : null;
     }
     if (arclight$spec.itemMetaType == null) {

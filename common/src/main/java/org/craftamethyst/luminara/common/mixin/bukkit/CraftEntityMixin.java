@@ -2,10 +2,10 @@ package org.craftamethyst.luminara.common.mixin.bukkit;
 
 import org.craftamethyst.luminara.common.mod.server.entity.ArclightFakePlayer;
 import org.craftamethyst.luminara.common.mod.server.entity.EntityClassLookup;
+import org.craftamethyst.luminara.common.mod.util.PlatformHooks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.craftbukkit.v.CraftServer;
 import org.bukkit.craftbukkit.v.entity.CraftComplexPart;
 import org.bukkit.craftbukkit.v.entity.CraftEnderDragonPart;
@@ -27,8 +27,8 @@ public abstract class CraftEntityMixin implements org.bukkit.entity.Entity {
   @Inject(method = "getEntity", cancellable = true, at = @At("HEAD"))
   private static void arclight$fakePlayer(
       CraftServer server, Entity entity, CallbackInfoReturnable<CraftEntity> cir) {
-    if (entity instanceof FakePlayer) {
-      cir.setReturnValue(new ArclightFakePlayer(server, (FakePlayer) entity));
+    if (PlatformHooks.isFakePlayer(entity)) {
+      cir.setReturnValue(new ArclightFakePlayer(server, (net.minecraft.server.level.ServerPlayer) entity));
       return;
     }
     if (entity instanceof EnderDragonPart part) {

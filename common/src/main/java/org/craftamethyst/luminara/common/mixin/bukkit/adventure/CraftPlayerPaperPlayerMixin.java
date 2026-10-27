@@ -72,7 +72,7 @@ public abstract class CraftPlayerPaperPlayerMixin {
 
   public boolean isFakePlayer() {
     CraftPlayer player = (CraftPlayer) (Object) this;
-    return player.getHandle() instanceof net.minecraftforge.common.util.FakePlayer;
+    return org.craftamethyst.luminara.common.mod.util.PlatformHooks.isFakePlayer(player.getHandle());
   }
 
   // Paper's playerListName methods
