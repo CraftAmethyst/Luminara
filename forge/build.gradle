@@ -1,0 +1,90 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+mixin {
+    add(sourceSets.main, 'mixins.arclight.forge.refmap.json')
+}
+
+legacyForge {
+    version = "${minecraft_version}-${forge_version}"
+
+    validateAccessTransformers = true
+
+    def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers = [at]
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+def commonJar = project(':common').tasks.named('jar').flatMap { it.archiveFile }
+def mappedSpigotJar = project(':common').layout.buildDirectory.file('spigot/spigot-1.20.1-mapped-deobf.jar')
+
+dependencies {
+    compileOnly project(':common')
+    compileOnly files(mappedSpigotJar)
+    implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+    implementation "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
+    implementation "io.izzel:tools:${libs.versions.tools.get()}"
+    implementation "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
+    implementation "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
+    implementation "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
+    implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
+    implementation 'net.md-5:SpecialSource:1.11.0'
+    implementation 'jline:jline:2.12.1'
+    implementation 'org.yaml:snakeyaml:2.0'
+    implementation "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
+    implementation 'org.jetbrains:annotations:23.0.0'
+    implementation platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
+    implementation 'net.kyori:adventure-api'
+    implementation 'net.kyori:adventure-key'
+    implementation 'net.kyori:adventure-text-serializer-gson'
+    implementation 'net.kyori:adventure-text-serializer-json'
+    implementation 'net.kyori:adventure-text-serializer-legacy'
+    implementation 'net.kyori:adventure-text-serializer-plain'
+    implementation 'net.kyori:adventure-text-minimessage'
+    implementation 'net.kyori:adventure-text-logger-slf4j'
+    implementation 'net.kyori:examination-api'
+    annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.processor.get()}:processor"
+}
+
+jar {
+    dependsOn(project(':common').tasks.named('jar'))
+    finalizedBy('reobfJar')
+
+    from({ zipTree(commonJar.get().asFile) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/mods.toml'
+        exclude 'META-INF/services/**'
+        exclude 'module-info.class'
+        exclude 'META-INF/versions/*/module-info.class'
+    }
+
+    manifest.attributes([
+            'MixinConnector': 'org.craftamethyst.luminara.common.mod.ArclightConnector',
+            'MixinConfigs'  : 'mixins.arclight.forge.json,mixins.arclight.impl.forge.optimization.json,mixins.arclight.forge.compat.json'
+    ])
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

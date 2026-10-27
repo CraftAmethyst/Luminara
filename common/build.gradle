@@ -1,0 +1,158 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+mixin {
+    add(sourceSets.main, 'mixins.arclight.refmap.json')
+}
+
+legacyForge {
+    version = "${minecraft_version}-${forge_version}"
+    if (file("src/main/resources/META-INF/accesstransformer.cfg").exists()) {
+        accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+}
+
+repositories {
+    maven { url = 'https://maven.minecraftforge.net' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+    maven { url = 'https://maven.izzel.io/releases' }
+    ivy {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
+        patternLayout {
+            artifact '[organisation]/[module]/1.20.1-R0.1-SNAPSHOT/[module]-[revision](-[classifier]).[ext]'
+            setM2compatible(true)
+        }
+        metadataSources { artifact() }
+    }
+}
+
+def mappedSpigotJar = layout.projectDirectory.file('libs/spigot-1.20.1-mapped-deobf.jar')
+
+configurations {
+    spigotMapped {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    compileOnly "cpw.mods:modlauncher:${libs.versions.modlauncher.get()}"
+    compileOnly "cpw.mods:securejarhandler:${libs.versions.securejarhandler.get()}"
+    compileOnly "net.minecraftforge:fmlcore:${minecraft_version}-${forge_version}"
+    compileOnly "net.minecrell:terminalconsoleappender:1.2.0"
+    spigotMapped files(mappedSpigotJar)
+    compileOnly files(mappedSpigotJar)
+    testImplementation files(mappedSpigotJar)
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+    implementation "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
+    implementation "io.izzel:tools:${libs.versions.tools.get()}"
+    implementation "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
+    implementation "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
+    implementation "org.apache.logging.log4j:log4j-api:${libs.versions.log4j.get()}"
+    implementation "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
+    implementation "org.jetbrains:annotations:23.0.0"
+    implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
+    implementation 'net.md-5:SpecialSource:1.11.0'
+    implementation 'jline:jline:2.12.1'
+    implementation 'org.yaml:snakeyaml:2.0'
+    implementation "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
+    implementation "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
+    implementation platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
+    implementation 'net.kyori:adventure-api'
+    implementation 'net.kyori:adventure-key'
+    implementation 'net.kyori:adventure-text-serializer-gson'
+    implementation 'net.kyori:adventure-text-serializer-json'
+    implementation 'net.kyori:adventure-text-serializer-legacy'
+    implementation 'net.kyori:adventure-text-serializer-plain'
+    implementation 'net.kyori:adventure-text-minimessage'
+    implementation 'net.kyori:adventure-text-logger-slf4j'
+    implementation 'net.kyori:examination-api'
+    implementation 'org.apache.logging.log4j:log4j-jul:2.19.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.processor.get()}:processor"
+    annotationProcessor "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
+    annotationProcessor "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
+    testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}
+
+sourceSets {
+    smokePlugin
+    smokeMod
+}
+
+dependencies {
+    smokePluginCompileOnly "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-XDignore.symbol.file' << '-XDenableSunApiLintControl'
+}
+
+jar {
+    manifest.attributes 'MixinConnector': 'org.craftamethyst.luminara.common.mod.ArclightConnector'
+    from({ zipTree(mappedSpigotJar.get().asFile) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'module-info.class'
+        exclude 'META-INF/versions/*/module-info.class'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+def generateLuminaraVersion = tasks.register('generateLuminaraVersion') {
+    def outputDirectory = layout.buildDirectory.dir('generated/resources/luminara')
+    def outputFile = outputDirectory.map { it.file('META-INF/luminara-version.properties') }
+    inputs.property('minecraftVersion', providers.provider { minecraft_version })
+    inputs.property('forgeVersion', providers.provider { forge_version })
+    inputs.property('javaVersion', providers.provider { java_version })
+    inputs.property('bukkitPackage', libs.versions.bukkit.package.get())
+    inputs.property('version', providers.provider { project.version.toString() })
+    inputs.property('gitCommit', project.rootProject.ext.gitHash)
+    outputs.file(outputFile)
+    doLast {
+        def values = [
+                minecraftVersion: minecraft_version,
+                forgeVersion: forge_version,
+                javaVersion: java_version,
+                bukkitPackage: libs.versions.bukkit.package.get(),
+                version: project.version.toString(),
+                gitCommit: project.rootProject.ext.gitHash
+        ]
+        def target = outputFile.get().asFile
+        target.parentFile.mkdirs()
+        target.withWriter('UTF-8') { writer ->
+            values.keySet().sort().each { key -> writer.write("${key}=${values[key]}\n") }
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir(generateLuminaraVersion.map { layout.buildDirectory.dir('generated/resources/luminara').get().asFile })
+processResources.dependsOn(generateLuminaraVersion)

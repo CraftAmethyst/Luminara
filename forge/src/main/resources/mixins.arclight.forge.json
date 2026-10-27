@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.craftamethyst.luminara.common.mixin.forge",
+  "target": "@env(DEFAULT)",
+  "refmap": "mixins.arclight.forge.refmap.json",
+  "setSourceFile": true,
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EventListenerHelperMixin",
+    "ForgeEventFactoryMixin",
+    "ForgeHooksMixin",
+    "NetworkHooksMixin",
+    "async.NetworkHooksAsyncMixin",
+    "PacketDistributorMixin",
+    "PermissionAPIMixin"
+  ]
+}

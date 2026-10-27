@@ -1,0 +1,38 @@
+package org.craftamethyst.luminara.common.mixin.bukkit;
+
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+
+import io.izzel.arclight.api.EnumHelper;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.world.entity.monster.SpellcasterIllager;
+import org.bukkit.craftbukkit.v.entity.CraftSpellcaster;
+import org.bukkit.entity.Spellcaster;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
+@Mixin(value = CraftSpellcaster.class, remap = false)
+public class CraftSpellcasterMixin {
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static Spellcaster.Spell toBukkitSpell(SpellcasterIllager.IllagerSpell spell) {
+    try {
+      return Spellcaster.Spell.valueOf(spell.name());
+    } catch (IllegalArgumentException e) {
+      var newTypes = new ArrayList<Spellcaster.Spell>();
+      var forgeCount = SpellcasterIllager.IllagerSpell.values().length;
+      for (var id = Spellcaster.Spell.values().length; id < forgeCount; id++) {
+        var name = SpellcasterIllager.IllagerSpell.values()[id].name();
+        var newPhase = EnumHelper.makeEnum(Spellcaster.Spell.class, name, id, List.of(), List.of());
+        newTypes.add(newPhase);
+        LuminaraLog.LOGGER.debug("Registered {} as illager spell {}", name, newPhase);
+      }
+      EnumHelper.addEnums(Spellcaster.Spell.class, newTypes);
+      return toBukkitSpell(spell);
+    }
+  }
+}

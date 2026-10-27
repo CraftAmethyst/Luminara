@@ -21,7 +21,3 @@ java {
 tasks.withType(JavaCompile).configureEach {
     options.release.set(17)
 }
-
-dependencyLocking {
-    lockAllConfigurations()
-}

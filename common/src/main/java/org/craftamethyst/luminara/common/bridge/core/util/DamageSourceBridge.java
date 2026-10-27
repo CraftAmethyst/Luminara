@@ -1,0 +1,13 @@
+package org.craftamethyst.luminara.common.bridge.core.util;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+public interface DamageSourceBridge {
+  boolean bridge$isSweep();
+
+  DamageSource bridge$sweep();
+
+  DamageSource bridge$poison();
+
+  DamageSource bridge$melting();
+}

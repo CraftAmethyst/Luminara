@@ -1,0 +1,53 @@
+plugins {
+    id 'multiloader-common'
+    id 'fabric-loom'
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    compileOnly project(':common')
+    implementation project(':common')
+    implementation "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
+    implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+    compileOnly "net.minecraftforge:eventbus:4.0.0"
+    compileOnly "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
+}
+
+loom {
+    mixin {
+        defaultRefmapName.set('mixins.arclight.refmap.json')
+    }
+    runs {
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('run')
+        }
+    }
+}
+
+def commonJar = project(':common').tasks.named('jar').flatMap { it.archiveFile }
+
+jar {
+    dependsOn(project(':common').tasks.named('jar'))
+    from({ zipTree(commonJar.get().asFile) }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/mods.toml'
+        exclude 'META-INF/accesstransformer.cfg'
+        exclude 'META-INF/luminara-version.properties'
+        exclude 'META-INF/services/**'
+        exclude 'module-info.class'
+        exclude 'META-INF/versions/*/module-info.class'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

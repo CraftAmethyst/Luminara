@@ -1,0 +1,7 @@
+package org.craftamethyst.luminara.common.bridge.core.entity.passive;
+
+import java.util.UUID;
+
+public interface FoxEntityBridge extends AnimalEntityBridge {
+  void bridge$addTrustedUUID(UUID uuidIn);
+}

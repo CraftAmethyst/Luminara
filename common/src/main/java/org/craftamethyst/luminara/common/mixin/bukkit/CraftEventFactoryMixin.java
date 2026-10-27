@@ -1,0 +1,362 @@
+package org.craftamethyst.luminara.common.mixin.bukkit;
+
+import org.craftamethyst.luminara.common.mod.util.log.LuminaraLog;
+
+import com.google.common.base.Function;
+import org.craftamethyst.luminara.common.bridge.core.entity.EntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.entity.player.ServerPlayerEntityBridge;
+import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
+import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
+import org.craftamethyst.luminara.common.mod.util.DistValidate;
+import java.util.Map;
+import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.craftbukkit.v.block.CraftBlock;
+import org.bukkit.craftbukkit.v.block.CraftBlockState;
+import org.bukkit.craftbukkit.v.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v.block.CraftSign;
+import org.bukkit.craftbukkit.v.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v.util.CraftMagicNumbers;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.player.PlayerSignOpenEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(value = CraftEventFactory.class, remap = false)
+public class CraftEventFactoryMixin {
+
+  @Shadow public static Entity entityDamage;
+
+  @Shadow public static Block blockDamage;
+
+  @Inject(
+      method =
+          "handleEntityDamageEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;",
+      at = @At("HEAD"))
+  private static void arclight$captureSource(
+      Entity entity,
+      DamageSource source,
+      Map<EntityDamageEvent.DamageModifier, Double> modifiers,
+      Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>> modifierFunctions,
+      boolean cancelled,
+      CallbackInfoReturnable<EntityDamageEvent> cir) {
+    Entity damageEventEntity = ArclightCaptures.getDamageEventEntity();
+    BlockPos damageEventBlock = ArclightCaptures.getDamageEventBlock();
+    if (damageEventEntity != null && entityDamage == null) {
+      if (source.is(DamageTypes.LIGHTNING_BOLT)) {
+        entityDamage = damageEventEntity;
+      }
+    }
+    if (damageEventBlock != null && blockDamage == null) {
+      if (source.is(DamageTypes.CACTUS)
+          || source.is(DamageTypes.SWEET_BERRY_BUSH)
+          || source.is(DamageTypes.HOT_FLOOR)) {
+        blockDamage = CraftBlock.at(entity.getCommandSenderWorld(), damageEventBlock);
+      }
+    }
+  }
+
+  @Inject(
+      method =
+          "handleEntityDamageEvent(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Ljava/util/Map;Ljava/util/Map;Z)Lorg/bukkit/event/entity/EntityDamageEvent;",
+      cancellable = true,
+      at = @At(value = "NEW", target = "java/lang/IllegalStateException"))
+  private static void arclight$unhandledDamage(
+      Entity entity,
+      DamageSource source,
+      Map<EntityDamageEvent.DamageModifier, Double> modifiers,
+      Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>> modifierFunctions,
+      boolean cancelled,
+      CallbackInfoReturnable<EntityDamageEvent> cir) {
+    // todo blockDamage is lost
+    EntityDamageEvent event;
+    if (source.getEntity() != null) {
+      // LuminaraLog.LOGGER.debug("Unhandled damage of {} by {} from {}", entity,
+      // source.getEntity(), source.msgId);
+      event =
+          new EntityDamageByEntityEvent(
+              ((EntityBridge) source.getEntity()).bridge$getBukkitEntity(),
+              ((EntityBridge) entity).bridge$getBukkitEntity(),
+              EntityDamageEvent.DamageCause.CUSTOM,
+              modifiers,
+              modifierFunctions);
+    } else {
+      // LuminaraLog.LOGGER.debug("Unhandled damage of {} from {}", entity, source.msgId);
+      event =
+          new EntityDamageEvent(
+              ((EntityBridge) entity).bridge$getBukkitEntity(),
+              EntityDamageEvent.DamageCause.CUSTOM,
+              modifiers,
+              modifierFunctions);
+    }
+    event.setCancelled(cancelled);
+    Bukkit.getPluginManager().callEvent(event);
+    if (!event.isCancelled()) {
+      ((EntityBridge) entity).bridge$getBukkitEntity().setLastDamageCause(event);
+    }
+    cir.setReturnValue(event);
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static boolean handleBlockSpreadEvent(
+      LevelAccessor world,
+      BlockPos source,
+      BlockPos target,
+      net.minecraft.world.level.block.state.BlockState block,
+      int flag) {
+    // Suppress during worldgen
+    if (!(world instanceof Level) || !DistValidate.isValid(world)) {
+      world.setBlock(target, block, flag);
+      return true;
+    }
+
+    CraftBlockState state = CraftBlockStates.getBlockState(world, target, flag);
+    state.setData(block);
+
+    BlockSpreadEvent event =
+        new BlockSpreadEvent(state.getBlock(), CraftBlock.at(world, source), state);
+    Bukkit.getPluginManager().callEvent(event);
+
+    if (!event.isCancelled()) {
+      state.update(true);
+    }
+    return !event.isCancelled();
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static boolean handleBlockGrowEvent(
+      Level world,
+      BlockPos pos,
+      net.minecraft.world.level.block.state.BlockState newData,
+      int flag) {
+    // Suppress during worldgen
+    if (!DistValidate.isValid(world)) {
+      world.setBlock(pos, newData, flag);
+      return true;
+    }
+    Block block =
+        ((WorldBridge) world).bridge$getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+    CraftBlockState state = (CraftBlockState) block.getState();
+    state.setData(newData);
+
+    BlockGrowEvent event = new BlockGrowEvent(block, state);
+    Bukkit.getPluginManager().callEvent(event);
+
+    if (!event.isCancelled()) {
+      state.update(true);
+    }
+
+    return !event.isCancelled();
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static boolean handleBlockFormEvent(
+      Level world,
+      BlockPos pos,
+      net.minecraft.world.level.block.state.BlockState block,
+      int flag,
+      @Nullable Entity entity) {
+    // Suppress during worldgen
+    if (!DistValidate.isValid(world)) {
+      world.setBlock(pos, block, flag);
+      return true;
+    }
+    CraftBlockState blockState = CraftBlockStates.getBlockState(world, pos, flag);
+    blockState.setData(block);
+
+    BlockFormEvent event =
+        entity == null
+            ? new BlockFormEvent(blockState.getBlock(), blockState)
+            : new EntityBlockFormEvent(
+                ((EntityBridge) entity).bridge$getBukkitEntity(),
+                blockState.getBlock(),
+                blockState);
+    Bukkit.getPluginManager().callEvent(event);
+
+    if (!event.isCancelled()) {
+      blockState.update(true);
+    }
+
+    return !event.isCancelled();
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static BlockFadeEvent callBlockFadeEvent(
+      LevelAccessor world,
+      BlockPos pos,
+      net.minecraft.world.level.block.state.BlockState newBlock) {
+    // Suppress during worldgen
+    if (!(world instanceof Level) || !DistValidate.isValid(world)) {
+      return new BlockFadeEvent(
+          CraftBlock.at(world, pos),
+          CraftBlockStates.getBlockState(CraftMagicNumbers.getMaterial(newBlock.getBlock()), null));
+    }
+    CraftBlockState state = CraftBlockStates.getBlockState(world, pos);
+    state.setData(newBlock);
+
+    BlockFadeEvent event = new BlockFadeEvent(state.getBlock(), state);
+    Bukkit.getPluginManager().callEvent(event);
+    return event;
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static BlockPhysicsEvent callBlockPhysicsEvent(
+      LevelAccessor world, BlockPos blockposition) {
+    org.bukkit.block.Block block = CraftBlock.at(world, blockposition);
+    BlockPhysicsEvent event = new BlockPhysicsEvent(block, block.getBlockData());
+    // Suppress during worldgen
+    if (world instanceof Level && DistValidate.isValid(world)) {
+      Bukkit.getPluginManager().callEvent(event);
+    }
+    return event;
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static boolean callEntityChangeBlockEvent(
+      Entity entity,
+      BlockPos position,
+      net.minecraft.world.level.block.state.BlockState newBlock,
+      boolean cancelled) {
+    Block block = CraftBlock.at(entity.level(), position);
+    EntityChangeBlockEvent event =
+        new EntityChangeBlockEvent(
+            ((EntityBridge) entity).bridge$getBukkitEntity(),
+            block,
+            CraftBlockData.fromData(newBlock));
+    event.setCancelled(cancelled);
+    // Suppress during worldgen
+    if (DistValidate.isValid(entity.level())) {
+      Bukkit.getPluginManager().callEvent(event);
+    }
+    return !event.isCancelled();
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static BlockRedstoneEvent callRedstoneChange(
+      Level world, BlockPos pos, int oldCurrent, int newCurrent) {
+    BlockRedstoneEvent event =
+        new BlockRedstoneEvent(CraftBlock.at(world, pos), oldCurrent, newCurrent);
+    // Suppress during worldgen
+    if (DistValidate.isValid(world)) {
+      Bukkit.getPluginManager().callEvent(event);
+    }
+    return event;
+  }
+
+  /**
+   * @author IzzelAliz
+   * @reason
+   */
+  @Overwrite
+  public static NotePlayEvent callNotePlayEvent(
+      Level world, BlockPos pos, NoteBlockInstrument instrument, int note) {
+    NotePlayEvent event =
+        new NotePlayEvent(
+            CraftBlock.at(world, pos),
+            org.bukkit.Instrument.getByType((byte) instrument.ordinal()),
+            new org.bukkit.Note(note));
+    // Suppress during worldgen
+    if (DistValidate.isValid(world)) {
+      Bukkit.getPluginManager().callEvent(event);
+    }
+    return event;
+  }
+
+  @Inject(method = "callItemSpawnEvent", cancellable = true, at = @At("HEAD"))
+  private static void arclight$noAirDrops(
+      ItemEntity itemEntity, CallbackInfoReturnable<ItemSpawnEvent> cir) {
+    if (itemEntity.getItem().isEmpty()) {
+      Item entity = (Item) ((EntityBridge) itemEntity).bridge$getBukkitEntity();
+      ItemSpawnEvent event = new ItemSpawnEvent(entity);
+      event.setCancelled(true);
+      cir.setReturnValue(event);
+    }
+  }
+
+  /**
+   * @author sj-hub9796
+   * @reason
+   */
+  @Overwrite
+  public static boolean callPlayerSignOpenEvent(
+      net.minecraft.world.entity.player.Player player,
+      SignBlockEntity tileEntitySign,
+      boolean front,
+      PlayerSignOpenEvent.Cause cause) {
+    Block block = CraftBlock.at(tileEntitySign.getLevel(), tileEntitySign.getBlockPos());
+    Sign sign;
+    if (CraftBlockStates.getBlockState(block) instanceof Sign sign1) {
+      sign = sign1;
+    } else {
+      sign =
+          new CraftSign<>(
+              ((WorldBridge) tileEntitySign.getLevel()).bridge$getWorld(), tileEntitySign);
+    }
+    Side side = front ? Side.FRONT : Side.BACK;
+    return callPlayerSignOpenEvent(
+        ((ServerPlayerEntityBridge) player).bridge$getBukkitEntity(), sign, side, cause);
+  }
+
+  /**
+   * @author sj-hub9796
+   * @reason
+   */
+  @Overwrite
+  public static boolean callPlayerSignOpenEvent(
+      Player player, Sign sign, Side side, PlayerSignOpenEvent.Cause cause) {
+    PlayerSignOpenEvent event = new PlayerSignOpenEvent(player, sign, side, cause);
+    Bukkit.getPluginManager().callEvent(event);
+    return !event.isCancelled();
+  }
+}

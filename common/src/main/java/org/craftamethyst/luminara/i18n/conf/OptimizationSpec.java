@@ -1,0 +1,29 @@
+package org.craftamethyst.luminara.i18n.conf;
+
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+
+@ConfigSerializable
+public class OptimizationSpec {
+
+  @Setting("cache-plugin-class")
+  private boolean cachePluginClass;
+
+  @Setting("goal-selector-update-interval")
+  private int goalSelectorInterval;
+
+  @Setting("use-activation-and-tracking-range")
+  private boolean useActivationAndTrackingRange;
+
+  public boolean isCachePluginClass() {
+    return cachePluginClass;
+  }
+
+  public int getGoalSelectorInterval() {
+    return goalSelectorInterval;
+  }
+
+  public boolean useActivationAndTrackingRange() {
+    return useActivationAndTrackingRange;
+  }
+}
