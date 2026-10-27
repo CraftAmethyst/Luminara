@@ -80,5 +80,6 @@
     "adventure.NameableAdventureMixin",
     "adventure.NamespacedKeyAdventureMixin",
     "adventure.TitleAdventureCompatMixin"
-  ]
+  ],
+  "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin"
 }

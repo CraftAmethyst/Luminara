@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+        mavenCentral()
+        maven { url = 'https://maven.izzel.io/releases' }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.54'
+        classpath 'org.spongepowered:mixingradle:0.7.38'
+        classpath 'io.izzel.arclight:arclight-gradle-plugin:1.23'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'io.izzel.arclight'
+apply plugin: 'java'
+
+group = 'org.craftamethyst.luminara'
+version = '1.0.0'
+
+repositories {
+    maven { url = 'https://maven.minecraftforge.net' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+    maven { url = 'https://maven.izzel.io/releases' }
+    mavenCentral()
+}
+
+arclight {
+    mcVersion = '1.20.1'
+    forgeVersion = '47.4.0'
+    bukkitVersion = 'v1_20_R1'
+    sharedSpigot = true
+    wipeVersion = true
+    reobfVersion = true
+    accessTransformer = rootProject.file('../common/bukkit.at')
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    accessTransformer = rootProject.file('../common/src/main/resources/META-INF/accesstransformer.cfg')
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.0'
+}
+
+tasks.named('remapSpigotJar').configure {
+    includes.add('net/minecraft/world/level/block/ChestBlock$DoubleInventory')
+}
+
+tasks.register('publishMappedSpigot', Copy) {
+    dependsOn('remapSpigotJar')
+    from(layout.buildDirectory.file('arclight_cache/spigot-1.20.1-mapped-deobf.jar'))
+    into(rootProject.file('../common/libs'))
+}

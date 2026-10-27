@@ -29,7 +29,16 @@ dependencies {
     compileOnly "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
 }
 
+processResources {
+    from(project(':common').file('src/main/resources/luminara.accesswidener'))
+}
+
+tasks.named('validateAccessWidener') {
+    enabled = false
+}
+
 loom {
+    accessWidenerPath.set(project(':common').file('src/main/resources/luminara.accesswidener'))
     mixin {
         defaultRefmapName.set('mixins.arclight.refmap.json')
     }

@@ -4,17 +4,22 @@
   "version": "${version}",
   "name": "Luminara",
   "description": "Bukkit, Spigot, and Paper plugin compatibility for Fabric servers.",
-  "authors": ["${mod_author}"],
+  "authors": [
+    "${mod_author}"
+  ],
   "license": "${license}",
   "environment": "server",
   "entrypoints": {
-    "preLaunch": ["org.craftamethyst.luminara.fabric.LuminaraFabricPreLaunch"],
-    "main": ["org.craftamethyst.luminara.fabric.LuminaraFabric"]
+    "preLaunch": [
+      "org.craftamethyst.luminara.fabric.LuminaraFabricPreLaunch"
+    ],
+    "main": [
+      "org.craftamethyst.luminara.fabric.LuminaraFabric"
+    ]
   },
   "mixins": [
     "mixins.arclight.core.fabric.json",
     "mixins.arclight.bukkit.fabric.json",
-    "mixins.arclight.compat.fabric.json",
     "mixins.arclight.fabric.json"
   ],
   "depends": {
@@ -22,5 +27,6 @@
     "fabric": "*",
     "minecraft": "${minecraft_version}",
     "java": ">=${java_version}"
-  }
+  },
+  "accessWidener": "luminara.accesswidener"
 }

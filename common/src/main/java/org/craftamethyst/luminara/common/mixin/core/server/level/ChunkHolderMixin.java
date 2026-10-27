@@ -130,37 +130,5 @@ public abstract class ChunkHolderMixin implements ChunkHolderBridge {
     }
   }
 
-  @Inject(method = "updateFutures", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
-  public void arclight$onChunkLoad(
-      ChunkMap chunkManager,
-      Executor executor,
-      CallbackInfo ci,
-      ChunkStatus chunkStatus,
-      ChunkStatus chunkStatus1,
-      boolean flag,
-      boolean flag1,
-      FullChunkStatus locationType,
-      FullChunkStatus locationType1) {
-    if (!locationType.isOrAfter(FullChunkStatus.FULL)
-        && locationType1.isOrAfter(FullChunkStatus.FULL)) {
-      this.getFutureIfPresentUnchecked(ChunkStatus.FULL)
-          .thenAccept(
-              either -> {
-                LevelChunk chunk = (LevelChunk) either.left().orElse(null);
-                if (chunk != null) {
-                  ((ChunkMapBridge) chunkManager)
-                      .bridge$getCallbackExecutor()
-                      .execute(((ChunkBridge) chunk)::bridge$loadCallback);
-                }
-              })
-          .exceptionally(
-              throwable -> {
-                // ensure exceptions are printed, by default this is not the case
-                LuminaraLog.LOGGER.fatal("chunk.load-callback.failed", this.pos, throwable);
-                return null;
-              });
 
-      ((ChunkMapBridge) chunkManager).bridge$getCallbackExecutor().run();
-    }
-  }
 }

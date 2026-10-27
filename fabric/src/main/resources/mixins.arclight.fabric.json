@@ -8,5 +8,8 @@
     "defaultRequire": 1
   },
   "compatibilityLevel": "JAVA_17",
-  "mixins": []
+  "mixins": [
+    "core.commands.CommandsMixin_Fabric"
+  ],
+  "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin"
 }

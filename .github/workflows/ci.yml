@@ -77,6 +77,38 @@ jobs:
           if-no-files-found: warn
           path: build/forge-smoke.log
 
+  smoke-fabric:
+    name: Fabric dedicated-server startup smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Java 17
+        uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
+      - name: Start the Fabric development server and verify startup
+        timeout-minutes: 25
+        run: |
+          mkdir -p build fabric/run
+          printf 'eula=true\n' > fabric/run/eula.txt
+          printf 'online-mode=false\nlevel-type=flat\nmax-players=1\n' > fabric/run/server.properties
+          timeout 900 ./gradlew :fabric:runServer --no-daemon --console=plain > build/fabric-smoke.log 2>&1 || true
+          grep -q 'Luminara 2.0.0' build/fabric-smoke.log
+          grep -q 'Done (' build/fabric-smoke.log
+      - name: Upload Fabric smoke log
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: luminara-fabric-smoke-${{ github.sha }}
+          retention-days: 7
+          if-no-files-found: warn
+          path: build/fabric-smoke.log
+
   windows:
     name: Windows assembly and mod JAR contracts
     runs-on: windows-latest

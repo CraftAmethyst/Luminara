@@ -103,16 +103,11 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
   public abstract LevelData getLevelData();
 
   @Shadow
-  public abstract ResourceKey<Level> dimension();
+  protected abstract void sendBlockUpdated(
+      BlockPos pos, BlockState oldState, BlockState newState, int flags);
 
-  @Shadow(remap = false)
-  public abstract void markAndNotifyBlock(
-      BlockPos p_46605_,
-      @org.jetbrains.annotations.Nullable LevelChunk levelchunk,
-      BlockState blockstate,
-      BlockState p_46606_,
-      int p_46607_,
-      int p_46608_);
+  @Shadow
+  public abstract ResourceKey<Level> dimension();
 
   @Shadow
   public abstract DimensionType dimensionType();
@@ -228,7 +223,8 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
   }
 
   @Inject(
-      method = "markAndNotifyBlock",
+      method = {"markAndNotifyBlock", "sendBlockUpdated"},
+      require = 0,
       cancellable = true,
       at =
           @At(
@@ -259,7 +255,8 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
   }
 
   @Inject(
-      method = "markAndNotifyBlock",
+      method = {"markAndNotifyBlock", "sendBlockUpdated"},
+      require = 0,
       cancellable = true,
       at =
           @At(
@@ -287,7 +284,7 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
       BlockState actualBlock,
       int i,
       int j) {
-    this.markAndNotifyBlock(blockposition, chunk, oldBlock, newBlock, i, j);
+    this.sendBlockUpdated(blockposition, oldBlock, newBlock, i);
   }
 
   public CraftServer getCraftServer() {

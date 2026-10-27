@@ -1,15 +1,3 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
-        mavenCentral()
-        maven { url = 'https://maven.izzel.io/releases' }
-    }
-    dependencies {
-        classpath 'io.izzel.arclight:arclight-gradle-plugin:1.23'
-    }
-}
-
 plugins {
     id 'fabric-loom' version '1.9-SNAPSHOT' apply(false)
     id 'net.neoforged.moddev.legacyforge' version '2.0.77' apply(false)
@@ -103,38 +91,6 @@ tasks.register('buildSpigotServer') {
                     buildToolsJar.get().asFile.absolutePath, '--rev', minecraftVersion, '--compile', 'spigot'
         }
     }
-}
-
-def processSpigotMapping = tasks.register('processSpigotMapping', io.izzel.arclight.gradle.tasks.ProcessMappingV2Task) {
-    group = 'spigot'
-    description = 'Builds the Bukkit-to-SRG mapping used by the Spigot remapper.'
-    dependsOn('buildSpigotServer', 'downloadMinecraftVersionJson', ':common:createMinecraftArtifacts')
-    buildData = spigotBuildToolsDir.get().dir('BuildData').asFile
-    mcVersion = minecraftVersion
-    bukkitVersion = 'v1_20_R1'
-    outDir = spigotMappingDir.get().asFile
-    inMeta = versionJson.get().asFile
-    inSrg = project(':common').layout.buildDirectory.file('moddev/artifacts/namedToIntermediate.tsrg').get().asFile
-    inMcp = project(':common').layout.buildDirectory.file('moddev/artifacts/intermediateToNamed.srg').get().asFile
-    inJar = spigotJar.get().asFile
-    inVanillaJar = project(':common').layout.buildDirectory.file('moddev/artifacts/vanilla-1.20.1.jar').get().asFile
-    packageName = 'v'
-}
-
-tasks.register('remapSpigotJar', io.izzel.arclight.gradle.tasks.RemapSpigotTask) {
-    group = 'spigot'
-    description = 'Remaps Spigot CraftBukkit classes to Mojang names for compilation.'
-    dependsOn(processSpigotMapping)
-    ssJar = spigotBuildToolsDir.get().file('BuildData/bin/SpecialSource.jar').asFile
-    inJar = spigotJar.get().asFile
-    inSrg = spigotMappingDir.get().file('bukkit_srg.srg').asFile
-    inSrgToStable = project(':common').layout.buildDirectory.file('moddev/artifacts/intermediateToNamed.srg').get().asFile
-    inheritanceMap = spigotMappingDir.get().file('inheritanceMap.txt').asFile
-    outJar = spigotWorkDir.get().file('spigot-1.20.1-mapped.jar').asFile
-    outDeobf = spigotWorkDir.get().file('spigot-1.20.1-mapped-deobf.jar').asFile
-    inAt = layout.projectDirectory.file('common/bukkit.at').get().asFile
-    bukkitVersion = 'v1_20_R1'
-    includes.add('net/minecraft/world/level/block/ChestBlock$DoubleInventory')
 }
 
 def distributionDir = layout.buildDirectory.dir('distributions')
@@ -257,4 +213,13 @@ tasks.register('smokeFabricServer') {
     group = 'verification'
     description = 'Runs the Fabric dedicated-server smoke test.'
     dependsOn(':fabric:runServer')
+}
+
+// Isolated build: the legacy Arclight/ForgeGradle toolchain is only loaded when this
+// task is requested, so it cannot leak an old Guava onto the main build classpath.
+tasks.register('remapSpigotJar', GradleBuild) {
+    group = 'spigot'
+    description = 'Regenerates the checked-in Mojang-named CraftBukkit compatibility JAR.'
+    dir = file('spigot-remap')
+    tasks = ['publishMappedSpigot']
 }
