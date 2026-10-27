@@ -17,11 +17,7 @@
       "org.craftamethyst.luminara.fabric.LuminaraFabric"
     ]
   },
-  "mixins": [
-    "mixins.arclight.core.fabric.json",
-    "mixins.arclight.bukkit.fabric.json",
-    "mixins.arclight.fabric.json"
-  ],
+  "mixins": [],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
     "fabric": "*",

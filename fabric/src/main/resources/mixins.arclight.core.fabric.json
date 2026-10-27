@@ -238,7 +238,6 @@
     "world.level.block.DragonEggBlockMixin",
     "world.level.block.EndPortalBlockMixin",
     "world.level.block.FenceGateBlockMixin",
-    "world.level.block.FireBlockMixin",
     "world.level.block.FungusBlockMixin",
     "world.level.block.GrowingPlantHeadBlockMixin",
     "world.level.block.IceBlockMixin",

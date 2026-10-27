@@ -35,12 +35,42 @@ repositories {
 }
 
 mixin {
-    config('mixins.arclight.core.json')
-    config('mixins.arclight.bukkit.json')
-    config('mixins.arclight.compat.json')
-    config('mixins.arclight.forge.json')
-    config('mixins.arclight.impl.forge.optimization.json')
-    config('mixins.arclight.forge.compat.json')
+}
+
+def forgeBundle = configurations.create('forgeBundle') {
+    canBeConsumed = false
+    canBeResolved = true
+    transitive = false
+}
+
+def bundledLibsDir = layout.buildDirectory.dir('bundled-libs')
+def extractBundledLibs = tasks.register('extractBundledLibs', Sync) {
+    from({ forgeBundle.collect { zipTree(it) } }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/services/**'
+        exclude 'module-info.class'
+        exclude 'META-INF/versions/*/module-info.class'
+        exclude 'org/apache/logging/**'
+        exclude 'com/google/gson/**'
+        exclude 'com/google/common/**'
+        exclude 'org/objectweb/asm/**'
+        exclude 'org/slf4j/**'
+        exclude 'org/apache/commons/**'
+    }
+    from({ zipTree(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar')) }) {
+        include 'org/bukkit/craftbukkit/**'
+        include 'org/spigotmc/**'
+    }
+    into bundledLibsDir
+}
+
+sourceSets {
+    bundledLibs {
+        output.dir(bundledLibsDir, builtBy: extractBundledLibs)
+    }
 }
 
 legacyForge {
@@ -72,6 +102,8 @@ legacyForge {
     mods {
         "${mod_id}" {
             sourceSet sourceSets.main
+            sourceSet project(':common').sourceSets.main
+            sourceSet sourceSets.bundledLibs
         }
     }
 }
@@ -84,6 +116,27 @@ dependencies {
     testImplementation platform("org.junit:junit-bom:5.14.4")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher' 
+    add('forgeBundle', "io.izzel:tools:${libs.versions.tools.get()}")
+    add('forgeBundle', "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}")
+    add('forgeBundle', "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}")
+    add('forgeBundle', "org.spongepowered:configurate-core:${libs.versions.configurate.get()}")
+    add('forgeBundle', "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}")
+    add('forgeBundle', 'org.yaml:snakeyaml:2.0')
+    add('forgeBundle', 'net.md-5:SpecialSource:1.11.0')
+    add('forgeBundle', 'jline:jline:2.12.1')
+    add('forgeBundle', "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}")
+    add('forgeBundle', "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}")
+    add('forgeBundle', "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}")
+    add('forgeBundle', 'net.md-5:bungeecord-chat:1.16-R0.4')
+    add('forgeBundle', "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar")
+    ['adventure-api', 'adventure-key', 'adventure-text-serializer-gson',
+     'adventure-text-serializer-json', 'adventure-text-serializer-legacy',
+     'adventure-text-serializer-plain', 'adventure-text-minimessage',
+     'adventure-text-logger-slf4j'].each { artifact ->
+        add('forgeBundle', "net.kyori:${artifact}:${libs.versions.adventure.get()}")
+    }
+    add('forgeBundle', 'net.kyori:examination-api:1.3.0')
+
 }
 
 jar {
@@ -95,4 +148,11 @@ jar {
 
 tasks.named('compileJava', JavaCompile) {
     
+}
+
+jar {
+    from({ zipTree(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar')) }) {
+        include 'org/bukkit/craftbukkit/**'
+        include 'org/spigotmc/**'
+    }
 }

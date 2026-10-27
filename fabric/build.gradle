@@ -19,6 +19,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":common")
+    implementation files(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar'))
     compileOnly("net.minecraftforge:eventbus:4.0.0") { transitive = false }
 }
 
@@ -78,4 +79,11 @@ loom {
 
 tasks.named('validateAccessWidener') {
     enabled = false
+}
+
+jar {
+    from({ zipTree(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar')) }) {
+        include 'org/bukkit/craftbukkit/**'
+        include 'org/spigotmc/**'
+    }
 }

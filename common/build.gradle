@@ -110,7 +110,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
-    filesMatching('luminara-version.properties') {
+    filesMatching('**/luminara-version.properties') {
         expand 'version': project.version
     }
 }
