@@ -3,6 +3,14 @@ plugins {
     id 'fabric-loom'
 }
 
+configurations {
+    fabricBundle {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered {
@@ -11,11 +19,12 @@ dependencies {
     }
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    compileOnly project(':common')
-    implementation project(':common')
+    compileOnly(project(':common')) { transitive = false }
+    implementation(project(':common')) { transitive = false }
     implementation "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
     implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
-    compileOnly "net.minecraftforge:eventbus:4.0.0"
+    compileOnly("net.minecraftforge:eventbus:4.0.0") { transitive = false }
+    fabricBundle "net.minecraftforge:eventbus:6.0.5"
     compileOnly "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
 }
 
@@ -37,6 +46,15 @@ def commonJar = project(':common').tasks.named('jar').flatMap { it.archiveFile }
 
 jar {
     dependsOn(project(':common').tasks.named('jar'))
+    from({
+        configurations.fabricBundle.collect { it.isDirectory() ? it : zipTree(it) }
+    }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'module-info.class'
+    }
     from({ zipTree(commonJar.get().asFile) }) {
         exclude 'META-INF/MANIFEST.MF'
         exclude 'META-INF/*.SF'
@@ -44,10 +62,10 @@ jar {
         exclude 'META-INF/*.RSA'
         exclude 'META-INF/mods.toml'
         exclude 'META-INF/accesstransformer.cfg'
-        exclude 'META-INF/luminara-version.properties'
         exclude 'META-INF/services/**'
         exclude 'module-info.class'
         exclude 'META-INF/versions/*/module-info.class'
+        exclude 'net/minecraft/**'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

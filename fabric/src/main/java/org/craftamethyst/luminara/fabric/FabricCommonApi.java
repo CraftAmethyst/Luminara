@@ -6,7 +6,6 @@ import net.minecraft.server.MinecraftServer;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.ServerOperator;
 import org.craftamethyst.luminara.common.mod.ArclightCommon;
-import org.craftamethyst.luminara.common.mod.server.ArclightServer;
 
 /** Fabric implementation of the loader-neutral common services. */
 public final class FabricCommonApi implements ArclightCommon.Api {
@@ -18,7 +17,7 @@ public final class FabricCommonApi implements ArclightCommon.Api {
 
   @Override
   public MinecraftServer getCurrentServer() {
-    return ArclightServer.getMinecraftServer();
+    return org.craftamethyst.luminara.common.mod.server.ArclightServer.getMinecraftServer();
   }
 
   @Override

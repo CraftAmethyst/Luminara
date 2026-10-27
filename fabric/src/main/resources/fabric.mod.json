@@ -12,9 +12,9 @@
     "main": ["org.craftamethyst.luminara.fabric.LuminaraFabric"]
   },
   "mixins": [
-    "mixins.arclight.core.json",
-    "mixins.arclight.bukkit.json",
-    "mixins.arclight.compat.json",
+    "mixins.arclight.core.fabric.json",
+    "mixins.arclight.bukkit.fabric.json",
+    "mixins.arclight.compat.fabric.json",
     "mixins.arclight.fabric.json"
   ],
   "depends": {

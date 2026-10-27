@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
-    <img src="assets/banner.png" alt="Luminara - Bukkit, Spigot, and Paper compatibility for Forge servers" width="100%">
+    <img src="assets/banner.png" alt="Luminara - Bukkit, Spigot, and Paper compatibility for Forge and Fabric servers" width="100%">
   </picture>
 </p>
 
@@ -43,8 +43,8 @@ Luminara is a fork project developed based on the [Arclight](https://github.com/
 | JDK | 17, 21 | 21, 25 |
 | Forge | ≥ 47.4.0 | Not supported |
 | NeoForge | Not supported | ≥ 21.1.117 |
-| Fabric Loader | Not supported | ≥ 0.16.0 |
-| Fabric API | Not supported | ≥ 0.115.0 |
+| Fabric Loader | ≥ 0.16.9 | ≥ 0.16.0 |
+| Fabric API | ≥ 0.92.1+1.20.1 | ≥ 0.115.0 |
 | CraftBukkit | `v1_20_R1` | `v1_21_R1` |
 
 ## Community Support

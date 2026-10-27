@@ -44,8 +44,8 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服�
 | JDK | 17、21 | 21、25 |
 | Forge | ≥ 47.4.0 | 不支持 |
 | NeoForge | 不支持 | ≥ 21.1.117 |
-| Fabric Loader | 不支持 | ≥ 0.16.0 |
-| Fabric API | 不支持 | ≥ 0.115.0 |
+| Fabric Loader | ≥ 0.16.9 | ≥ 0.16.0 |
+| Fabric API | ≥ 0.92.1+1.20.1 | ≥ 0.115.0 |
 | CraftBukkit | `v1_20_R1` | `v1_21_R1` |
 
 ## 社区支持
