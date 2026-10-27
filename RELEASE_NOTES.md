@@ -2,6 +2,8 @@
 
 > Minecraft 1.20.1 | Forge 47.4.0 | Fabric Loader 0.16.9 | Java 17 | Dedicated Server
 
+> **警告 / Warning:** 当前 `2.0.0-alpha.1` 的 Forge/Fabric JAR 可以启动，但尚未启用 Bukkit/Spigot/Paper 的 Mixin 注入，Bukkit 插件不会加载。详见下方“已知限制”。The current `2.0.0-alpha.1` Forge/Fabric JARs start, but Bukkit/Spigot/Paper Mixin injection is not enabled; Bukkit plugins will not load. See "Known limitations" below.
+
 <details>
 <summary>中文发布说明</summary>
 
