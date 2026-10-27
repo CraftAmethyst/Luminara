@@ -694,8 +694,10 @@ public final class PlatformHooks {
     }
 
     public static int getBlockExpDrop(Block block, BlockState state, ServerLevel world, BlockPos pos, ItemStack stack, boolean ignoredDropFlag) {
-        int silkTouch = stack.getEnchantmentLevel(net.minecraft.world.item.enchantment.Enchantments.SILK_TOUCH);
-        int fortune = stack.getEnchantmentLevel(net.minecraft.world.item.enchantment.Enchantments.BLOCK_FORTUNE);
+        int silkTouch = net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
+            net.minecraft.world.item.enchantment.Enchantments.SILK_TOUCH, stack);
+        int fortune = net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(
+            net.minecraft.world.item.enchantment.Enchantments.BLOCK_FORTUNE, stack);
         if (FORGE_PRESENT) {
             try {
                 Method method = block.getClass().getMethod("getExpDrop", BlockState.class, ServerLevel.class, net.minecraft.util.RandomSource.class, BlockPos.class, int.class, int.class);

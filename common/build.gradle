@@ -4,12 +4,11 @@ plugins {
 }
 
 mixin {
-    add(sourceSets.main, 'mixins.arclight.refmap.json')
+    add(sourceSets.main, 'luminara.refmap.json')
 }
 
 legacyForge {
     version = "${minecraft_version}-${forge_version}"
-    validateAccessTransformers = false
     if (file("src/main/resources/META-INF/accesstransformer.cfg").exists()) {
         accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
     }
@@ -20,93 +19,70 @@ legacyForge {
 }
 
 repositories {
-    maven { url = 'https://maven.minecraftforge.net' }
-    maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
-    maven { url = 'https://maven.izzel.io/releases' }
+    maven {
+        name = 'Izzel'
+        url = 'https://maven.izzel.io/releases'
+        content {
+            includeGroupByRegex 'io\\.izzel(\\..*)?'
+            includeGroup 'net.md-5'
+        }
+    }
+    maven {
+        name = 'JitPack'
+        url = 'https://jitpack.io'
+        content { includeGroupByRegex 'com\\.github\\.ArclightTeam(\\..*)?' }
+    }
+    maven {
+        name = 'ForgeMaven'
+        url = 'https://maven.minecraftforge.net'
+        content { includeGroup 'net.minecraftforge' }
+    }
     ivy {
+        name = 'SpigotPinnedSnapshot'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
         patternLayout {
             artifact '[organisation]/[module]/1.20.1-R0.1-SNAPSHOT/[module]-[revision](-[classifier]).[ext]'
             setM2compatible(true)
         }
         metadataSources { artifact() }
-    }
-}
-
-def mappedSpigotJar = layout.projectDirectory.file('libs/spigot-1.20.1-mapped-deobf.jar')
-
-configurations {
-    spigotMapped {
-        canBeConsumed = false
-        canBeResolved = true
-    }
-    embed {
-        canBeConsumed = false
-        canBeResolved = true
-        transitive = false
+        content { includeGroupByRegex 'org\\.spigotmc(\\..*)?' }
     }
 }
 
 dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
-    compileOnly "cpw.mods:modlauncher:${libs.versions.modlauncher.get()}"
-    compileOnly "cpw.mods:securejarhandler:${libs.versions.securejarhandler.get()}"
-    compileOnly "net.minecraftforge:fmlcore:${minecraft_version}-${forge_version}"
-    compileOnly "net.minecrell:terminalconsoleappender:1.2.0"
-    spigotMapped files(mappedSpigotJar)
-    compileOnly files(mappedSpigotJar)
-    testImplementation files(mappedSpigotJar)
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-    implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
-    implementation "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
-    implementation "io.izzel:tools:${libs.versions.tools.get()}"
-    implementation "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
-    implementation "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
-    implementation "org.apache.logging.log4j:log4j-api:${libs.versions.log4j.get()}"
-    implementation "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
-    implementation "org.jetbrains:annotations:23.0.0"
-    implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
-    implementation 'net.md-5:SpecialSource:1.11.0'
-    implementation 'jline:jline:2.12.1'
-    implementation 'org.yaml:snakeyaml:2.0'
-    implementation "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
-    implementation "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
-    implementation platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
-    implementation 'net.kyori:adventure-api'
-    implementation 'net.kyori:adventure-key'
-    implementation 'net.kyori:adventure-text-serializer-gson'
-    implementation 'net.kyori:adventure-text-serializer-json'
-    implementation 'net.kyori:adventure-text-serializer-legacy'
-    implementation 'net.kyori:adventure-text-serializer-plain'
-    implementation 'net.kyori:adventure-text-minimessage'
-    implementation 'net.kyori:adventure-text-logger-slf4j'
-    implementation 'net.kyori:examination-api'
-    implementation 'org.apache.logging.log4j:log4j-jul:2.19.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    compileOnly "net.minecraftforge:eventbus:4.0.0"
+
+    api files('libs/spigot-1.20.1-mapped-deobf.jar')
+    api "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
+    api "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
+    api "io.izzel:tools:${libs.versions.tools.get()}"
+    api "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
+    api "org.spongepowered:configurate-core:${libs.versions.configurate.get()}"
+    api "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
+    api 'org.yaml:snakeyaml:2.0'
+    api 'net.md-5:SpecialSource:1.11.0'
+    api 'jline:jline:2.12.1'
+    api "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}"
+    api "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
+    api "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
+    api 'net.md-5:bungeecord-chat:1.16-R0.4'
+    api 'net.minecrell:terminalconsoleappender:1.2.0'
+    api platform("net.kyori:adventure-bom:${libs.versions.adventure.get()}")
+    api 'net.kyori:adventure-api'
+    api 'net.kyori:adventure-key'
+    api 'net.kyori:adventure-text-serializer-gson'
+    api 'net.kyori:adventure-text-serializer-json'
+    api 'net.kyori:adventure-text-serializer-legacy'
+    api 'net.kyori:adventure-text-serializer-plain'
+    api 'net.kyori:adventure-text-minimessage'
+    api 'net.kyori:adventure-text-logger-slf4j'
+    api 'net.kyori:examination-api'
+
     annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.processor.get()}:processor"
     annotationProcessor "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
     annotationProcessor "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
-    embed "io.izzel:tools:${libs.versions.tools.get()}"
-    embed "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}"
-    embed "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
-    embed "org.spongepowered:configurate-core:${libs.versions.configurate.get()}"
-    embed "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
-    embed 'org.yaml:snakeyaml:2.0'
-    embed 'net.md-5:SpecialSource:1.11.0'
-    embed 'jline:jline:2.12.1'
-    embed "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}"
-    embed "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}"
-    embed "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
-    embed 'net.md-5:bungeecord-chat:1.16-R0.4'
-    embed "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
-    ['adventure-api', 'adventure-key', 'adventure-text-serializer-gson',
-     'adventure-text-serializer-json', 'adventure-text-serializer-legacy',
-     'adventure-text-serializer-plain', 'adventure-text-minimessage',
-     'adventure-text-logger-slf4j'].each { artifact ->
-        embed "net.kyori:${artifact}:${libs.versions.adventure.get()}"
-    }
-    embed 'net.kyori:examination-api:1.3.0'
-    embed 'net.kyori:examination-string:1.3.0'
 
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -129,88 +105,17 @@ artifacts {
     commonResources sourceSets.main.resources.sourceDirectories.singleFile
 }
 
-sourceSets {
-    smokePlugin
-    smokeMod
-}
-
-dependencies {
-    smokePluginCompileOnly "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
-}
-
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << '-XDignore.symbol.file' << '-XDenableSunApiLintControl'
 }
 
-jar {
-    manifest.attributes 'MixinConnector': 'org.craftamethyst.luminara.common.mod.ArclightConnector'
-    from({ zipTree(mappedSpigotJar.asFile) }) {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-        exclude 'module-info.class'
-        exclude 'META-INF/versions/*/module-info.class'
-        exclude 'net/minecraft/**'
-    }
-    from({ configurations.embed.collect { it.isDirectory() ? it : zipTree(it) } }) {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-        exclude 'META-INF/services/**'
-        exclude 'module-info.class'
-        exclude 'META-INF/versions/*/module-info.class'
-        exclude 'org/apache/logging/**'
-        exclude 'com/google/gson/**'
-        exclude 'com/google/common/**'
-        exclude 'org/objectweb/asm/**'
-        exclude 'org/slf4j/**'
-        exclude 'org/apache/commons/**'
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-def generateLuminaraVersion = tasks.register('generateLuminaraVersion') {
-    def outputDirectory = layout.buildDirectory.dir('generated/resources/luminara')
-    def outputFile = outputDirectory.map { it.file('META-INF/luminara-version.properties') }
-    inputs.property('minecraftVersion', providers.provider { minecraft_version })
-    inputs.property('forgeVersion', providers.provider { forge_version })
-    inputs.property('javaVersion', providers.provider { java_version })
-    inputs.property('bukkitPackage', libs.versions.bukkit.package.get())
-    inputs.property('version', providers.provider { project.version.toString() })
-    inputs.property('gitCommit', project.rootProject.ext.gitHash)
-    outputs.file(outputFile)
-    doLast {
-        def values = [
-                minecraftVersion: minecraft_version,
-                forgeVersion: forge_version,
-                javaVersion: java_version,
-                bukkitPackage: libs.versions.bukkit.package.get(),
-                version: project.version.toString(),
-                gitCommit: project.rootProject.ext.gitHash
-        ]
-        def target = outputFile.get().asFile
-        target.parentFile.mkdirs()
-        target.withWriter('UTF-8') { writer ->
-            values.keySet().sort().each { key -> writer.write("${key}=${values[key]}\n") }
-        }
+processResources {
+    filesMatching('luminara-version.properties') {
+        expand 'version': project.version
     }
 }
 
-sourceSets.main.resources.srcDir(generateLuminaraVersion.map { layout.buildDirectory.dir('generated/resources/luminara').get().asFile })
-processResources.dependsOn(generateLuminaraVersion)
-
-tasks.register('smokePluginJar', Jar) {
-    archiveFileName.set('luminara-smoke-plugin.jar')
-    destinationDirectory.set(layout.buildDirectory.dir('smoke-fixtures'))
-    from(sourceSets.smokePlugin.output)
-}
-
-tasks.register('smokeModJar', Jar) {
-    archiveFileName.set('luminara-smoke-mod.jar')
-    destinationDirectory.set(layout.buildDirectory.dir('smoke-fixtures'))
-    from(sourceSets.smokeMod.output) {
-        exclude 'net/minecraftforge/**'
-    }
+tasks.withType(Javadoc).configureEach {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.tags = ['author:a:Author', 'reason:a:Reason']
 }

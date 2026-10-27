@@ -42,34 +42,6 @@ repositories {
         name = 'BlameJared'
         url = 'https://maven.blamejared.com'
     }
-    maven {
-        name = 'Izzel'
-        url = 'https://maven.izzel.io/releases'
-        content {
-            includeGroupByRegex 'io\\.izzel(\\..*)?'
-            includeGroup 'net.md-5'
-        }
-    }
-    maven {
-        name = 'JitPack'
-        url = 'https://jitpack.io'
-        content { includeGroupByRegex 'com\\.github\\.ArclightTeam(\\..*)?' }
-    }
-    maven {
-        name = 'ForgeMaven'
-        url = 'https://maven.minecraftforge.net'
-        content { includeGroup 'net.minecraftforge' }
-    }
-    ivy {
-        name = 'SpigotPinnedSnapshot'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
-        patternLayout {
-            artifact '[organisation]/[module]/1.20.1-R0.1-SNAPSHOT/[module]-[revision](-[classifier]).[ext]'
-            setM2compatible(true)
-        }
-        metadataSources { artifact() }
-        content { includeGroupByRegex 'org\\.spigotmc(\\..*)?' }
-    }
 }
 
 // Declare capabilities on the outgoing configurations.
@@ -156,4 +128,9 @@ publishing {
             url System.getenv('local_maven_url')
         }
     }
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.tags = ['author:a:Author', 'reason:a:Reason']
 }

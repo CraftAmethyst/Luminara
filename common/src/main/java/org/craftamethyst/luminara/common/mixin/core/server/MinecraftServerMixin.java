@@ -38,7 +38,6 @@ import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.status.ServerStatus;
-import net.minecraft.obfuscate.DontObfuscate;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.*;
 import net.minecraft.server.level.ServerChunkCache;
@@ -697,17 +696,6 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     this.server.syncCommands();
   }
 
-  /**
-   * @author IzzelAliz
-   * @reason our branding, no one should fuck this up
-   */
-  @DontObfuscate
-  @Overwrite
-  public String getServerModName() {
-    return (PlatformHooks.getServerBranding()
-        + " luminara/"
-        + ArclightVersion.current().getReleaseName());
-  }
 
   @Override
   public void bridge$setAutosavePeriod(int autosavePeriod) {

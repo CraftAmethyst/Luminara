@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "org.craftamethyst.luminara.common.mixin.forge",
   "target": "@env(DEFAULT)",
-  "refmap": "mixins.arclight.forge.refmap.json",
+  "refmap": "luminara.refmap.json",
   "setSourceFile": true,
   "injectors": {
     "defaultRequire": 1

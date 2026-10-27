@@ -634,3 +634,8 @@ mutable field net/minecraft/world/level/saveddata/maps/MapItemSavedData unlimite
 
 # Fabric: CraftServer constructs a fresh command dispatcher for plugin commands.
 accessible method net/minecraft/commands/Commands <init> ()V
+
+# Fabric compile targets that Forge access transformers expose.
+accessible class net/minecraft/world/inventory/MenuType$MenuSupplier
+accessible method net/minecraft/world/inventory/MenuType <init> (Lnet/minecraft/world/inventory/MenuType$MenuSupplier;Lnet/minecraft/world/flag/FeatureFlagSet;)V
+accessible method net/minecraft/world/level/block/entity/HopperBlockEntity setCooldown (I)V

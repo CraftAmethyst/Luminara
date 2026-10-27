@@ -3,7 +3,9 @@
   "minVersion": "0.8",
   "package": "org.craftamethyst.luminara.common.mixin.bukkit",
   "target": "@env(DEFAULT)",
+  "refmap": "luminara.refmap.json",
   "setSourceFile": true,
+  "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin",
   "injectors": {
     "defaultRequire": 1
   },
@@ -30,24 +32,19 @@
     "CraftMetaItemMixin",
     "CraftPlayerMixin",
     "CraftPotionUtilMixin",
-    "CraftRecipeMixin",
     "CraftRegionAccessorMixin",
     "CraftSchedulerMixin",
     "CraftServerMixin",
     "CraftSpawnCategoryMixin",
     "CraftSpellcasterMixin",
     "CraftVillagerMixin",
-    "CraftWorldMixin",
     "Entity_PaperCompatMixin",
     "EntityTypeMixin",
     "JavaPluginLoaderMixin",
     "JavaPluginMixin",
-    "LibraryLoaderMixin",
-    "MaterialMixin",
     "Player_PaperCompatMixin",
     "PlayerLocaleMixin",
     "PlayerTeleportEvent_PaperCompatMixin",
-    "PluginClassLoaderMixin",
     "PotionEffectTypeMixin",
     "RecipeIteratorMixin",
     "Registry_SimpleRegistryMixin",
@@ -80,6 +77,5 @@
     "adventure.NameableAdventureMixin",
     "adventure.NamespacedKeyAdventureMixin",
     "adventure.TitleAdventureCompatMixin"
-  ],
-  "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin"
+  ]
 }

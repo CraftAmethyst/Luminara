@@ -16,25 +16,12 @@ Development targets the `stable/Trials` branch of [CraftAmethyst/Luminara](https
 Select a 64-bit JDK 17 through `JAVA_HOME`, then run from the repository root:
 
 ```bash
-./gradlew check
-./gradlew :common:test :fabric:build :forge:build
-./gradlew assembleForgeMod assembleFabricMod
-./gradlew smokeServer smokeFabricServer
+./gradlew build
 ```
 
-`common/libs/spigot-1.20.1-mapped-deobf.jar` is a checked-in build input: Spigot CraftBukkit classes remapped to Mojang names. Regenerate it when the Spigot baseline changes:
+This builds `common`, `fabric`, and `forge` exactly like the MultiLoader template, including `commonJava`/`commonResources` sharing, loader refmaps, access wideners, sources, and javadoc JARs. The loader JARs are written to `fabric/build/libs` and `forge/build/libs`.
 
-```bash
-./gradlew remapSpigotJar
-```
-
-Then copy `build/spigot/spigot-1.20.1-mapped-deobf.jar` over the checked-in file. The task downloads BuildTools and pins Spigot `1.20.1-R0.1-SNAPSHOT` through the repository pattern.
-
-Changes to archive metadata, dependency resolution, or build inputs must also pass:
-
-```bash
-./gradlew verifyForgeModDistribution verifyFabricModDistribution
-```
+`common/libs/spigot-1.20.1-mapped-deobf.jar` is a checked-in build input: Spigot CraftBukkit classes remapped to Mojang names. Regenerate it from Spigot's BuildTools when the Spigot baseline changes.
 
 Use `gradlew.bat` instead of `./gradlew` on Windows.
 

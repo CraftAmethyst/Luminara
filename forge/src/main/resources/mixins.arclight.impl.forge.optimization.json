@@ -2,7 +2,7 @@
   "minVersion": "0.8",
   "package": "org.craftamethyst.luminara.common.mixin.optimization.general",
   "target": "@env(DEFAULT)",
-  "refmap": "mixins.arclight.forge.refmap.json",
+  "refmap": "luminara.refmap.json",
   "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [

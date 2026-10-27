@@ -11,5 +11,6 @@
   "mixins": [
     "core.commands.CommandsMixin_Fabric"
   ],
-  "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin"
+  "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin",
+  "refmap": "luminara.refmap.json"
 }
