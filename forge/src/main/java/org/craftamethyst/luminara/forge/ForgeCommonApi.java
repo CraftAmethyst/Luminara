@@ -20,15 +20,16 @@ import org.craftamethyst.luminara.common.mod.server.api.DefaultArclightServer;
 /** Forge implementation of the loader-neutral common services. */
 public final class ForgeCommonApi implements ArclightCommon.Api {
 
-  private static final Set<IForgeRegistry<?>> REGISTRIES =
-      ImmutableSet.of(
-          ForgeRegistries.BLOCKS,
-          ForgeRegistries.ITEMS,
-          ForgeRegistries.MOB_EFFECTS,
-          ForgeRegistries.POTIONS,
-          ForgeRegistries.ENTITY_TYPES,
-          ForgeRegistries.BLOCK_ENTITY_TYPES,
-          ForgeRegistries.BIOMES);
+  private static Set<IForgeRegistry<?>> registries() {
+    return ImmutableSet.of(
+        ForgeRegistries.BLOCKS,
+        ForgeRegistries.ITEMS,
+        ForgeRegistries.MOB_EFFECTS,
+        ForgeRegistries.POTIONS,
+        ForgeRegistries.ENTITY_TYPES,
+        ForgeRegistries.BLOCK_ENTITY_TYPES,
+        ForgeRegistries.BIOMES);
+  }
 
   @Override
   public boolean isModLoaded(String modid) {
@@ -57,7 +58,7 @@ public final class ForgeCommonApi implements ArclightCommon.Api {
 
   @Override
   public void unlockRegistries() {
-    for (IForgeRegistry<?> registry : REGISTRIES) {
+    for (IForgeRegistry<?> registry : registries()) {
       if (registry instanceof ForgeRegistry<?> forgeRegistry) {
         forgeRegistry.unfreeze();
       }
@@ -66,7 +67,7 @@ public final class ForgeCommonApi implements ArclightCommon.Api {
 
   @Override
   public void lockRegistries() {
-    for (IForgeRegistry<?> registry : REGISTRIES) {
+    for (IForgeRegistry<?> registry : registries()) {
       if (registry instanceof ForgeRegistry<?> forgeRegistry) {
         forgeRegistry.freeze();
       }

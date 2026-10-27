@@ -65,8 +65,10 @@ jobs:
           printf 'eula=true\n' > forge/run/eula.txt
           printf 'online-mode=false\nlevel-type=flat\nmax-players=1\n' > forge/run/server.properties
           printf '[server]\n    advertiseDedicatedServerToLan = false\n' > forge/run/config/forge-server.toml
+          ./gradlew prepareSmokeFixtures --no-daemon
           timeout 900 ./gradlew :forge:runServer --no-daemon --console=plain > build/forge-smoke.log 2>&1 || true
           grep -q 'Luminara 2.0.0' build/forge-smoke.log
+          grep -q 'LUMINARA_SMOKE_MOD_ENABLED' build/forge-smoke.log
           grep -q 'Done (' build/forge-smoke.log
       - name: Upload Forge smoke log
         if: always()

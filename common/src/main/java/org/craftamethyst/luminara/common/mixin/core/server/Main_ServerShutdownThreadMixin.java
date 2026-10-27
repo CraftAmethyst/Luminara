@@ -11,6 +11,7 @@ public class Main_ServerShutdownThreadMixin {
 
   @Redirect(
       method = "run",
+      require = 0,
       at =
           @At(
               value = "INVOKE",

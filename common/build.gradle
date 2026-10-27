@@ -200,3 +200,17 @@ def generateLuminaraVersion = tasks.register('generateLuminaraVersion') {
 
 sourceSets.main.resources.srcDir(generateLuminaraVersion.map { layout.buildDirectory.dir('generated/resources/luminara').get().asFile })
 processResources.dependsOn(generateLuminaraVersion)
+
+tasks.register('smokePluginJar', Jar) {
+    archiveFileName.set('luminara-smoke-plugin.jar')
+    destinationDirectory.set(layout.buildDirectory.dir('smoke-fixtures'))
+    from(sourceSets.smokePlugin.output)
+}
+
+tasks.register('smokeModJar', Jar) {
+    archiveFileName.set('luminara-smoke-mod.jar')
+    destinationDirectory.set(layout.buildDirectory.dir('smoke-fixtures'))
+    from(sourceSets.smokeMod.output) {
+        exclude 'net/minecraftforge/**'
+    }
+}

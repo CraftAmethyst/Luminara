@@ -223,3 +223,16 @@ tasks.register('remapSpigotJar', GradleBuild) {
     dir = file('spigot-remap')
     tasks = ['publishMappedSpigot']
 }
+
+tasks.register('prepareSmokeFixtures', Copy) {
+    group = 'verification'
+    description = 'Copies the Bukkit plugin and Forge test mod into the development run directory.'
+    dependsOn(':common:smokePluginJar', ':common:smokeModJar')
+    into(layout.projectDirectory.dir('forge/run'))
+    from(project(':common').layout.buildDirectory.file('smoke-fixtures/luminara-smoke-plugin.jar')) {
+        into 'plugins'
+    }
+    from(project(':common').layout.buildDirectory.file('smoke-fixtures/luminara-smoke-mod.jar')) {
+        into 'mods'
+    }
+}

@@ -81,7 +81,7 @@ public abstract class FireBlockMixin extends BaseFireBlockMixin implements FireB
   }
 
   @Inject(
-      method = "checkBurnOut",
+      method = "tryCatchFire",
       cancellable = true,
       at =
           @At(

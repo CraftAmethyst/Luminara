@@ -20,9 +20,33 @@ public final class ArclightCommon {
   public static Api api() {
     Api current = instance;
     if (current == null) {
-      throw new IllegalStateException("Luminara platform services have not been installed");
+      synchronized (ArclightCommon.class) {
+        current = instance;
+        if (current == null) {
+          current = loadPlatform();
+          instance = current;
+        }
+      }
     }
     return current;
+  }
+
+  private static Api loadPlatform() {
+    for (String candidate :
+        new String[] {
+          "org.craftamethyst.luminara.forge.ForgeCommonApi",
+          "org.craftamethyst.luminara.fabric.FabricCommonApi"
+        }) {
+      try {
+        Class<?> type = Class.forName(candidate, true, ArclightCommon.class.getClassLoader());
+        return (Api) type.getDeclaredConstructor().newInstance();
+      } catch (ClassNotFoundException ignored) {
+        // Try the next loader.
+      } catch (ReflectiveOperationException e) {
+        throw new IllegalStateException("Cannot install Luminara platform services from " + candidate, e);
+      }
+    }
+    throw new IllegalStateException("Luminara platform services have not been installed");
   }
 
   public static Api instance() {
