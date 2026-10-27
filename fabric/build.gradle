@@ -25,6 +25,7 @@ dependencies {
     implementation "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
     compileOnly("net.minecraftforge:eventbus:4.0.0") { transitive = false }
     fabricBundle "net.minecraftforge:eventbus:6.0.5"
+    fabricBundle "net.minecrell:terminalconsoleappender:1.2.0"
     compileOnly "org.spongepowered:mixin:${libs.versions.mixin.runtime.get()}"
 }
 

@@ -184,7 +184,7 @@ tasks.register('assemble') {
 tasks.register('verifyForgeModDistribution', org.craftamethyst.luminara.gradle.tasks.VerifyForgeModTask) {
     group = 'verification'
     description = 'Validates the assembled Forge mod JAR metadata and mixin configuration.'
-    dependsOn(assembleForgeMod)
+    dependsOn(assembleForgeMod, assembleFabricMod)
     modJar.set(distributionDir.map { it.file("luminara-forge-${mcVersion}-${projectVersion}.jar") })
     modId.set('luminara')
     minecraftVersion.set(mcVersion)
@@ -243,7 +243,7 @@ tasks.register('verifyFabricModDistribution') {
 tasks.register('check') {
     group = 'verification'
     description = 'Runs every module check plus both distribution validations.'
-    dependsOn(subprojects.collect { it.tasks.matching { task -> task.name == 'check' } })
+    dependsOn(':common:check', ':forge:check', ':fabric:compileJava')
     dependsOn('verifyForgeModDistribution', 'verifyFabricModDistribution')
 }
 

@@ -99,7 +99,6 @@ dependencies {
     embed "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}"
     embed 'net.md-5:bungeecord-chat:1.16-R0.4'
     embed "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar"
-    embed 'net.minecrell:terminalconsoleappender:1.2.0'
     ['adventure-api', 'adventure-key', 'adventure-text-serializer-gson',
      'adventure-text-serializer-json', 'adventure-text-serializer-legacy',
      'adventure-text-serializer-plain', 'adventure-text-minimessage',

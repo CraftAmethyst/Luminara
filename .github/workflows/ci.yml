@@ -44,6 +44,39 @@ jobs:
             **/build/test-results/**
             **/build/reports/tests/**
 
+  smoke-forge:
+    name: Forge dedicated-server startup smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Java 17
+        uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947
+      - name: Start the Forge development server and verify startup
+        timeout-minutes: 25
+        run: |
+          mkdir -p build forge/run/config
+          printf 'eula=true\n' > forge/run/eula.txt
+          printf 'online-mode=false\nlevel-type=flat\nmax-players=1\n' > forge/run/server.properties
+          printf '[server]\n    advertiseDedicatedServerToLan = false\n' > forge/run/config/forge-server.toml
+          timeout 900 ./gradlew :forge:runServer --no-daemon --console=plain > build/forge-smoke.log 2>&1 || true
+          grep -q 'Luminara 2.0.0' build/forge-smoke.log
+          grep -q 'Done (' build/forge-smoke.log
+      - name: Upload Forge smoke log
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: luminara-forge-smoke-${{ github.sha }}
+          retention-days: 7
+          if-no-files-found: warn
+          path: build/forge-smoke.log
+
   windows:
     name: Windows assembly and mod JAR contracts
     runs-on: windows-latest
