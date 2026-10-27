@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
-    <img src="assets/banner.png" alt="Luminara - Bukkit, Spigot, and Paper compatibility for Forge servers" width="100%">
+    <img src="assets/banner.png" alt="Luminara - Bukkit, Spigot, and Paper compatibility for Forge and Fabric servers" width="100%">
   </picture>
 </p>
 
@@ -35,6 +35,22 @@ Luminara is a fork project developed based on the [Arclight](https://github.com/
 - Compatible with Adventure, MiniMessage, signed chat (signed-chat), and some commonly used Paper APIs
 - Better mod and plugin compatibility
 
+## Building from source
+
+The project follows the [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template) 1.20.1 layout. A single Java 17 build produces the shared, Fabric, and Forge artifacts:
+
+```bash
+./gradlew build
+```
+
+| Module | Output |
+| --- | --- |
+| `common` | `common/build/libs/luminara-common-1.20.1-*.jar` |
+| `fabric` | `fabric/build/libs/luminara-fabric-1.20.1-*.jar` |
+| `forge` | `forge/build/libs/luminara-forge-1.20.1-*.jar` |
+
+The loader JARs are self-contained and can be started by placing them in the respective `mods/` directory. CI stages both loader JARs and `build/libs/SHA256SUMS` into `build/libs`; verify the downloaded files with `sha256sum -c build/libs/SHA256SUMS`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
+
 ## Supported Versions
 
 | Component | stable/Trials | stable/FeudalKings |
@@ -43,8 +59,8 @@ Luminara is a fork project developed based on the [Arclight](https://github.com/
 | JDK | 17, 21 | 21, 25 |
 | Forge | ≥ 47.4.0 | Not supported |
 | NeoForge | Not supported | ≥ 21.1.117 |
-| Fabric Loader | Not supported | ≥ 0.16.0 |
-| Fabric API | Not supported | ≥ 0.115.0 |
+| Fabric Loader | ≥ 0.16.9 | ≥ 0.16.0 |
+| Fabric API | ≥ 0.92.1+1.20.1 | ≥ 0.115.0 |
 | CraftBukkit | `v1_20_R1` | `v1_21_R1` |
 
 ## Community Support

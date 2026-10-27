@@ -29,6 +29,7 @@ atlassian-ide-plugin.xml
 
 # Package Files #
 *.jar
+!common/libs/spigot-1.20.1-mapped-deobf.jar
 *.war
 *.nar
 *.ear

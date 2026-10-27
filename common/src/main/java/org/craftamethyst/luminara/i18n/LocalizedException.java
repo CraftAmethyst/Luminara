@@ -1,0 +1,41 @@
+package org.craftamethyst.luminara.i18n;
+
+@SuppressWarnings("unchecked")
+public interface LocalizedException {
+  static <T extends Exception & LocalizedException> T checked(String node, Object... args) {
+    class Checked extends Exception implements LocalizedException {
+
+      @Override
+      public String node() {
+        return node;
+      }
+
+      @Override
+      public Object[] args() {
+        return args;
+      }
+    }
+    return (T) new Checked();
+  }
+
+  static <T extends RuntimeException & LocalizedException> T unchecked(
+      String node, Object... args) {
+    class Unchecked extends RuntimeException implements LocalizedException {
+
+      @Override
+      public String node() {
+        return node;
+      }
+
+      @Override
+      public Object[] args() {
+        return args;
+      }
+    }
+    return (T) new Unchecked();
+  }
+
+  String node();
+
+  Object[] args();
+}

@@ -1,0 +1,138 @@
+plugins {
+    id 'multiloader-loader'
+    id 'fabric-loom'
+}
+configurations {
+    fabricBundle {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
+repositories {
+    maven {
+        url = 'https://maven.minecraftforge.net'
+        content { includeGroup 'net.minecraftforge' }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    implementation project(":common")
+    implementation files(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar'))
+    compileOnly("net.minecraftforge:eventbus:4.0.0") { transitive = false }
+    add('fabricBundle', "io.izzel:tools:${libs.versions.tools.get()}")
+    add('fabricBundle', "io.izzel.arclight:arclight-api:${libs.versions.arclight.api.get()}")
+    add('fabricBundle', "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}")
+    add('fabricBundle', "org.spongepowered:configurate-core:${libs.versions.configurate.get()}")
+    add('fabricBundle', "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}")
+    add('fabricBundle', 'org.yaml:snakeyaml:2.0')
+    add('fabricBundle', 'net.md-5:SpecialSource:1.11.0')
+    add('fabricBundle', 'jline:jline:2.12.1')
+    add('fabricBundle', "org.xerial:sqlite-jdbc:${libs.versions.sqlite.get()}")
+    add('fabricBundle', "com.mysql:mysql-connector-j:${libs.versions.mysql.get()}")
+    add('fabricBundle', "org.apache.logging.log4j:log4j-jul:${libs.versions.log4j.get()}")
+    add('fabricBundle', 'net.md-5:bungeecord-chat:1.16-R0.4')
+    add('fabricBundle', "org.spigotmc:spigot-api:${libs.versions.spigot.get()}@jar")
+    ['adventure-api', 'adventure-key', 'adventure-text-serializer-gson',
+     'adventure-text-serializer-json', 'adventure-text-serializer-legacy',
+     'adventure-text-serializer-plain', 'adventure-text-minimessage',
+     'adventure-text-logger-slf4j'].each { artifact ->
+        add('fabricBundle', "net.kyori:${artifact}:${libs.versions.adventure.get()}")
+    }
+    add('fabricBundle', 'net.kyori:examination-api:1.3.0')
+    add('fabricBundle', "net.minecrell:terminalconsoleappender:1.2.0")
+    add('fabricBundle', "net.minecraftforge:eventbus:6.0.5")
+
+}
+
+repositories {
+    maven {
+        name = 'Izzel'
+        url = 'https://maven.izzel.io/releases'
+        content {
+            includeGroupByRegex 'io\\.izzel(\\..*)?'
+            includeGroup 'net.md-5'
+        }
+    }
+    maven {
+        name = 'ForgeMaven'
+        url = 'https://maven.minecraftforge.net'
+        content { includeGroup 'net.minecraftforge' }
+    }
+    maven {
+        name = 'JitPack'
+        url = 'https://jitpack.io'
+        content { includeGroupByRegex 'com\\.github\\.ArclightTeam(\\..*)?' }
+    }
+    ivy {
+        name = 'SpigotPinnedSnapshot'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
+        patternLayout {
+            artifact '[organisation]/[module]/1.20.1-R0.1-SNAPSHOT/[module]-[revision](-[classifier]).[ext]'
+            setM2compatible(true)
+        }
+        metadataSources { artifact() }
+        content { includeGroupByRegex 'org\\.spigotmc(\\..*)?' }
+    }
+}
+
+loom {
+    if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
+        accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+    }
+}
+
+tasks.named('validateAccessWidener') {
+    enabled = false
+}
+
+jar {
+    from({ zipTree(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar')) }) {
+        include 'org/bukkit/craftbukkit/**'
+        include 'org/spigotmc/**'
+    }
+}
+
+jar {
+    from({ configurations.fabricBundle.collect { zipTree(it) } }) {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/services/**'
+        exclude 'module-info.class'
+        exclude 'META-INF/versions/*/module-info.class'
+        exclude 'org/apache/logging/**'
+        exclude 'com/google/gson/**'
+        exclude 'com/google/common/**'
+        exclude 'org/objectweb/asm/**'
+        exclude 'org/slf4j/**'
+        exclude 'org/apache/commons/**'
+    }
+}

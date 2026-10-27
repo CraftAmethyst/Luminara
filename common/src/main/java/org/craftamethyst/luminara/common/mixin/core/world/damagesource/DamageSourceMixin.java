@@ -1,0 +1,71 @@
+package org.craftamethyst.luminara.common.mixin.core.world.damagesource;
+
+import org.craftamethyst.luminara.common.bridge.core.util.DamageSourceBridge;
+import javax.annotation.Nullable;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+@Mixin(DamageSource.class)
+public abstract class DamageSourceMixin implements DamageSourceBridge {
+
+  private boolean sweep;
+  // @formatter:on
+  private boolean melting;
+  private boolean poison;
+
+  // @formatter:off
+  @Shadow
+  @Nullable
+  public Entity getEntity() {
+    return null;
+  }
+
+  public boolean isSweep() {
+    return sweep;
+  }
+
+  @Override
+  public boolean bridge$isSweep() {
+    return isSweep();
+  }
+
+  public DamageSource sweep() {
+    sweep = true;
+    return (DamageSource) (Object) this;
+  }
+
+  @Override
+  public DamageSource bridge$sweep() {
+    return sweep();
+  }
+
+  public boolean isMelting() {
+    return melting;
+  }
+
+  public DamageSource melting() {
+    this.melting = true;
+    return (DamageSource) (Object) this;
+  }
+
+  @Override
+  public DamageSource bridge$melting() {
+    return melting();
+  }
+
+  public boolean isPoison() {
+    return poison;
+  }
+
+  public DamageSource poison() {
+    this.poison = true;
+    return (DamageSource) (Object) this;
+  }
+
+  @Override
+  public DamageSource bridge$poison() {
+    return poison();
+  }
+}

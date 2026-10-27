@@ -35,6 +35,22 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服�
 - 兼容 Adventure、MiniMessage、签名聊天（signed-chat）以及部分常用 Paper API
 - 具备更好的模组与插件兼容性
 
+## 从源码构建
+
+项目采用 [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template) 1.20.1 布局，一次 Java 17 构建即可生成共享、Fabric 和 Forge 产物：
+
+```bash
+./gradlew build
+```
+
+| 模块 | 产物 |
+| --- | --- |
+| `common` | `common/build/libs/luminara-common-1.20.1-*.jar` |
+| `fabric` | `fabric/build/libs/luminara-fabric-1.20.1-*.jar` |
+| `forge` | `forge/build/libs/luminara-forge-1.20.1-*.jar` |
+
+两个 loader 产物均为自包含 JAR，可直接放入对应服务端的 `mods/` 目录启动。CI 会将两个 loader JAR 与 `build/libs/SHA256SUMS` 统一放入 `build/libs`，可使用 `sha256sum -c build/libs/SHA256SUMS` 校验下载文件。开发流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
 ## 支持版本
 
 
@@ -44,8 +60,8 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服�
 | JDK | 17、21 | 21、25 |
 | Forge | ≥ 47.4.0 | 不支持 |
 | NeoForge | 不支持 | ≥ 21.1.117 |
-| Fabric Loader | 不支持 | ≥ 0.16.0 |
-| Fabric API | 不支持 | ≥ 0.115.0 |
+| Fabric Loader | ≥ 0.16.9 | ≥ 0.16.0 |
+| Fabric API | ≥ 0.92.1+1.20.1 | ≥ 0.115.0 |
 | CraftBukkit | `v1_20_R1` | `v1_21_R1` |
 
 ## 社区支持

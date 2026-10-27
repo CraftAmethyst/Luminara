@@ -1,0 +1,30 @@
+package org.craftamethyst.luminara.common.mixin.forge;
+
+import org.craftamethyst.luminara.common.mod.ArclightMod;
+import org.craftamethyst.luminara.common.mod.server.ArclightPermissionHandler;
+import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.conf.PermissionForwarding;
+import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftforge.server.permission.handler.IPermissionHandler;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(value = PermissionAPI.class, remap = false)
+public class PermissionAPIMixin {
+
+  @Shadow private static IPermissionHandler activeHandler;
+
+  @Inject(method = "initializePermissionAPI", at = @At("RETURN"))
+  private static void arclight$init(CallbackInfo ci) {
+    if (ArclightConfig.spec().getCompat().getPermissionForwarding()
+        != PermissionForwarding.FORGE_TO_BUKKIT) {
+      return;
+    }
+    var handler = new ArclightPermissionHandler(activeHandler);
+    ArclightMod.LOGGER.info("permission.forge-to-bukkit", activeHandler.getIdentifier());
+    activeHandler = handler;
+  }
+}
