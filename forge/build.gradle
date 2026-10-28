@@ -35,6 +35,7 @@ repositories {
 }
 
 mixin {
+    add(sourceSets.main, 'luminara.refmap.json')
 }
 
 def forgeBundle = configurations.create('forgeBundle') {
@@ -113,6 +114,9 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
     compileOnly project(":common")
+    annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.processor.get()}:processor"
+    annotationProcessor "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
+    annotationProcessor "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
     testImplementation project(":common")
     testImplementation platform("org.junit:junit-bom:5.14.4")
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -152,6 +156,10 @@ tasks.named('compileJava', JavaCompile) {
 }
 
 jar {
+    manifest.attributes([
+            'MixinConnector': 'org.craftamethyst.luminara.common.mod.ArclightConnector',
+            'MixinConfigs': 'mixins.arclight.core.json,mixins.arclight.bukkit.json,mixins.arclight.forge.json,mixins.arclight.impl.forge.optimization.json,mixins.arclight.forge.compat.json'
+    ])
     from({ zipTree(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar')) }) {
         include 'org/bukkit/craftbukkit/**'
         include 'org/spigotmc/**'
