@@ -23,6 +23,8 @@
     "server.level.ServerLevelMixin",
     "server.level.ChunkMapMixin",
     "server.level.ServerChunkCacheMixin",
+    "server.level.DistanceManagerMixin",
+    "commands.CommandSourceStackMixin",
     "world.level.LevelMixin",
     "world.level.border.WorldBorderMixin",
     "world.storage.LevelStorageSource_LevelStorageAccessMixin",

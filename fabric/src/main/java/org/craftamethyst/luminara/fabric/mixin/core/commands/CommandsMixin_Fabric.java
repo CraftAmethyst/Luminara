@@ -14,9 +14,16 @@ public abstract class CommandsMixin_Fabric {
 
   @Mutable @Shadow @Final private CommandDispatcher<CommandSourceStack> dispatcher;
 
+  @Shadow
+  public abstract int performPrefixedCommand(CommandSourceStack source, String command);
+
   public void arclight$constructor() {
     this.dispatcher = new BukkitDispatcher((Commands) (Object) this);
     this.dispatcher.setConsumer(
         (context, b, i) -> context.getSource().onCommandComplete(context, b, i));
+  }
+
+  public int performPrefixedCommand(CommandSourceStack source, String command, String label) {
+    return this.performPrefixedCommand(source, command);
   }
 }
