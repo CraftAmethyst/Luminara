@@ -86,26 +86,7 @@ public class ArclightRemapper {
         new String(
             ArclightRemapper.class.getResourceAsStream("/bukkit_srg.srg").readAllBytes(),
             StandardCharsets.UTF_8);
-    var i =
-        content.indexOf(
-            "net/minecraft/server/level/ChunkMap net/minecraft/server/level/ChunkTracker");
-    var nextSection =
-        content
-            .substring(i)
-            .lines()
-            .skip(1)
-            .dropWhile(it -> it.startsWith("\t"))
-            .findFirst()
-            .orElseThrow();
-    var nextIndex = content.indexOf(nextSection);
-    this.toBukkitMapping.loadMappings(
-        new BufferedReader(
-            new StringReader(content.substring(0, i) + content.substring(nextIndex))),
-        null,
-        null,
-        true);
-    this.toBukkitMapping.loadMappings(
-        new BufferedReader(new StringReader(content.substring(i, nextIndex))), null, null, true);
+    BukkitMappingLoader.load(toBukkitMapping, content);
     BiMap<String, String> inverseClassMap = HashBiMap.create(toNmsMapping.classes).inverse();
     try (BufferedReader reader =
         new BufferedReader(

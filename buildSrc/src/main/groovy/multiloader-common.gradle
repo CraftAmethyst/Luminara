@@ -134,3 +134,7 @@ tasks.withType(Javadoc).configureEach {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.tags = ['author:a:Author', 'reason:a:Reason']
 }
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
