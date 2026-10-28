@@ -116,6 +116,7 @@ jar {
     from({ zipTree(project(':common').file('libs/spigot-1.20.1-mapped-deobf.jar')) }) {
         include 'org/bukkit/craftbukkit/**'
         include 'org/spigotmc/**'
+        include 'configurations/**'
     }
 }
 

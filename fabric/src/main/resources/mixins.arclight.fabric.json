@@ -9,7 +9,8 @@
   },
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "core.commands.CommandsMixin_Fabric"
+    "core.commands.CommandsMixin_Fabric",
+    "core.world.level.block.FireBlockMixin_Fabric"
   ],
   "plugin": "org.craftamethyst.luminara.common.mod.ArclightMixinPlugin",
   "refmap": "luminara.refmap.json"

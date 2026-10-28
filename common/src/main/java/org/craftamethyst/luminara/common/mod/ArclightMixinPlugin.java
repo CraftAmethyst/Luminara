@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 public class ArclightMixinPlugin implements IMixinConfigPlugin {
 
+  private static final String TICKET_TYPE = "net.minecraft.server.level.TicketType";
+
   private final Map<String, Map.Entry<List<FieldNode>, List<MethodNode>>> accessTransformer =
       ImmutableMap.<String, Map.Entry<List<FieldNode>, List<MethodNode>>>builder()
           .put(
@@ -40,23 +42,6 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
                           "()Lnet/minecraft/server/MinecraftServer;",
                           null,
                           null))))
-          .put(
-              "net.minecraft.server.level.TicketType",
-              Maps.immutableEntry(
-                  ImmutableList.of(
-                      new FieldNode(
-                          Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL,
-                          "PLUGIN",
-                          "Lnet/minecraft/server/level/TicketType;",
-                          null,
-                          null),
-                      new FieldNode(
-                          Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL,
-                          "PLUGIN_TICKET",
-                          "Lnet/minecraft/server/level/TicketType;",
-                          null,
-                          null)),
-                  ImmutableList.of()))
           .put(
               "net.minecraft.world.level.storage.loot.parameters.LootContextParams",
               Maps.immutableEntry(
@@ -157,6 +142,7 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
           .add("net.minecraft.world.item.trading.MerchantOffer")
           .add("net.minecraft.world.inventory.LecternMenu")
           .add("net.minecraft.server.level.ServerEntity")
+          .add("net.minecraft.class_2170")
           .add("net.minecraft.network.protocol.game.ServerboundContainerClosePacket")
           .add("net.minecraft.network.chat.TextColor")
           .add("net.minecraft.commands.Commands")
@@ -203,6 +189,14 @@ public class ArclightMixinPlugin implements IMixinConfigPlugin {
       List<MethodNode> methods = entry.getValue();
       for (MethodNode methodNode : targetClass.methods) {
         tryTransform(methods, methodNode);
+      }
+    }
+    if (TICKET_TYPE.equals(targetClassName)
+        || "net.minecraft.class_3230".equals(targetClassName)) {
+      for (FieldNode field : targetClass.fields) {
+        if (field.name.equals("PLUGIN") || field.name.equals("PLUGIN_TICKET")) {
+          field.access = (field.access | Opcodes.ACC_PUBLIC) & ~Opcodes.ACC_PRIVATE;
+        }
       }
     }
     BukkitPaperApiPatcher.patch(targetClassName, targetClass);
