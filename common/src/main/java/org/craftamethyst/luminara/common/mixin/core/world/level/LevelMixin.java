@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -54,6 +53,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -81,11 +81,8 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
   @Shadow @Final private WorldBorder worldBorder;
 
   // @formatter:off
-  @Shadow
-  @Nullable
-  public BlockEntity getBlockEntity(BlockPos pos) {
-    return null;
-  }
+  @Invoker("getBlockEntity")
+  public abstract BlockEntity arclight$invokeGetBlockEntity(BlockPos pos);
 
   @Shadow
   public abstract BlockState getBlockState(BlockPos pos);
@@ -339,7 +336,7 @@ public abstract class LevelMixin implements WorldBridge, LevelWriter {
   }
 
   public BlockEntity getBlockEntity(BlockPos pos, boolean validate) {
-    return getBlockEntity(pos);
+    return arclight$invokeGetBlockEntity(pos);
   }
 
   @Override

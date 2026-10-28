@@ -40,7 +40,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.profiling.jfr.JvmProfiler;
 import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.DataPackConfig;
 import net.minecraft.world.level.ForcedChunksSavedData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
@@ -162,14 +161,24 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
     super(name);
   }
 
-  @Shadow
-  private static DataPackConfig getSelectedPacks(PackRepository p_129818_) {
-    return null;
-  }
+  @Unique
+  private static CrashReport arclight$constructOrExtractCrashReport(Throwable throwable) {
+    ReportedException reportedException = null;
+    for (Throwable cause = throwable; cause != null; cause = cause.getCause()) {
+      if (cause instanceof ReportedException) {
+        reportedException = (ReportedException) cause;
+      }
+    }
 
-  @Shadow
-  private static CrashReport constructOrExtractCrashReport(Throwable p_206569_) {
-    return null;
+    if (reportedException == null) {
+      return new CrashReport("Exception in server tick loop", throwable);
+    }
+
+    CrashReport report = reportedException.getReport();
+    if (reportedException != throwable) {
+      report.addCategory("Wrapped in").setDetailError("Wrapping exception", throwable);
+    }
+    return report;
   }
 
   private static double calcTps(double avg, double exp, double tps) {
@@ -365,7 +374,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
       PlatformHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
     } catch (Throwable throwable1) {
       ARCLIGHT_LOGGER.error("server.unexpected-exception", throwable1);
-      CrashReport crashreport = constructOrExtractCrashReport(throwable1);
+      CrashReport crashreport = arclight$constructOrExtractCrashReport(throwable1);
       this.fillSystemReport(crashreport.getSystemReport());
 
       // Use the new crash handler to determine if we should continue

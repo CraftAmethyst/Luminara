@@ -691,7 +691,7 @@ public abstract class ServerLevelMixin extends LevelMixin implements ServerWorld
 
   @Override
   public BlockEntity getBlockEntity(BlockPos pos, boolean validate) {
-    return this.getBlockEntity(pos);
+    return this.arclight$invokeGetBlockEntity(pos);
   }
 
   @Redirect(

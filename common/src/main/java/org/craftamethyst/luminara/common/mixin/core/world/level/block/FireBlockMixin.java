@@ -83,6 +83,7 @@ public abstract class FireBlockMixin extends BaseFireBlockMixin implements FireB
   @Inject(
       method = "tryCatchFire",
       cancellable = true,
+      require = 0,
       at =
           @At(
               value = "INVOKE",
