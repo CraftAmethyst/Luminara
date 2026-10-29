@@ -77,6 +77,8 @@ public abstract class CreeperMixin extends PathfinderMobMixin implements Creeper
       Bukkit.getPluginManager().callEvent(event);
       if (!event.isCancelled()) {
         this.dead = true;
+        // Keep the seven-argument overload: Supplementaries' Arclight compatibility mixin
+        // (selected through the io.izzel.arclight...CreeperMixin marker) wraps this call.
         this.level()
             .explode(
                 (Creeper) (Object) this,
