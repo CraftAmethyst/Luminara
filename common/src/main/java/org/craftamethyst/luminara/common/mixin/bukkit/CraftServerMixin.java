@@ -40,6 +40,7 @@ import org.craftamethyst.luminara.common.bridge.core.world.WorldBridge;
 import org.craftamethyst.luminara.common.mod.server.ArclightServer;
 import org.craftamethyst.luminara.common.mod.util.PlatformHooks;
 import org.craftamethyst.luminara.common.mod.util.log.ArclightPluginLogger;
+import org.craftamethyst.luminara.i18n.LuminaraVersion;
 import org.spigotmc.SpigotConfig;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -67,8 +68,6 @@ public abstract class CraftServerMixin implements CraftServerBridge {
 
   @Shadow @Final private SimpleHelpMap helpMap;
 
-  @Shadow @Final @Mutable private String serverName;
-
   @Shadow @Final @Mutable private List<CraftPlayer> playerView;
 
   @Shadow @Final private Map<String, World> worlds;
@@ -80,8 +79,6 @@ public abstract class CraftServerMixin implements CraftServerBridge {
   @Shadow @Final private Logger logger;
 
   @Shadow private boolean overrideAllCommandBlockCommands;
-
-  @Shadow @Final private String serverVersion;
 
   @Shadow
   protected abstract void enablePlugin(Plugin plugin);
@@ -121,10 +118,14 @@ public abstract class CraftServerMixin implements CraftServerBridge {
 
   @Inject(method = "<init>", at = @At("RETURN"))
   public void arclight$setBrand(DedicatedServer console, PlayerList playerList, CallbackInfo ci) {
-    this.serverName = "Luminara";
     // Bukkit.getLogger() returns this field. Replace the original JUL logger so
     // Spigot internals and plugins share Forge's Log4j formatting.
     this.setLogger(ArclightPluginLogger.getLogger("Arclight"));
+  }
+
+  @Inject(method = "getVersion", at = @At("HEAD"), cancellable = true)
+  private void arclight$setVersion(CallbackInfoReturnable<String> cir) {
+    cir.setReturnValue(LuminaraVersion.version() + " (MC: " + this.getMinecraftVersion() + ")");
   }
 
   /**
