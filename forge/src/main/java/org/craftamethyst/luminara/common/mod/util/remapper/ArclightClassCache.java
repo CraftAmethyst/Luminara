@@ -137,6 +137,7 @@ public abstract class ArclightClassCache implements AutoCloseable {
       builder.append("Arclight class cache").append(", ");
       builder.append("spec=").append(SPEC_VERSION).append(", ");
       builder.append("arclight=").append(arclight).append(", ");
+      builder.append("mapping=").append(mappingFingerprint()).append(", ");
       builder.append("patcher=[");
       for (PluginPatcher patcher : ArclightRemapper.INSTANCE.getPatchers()) {
         builder
@@ -148,6 +149,21 @@ public abstract class ArclightClassCache implements AutoCloseable {
       }
       builder.append("]");
       return builder.toString();
+    }
+
+    /**
+     * The remapped plugin classes embed the Spigot-to-SRG mapping, so a mapping update must
+     * invalidate the cache even when the Luminara version string did not change.
+     */
+    private static String mappingFingerprint() {
+      try (InputStream stream =
+          ArclightClassCache.class.getResourceAsStream("/bukkit_srg.srg")) {
+        if (stream != null) {
+          return Hashing.sha256().hashBytes(stream.readAllBytes()).toString();
+        }
+      } catch (IOException ignored) {
+      }
+      return "unknown";
     }
 
     @Override
