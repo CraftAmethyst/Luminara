@@ -33,7 +33,7 @@ class ArclightRemapperTest {
     BukkitMappingLoader.load(mapping, content);
 
     assertEquals(
-        "net/minecraft/server/v1_14_R1/PlayerChunkMap",
-        mapping.classes.get("net/minecraft/world/server/ChunkManager"));
+        "net/minecraft/server/level/ChunkMap",
+        mapping.classes.get("net/minecraft/server/level/ChunkTracker"));
   }
 }
