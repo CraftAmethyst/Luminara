@@ -1,6 +1,6 @@
 package org.craftamethyst.luminara.common.mixin.core.server;
 
-import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.MinecraftServer;
 import org.spigotmc.AsyncCatcher;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,8 +16,8 @@ public class Main_ServerShutdownThreadMixin {
           @At(
               value = "INVOKE",
               remap = true,
-              target = "Lnet/minecraft/server/dedicated/DedicatedServer;halt(Z)V"))
-  private void arclight$shutdown(DedicatedServer instance, boolean b) {
+              target = "Lnet/minecraft/server/MinecraftServer;halt(Z)V"))
+  private void arclight$shutdown(MinecraftServer instance, boolean b) {
     AsyncCatcher.enabled = false;
     // Signal the server loop to stop and wait for it when shutdown is externally
     // initiated. If it is already stopping (for example during a restart), waiting

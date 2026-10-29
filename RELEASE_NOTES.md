@@ -32,6 +32,7 @@
 - 修复 Forge 独立服务端日志被替换为 `uminaraFormatting` 的问题；日志布局不再依赖尚未注册的自定义 Log4j 转换器。
 - 修复 Forge 与 Fabric 构建产物在真实专用服务端上的启动问题。
 - 修复 Forge 开发环境 `runServer` 找不到打包依赖的问题。
+- 修复 Forge 控制台 Ctrl-C 关服钩子未命中 `MinecraftServer.halt` 的问题，恢复正常的服务器线程关服流程。
 - 将 Gradle 脚本、`buildSrc` 约定和模块任务对齐 MultiLoader 模板；`./gradlew build` 可直接产出全部构建物。
 - 修复 Fabric 专用服务器上的 Bukkit 插件初始化与命令分派，并将 Bukkit 默认配置打包进 Forge/Fabric 产物。
 
@@ -86,6 +87,7 @@
 - Fixed Forge dedicated-server logs being replaced by `uminaraFormatting`; log layouts no longer depend on a custom Log4j converter that was not registered yet.
 - Fixed startup of the Forge and Fabric artifacts on real dedicated servers.
 - Fixed missing bundled dependencies during Forge `runServer` development launches.
+- Fixed the Forge console Ctrl-C shutdown hook targeting the wrong `halt` owner, restoring the normal server-thread shutdown path.
 - Aligned Gradle scripts, `buildSrc` conventions, and module tasks with the MultiLoader template; `./gradlew build` now produces every build output directly.
 - Fixed Bukkit plugin initialization and command dispatch on Fabric dedicated servers, and bundled Bukkit default configuration files in both loader artifacts.
 
