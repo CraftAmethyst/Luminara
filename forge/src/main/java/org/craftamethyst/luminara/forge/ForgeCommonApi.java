@@ -6,6 +6,8 @@ import java.util.Set;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.CrashReportCallables;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -33,7 +35,14 @@ public final class ForgeCommonApi implements ArclightCommon.Api {
 
   @Override
   public boolean isModLoaded(String modid) {
-    return ModList.get() != null && ModList.get().isLoaded(modid);
+    ModList modList = ModList.get();
+    if (modList != null) {
+      return modList.isLoaded(modid);
+    }
+    // Mixin config plugins are queried before ModList is published, but LoadingModList is
+    // already populated by then. Without this fallback every @LoadIfMod check sees "absent".
+    LoadingModList loadingModList = FMLLoader.getLoadingModList();
+    return loadingModList != null && loadingModList.getModFileById(modid) != null;
   }
 
   @Override

@@ -15,6 +15,7 @@ public abstract class RecipeManagerModernFixMixin {
 
   private static final Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger("RecipeManager");
 
+  // Not fatal if a future ModernFix changes the target; ModernFix's own redirect then stays.
   @Redirect(
       method = "apply",
       at =
@@ -22,7 +23,7 @@ public abstract class RecipeManagerModernFixMixin {
               value = "INVOKE",
               target =
                   "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"),
-      require = 1)
+      require = 0)
   private void arclight$logParsingError(
       org.slf4j.Logger logger, String message, Object recipeId, Object exception) {
     ARCLIGHT_LOGGER.error("recipe.loading.parsing-error", recipeId, exception);

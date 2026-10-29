@@ -15,6 +15,8 @@ public abstract class RecipeManagerParsingErrorMixin {
 
   private static final Logger ARCLIGHT_LOGGER = ArclightI18nLogger.getLogger("RecipeManager");
 
+  // Only a logging tweak: if another mod already redirected the same call, let it win instead of
+  // aborting the server with an InjectionError.
   @Redirect(
       method = "apply",
       at =
@@ -22,7 +24,7 @@ public abstract class RecipeManagerParsingErrorMixin {
               value = "INVOKE",
               target =
                   "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"),
-      require = 1)
+      require = 0)
   private void arclight$logParsingError(
       org.slf4j.Logger logger, String message, Object recipeId, Object exception) {
     ARCLIGHT_LOGGER.error("recipe.loading.parsing-error", recipeId, exception);
