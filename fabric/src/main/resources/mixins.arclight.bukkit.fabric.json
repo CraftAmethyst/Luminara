@@ -19,6 +19,7 @@
     "enumvalues.MaterialEnumMixin",
     "ColouredConsoleSenderMixin",
     "CraftConsoleCommandSenderMixin",
-    "CraftServerMixin"
+    "CraftServerMixin",
+    "WatchdogThreadMixin"
   ]
 }
