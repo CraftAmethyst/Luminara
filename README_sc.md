@@ -26,6 +26,12 @@
   <a href="https://lum.rimecraft.top/"><strong>访问文档</strong></a>
 </p>
 
+<p align="center">
+  <a href="https://discord.gg/xn8KGphcvS">Discord（国际）</a>
+  &nbsp;·&nbsp;
+  <a href="https://qm.qq.com/q/5S00vXfQpq">QQ 群 <code>929252864</code>（仅中国）</a>
+</p>
+
 <hr>
 
 Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服务端开发的分支项目。
@@ -75,11 +81,6 @@ Forge 和 Fabric 都使用 `config/luminara-common.toml`。启动时若该文件
 | Fabric Loader | ≥ 0.16.9 | ≥ 0.16.0 |
 | Fabric API | ≥ 0.92.1+1.20.1 | ≥ 0.115.0 |
 | CraftBukkit | `v1_20_R1` | `v1_21_R1` |
-
-## 社区支持
-
-- Discord（国际）：https://discord.gg/xn8KGphcvS
-- QQ 群 `929252864`（仅中国）：https://qm.qq.com/q/5S00vXfQpq
 
 ## 技术支持
 

@@ -26,6 +26,12 @@
   <a href="https://lum.rimecraft.top/en/"><strong>Read the Documentation</strong></a>
 </p>
 
+<p align="center">
+  <a href="https://discord.gg/xn8KGphcvS">Discord (International)</a>
+  &nbsp;·&nbsp;
+  <a href="https://qm.qq.com/q/5S00vXfQpq">QQ Group <code>929252864</code> (China only)</a>
+</p>
+
 <hr>
 
 Luminara is a fork project developed based on the [Arclight](https://github.com/IzzelAliz/Arclight) server.
@@ -74,11 +80,6 @@ Forge and Fabric store Luminara settings in `config/luminara-common.toml`. On st
 | Fabric Loader | ≥ 0.16.9 | ≥ 0.16.0 |
 | Fabric API | ≥ 0.92.1+1.20.1 | ≥ 0.115.0 |
 | CraftBukkit | `v1_20_R1` | `v1_21_R1` |
-
-## Community Support
-
-- Discord (International): https://discord.gg/xn8KGphcvS
-- QQ Group `929252864` (China only): https://qm.qq.com/q/5S00vXfQpq
 
 ## Technical Support
 
