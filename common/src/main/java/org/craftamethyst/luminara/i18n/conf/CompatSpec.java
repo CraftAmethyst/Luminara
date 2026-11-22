@@ -10,10 +10,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class CompatSpec {
 
   @Setting("preload-bungee-chat-classes")
-  private final boolean preloadBungeeChatClasses = true;
+  private boolean preloadBungeeChatClasses = true;
 
   @Setting("enable-bukkit-reload-command")
-  private final boolean enableBukkitReloadCommand = true;
+  private boolean enableBukkitReloadCommand = true;
 
   @Setting("material-property-overrides")
   private Map<String, MaterialPropertySpec> materials = Map.of();

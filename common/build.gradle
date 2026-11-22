@@ -64,6 +64,7 @@ dependencies {
     api "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}"
     api "org.spongepowered:configurate-core:${libs.versions.configurate.get()}"
     api "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}"
+    api "com.electronwill.night-config:toml:${libs.versions.night.config.get()}"
     api 'org.yaml:snakeyaml:2.0'
     api 'net.md-5:SpecialSource:1.11.0'
     api 'jline:jline:2.12.1'

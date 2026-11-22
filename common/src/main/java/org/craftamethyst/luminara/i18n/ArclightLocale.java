@@ -1,15 +1,14 @@
 package org.craftamethyst.luminara.i18n;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.*;
-import java.util.concurrent.Callable;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.StringJoiner;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ValueType;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -17,92 +16,70 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public record ArclightLocale(String current, String fallback, ConfigurationNode node) {
-  private static ArclightLocale instance;
 
-  static {
-    try {
-      init();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
+  static final String DEFAULT_FALLBACK = "zh_cn";
+  private static final Logger LOGGER = LogManager.getLogger("ArclightLocale-Debug");
+  private static volatile ArclightLocale instance;
 
   public static void info(String path, Object... args) {
-    System.out.println(instance.format(path, args));
+    System.out.println(getInstance().format(path, args));
   }
 
   public static void error(String path, Object... args) {
-    System.err.println(instance.format(path, args));
+    System.err.println(getInstance().format(path, args));
   }
 
   public static ArclightLocale getInstance() {
-    return instance;
-  }
-
-  private static void init() throws Exception {
-    Logger logger = LogManager.getLogger("ArclightLocale-Debug");
-    logger.debug("ArclightLocale initialization starting");
-    Map.Entry<String, String> entry = getLocale();
-    String current = entry.getKey();
-    String fallback = entry.getValue();
-    logger.debug("Current locale: {}, Fallback: {}", current, fallback);
-    InputStream stream =
-        ArclightLocale.class.getResourceAsStream("/META-INF/i18n/" + fallback + ".yml");
-    if (stream == null) throw new RuntimeException("Fallback locale is not found: " + fallback);
-    logger.debug("Loading fallback locale resource: {}", fallback);
-    ConfigurationNode node =
-        YAMLConfigurationLoader.builder().setSource(localeSource(fallback)).build().load();
-    instance = new ArclightLocale(current, fallback, node);
-    logger.debug("ArclightLocale instance created with fallback");
-    if (!current.equals(fallback)) {
+    var locale = ArclightConfig.spec().getLocale();
+    String current = locale.getCurrent() == null ? systemLocale() : locale.getCurrent();
+    String fallback = locale.getFallback() == null ? DEFAULT_FALLBACK : locale.getFallback();
+    ArclightLocale loaded = instance;
+    if (loaded == null || !current.equals(loaded.current) || !fallback.equals(loaded.fallback)) {
       try {
-        logger.debug("Loading current locale resource: {}", current);
-        ConfigurationNode curNode =
-            YAMLConfigurationLoader.builder().setSource(localeSource(current)).build().load();
-        curNode.mergeValuesFrom(node);
-        instance = new ArclightLocale(current, fallback, curNode);
-        logger.debug("ArclightLocale instance updated with current locale");
-      } catch (Exception e) {
-        logger.debug("Failed to load current locale: {}", e.getMessage());
-        System.err.println(instance.format("i18n.current-not-available", current));
+        loaded = load(current, fallback);
+        instance = loaded;
+      } catch (IOException e) {
+        throw new UncheckedIOException("Unable to load Luminara locale " + current, e);
       }
     }
-    logger.debug("ArclightLocale initialization completed");
+    return loaded;
   }
 
-  private static Callable<BufferedReader> localeSource(String path) {
-    return () ->
-        new BufferedReader(
-            new InputStreamReader(
-                ArclightLocale.class.getResourceAsStream("/META-INF/i18n/" + path + ".yml"),
-                StandardCharsets.UTF_8));
+  private static ArclightLocale load(String current, String fallback) throws IOException {
+    ConfigurationNode fallbackNode = readBundle(fallback);
+    if (current.equals(fallback)) {
+      return new ArclightLocale(current, fallback, fallbackNode);
+    }
+    if (!hasBundle(current)) {
+      ArclightLocale loaded = new ArclightLocale(current, fallback, fallbackNode);
+      LOGGER.warn(loaded.format("i18n.current-not-available", current));
+      return loaded;
+    }
+
+    ConfigurationNode currentNode = readBundle(current);
+    currentNode.mergeValuesFrom(fallbackNode);
+    return new ArclightLocale(current, fallback, currentNode);
   }
 
-  private static Map.Entry<String, String> getLocale() {
-    Logger logger = LogManager.getLogger("ArclightLocale-Debug");
-    try {
-      Path path = Paths.get("luminara.yml");
-      logger.debug("Looking for config file at: {}", path.toAbsolutePath());
-      if (!Files.exists(path)) {
-        logger.debug("Config file luminara.yml not found, using system locale");
-        throw new Exception();
-      } else {
-        logger.debug("Config file found, reading locale settings");
-        ConfigurationNode node = YAMLConfigurationLoader.builder().setPath(path).build().load();
-        ConfigurationNode locale = node.getNode("locale");
-        String current = locale.getNode("current").getString(currentLocale());
-        String fallback = locale.getNode("fallback").getString("zh_cn");
-        logger.debug("Configured locale - Current: {}, Fallback: {}", current, fallback);
-        return new AbstractMap.SimpleImmutableEntry<>(current, fallback);
-      }
-    } catch (Throwable t) {
-      String systemLocale = currentLocale();
-      logger.debug("Using system locale: {} with zh_cn fallback", systemLocale);
-      return new AbstractMap.SimpleImmutableEntry<>(systemLocale, "zh_cn");
+  static boolean hasBundle(String locale) {
+    return ArclightLocale.class.getResource(bundlePath(locale)) != null;
+  }
+
+  static ConfigurationNode readBundle(String locale) throws IOException {
+    var stream = ArclightLocale.class.getResourceAsStream(bundlePath(locale));
+    if (stream == null) {
+      throw new IOException("Locale is not available: " + locale);
+    }
+    try (var reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+      return YAMLConfigurationLoader.builder().setSource(() -> reader).build().load();
     }
   }
 
-  private static String currentLocale() {
+  private static String bundlePath(String locale) {
+    return "/META-INF/i18n/" + locale + ".yml";
+  }
+
+  static String systemLocale() {
     Locale locale = Locale.getDefault();
     return (locale.getLanguage().toLowerCase(Locale.ROOT)
         + "_"
@@ -114,14 +91,13 @@ public record ArclightLocale(String current, String fallback, ConfigurationNode 
   }
 
   public String get(String path) {
-    Logger logger = LogManager.getLogger("ArclightLocale-Debug");
     if (path.contains("command") || path.contains("i18n") || path.contains("error")) {
-      logger.debug("Getting localized string for: {}", path);
+      LOGGER.debug("Getting localized string for: {}", path);
     }
     String result = getOption(path).orElse(path);
     if ((path.contains("command") || path.contains("i18n") || path.contains("error"))
         && result.equals(path)) {
-      logger.debug("No translation found for: {}, returning original", path);
+      LOGGER.debug("No translation found for: {}, returning original", path);
     }
     return result;
   }
@@ -133,9 +109,8 @@ public record ArclightLocale(String current, String fallback, ConfigurationNode 
       for (ConfigurationNode configurationNode : node.getChildrenList()) {
         joiner.add(configurationNode.getString());
       }
-      return Optional.ofNullable(joiner.toString());
-    } else {
-      return Optional.ofNullable(node.getString());
+      return Optional.of(joiner.toString());
     }
+    return Optional.ofNullable(node.getString());
   }
 }

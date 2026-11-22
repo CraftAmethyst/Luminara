@@ -51,6 +51,10 @@ The project follows the [MultiLoader-Template](https://github.com/jaredlll08/Mul
 
 The loader JARs are self-contained and can be started by placing them in the respective `mods/` directory. CI stages both loader JARs and `build/libs/SHA256SUMS` into `build/libs`; verify the downloaded files with `sha256sum -c build/libs/SHA256SUMS`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
 
+## Server configuration
+
+Forge and Fabric store Luminara settings in `config/luminara-common.toml`. On startup, Luminara imports `luminara.yml` from the server root if the TOML file is missing and keeps the original YAML file. Restart the server after changing settings that are read during startup.
+
 ## Supported Versions
 
 | Component | stable/Trials | stable/FeudalKings |

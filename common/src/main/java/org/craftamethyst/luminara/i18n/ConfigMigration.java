@@ -1,9 +1,18 @@
 package org.craftamethyst.luminara.i18n;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.toml.TomlFormat;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import ninja.leaping.configurate.ConfigurationNode;
+import java.util.Map;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.craftamethyst.luminara.i18n.conf.PermissionForwarding;
 
 final class ConfigMigration {
@@ -20,60 +29,82 @@ final class ConfigMigration {
 
   private ConfigMigration() {}
 
-  static Result migrate(ConfigurationNode root) {
-    int version = root.getNode("_v").getInt(1);
-    if (version > CURRENT_VERSION) {
-      throw new IllegalArgumentException("Unsupported configuration version at _v: " + version);
+  static CommentedConfig readLegacy(Path path) throws IOException {
+    Object root = YAMLConfigurationLoader.builder().setPath(path).build().load().getValue();
+    if (!(root instanceof Map<?, ?> map)) {
+      throw new IOException("Expected a YAML mapping in " + path);
     }
+    return toTomlTable(map);
+  }
+
+  private static CommentedConfig toTomlTable(Map<?, ?> map) {
+    CommentedConfig table = CommentedConfig.of(LinkedHashMap::new, TomlFormat.instance());
+    map.forEach(
+        (key, value) -> {
+          if (value != null) {
+            table.set(List.of(String.valueOf(key)), toTomlValue(value));
+          }
+        });
+    return table;
+  }
+
+  private static Object toTomlValue(Object value) {
+    if (value instanceof Map<?, ?> map) {
+      return toTomlTable(map);
+    }
+    if (value instanceof List<?> list) {
+      return list.stream().map(ConfigMigration::toTomlValue).toList();
+    }
+    if (value instanceof Date date) {
+      return date.toInstant().atOffset(ZoneOffset.UTC);
+    }
+    return value;
+  }
+
+  static int version(UnmodifiableConfig config) {
+    Object raw = config.get("_v");
+    if (raw == null) {
+      return 1;
+    }
+    try {
+      int version = Integer.parseInt(raw.toString());
+      if (version <= CURRENT_VERSION) {
+        return version;
+      }
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException("Invalid configuration version at _v: " + raw, e);
+    }
+    throw new IllegalArgumentException("Unsupported configuration version at _v: " + raw);
+  }
+
+  static List<String> migrate(CommentedConfig root) {
     List<String> removed = new ArrayList<>();
-    if (version < 2) {
+    if (version(root) < CURRENT_VERSION) {
       migratePermissionForwarding(root);
       for (String path : UNSAFE_SETTINGS) {
-        if (remove(root, path)) {
+        if (root.contains(path)) {
+          root.remove(path);
+          root.removeComment(path);
           removed.add(path);
         }
       }
-      root.getNode("_v").setValue(CURRENT_VERSION);
+      root.set("_v", CURRENT_VERSION);
     }
-    return new Result(root, List.copyOf(removed), version != CURRENT_VERSION);
+    return removed;
   }
 
-  private static void migratePermissionForwarding(ConfigurationNode root) {
-    ConfigurationNode compatibility = root.getNode("compatibility");
-    ConfigurationNode legacy = compatibility.getNode("forward-permission");
-    Object raw = legacy.getValue();
-    PermissionForwarding forwarding;
-    if (raw instanceof Boolean enabled) {
-      forwarding = enabled ? PermissionForwarding.FORGE_TO_BUKKIT : PermissionForwarding.DISABLED;
-    } else {
-      String value = raw == null ? "" : raw.toString().trim().toLowerCase(Locale.ROOT);
-      forwarding =
-          switch (value) {
-            case "true" -> PermissionForwarding.FORGE_TO_BUKKIT;
-            case "reverse" -> PermissionForwarding.BUKKIT_TO_FORGE;
-            default -> PermissionForwarding.DISABLED;
-          };
+  private static void migratePermissionForwarding(CommentedConfig root) {
+    Object raw = root.remove("compatibility.forward-permission");
+    if (raw == null && root.contains("compatibility.permission-forwarding")) {
+      return;
     }
-    compatibility.getNode("permission-forwarding").setValue(forwarding.name());
-    compatibility.removeChild("forward-permission");
+    String value = raw == null ? "" : raw.toString().trim().toLowerCase(Locale.ROOT);
+    PermissionForwarding forwarding =
+        switch (value) {
+          case "true" -> PermissionForwarding.FORGE_TO_BUKKIT;
+          case "reverse" -> PermissionForwarding.BUKKIT_TO_FORGE;
+          default -> PermissionForwarding.DISABLED;
+        };
+    root.set("compatibility.permission-forwarding", forwarding.name());
   }
-
-  private static boolean remove(ConfigurationNode root, String path) {
-    String[] elements = path.split("\\.");
-    ConfigurationNode parent = root;
-    for (int index = 0; index < elements.length - 1; index++) {
-      parent = parent.getNode(elements[index]);
-      if (parent.isVirtual()) {
-        return false;
-      }
-    }
-    ConfigurationNode candidate = parent.getNode(elements[elements.length - 1]);
-    if (candidate.isVirtual()) {
-      return false;
-    }
-    parent.removeChild(elements[elements.length - 1]);
-    return true;
-  }
-
-  record Result(ConfigurationNode root, List<String> removedUnsafeSettings, boolean changed) {}
 }

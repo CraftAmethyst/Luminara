@@ -1,150 +1,159 @@
 package org.craftamethyst.luminara.i18n;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.core.io.ParsingException;
+import com.electronwill.nightconfig.toml.TomlParser;
+import com.electronwill.nightconfig.toml.TomlWriter;
 import com.google.common.reflect.TypeToken;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import ninja.leaping.configurate.ConfigurationNode;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.craftamethyst.luminara.common.mod.ArclightCommon;
 import org.craftamethyst.luminara.i18n.conf.ConfigSpec;
-import org.yaml.snakeyaml.DumperOptions;
 
-public class ArclightConfig {
+public final class ArclightConfig {
 
-  private static ArclightConfig instance;
+  public static final String FILE_NAME = "luminara-common.toml";
+  static final String LEGACY_FILE_NAME = "luminara.yml";
 
-  static {
-    try {
-      load();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
+  private ArclightConfig() {}
 
-  private final ConfigurationNode node;
-  private final ConfigSpec spec;
-
-  public ArclightConfig(ConfigurationNode node) throws ObjectMappingException {
-    this.node = node;
-    this.spec = this.node.getValue(TypeToken.of(ConfigSpec.class));
-    if (spec == null || spec.getVersion() != ConfigMigration.CURRENT_VERSION) {
-      throw new ObjectMappingException(
-          "Invalid configuration key _v: expected " + ConfigMigration.CURRENT_VERSION);
-    }
+  private static final class LoadedConfig {
+    private static volatile ConfigSpec spec = loadPlatformConfig();
   }
 
   public static ConfigSpec spec() {
-    return instance.spec;
+    return LoadedConfig.spec;
   }
 
-  private static void load() throws Exception {
-    Path path = Paths.get("luminara.yml");
-    boolean fileExisted = Files.exists(path);
-
-    if (!fileExisted) {
-      instance = createInitialConfig(path);
-    } else {
-      instance = loadExistingConfig(path);
-    }
-
-    LoggingConfigurator.apply(instance.spec);
+  public static void applyLogging() {
+    LoggingConfigurator.apply(spec());
   }
 
-  private static ArclightConfig createInitialConfig(Path path) throws Exception {
-    String currentLocale = ArclightLocale.getInstance().current();
-    String processed;
-    try (InputStream stream = ArclightConfig.class.getResourceAsStream("/META-INF/luminara.yml")) {
-      if (stream == null) throw new IOException("Missing /META-INF/luminara.yml");
-      String content = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-      processed = I18nCommentInjector.injectComments(content, currentLocale);
-    }
-    Path temporary = Files.createTempFile(path.toAbsolutePath().getParent(), "luminara", ".yml");
+  static void useConfig(CommentedConfig config) {
+    LoadedConfig.spec = readSpec(config);
+  }
+
+  private static ConfigSpec loadPlatformConfig() {
+    Path path = ArclightCommon.api().getConfigDirectory().resolve(FILE_NAME);
     try {
-      Files.writeString(temporary, processed, StandardCharsets.UTF_8);
-      ConfigurationNode node = loader(temporary).load();
-      ConfigMigration.migrate(node);
-      ArclightConfig config = new ArclightConfig(node);
-      saveAtomically(path, node);
-      return config;
-    } finally {
-      Files.deleteIfExists(temporary);
+      return load(path);
+    } catch (IOException e) {
+      throw new UncheckedIOException("Unable to load Luminara configuration " + path, e);
     }
   }
 
-  static ArclightConfig loadExistingConfig(Path path) throws Exception {
-    YAMLConfigurationLoader loader = loader(path);
-    ConfigurationNode original = loader.load();
-    String originalContent = Files.readString(path, StandardCharsets.UTF_8);
-    ConfigurationNode migrated = original.copy();
-    ConfigMigration.Result migration = ConfigMigration.migrate(migrated);
-    migrated.getNode("locale", "current").setValue(ArclightLocale.getInstance().current());
-    String currentLocale = migrated.getNode("locale", "current").getString("zh_cn");
-    ArclightConfig config = new ArclightConfig(migrated);
-    if (migration.changed()
-        || !currentLocale.equals(original.getNode("locale", "current").getString(""))
-        || !I18nCommentInjector.hasInjectedComments(originalContent, currentLocale)) {
-      saveAtomically(path, migrated);
-    }
-    migration
-        .removedUnsafeSettings()
-        .forEach(setting -> System.err.println("Removed unsupported unsafe setting: " + setting));
-    return config;
-  }
-
-  private static YAMLConfigurationLoader loader(Path path) {
-    return YAMLConfigurationLoader.builder()
-        .setPath(path)
-        .setIndent(2)
-        .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
-        .build();
-  }
-
-  static void saveAtomically(Path path, ConfigurationNode node) throws IOException {
-    Path absolute = path.toAbsolutePath();
-    Path parent = absolute.getParent();
-    if (parent != null) Files.createDirectories(parent);
-    Path temporary = Files.createTempFile(parent, absolute.getFileName().toString(), ".tmp");
+  static ConfigSpec load(Path path) throws IOException {
+    Path legacy = path.toAbsolutePath().getParent().getParent().resolve(LEGACY_FILE_NAME);
+    boolean create = Files.notExists(path);
+    CommentedConfig config;
+    Path source = path;
     try {
-      loader(temporary).save(node);
-      String currentLocale = node.getNode("locale", "current").getString("zh_cn");
-      String localized;
-      try {
-        localized =
-            I18nCommentInjector.injectComments(
-                Files.readString(temporary, StandardCharsets.UTF_8), currentLocale);
-      } catch (Exception exception) {
-        throw new IOException("Unable to inject localized configuration comments", exception);
+      if (!create) {
+        try (var reader = Files.newBufferedReader(path)) {
+          config = new TomlParser().parse(reader);
+        }
+      } else if (!Files.notExists(legacy)) {
+        source = legacy;
+        config = ConfigMigration.readLegacy(legacy);
+      } else {
+        config = defaults();
       }
-      Files.writeString(temporary, localized, StandardCharsets.UTF_8);
+      boolean changed = prepare(config);
+      ConfigSpec spec = readSpec(config);
+      if (create || changed) {
+        saveAtomically(path, config);
+      }
+      return spec;
+    } catch (ParsingException | IllegalArgumentException e) {
+      throw new IOException("Invalid Luminara configuration " + source, e);
+    }
+  }
+
+  static CommentedConfig defaults() {
+    String resource = "/META-INF/" + FILE_NAME;
+    var stream = Objects.requireNonNull(ArclightConfig.class.getResourceAsStream(resource), resource);
+    try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+      return new TomlParser().parse(reader);
+    } catch (IOException e) {
+      throw new UncheckedIOException("Unable to read " + resource, e);
+    }
+  }
+
+  static boolean needsUpdate(CommentedConfig config) {
+    return ConfigMigration.version(config) != ConfigMigration.CURRENT_VERSION
+        || !config.contains("locale.current")
+        || !I18nCommentInjector.hasLocalizedComments(config);
+  }
+
+  static boolean prepare(CommentedConfig config) {
+    if (!needsUpdate(config)) {
+      return false;
+    }
+    var removed = ConfigMigration.migrate(config);
+    if (!config.contains("locale.current")) {
+      config.set("locale.current", ArclightLocale.systemLocale());
+    }
+    readSpec(config);
+    I18nCommentInjector.localize(config);
+    removed.forEach(setting -> System.err.println("Removed unsupported unsafe setting: " + setting));
+    return true;
+  }
+
+  private static ConfigSpec readSpec(CommentedConfig config) {
+    var node = SimpleConfigurationNode.root().setValue(toNodeValue(config));
+    try {
+      return node.getValue(TypeToken.of(ConfigSpec.class));
+    } catch (ObjectMappingException e) {
+      throw new IllegalArgumentException("Unable to map Luminara configuration", e);
+    }
+  }
+
+  private static Object toNodeValue(Object value) {
+    if (value instanceof UnmodifiableConfig config) {
+      Map<String, Object> map = new LinkedHashMap<>();
+      config.valueMap().forEach((key, entry) -> map.put(key, toNodeValue(entry)));
+      return map;
+    }
+    if (value instanceof List<?> list) {
+      return list.stream().map(ArclightConfig::toNodeValue).toList();
+    }
+    return value;
+  }
+
+  private static void saveAtomically(Path path, CommentedConfig config) throws IOException {
+    Path absolute = path.toAbsolutePath();
+    Path parent = Files.createDirectories(absolute.getParent());
+    Path temporary = Files.createTempFile(parent, FILE_NAME, ".tmp");
+    try {
+      try (var writer = Files.newBufferedWriter(temporary)) {
+        new TomlWriter().write(config, writer);
+      }
       try (FileChannel channel = FileChannel.open(temporary, StandardOpenOption.WRITE)) {
         channel.force(true);
       }
       try {
         Files.move(
-            temporary,
-            absolute,
-            StandardCopyOption.ATOMIC_MOVE,
-            StandardCopyOption.REPLACE_EXISTING);
+            temporary, absolute, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
       } catch (AtomicMoveNotSupportedException ignored) {
         Files.move(temporary, absolute, StandardCopyOption.REPLACE_EXISTING);
       }
     } finally {
       Files.deleteIfExists(temporary);
     }
-  }
-
-  public ConfigSpec getSpec() {
-    return spec;
-  }
-
-  public ConfigurationNode getNode() {
-    return node;
-  }
-
-  public ConfigurationNode get(String path) {
-    return this.node.getNode((Object) path.split("\\."));
   }
 }

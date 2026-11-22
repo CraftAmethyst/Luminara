@@ -1,6 +1,7 @@
 package org.craftamethyst.luminara.common.mod;
 
 import io.izzel.arclight.api.ArclightServer;
+import java.nio.file.Path;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.ServerOperator;
@@ -65,6 +66,8 @@ public final class ArclightCommon {
   public interface Api {
 
     boolean isModLoaded(String modid);
+
+    Path getConfigDirectory();
 
     MinecraftServer getCurrentServer();
 

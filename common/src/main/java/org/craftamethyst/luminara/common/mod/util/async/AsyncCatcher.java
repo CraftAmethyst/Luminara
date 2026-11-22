@@ -17,7 +17,7 @@ import org.craftamethyst.luminara.i18n.conf.AsyncCatcherSpec;
 
 /**
  * Guards the world-state methods that must not be driven from a non-server thread. Strategy comes
- * from {@code async-catcher.defaultOperation} in {@code luminara.yml}.
+ * from {@code async-catcher.defaultOperation} in {@code config/luminara-common.toml}.
  */
 public final class AsyncCatcher {
 

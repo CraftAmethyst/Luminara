@@ -2,11 +2,13 @@ package org.craftamethyst.luminara.forge;
 
 import com.google.common.collect.ImmutableSet;
 import io.izzel.arclight.api.ArclightServer;
+import java.nio.file.Path;
 import java.util.Set;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.CrashReportCallables;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -43,6 +45,11 @@ public final class ForgeCommonApi implements ArclightCommon.Api {
     // already populated by then. Without this fallback every @LoadIfMod check sees "absent".
     LoadingModList loadingModList = FMLLoader.getLoadingModList();
     return loadingModList != null && loadingModList.getModFileById(modid) != null;
+  }
+
+  @Override
+  public Path getConfigDirectory() {
+    return FMLPaths.CONFIGDIR.get();
   }
 
   @Override

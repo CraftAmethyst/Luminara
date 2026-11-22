@@ -51,6 +51,10 @@ Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服�
 
 两个 loader 产物均为自包含 JAR，可直接放入对应服务端的 `mods/` 目录启动。CI 会将两个 loader JAR 与 `build/libs/SHA256SUMS` 统一放入 `build/libs`，可使用 `sha256sum -c build/libs/SHA256SUMS` 校验下载文件。开发流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
+## 服务端配置
+
+Forge 和 Fabric 都使用 `config/luminara-common.toml`。启动时若该文件不存在，Luminara 会导入服务端根目录中的 `luminara.yml` 并保留原文件。修改启动时读取的设置后，请重启服务端使其生效。
+
 ## 支持版本
 
 

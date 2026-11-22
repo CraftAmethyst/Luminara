@@ -7,6 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -20,6 +21,7 @@ import org.craftamethyst.luminara.common.mod.server.event.ArclightEventDispatche
 import org.craftamethyst.luminara.common.mod.util.BungeeComponentPreloader;
 import org.craftamethyst.luminara.common.mod.util.log.ArclightI18nLogger;
 import org.craftamethyst.luminara.i18n.ArclightConfig;
+import org.craftamethyst.luminara.i18n.ForgeLuminaraConfig;
 import org.craftamethyst.luminara.i18n.LuminaraVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +32,7 @@ public class ArclightMod {
   public static final Logger LOGGER = ArclightI18nLogger.getLogger("Luminara");
 
   public ArclightMod(FMLJavaModLoadingContext context) {
-    // The logging configuration is loaded on first ArclightConfig access. Register the
-    // RGB pattern converter before that so Log4j can resolve it during reconfiguration.
+    // Register the RGB pattern converter before Log4j is reconfigured.
     LuminaraBootstrap.registerLoggingPlugins();
     if (FMLLoader.getDist() != Dist.DEDICATED_SERVER) {
       throw new IllegalStateException(
@@ -42,13 +43,13 @@ public class ArclightMod {
               + "after reading https://github.com/CraftAmethyst/Luminara");
     }
     LuminaraBootstrap.applyPlatform();
+    context.registerConfig(ModConfig.Type.COMMON, new ForgeLuminaraConfig(), ArclightConfig.FILE_NAME);
 
     // Capture stdout before loading the config, because LoggingConfigurator reports
     // the selected layout through System.out after installing the new Log4j config.
     System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
     System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));
-    // First-stage config load applies Luminara's logging layout before the banner.
-    ArclightConfig.spec();
+    ArclightConfig.applyLogging();
 
     try {
       LuminaraBootstrap.installGsonEnumFactory();

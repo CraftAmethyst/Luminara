@@ -38,6 +38,8 @@ dependencies {
     add('fabricBundle', "io.izzel.arclight:mixin-tools:${libs.versions.mixin.tools.get()}")
     add('fabricBundle', "org.spongepowered:configurate-core:${libs.versions.configurate.get()}")
     add('fabricBundle', "org.spongepowered:configurate-yaml:${libs.versions.configurate.get()}")
+    add('fabricBundle', "com.electronwill.night-config:core:${libs.versions.night.config.get()}")
+    add('fabricBundle', "com.electronwill.night-config:toml:${libs.versions.night.config.get()}")
     add('fabricBundle', 'org.yaml:snakeyaml:2.0')
     add('fabricBundle', 'net.md-5:SpecialSource:1.11.0')
     add('fabricBundle', 'jline:jline:2.12.1')

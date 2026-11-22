@@ -1,194 +1,79 @@
 package org.craftamethyst.luminara.i18n;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import com.electronwill.nightconfig.core.CommentedConfig;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 final class I18nCommentInjector {
 
   private I18nCommentInjector() {}
 
-  static String injectComments(String configContent, String currentLocale) throws Exception {
-    ConfigurationNode commentsNode = loadCommentsNode(currentLocale);
-    if (commentsNode == null || commentsNode.isVirtual()) {
-      return updateLocaleInContent(configContent, currentLocale);
-    }
-    String withComments = injectCommentsForContent(configContent, commentsNode);
-    return updateLocaleInContent(withComments, currentLocale);
+  static boolean hasLocalizedComments(CommentedConfig config) {
+    String comment = commentText(loadComments(config), "_v");
+    return comment.isEmpty() || Objects.equals(config.getComment("_v"), comment);
   }
 
-  static boolean hasInjectedComments(String configContent, String currentLocale) throws Exception {
-    ConfigurationNode commentsNode = loadCommentsNode(currentLocale);
-    if (commentsNode == null || commentsNode.isVirtual()) return true;
+  static void localize(CommentedConfig config) {
+    applyComments(config, loadComments(config), "");
+  }
 
-    ConfigurationNode versionComment = findCommentNode(commentsNode, "_v");
-    if (versionComment == null) return true;
-    String commentText = getCommentText(versionComment);
-    for (String line : commentText.split("\\n")) {
-      String trimmed = line.trim();
-      if (!trimmed.isEmpty() && !configContent.contains("# " + trimmed)) {
-        return false;
+  private static ConfigurationNode loadComments(CommentedConfig config) {
+    String current = config.getOrElse("locale.current", ArclightLocale.systemLocale());
+    String fallback = config.getOrElse("locale.fallback", ArclightLocale.DEFAULT_FALLBACK);
+    try {
+      return ArclightLocale.readBundle(
+              ArclightLocale.hasBundle(current) ? current : fallback)
+          .getNode("comments");
+    } catch (IOException e) {
+      throw new UncheckedIOException("Unable to load localized configuration comments", e);
+    }
+  }
+
+  private static void applyComments(
+      CommentedConfig config, ConfigurationNode comments, String prefix) {
+    for (var entry : config.valueMap().entrySet()) {
+      String key = entry.getKey();
+      String path = prefix + key;
+      String text = commentText(comments, path);
+      if (!text.isEmpty()) {
+        config.setComment(List.of(key), text);
+      }
+      if (entry.getValue() instanceof CommentedConfig section) {
+        applyComments(section, comments, path + ".");
       }
     }
-    return true;
   }
 
-  private static ConfigurationNode loadCommentsNode(String currentLocale) throws Exception {
-    InputStream i18nStream =
-        I18nCommentInjector.class.getResourceAsStream("/META-INF/i18n/" + currentLocale + ".yml");
-
-    if (i18nStream == null) {
-      String fallbackLocale = ArclightLocale.getInstance().fallback();
-      i18nStream =
-          I18nCommentInjector.class.getResourceAsStream(
-              "/META-INF/i18n/" + fallbackLocale + ".yml");
-    }
-
-    if (i18nStream == null) {
-      return null;
-    }
-
-    final InputStream finalI18nStream = i18nStream;
-    YAMLConfigurationLoader i18nLoader =
-        YAMLConfigurationLoader.builder()
-            .setSource(
-                () ->
-                    new BufferedReader(
-                        new InputStreamReader(finalI18nStream, StandardCharsets.UTF_8)))
-            .build();
-    ConfigurationNode i18nNode = i18nLoader.load();
-    return i18nNode.getNode("comments");
-  }
-
-  private static String injectCommentsForContent(
-      String configContent, ConfigurationNode commentsNode) {
-    StringBuilder result = new StringBuilder(configContent.length() + 128);
-
-    String[] lines = configContent.split("\n");
-    List<String> currentPath = new ArrayList<>();
-
-    for (String line : lines) {
-      String trimmed = line.trim();
-      if (!trimmed.isEmpty() && !trimmed.startsWith("#")) {
-        int indentLevel = getIndentLength(line);
-        String key = extractKeyFromLine(trimmed);
-        if (key != null) {
-          int currentLevel = Math.max(0, indentLevel / 2);
-
-          while (currentPath.size() > currentLevel) {
-            currentPath.remove(currentPath.size() - 1);
-          }
-
-          currentPath.add(key);
-
-          String fullPath = String.join(".", currentPath);
-
-          ConfigurationNode commentNode = findCommentNode(commentsNode, fullPath);
-          if (commentNode != null && !commentNode.isVirtual() && commentNode.getValue() != null) {
-            String commentText = getCommentText(commentNode);
-            if (!commentText.isEmpty()) {
-              String indent = getIndent(line);
-              String[] commentLines = commentText.split("\n");
-              for (String comment : commentLines) {
-                String commentTrimmed = comment.trim();
-                if (!commentTrimmed.isEmpty()) {
-                  result.append(indent).append("# ").append(commentTrimmed).append("\n");
-                }
-              }
-            }
-          }
-        }
+  private static String commentText(ConfigurationNode comments, String path) {
+    String[] elements = (path + ".comment").split("\\.");
+    ConfigurationNode node = comments;
+    for (int index = 0; index < elements.length; index++) {
+      var child = node.getNode(elements[index]);
+      if (child.isVirtual()) {
+        String flattened = String.join(".", Arrays.copyOfRange(elements, index, elements.length));
+        node = node.getNode(flattened);
+        break;
       }
-
-      result.append(line).append("\n");
+      node = child;
     }
-
-    return result.toString();
-  }
-
-  private static String extractKeyFromLine(String trimmed) {
-    if (trimmed.isEmpty() || trimmed.startsWith("#")) {
-      return null;
-    }
-
-    int colonIndex = trimmed.indexOf(':');
-    if (colonIndex > 0) {
-      return trimmed.substring(0, colonIndex).trim();
-    }
-    return null;
-  }
-
-  private static ConfigurationNode findCommentNode(
-      ConfigurationNode commentsNode, String fullPath) {
-    String[] path = (fullPath + ".comment").split("\\.");
-    ConfigurationNode current = commentsNode;
-    for (int index = 0; index < path.length; index++) {
-      ConfigurationNode child = current.getChildrenMap().get(path[index]);
-      if (child != null) {
-        current = child;
-        continue;
-      }
-
-      StringBuilder flattenedKey = new StringBuilder();
-      for (int suffix = index; suffix < path.length; suffix++) {
-        if (flattenedKey.length() > 0) flattenedKey.append('.');
-        flattenedKey.append(path[suffix]);
-      }
-      child = current.getChildrenMap().get(flattenedKey.toString());
-      return child;
-    }
-    return current;
-  }
-
-  private static String getCommentText(ConfigurationNode commentNode) {
-    Object value = commentNode.getValue();
-    if (value instanceof String) {
-      return (String) value;
-    } else if (value instanceof Iterable) {
-      StringBuilder sb = new StringBuilder();
-      for (Object item : (Iterable<?>) value) {
-        if (item instanceof String) {
-          if (sb.length() > 0) {
-            sb.append("\n");
-          }
-          sb.append((String) item);
-        }
-      }
-      return sb.toString();
-    }
-    return "";
-  }
-
-  private static String getIndent(String line) {
-    int indentLength = 0;
-    while (indentLength < line.length() && Character.isWhitespace(line.charAt(indentLength))) {
-      indentLength++;
-    }
-    return line.substring(0, indentLength);
-  }
-
-  private static int getIndentLength(String line) {
-    int indentLength = 0;
-    while (indentLength < line.length() && Character.isWhitespace(line.charAt(indentLength))) {
-      indentLength++;
-    }
-    return indentLength;
-  }
-
-  private static String updateLocaleInContent(String content, String currentLocale) {
-    if (content.contains("current:")) {
-      content =
-          content.replaceAll("(?m)^([\\t ]*current:)\\s*[a-zA-Z_0-9]+$", "$1 " + currentLocale);
-    } else {
-      content =
-          content.replaceFirst(
-              "(locale:\\s*\\n\\s*fallback:\\s*zh_cn)", "$1\n  current: " + currentLocale);
-    }
-    return content;
+    String text =
+        switch (node.getValueType()) {
+          case SCALAR -> node.getString("");
+          case LIST ->
+              node.getChildrenList().stream()
+                  .map(line -> line.getString(""))
+                  .collect(Collectors.joining("\n"));
+          default -> "";
+        };
+    return text.lines()
+        .map(String::strip)
+        .filter(line -> !line.isEmpty())
+        .map(line -> " " + line)
+        .collect(Collectors.joining("\n"));
   }
 }

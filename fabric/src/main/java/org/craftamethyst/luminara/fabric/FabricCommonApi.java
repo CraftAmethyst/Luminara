@@ -1,6 +1,7 @@
 package org.craftamethyst.luminara.fabric;
 
 import io.izzel.arclight.api.ArclightServer;
+import java.nio.file.Path;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.permissions.PermissibleBase;
@@ -13,6 +14,11 @@ public final class FabricCommonApi implements ArclightCommon.Api {
   @Override
   public boolean isModLoaded(String modid) {
     return FabricLoader.getInstance().isModLoaded(modid);
+  }
+
+  @Override
+  public Path getConfigDirectory() {
+    return FabricLoader.getInstance().getConfigDir();
   }
 
   @Override
