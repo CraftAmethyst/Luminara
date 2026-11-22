@@ -7,6 +7,7 @@ import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.plugins.util.PluginRegistry;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.message.Message;
 import org.craftamethyst.luminara.common.mod.util.log.LuminaraMinecraftFormattingConverter;
 import org.craftamethyst.luminara.i18n.ArclightLocale;
 import org.craftamethyst.luminara.i18n.LuminaraVersion;
+import org.jline.terminal.impl.AbstractWindowsTerminal;
 
 public final class LuminaraBootstrap {
 
@@ -72,10 +74,15 @@ public final class LuminaraBootstrap {
     var locale = ArclightLocale.getInstance();
     var terminal = TerminalConsoleAppender.getTerminal();
     var console = System.console();
-    Charset encoding =
-        terminal != null
-            ? terminal.encoding()
-            : console != null ? console.charset() : Charset.defaultCharset();
+    Charset encoding;
+    if (terminal instanceof AbstractWindowsTerminal) {
+      // The native Windows terminal writes Unicode characters through WriteConsoleW.
+      encoding = StandardCharsets.UTF_8;
+    } else if (terminal != null) {
+      encoding = terminal.encoding();
+    } else {
+      encoding = console != null ? console.charset() : Charset.defaultCharset();
+    }
     Message banner =
         new BannerMessage(
             """

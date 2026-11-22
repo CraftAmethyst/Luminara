@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLogger;
 
-/** Plugin logger that routes Bukkit's JUL API through the Log4j logger owned by Forge. */
+/** Plugin logger that routes Bukkit's JUL API through the server's Log4j configuration. */
 public class ArclightPluginLogger extends PluginLogger {
 
   private final java.util.logging.Logger logger;

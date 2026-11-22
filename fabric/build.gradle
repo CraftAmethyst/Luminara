@@ -59,6 +59,7 @@ dependencies {
     add('fabricBundle', "net.minecrell:terminalconsoleappender:1.2.0")
     add('fabricBundle', 'org.jline:jline-reader:3.12.1')
     add('fabricBundle', 'org.jline:jline-terminal:3.12.1')
+    add('fabricBundle', 'org.jline:jline-terminal-jna:3.12.1')
     add('fabricBundle', "net.minecraftforge:eventbus:6.0.5")
 
     // Spigot declares these Maven Resolver components as provided; bundle them for plugin.yml libraries.
@@ -141,7 +142,10 @@ jar {
         exclude 'META-INF/*.SF'
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
-        exclude 'META-INF/services/**'
+        exclude { entry ->
+            entry.path.startsWith('META-INF/services/') &&
+                entry.path != 'META-INF/services/org.jline.terminal.spi.JnaSupport'
+        }
         exclude 'module-info.class'
         exclude 'META-INF/versions/*/module-info.class'
         exclude 'org/apache/logging/**'
