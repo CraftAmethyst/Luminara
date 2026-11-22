@@ -109,6 +109,10 @@ processResources {
         expand expandProps
     }
 
+    filesMatching('META-INF/luminara-version.properties') {
+        expand 'version': project.version
+    }
+
     filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
         expand jsonExpandProps
     }

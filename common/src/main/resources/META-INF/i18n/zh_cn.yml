@@ -384,6 +384,9 @@ server:
     failed: 保存世界 {} 失败
 server-initialization-completed: Luminara 服务器初始化完成
 symlink-file-exist: 创建符号链接 {} 时文件已存在
+update:
+  available: "Luminara 当前运行 {}，新版本 {} 可在此下载 {}"
+  failed: "无法检查 Luminara 更新（{}）"
 velocity:
   address:
     bridge-failed: 通过桥接设置地址失败

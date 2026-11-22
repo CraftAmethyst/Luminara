@@ -91,6 +91,7 @@ dependencies {
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.apache.maven:maven-artifact:3.8.5'
 }
 
 configurations {
@@ -136,9 +137,6 @@ processResources {
     dependsOn(relocateBstats)
     from({ zipTree(relocateBstats.get().archiveFile.get().asFile) }) {
         exclude 'META-INF/MANIFEST.MF'
-    }
-    filesMatching('**/luminara-version.properties') {
-        expand 'version': project.version
     }
 }
 

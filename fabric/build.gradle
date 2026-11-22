@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.apache.maven:maven-artifact:3.8.5'
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered {
         officialMojangMappings()

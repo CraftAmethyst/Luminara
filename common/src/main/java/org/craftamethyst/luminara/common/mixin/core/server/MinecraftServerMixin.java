@@ -65,6 +65,7 @@ import org.craftamethyst.luminara.common.mod.ArclightConstants;
 import org.craftamethyst.luminara.common.mod.metrics.MetricsManager;
 import org.craftamethyst.luminara.common.mod.server.ArclightServer;
 import org.craftamethyst.luminara.common.mod.server.BukkitRegistry;
+import org.craftamethyst.luminara.common.mod.update.UpdateChecker;
 import org.craftamethyst.luminara.common.mod.util.ArclightCaptures;
 import org.craftamethyst.luminara.common.mod.util.BukkitOptionParser;
 import org.craftamethyst.luminara.common.mod.util.PlatformHooks;
@@ -319,6 +320,9 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
         throw new IllegalStateException("Failed to initialize server");
       }
       PlatformHooks.handleServerStarted((MinecraftServer) (Object) this);
+      if (this.isDedicatedServer()) {
+        UpdateChecker.checkOnStartup(PlatformHooks.isForgePresent() ? "forge" : "fabric");
+      }
       long endTime = Util.getMillis();
       this.nextTickTime = endTime;
       this.statusIcon = this.loadStatusIcon().orElse(null);

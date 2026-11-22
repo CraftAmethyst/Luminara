@@ -421,6 +421,9 @@ velocity:
   signature:
     mismatch: Velocity signature mismatch!
     verification-error: Error verifying Velocity signature
+update:
+  available: "Luminara {} is running. Version {} is available at {}"
+  failed: "Could not check for Luminara updates ({})"
 warning:
   async-operation: "Async operation warning: {}"
   deprecated-api: "Using deprecated API: {}"
