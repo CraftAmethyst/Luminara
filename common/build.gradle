@@ -1,6 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'multiloader-common'
     id 'net.neoforged.moddev.legacyforge'
+    id 'com.gradleup.shadow' version '8.3.9' apply false
 }
 
 mixin {
@@ -90,6 +93,12 @@ dependencies {
 }
 
 configurations {
+    bstats {
+        canBeConsumed = false
+    }
+    commonBstats {
+        canBeResolved = false
+    }
     commonJava {
         canBeResolved = false
         canBeConsumed = true
@@ -100,7 +109,20 @@ configurations {
     }
 }
 
+def relocateBstats = tasks.register('relocateBstats', ShadowJar) {
+    archiveBaseName = 'luminara-bstats'
+    destinationDirectory = layout.buildDirectory.dir('bstats')
+    configurations = [project.configurations.bstats]
+    relocate 'org.bstats', 'org.craftamethyst.luminara.internal.bstats'
+}
+
+dependencies {
+    add('bstats', "org.bstats:bstats-base:${libs.versions.bstats.get()}")
+    compileOnlyApi files(relocateBstats)
+}
+
 artifacts {
+    commonBstats relocateBstats
     commonJava sourceSets.main.java.sourceDirectories.singleFile
     commonResources sourceSets.main.resources.sourceDirectories.singleFile
 }
@@ -110,6 +132,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
+    dependsOn(relocateBstats)
+    from({ zipTree(relocateBstats.get().archiveFile.get().asFile) }) {
+        exclude 'META-INF/MANIFEST.MF'
+    }
     filesMatching('**/luminara-version.properties') {
         expand 'version': project.version
     }

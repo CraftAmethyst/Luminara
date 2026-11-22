@@ -3,6 +3,9 @@ plugins {
 }
 
 configurations {
+    commonBstats {
+        canBeConsumed = false
+    }
     commonJava{
         canBeResolved = true
     }
@@ -17,6 +20,7 @@ dependencies {
             requireCapability "$group:$mod_id"
         }
     }
+    commonBstats project(path: ':common', configuration: 'commonBstats')
     commonJava project(path: ':common', configuration: 'commonJava')
     commonResources project(path: ':common', configuration: 'commonResources')
 }
@@ -29,6 +33,10 @@ tasks.named('compileJava', JavaCompile) {
 processResources {
     dependsOn(configurations.commonResources)
     from(configurations.commonResources)
+    dependsOn(configurations.commonBstats)
+    from({ configurations.commonBstats.collect { zipTree(it) } }) {
+        exclude 'META-INF/MANIFEST.MF'
+    }
 }
 
 tasks.named('javadoc', Javadoc).configure {

@@ -457,7 +457,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
     try {
       MetricsManager.initialize(
-          ArclightVersion.current().getReleaseName(), this.getServerDirectory());
+          ArclightVersion.current().getReleaseName(), this.getServerDirectory(), this);
     } catch (Exception e) {
       ARCLIGHT_LOGGER.error("Failed to initialize metrics", e);
     }
