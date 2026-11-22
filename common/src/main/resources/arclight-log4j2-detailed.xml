@@ -30,6 +30,12 @@
                 <!-- use white for info output -->
                 <LoggerNamePatternSelector
                         defaultPattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] [%style{%c{1.}%notEmpty{/%markerSimpleName}}{magenta}] %highlight{%msg{nolookup}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}">
+                    <PatternMatch key="Luminara.Banner"
+                                  pattern="%style{%msg{console}}{bright_cyan}%n"/>
+                    <PatternMatch key="Luminara.Banner.Details"
+                                  pattern="%msg{console}%n"/>
+                    <PatternMatch key="Luminara.Banner.Credits"
+                                  pattern="%style{%msg{nolookup}}{bright_green}%n"/>
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
                     <PatternMatch key="net.minecraft."
                                   pattern="[%style{%d{HH:mm:ss}}{cyan} %highlight{%level}{INFO=green, WARN=yellow, ERROR=red}] %highlight{%msg{nolookup}%n%xEx}{INFO=normal, WARN=normal, ERROR=red}"/>
@@ -53,7 +59,7 @@
             </PatternLayout>
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout
+            <PatternLayout charset="UTF-8"
                     pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName] %msg{nolookup}%n%tEx"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -62,7 +68,7 @@
             <DefaultRolloverStrategy max="99" fileIndex="min"/>
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.gz">
-            <PatternLayout
+            <PatternLayout charset="UTF-8"
                     pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName] %msg{nolookup}%n%tEx"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>

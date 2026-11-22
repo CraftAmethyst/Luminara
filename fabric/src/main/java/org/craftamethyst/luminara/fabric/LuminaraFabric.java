@@ -1,6 +1,7 @@
 package org.craftamethyst.luminara.fabric;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.craftamethyst.luminara.common.mod.ArclightCommon;
 import org.craftamethyst.luminara.common.mod.boot.LuminaraBootstrap;
 import org.craftamethyst.luminara.i18n.ArclightConfig;
@@ -18,6 +19,7 @@ public final class LuminaraFabric implements ModInitializer {
     ArclightConfig.applyLogging();
     LuminaraBootstrap.installGsonEnumFactory();
     LuminaraBootstrap.warmUpEnumHelper();
-    LuminaraBootstrap.logBanner();
+    var loader = FabricLoader.getInstance().getModContainer("fabricloader").orElseThrow();
+    LuminaraBootstrap.logBanner("Fabric", loader.getMetadata().getVersion().getFriendlyString());
   }
 }

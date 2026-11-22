@@ -91,6 +91,7 @@ dependencies {
     testImplementation platform("org.junit:junit-bom:${libs.versions.junit.get()}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly "org.apache.logging.log4j:log4j-core:${libs.versions.log4j.get()}"
     testRuntimeOnly 'org.apache.maven:maven-artifact:3.8.5'
 }
 

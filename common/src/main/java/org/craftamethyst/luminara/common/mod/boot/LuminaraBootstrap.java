@@ -6,13 +6,18 @@ import io.izzel.arclight.api.ArclightVersion;
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.plugins.util.PluginRegistry;
+import org.apache.logging.log4j.message.Message;
 import org.craftamethyst.luminara.common.mod.util.log.LuminaraMinecraftFormattingConverter;
 import org.craftamethyst.luminara.i18n.ArclightLocale;
 import org.craftamethyst.luminara.i18n.LuminaraVersion;
 
 public final class LuminaraBootstrap {
+
+  private static final String SOURCE_URL = "https://github.com/CraftAmethyst/Luminara";
 
   private static boolean platformApplied;
   private static boolean gsonEnumFactoryApplied;
@@ -63,15 +68,53 @@ public final class LuminaraBootstrap {
     gsonEnumFactoryApplied = true;
   }
 
-  public static void logBanner() {
-    var logger = LogManager.getLogger("Luminara");
-    logger.info(
-        ArclightLocale.getInstance().get("logo"),
-        ArclightLocale.getInstance()
-            .get("release-name." + ArclightVersion.current().getReleaseName()),
-        LuminaraVersion.version(),
-        LuminaraVersion.gitCommit());
-    logger.info(LuminaraVersion.compatibilityLine());
+  public static void logBanner(String loader, String loaderVersion) {
+    var locale = ArclightLocale.getInstance();
+    var terminal = TerminalConsoleAppender.getTerminal();
+    var console = System.console();
+    Charset encoding =
+        terminal != null
+            ? terminal.encoding()
+            : console != null ? console.charset() : Charset.defaultCharset();
+    Message banner =
+        new BannerMessage(
+            """
+
+               ██▓     █    ██  ███▄ ▄███▓ ██▓ ███▄    █  ▄▄▄       ██▀███   ▄▄▄
+              ▓██▒     ██  ▓██▒▓██▒▀█▀ ██▒▓██▒ ██ ▀█   █ ▒████▄    ▓██ ▒ ██▒▒████▄
+              ▒██░    ▓██  ▒██░▓██    ▓██░▒██▒▓██  ▀█ ██▒▒██  ▀█▄  ▓██ ░▄█ ▒▒██  ▀█▄
+              ▒██░    ▓▓█  ░██░▒██    ▒██ ░██░▓██▒  ▐▌██▒░██▄▄▄▄██ ▒██▀▀█▄  ░██▄▄▄▄██
+              ░██████▒▒▒█████▓ ▒██▒   ░██▒░██░▒██░   ▓██░ ▓█   ▓██▒░██▓ ▒██▒ ▓█   ▓██▒
+              ░ ▒░▓  ░░▒▓▒ ▒ ▒ ░ ▒░   ░  ░░▓  ░ ▒░   ▒ ▒  ▒▒   ▓▒█░░ ▒▓ ░▒▓░ ▒▒   ▓▒█░
+              ░ ░ ▒  ░░░▒░ ░ ░ ░  ░      ░ ▒ ░░ ░░   ░ ▒░  ▒   ▒▒ ░  ░▒ ░ ▒░  ▒   ▒▒ ░
+                ░ ░    ░░░ ░ ░ ░      ░    ▒ ░   ░   ░ ░   ░   ▒     ░░   ░   ░   ▒
+                  ░  ░   ░            ░    ░           ░       ░  ░   ░           ░  ░
+            """,
+            encoding);
+    LogManager.getLogger("Luminara.Banner").info(banner);
+    Message details =
+        BannerMessage.styled(
+            """
+              §7Luminara §e%s §8[§d%s§8]
+              §7Minecraft §b%s §8 |  §7%s §a%s §8 |  §7Java §e%s §8 |  §7Bukkit §d%s\
+            """
+                .formatted(
+                    LuminaraVersion.version(),
+                    ArclightVersion.current().getReleaseName(),
+                    LuminaraVersion.minecraftVersion(),
+                    loader,
+                    loaderVersion,
+                    Runtime.version().feature(),
+                    LuminaraVersion.bukkitPackage()));
+    LogManager.getLogger("Luminara.Banner.Details").info(details);
+    LogManager.getLogger("Luminara.Banner.Credits").info(
+        """
+          {}
+          {}  {}
+        """,
+        locale.get("startup-banner.developer"),
+        locale.get("startup-banner.source"),
+        SOURCE_URL);
   }
 
   public static void warmUpEnumHelper() {

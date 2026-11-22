@@ -37,22 +37,6 @@ public final class LuminaraVersion {
     return required("gitCommit");
   }
 
-  public static String compatibilityLine() {
-    return ("Luminara "
-        + version()
-        + " (Minecraft "
-        + minecraftVersion()
-        + ", Forge "
-        + forgeVersion()
-        + ", Java "
-        + javaVersion()
-        + ", Bukkit "
-        + bukkitPackage()
-        + ", commit "
-        + gitCommit()
-        + ")");
-  }
-
   static Properties load(InputStream input) {
     Objects.requireNonNull(input, "Missing " + RESOURCE);
     Properties properties = new Properties();

@@ -6,8 +6,8 @@ license = "GNU GENERAL PUBLIC LICENSE Version 3"
 modId = "luminara"
 version = "${version}"
 displayName = "Luminara"
-credits = "lona,夜幕"
-authors = "IzzelAliz"
+credits = "lona,夜幕, IzzelAliz (Arclight)"
+authors = "${mod_author}"
 description = '''
 Luminara is a Bukkit/Spigot/Paper compatibility layer for Minecraft Forge. It runs
 Forge mods from mods/ together with Bukkit plugins from plugins/ on a dedicated

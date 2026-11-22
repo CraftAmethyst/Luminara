@@ -257,19 +257,9 @@ java:
     - Current {0} Recommended {1}
     - Current Java will not be supported in future
 loading-mapping: Loading mappings ...
-logo:
-  - ""
-  - ""
-  - "    §1    __                    _                       "
-  - "    §9   / /   __  ______ ___  (_)___  ____ __________ _"
-  - '    §3  / /   / / / / __ `__ \/ / __ \/ __ `/ ___/ __ `/'
-  - "    §6 / /___/ /_/ / / / / / / / / / / /_/ / /  / /_/ / "
-  - '    §e/_____/\__,_/_/ /_/ /_/_/_/ /_/\__,_/_/   \__,_/  '
-  - ""
-  - "    §eLuminara Server-Software By§b QianMo0721"
-  - "    §aVersion {} / {}"
-  - "    §aBuild Time: {}"
-  - ""
+startup-banner:
+  developer: "Developed by CraftAmethyst"
+  source: "Source"
 loot:
   container:
     overfill-attempt: Tried to over-fill a container

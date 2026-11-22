@@ -12,6 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkConstants;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +58,7 @@ public class ArclightMod {
     } catch (Throwable t) {
       throw new IllegalStateException("Luminara failed to install the Gson enum bootstrap", t);
     }
-    LuminaraBootstrap.logBanner();
+    LuminaraBootstrap.logBanner("Forge", ForgeVersion.getVersion());
 
     if (ArclightConfig.spec().getCompat().isPreloadBungeeChatClasses()) {
       BungeeComponentPreloader.preloadBungeeClasses();
