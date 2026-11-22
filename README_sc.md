@@ -22,11 +22,19 @@
 
 <p align="center">
   <a href="https://lum-dl.rimecraft.top/"><strong>下载 Luminara</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://lum.rimecraft.top/"><strong>访问文档</strong></a>
 </p>
 
 <hr>
 
 Luminara 是一个基于 [Arclight](https://github.com/IzzelAliz/Arclight) 服务端开发的分支项目。
+
+## Star 历史
+
+如果你愿意，请给本项目一个 Star，这对本项目非常重要
+
+[![Luminara GitHub Star 历史](https://api.star-history.com/svg?repos=CraftAmethyst/Luminara&type=Date)](https://www.star-history.com/#CraftAmethyst/Luminara&Date)
 
 ## 相比 Arclight 的优势
 

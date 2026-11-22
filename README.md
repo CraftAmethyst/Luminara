@@ -22,11 +22,19 @@
 
 <p align="center">
   <a href="https://lum-dl.rimecraft.top/en/"><strong>Download Luminara</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://lum.rimecraft.top/en/"><strong>Read the Documentation</strong></a>
 </p>
 
 <hr>
 
 Luminara is a fork project developed based on the [Arclight](https://github.com/IzzelAliz/Arclight) server.
+
+## Star History
+
+If you’d like to support the project, please give it a Star. It means a lot to us.
+
+[![Luminara GitHub Star history](https://api.star-history.com/svg?repos=CraftAmethyst/Luminara&type=Date)](https://www.star-history.com/#CraftAmethyst/Luminara&Date)
 
 ## Advantages over Arclight
 
