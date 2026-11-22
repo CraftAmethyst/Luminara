@@ -1,4 +1,4 @@
-# Luminara 2.0.0-alpha.2
+# Luminara 2.0.0-alpha.3
 
 > Minecraft 1.20.1 | Forge 47.4.0 | Fabric Loader 0.16.9 | Java 17 | Dedicated Server
 
@@ -7,50 +7,52 @@
 
 ## 中文发布说明
 
-### 破坏性变更
+### 配置迁移
 
-- 项目构建结构迁移到 [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template) 的 `common` / `fabric` / `forge` 布局。
-- 不再提供单一 Forge 混合端 JAR。现在分别发布：
-  - `luminara-forge-1.20.1-2.0.0-alpha.2.jar`
-  - `luminara-fabric-1.20.1-2.0.0-alpha.2.jar`
-- 内部包名从 `io.izzel.arclight.common.*` 迁移到 `org.craftamethyst.luminara.common.*`.
+- Forge 和 Fabric 统一使用 `config/luminara-common.toml`。首次启动时，如果 TOML 文件不存在，Luminara 会从服务端根目录的 `luminara.yml` 导入设置，并保留原文件。
+- 旧版的权限转发设置会迁移到 `compatibility.permission-forwarding`。已停止支持的异步存档及优化选项会在迁移时移除。
 
 ### 新增
 
-- 新增实验性的 Fabric 支持。
-- 新增平台抽象层 `ArclightCommon`.
-- 保留 `io.izzel.arclight.common.mixin.core.world.entity.monster.CreeperMixin` 兼容标记类，供 Supplementaries/Moonlight 等按类名探测 Arclight 的模组识别。
-- Mixin 中的模组检测在 Forge `ModList` 发布前也可用（回退到 `LoadingModList`）。
-- 运行时映射资源随产物打包：`bukkit_srg.srg`、`inheritanceMap.txt`、`spigot-1.20.1-mapped-deobf.jar`。
-- 插件类缓存的失效键加入映射文件 SHA-256 指纹，映射更新后不会复用旧的 remap 结果。
+- Forge 和 Fabric 服务端启动时会在后台检查更新。发现与当前 Minecraft 版本和加载器匹配的新版本时，控制台会显示对应的下载链接。正式版只提示正式发布，预发布版也会提示更新的预发布。
+
+### 修复与改进
+
+- 修复 Fabric 在 Windows 旧代码页下的控制台编码问题。彩色横幅、插件日志和包含中文的命令均可正确显示或处理，按回车即可执行命令。
+- 修复文件日志中混入的 `mainEx` 和 `Server threadEx` 字样，异常仍会记录堆栈。
+- 更新彩色启动横幅，分别显示 Minecraft、实际运行的加载器和 Java 版本，以及 Bukkit 兼容版本。横幅附有 CraftAmethyst 署名和项目仓库地址。
+- 服务端统计改用官方 bStats 库，并保留 `bStats/config.yml` 中的设置及服务器 UUID。
 
 ### 构建与产物
 
-- 统一构建入口为 `./gradlew build`。
-- 移除旧的 `assembleForgeMod`、`assembleFabricMod`、发行物校验和 Forge 冒烟测试等自定义 Gradle 任务。
+- 使用 Java 17 运行 `./gradlew build`。Windows 下运行 `gradlew.bat build`。
+- 将适用于当前加载器的 JAR 放入服务端的 `mods/` 目录。
+  - `luminara-forge-1.20.1-2.0.0-alpha.3.jar`
+  - `luminara-fabric-1.20.1-2.0.0-alpha.3.jar`
 
 </details>
 
 ## English Release Notes
 
-### Breaking Changes
+### Configuration Migration
 
-- The project build structure has been migrated to the `common` / `fabric` / `forge` layout of [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template).
-- A single Forge hybrid JAR is no longer provided. The following are now released separately:
-    - `luminara-forge-1.20.1-2.0.0-alpha.2.jar`
-    - `luminara-fabric-1.20.1-2.0.0-alpha.2.jar`
-- Internal package names have been migrated from `io.izzel.arclight.common.*` to `org.craftamethyst.luminara.common.*`.
+- Forge and Fabric now both use `config/luminara-common.toml`. On startup, if the TOML file is missing, Luminara imports settings from `luminara.yml` in the server root and keeps the original file.
+- The migration moves the old permission forwarding setting to `compatibility.permission-forwarding` and removes retired asynchronous saving and optimization options.
 
 ### Added
 
-- Added experimental Fabric support.
-- Added the platform abstraction layer `ArclightCommon`.
-- Retained the `io.izzel.arclight.common.mixin.core.world.entity.monster.CreeperMixin` compatibility marker class, so mods such as Supplementaries/Moonlight that detect Arclight by class name can still recognize it.
-- Mod detection in Mixins now also works before Forge `ModList` is published (falls back to `LoadingModList`).
-- Runtime mapping resources are packaged with the artifacts: `bukkit_srg.srg`, `inheritanceMap.txt`, `spigot-1.20.1-mapped-deobf.jar`.
-- The invalidation key for the plugin class cache now includes SHA-256 fingerprints of the mapping files, so stale remap results are not reused after mappings are updated.
+- Forge and Fabric servers now check for updates in the background at startup. The console prints a download link when it finds a newer release for the current Minecraft version and loader. Stable builds report stable releases. Prerelease builds also report newer prereleases.
+
+### Fixes and Improvements
+
+- Fixed Fabric console encoding on Windows with legacy code pages. The console displays the colored banner and plugin logs correctly, accepts Chinese text in commands, and submits commands with Enter.
+- Removed stray `mainEx` and `Server threadEx` text from log files. Exceptions still include stack traces.
+- Refreshed the colored startup banner with the Minecraft version, the running loader and Java versions, and the Bukkit compatibility version. The banner credits CraftAmethyst and links to the source repository.
+- Switched server metrics to the official bStats library while preserving the settings and server UUID in `bStats/config.yml`.
 
 ### Build and Artifacts
 
-- The unified build entry point is `./gradlew build`.
-- Removed old custom Gradle tasks such as `assembleForgeMod`, `assembleFabricMod`, release artifact checksums, and Forge smoke tests.
+- Build with Java 17 using `./gradlew build` or `gradlew.bat build` on Windows.
+- Place the JAR for your loader in the server's `mods/` directory.
+  - `luminara-forge-1.20.1-2.0.0-alpha.3.jar`
+  - `luminara-fabric-1.20.1-2.0.0-alpha.3.jar`
